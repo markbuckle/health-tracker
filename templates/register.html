@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body class="body">
-    <a href="index.html" class="logo-block" aria-label="Home">
-        <img src="images/logo2_1.png" loading="lazy" sizes="200px" srcset="images/logo2_1-p-500.png 500w, images/logo2_1.png 681w" alt="Company Logo">
+    <a href="/index" class="authentication-logo" aria-label="Home">
+        <img src="images/logo2_1.png" loading="lazy" alt="Company Logo">
       </a>
     
     <div class="form-wrap">
@@ -17,24 +17,24 @@
                 <form action="/register" method="post" class="register-form">
                     <div class="inner-form-div">
                         <label for="fname" class="form-label">First name</label>
-                        <input type="text" class="form-input" name="fname" placeholder="">
+                        <input type="text" class="form-input" name="fname" placeholder="" required> 
                     </div>
                     <div class="inner-form-div">
                         <label for="lname" class="form-label">Last name</label>
-                        <input type="text" class="form-input" name="lname" placeholder="">
+                        <input type="text" class="form-input" name="lname" placeholder="" required>
                     </div>
                     <div class="inner-form-div">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-input" name="email" placeholder="">
+                        <input type="email" class="form-input" name="email" placeholder="" required>
                     </div>
                     <div class="inner-form-div">
                         <label for="uname" class="form-label">Username</label>
-                        <input type="text" class="form-input" name="uname" placeholder="">
+                        <input type="text" class="form-input" name="uname" placeholder="" required>
                     </div>
                     <div class="inner-form-div">
                         <label for="pw" class="form-label">Password</label>
                         <div class="password-wrap">
-                            <input type="password" class="form-input" name="password" placeholder="">
+                            <input type="password" class="form-input" name="password" placeholder="" required>
                             <div class="password-toggle">
                                 <img id="eye-open" alt="" loading="lazy" class="eye-open">
                                 <img id="eye-close" alt="" loading="lazy" class="eye-close">
@@ -42,9 +42,9 @@
                         </div>
                     </div>
                     <div class="inner-form-div">
-                        <label for="pw2" class="form-label">Confirm Password</label>
+                        <label for="pw" class="form-label">Password</label>
                         <div class="password-wrap">
-                            <input type="password" class="form-input" name="confirmPassword" placeholder="">
+                            <input type="password" class="form-input" name="confirmPassword" placeholder="" required>
                             <div class="password-toggle">
                                 <img id="eye-open" alt="" loading="lazy" class="eye-open">
                                 <img id="eye-close" alt="" loading="lazy" class="eye-close">
@@ -58,5 +58,14 @@
                 </form>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('.password-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const input = toggle.previousElementSibling;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                toggle.classList.toggle('active');
+            });
+        });
+    </script>
 </body>
 </html>
