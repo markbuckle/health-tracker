@@ -156,64 +156,65 @@
 
 /* ------ register page----- */
 
-.body {
-background-color: #7ebcf347;
+.authentication-logo {
+        background-color: transparent;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-left: 2rem; 
+        margin-top: 1rem; 
+        cursor: pointer;
+        z-index: 50;
 }
-
-.logo-block {
-background-color: #fff0;
-justify-content: flex-start;
-align-items: flex-start;
-width: 100%;
-margin-bottom: auto;
-margin-right: auto;
-display: flex;
+.authentication-logo img {
+        width: auto;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        z-index: 50;
+        max-width: 15%;
 }
-
 .form-wrap {
-flex-direction: column;
-justify-content: center;
-align-items: stretch;
-width: 20rem;
-margin-left: auto;
-margin-right: auto;
-margin-top: auto;
-margin-bottom: auto;
-display: flex;
-position: fixed;
-inset: 0%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin-top: 1rem;
+    position: fixed;
+    inset: 0%;
+    min-height: 0;
 }
-
 .register-block {
-background-color: #fff;
-border-radius: 1.2rem;
-width: 20rem;
-max-height: auto;
-padding: 1rem 2rem 3rem;
-position: relative;
-box-shadow: 0 0 1rem #0003;
+    background-color: #fff;
+    border-radius: 1.2rem;
+    width: 100%;
+    max-width: 25rem;  /* Increased from 20rem for better readability */
+    margin: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+    max-height: 100vh;  /* Prevent form from being taller than viewport */
+        /* overflow-y: auto;  Enable scrolling if content is too tall */
 }
 
 .register-form{
-margin-left: 2rem;
-margin-right: 2rem;
-margin-top: 2rem;
-}
-
-.heading {
-font-size: 42px;
-justify-content: center;
-align-items: center;
-margin-top: 1.5rem;
-margin-bottom: 1rem;
-font-family: 'Poppins-Bold', sans-serif;
-font-weight: bold;
-color: #020202c1;
-display: flex;
-}
-
-.standard-text {
+    margin-left: 2rem;
+    margin-right: 2rem;
     margin-top: 1rem;
+    margin-bottom: 0;
+}
+.heading {
+    font-size: clamp(32px, 5vw, 42px);  /* Responsive font size */
+    text-align: center;
+    margin-top: 1rem;
+    font-family: 'Poppins-Bold', sans-serif;
+    font-weight: bold;
+    color: rgba(2, 2, 2, 0.76);
+}
+.standard-text {
+    margin-top: 0;
     color: rgb(44, 44, 44);
     font-family: 'Poppins-Regular', sans-serif;
     text-decoration: none;
@@ -226,34 +227,41 @@ display: flex;
 }
 
 .form-label {
-color: #828895;
-font-family: Poppins, sans-serif;
-font-weight: 500;
+    color: #828895;
+    font-family: Poppins, sans-serif;
+    font-weight: 500;
 }
 
 .inner-form-div {
-display: flex;
-flex-direction: column;
-margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+    position: relative;
 }
 
 .form-input {
-border: none;
-border-bottom: 1px solid #e4e7eb;
-margin-top: 5px;
-margin-bottom: 5px;
-padding: 5px 0;
-display: block;
-width: 100%;
-font-size: 14px;
-line-height: 1.42857143;
-color: #333333;
-background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #e4e7eb;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    padding: 0.25rem 0;
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333333;
+    background-color: transparent;
+    transition: border-color 0.3s ease;
 }
 
 .form-input:focus {
-outline: none;
-border-bottom-color: #00b300;
+    outline: none;
+    border-bottom-color: #00b300;
+}
+.back-link {
+    color: #828895;
+    text-decoration: none;
+    font-family: Poppins, sans-serif;
 }
 
 /* ----- passwords -----*/
@@ -268,24 +276,40 @@ border-bottom-color: #00b300;
     right: 8px;
     transform: translateY(-50%);
     cursor: pointer;
-}
+  }
   
-.password-toggle.active .eye-open {
+  .password-toggle.active .eye-open {
     display: none;
-}
-
-.password-toggle .eye-close {
+  }
+  
+  .password-toggle .eye-close {
     display: none;
-}
-
-.password-toggle.active .eye-close {
+  }
+  
+  .password-toggle.active .eye-close {
     display: block;
-}
+  }
 
 /* ----- backgrounds  ----- */
 .home-body {
     background-color: #b3d6ff;
     margin: 0;
+}
+.body {
+    background-color: #7ebcf347;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.HIW-body{
+    background-color: #88f37e47;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ----- headers  ----- */
@@ -317,6 +341,7 @@ border-bottom-color: #00b300;
     margin-left: 2rem;  /* Restored original margin */
     width: 20%;  /* Added width to create proper spacing */
     height: 80px;
+    cursor: pointer;
 }
 
 .logo-block img {
@@ -324,8 +349,8 @@ border-bottom-color: #00b300;
     width: auto;
     max-height: 80px;  /* Prevents the logo becoming too large */
     transition: all 0.3s ease;
+    cursor: pointer;
 }
-
 .center-header {
     display: flex;
     justify-content: center;
@@ -429,9 +454,11 @@ border-bottom-color: #00b300;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 115px auto 10px;
+    margin-top: 1.5rem;
     margin-bottom: 4rem;
-    padding: 0 0.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 0.25rem;
 
     /* Typography */
     font-family: Poppins, sans-serif;
@@ -450,7 +477,9 @@ border-bottom-color: #00b300;
     max-width: 800px;  /* Prevents extremely long lines */
     transition: all 0.3s ease;  /* Smooth transitions if you plan any hover effects */
 }
-
+.mobile{
+    margin-top: 4rem;
+}
 .quote-container {
     background-color: #b3d6ff00;
     flex-wrap: nowrap;
@@ -487,7 +516,7 @@ border-bottom-color: #00b300;
     font-size: 26px;
     font-weight: 500;
     line-height: 50px;
-  }
+}
 .demo-page-img{
     border: 1px solid #999797;
     border-radius: 20px;
