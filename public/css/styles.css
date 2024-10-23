@@ -22,6 +22,11 @@
 :root {
     --black: #000;
     --dark-green: #194b1e8e;
+    --primary-color: #4379ba;
+    --bg-color: #cef3e2;
+    --font-primary: 'Poppins', sans-serif;
+    --shadow-color: rgba(18, 18, 18, 0.07);
+    --card-radius: 16px;
 }
 
 /* ------ buttons ----- */
@@ -303,8 +308,8 @@
     display: flex;
     flex-direction: column;
 }
-.HIW-body{
-    background-color: #88f37e47;
+.HIW-body {
+    background-color: var(--bg-color);
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -348,8 +353,8 @@
     height: 100%;
     width: auto;
     max-height: 80px;  /* Prevents the logo becoming too large */
-    transition: all 0.3s ease;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 .center-header {
     display: flex;
@@ -422,7 +427,15 @@
 .header-container-scrolled .header-links {
     color: #4a4a4a;  /* Darker color for better visibility */
 }
-
+.header-container-scrolled .button-basics {
+       /* Sizing and Spacing */
+       padding: 0.25rem 0.5rem;
+       min-width: 50px;
+       width: auto;
+}
+.header-container-scrolled .icon-link {
+    padding: 0.15rem;
+}
 .header-container-scrolled {
     background-color: rgba(255, 255, 255, 0);  /* transparent background */
 }
@@ -535,6 +548,12 @@
     align-items: flex-start;
     display: flex;
 }
+.white-strip2{
+    background-color: #f8f9fb;
+    /* justify-content: center;
+    align-items: flex-start;
+    display: flex; */
+}
 /* ------- footer ------- */
 .footer {
     background-color: #353535;
@@ -632,4 +651,86 @@
     margin-top: 10px;
     margin-bottom: 10px;
     display: flex;
+}
+/* ------ how-it-works ------- */
+.content-section {
+    margin: 15% auto 5%;
+    width: 60%;
+}
+
+.section-title {
+    color: #707070;
+    text-align: center;
+    font-size: 44px;
+    font-family: 'Poppins-Bold', sans-serif;
+    font-weight: 600;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Step cards */
+.steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5vh;
+}
+
+.step-block {
+    min-height: 60vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.step-card {
+    background-color: #fff;
+    border-radius: var(--card-radius);
+    padding: 5%;
+    position: relative;
+    width: 50%;
+}
+
+.step-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--card-radius);
+    box-shadow: 7px 7px 20px var(--shadow-color);
+    z-index: -1;
+}
+
+.step-number {
+    color: var(--primary-color);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.step-content {
+    margin-top: 24px;
+}
+
+.step-title {
+    color: var(--primary-color);
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.step-description {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.4;
+    font-family: 'Poppins', sans-serif;
+}
+
+.step-image {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
