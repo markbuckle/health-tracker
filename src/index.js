@@ -18,7 +18,8 @@ app.set("views", templatePath);
 app.use(express.static(publicPath))
 // hbs.registerPartials(partialPath)
 
-app.get('/index', (req, res) => {
+// home/landing page
+app.get('/', (req, res) => {
     res.render('index');
 });
 
@@ -26,12 +27,16 @@ app.get('/register', (req, res) => {
     res.render('register');
 });
 
-app.get('/', (req, res) => {
+app.get('/login', (req, res) => {
     res.render('login');
 });
 
 app.get('/how-it-works', (req, res) => {
     res.render('how-it-works');
+});
+
+app.get('/demo', (req, res) => {
+    res.render('demo');
 });
 
 app.post('/register', async (req, res) => {
