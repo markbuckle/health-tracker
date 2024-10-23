@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="body">
+    <a href="index.html" class="logo-block" aria-label="Home">
+        <img src="images/logo2_1.png" loading="lazy" sizes="200px" srcset="images/logo2_1-p-500.png 500w, images/logo2_1.png 681w" alt="Company Logo">
+      </a>
+    
+    <div class="form-wrap">
+        <div class="register-block">
+                <h1 class="heading">Register</h1>
+                <form action="/register" method="post" class="register-form">
+                    <div class="inner-form-div">
+                        <label for="fname" class="form-label">First name</label>
+                        <input type="text" class="form-input" name="fname" placeholder="">
+                    </div>
+                    <div class="inner-form-div">
+                        <label for="lname" class="form-label">Last name</label>
+                        <input type="text" class="form-input" name="lname" placeholder="">
+                    </div>
+                    <div class="inner-form-div">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-input" name="email" placeholder="">
+                    </div>
+                    <div class="inner-form-div">
+                        <label for="uname" class="form-label">Username</label>
+                        <input type="text" class="form-input" name="uname" placeholder="">
+                    </div>
+                    <div class="inner-form-div">
+                        <label for="pw" class="form-label">Password</label>
+                        <div class="password-wrap">
+                            <input type="password" class="form-input" name="password" placeholder="">
+                            <div class="password-toggle">
+                                <img id="eye-open" alt="" loading="lazy" class="eye-open">
+                                <img id="eye-close" alt="" loading="lazy" class="eye-close">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inner-form-div">
+                        <label for="pw2" class="form-label">Confirm Password</label>
+                        <div class="password-wrap">
+                            <input type="password" class="form-input" name="confirmPassword" placeholder="">
+                            <div class="password-toggle">
+                                <img id="eye-open" alt="" loading="lazy" class="eye-open">
+                                <img id="eye-close" alt="" loading="lazy" class="eye-close">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit" class="button-basics button-green" value="register">Sign Up</button>
+                        <a href="./"  class="hyperlink-text">Go back to login page</a>
+                    </div>
+                </form>
+        </div>
+    </div>
+</body>
+</html>
