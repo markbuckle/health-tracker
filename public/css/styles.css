@@ -916,12 +916,12 @@
     color: rgba(2, 2, 2, 0.76);
 }
 .subheading {
-    font-size: clamp(28px, 4vw, 37px);  /* Responsive font size */
+    font-size: clamp(28px, 4vw, 34px);  /* Responsive font size */
     text-align: center;
     margin-top: 1rem;
     font-family: 'Poppins-SemiBold', sans-serif;
     font-weight: bold;
-    color: rgba(2, 2, 2, 0.76);
+    color: rgba(104, 104, 104, 0.847);
 }
 .standard-text {
     margin-top: 0;
