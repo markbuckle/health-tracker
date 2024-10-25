@@ -1360,6 +1360,14 @@
     margin-bottom: 10px;
     display: flex;
 }
+.divider {
+    color: #474a57;
+    background-color: #474a57;
+    width: 100%;
+    height: 1px;
+    margin-top: -1rem;
+    margin-bottom: 1.25rem;
+}
 /* ------ how-it-works ------- */
 .content-section {
     margin: 15% auto 5%;
