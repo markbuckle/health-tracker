@@ -94,16 +94,24 @@ app.get('/demo', (req, res) => {
     res.render('demo');
 });
 
-app.get('/reports', checkAuth, (req, res) => {
-    res.render('user/reports', { naming: req.user.uname });
-});
-
 app.get('/profile', checkAuth, (req, res) => {
     res.render('user/profile', { 
         fname: req.user.fname, 
         lname: req.user.lname,
         user: req.user  // passing the entire user object
     });
+});
+
+app.get('/upload', checkAuth, (req, res) => {
+    res.render('user/upload', { naming: req.user.uname });
+});
+
+app.get('/reports', checkAuth, (req, res) => {
+    res.render('user/reports', { naming: req.user.uname });
+});
+
+app.get('/dashboard', checkAuth, (req, res) => {
+    res.render('user/dashboard', { naming: req.user.uname });
 });
 
 // Authentication logic
@@ -139,25 +147,6 @@ app.post('/register', async (req, res) => {
         res.status(500).send("An error occurred during registration");
     }
 });
-
-// app.post('/login', async (req, res) => {
-//     try {
-//         const user = await registerCollection.findOne({ uname: req.body.uname });
-
-//         if (!user) {
-//             return res.status(400).send("User not found");
-//         }
-
-//         if (user.password === req.body.password) {
-//             res.status(200).render("user/reports", { naming: user.uname });
-//         } else {
-//             res.status(400).send("Incorrect password");
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send("An error occurred during login");
-//     }
-// });
 
 // Login logic
 app.post('/login', passport.authenticate('local', {
