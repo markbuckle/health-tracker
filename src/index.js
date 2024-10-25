@@ -3,16 +3,12 @@ const path = require("path");
 const hbs = require("hbs");
 const { registerCollection } = require("./mongodb");
 const port = process.env.PORT || 3000;
-
 const templatePath = path.join(__dirname, '../templates');
 const publicPath = path.join(__dirname, '../public');
-// console.log(publicPath);
-
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
 app.use(express.static(publicPath))
@@ -24,11 +20,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    res.render('register');
+    res.render('auth/register');
 });
 
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('auth/login');
 });
 
 app.get('/how-it-works', (req, res) => {
@@ -39,6 +35,11 @@ app.get('/demo', (req, res) => {
     res.render('demo');
 });
 
+app.get('/reports', (req, res) => {
+    res.render('user/reports');
+});
+
+// Authentication logic
 app.post('/register', async (req, res) => {
     const data = {
         fname: req.body.fname,
