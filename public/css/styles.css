@@ -915,6 +915,14 @@
     font-weight: bold;
     color: rgba(2, 2, 2, 0.76);
 }
+.subheading {
+    font-size: clamp(28px, 4vw, 37px);  /* Responsive font size */
+    text-align: center;
+    margin-top: 1rem;
+    font-family: 'Poppins-SemiBold', sans-serif;
+    font-weight: bold;
+    color: rgba(2, 2, 2, 0.76);
+}
 .standard-text {
     margin-top: 0;
     color: rgb(44, 44, 44);
