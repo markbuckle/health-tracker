@@ -1,12 +1,15 @@
 const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
 const { registerCollection } = require("./mongodb");
 const port = process.env.PORT || 3000;
 const templatePath = path.join(__dirname, '../templates');
 const publicPath = path.join(__dirname, '../public');
-const app = express();
 
+const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", 'hbs');
@@ -14,7 +17,63 @@ app.set("views", templatePath);
 app.use(express.static(publicPath))
 // hbs.registerPartials(partialPath)
 
-// home/landing page
+// Session setup - MUST come before passport middleware
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
+
+// Passport setup
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy({
+    usernameField: 'uname',  // specify the field names from your form
+    passwordField: 'password'
+},
+async (username, password, done) => {
+    try {
+        const user = await registerCollection.findOne({ uname: username });
+        if (!user) {
+            return done(null, false, { message: 'User not found' });
+        }
+        // In production, use proper password hashing comparison
+        if (user.password !== password) {
+            return done(null, false, { message: 'Incorrect password' });
+        }
+        return done(null, user);
+    } catch (error) {
+        return done(error);
+    }
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user._id); // Use _id for MongoDB
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await registerCollection.findById(id);
+        done(null, user);
+    } catch (error) {
+        done(error);
+    }
+});
+
+// Authentication middleware
+function checkAuth(req, res, next) {
+    if (req.isAuthenticated()) { // or use your own custom authentication check
+        return next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
+// Routes
 app.get('/', (req, res) => {
     res.render('index');
 });
@@ -35,8 +94,16 @@ app.get('/demo', (req, res) => {
     res.render('demo');
 });
 
-app.get('/reports', (req, res) => {
-    res.render('user/reports');
+app.get('/reports', checkAuth, (req, res) => {
+    res.render('user/reports', { naming: req.user.uname });
+});
+
+app.get('/profile', checkAuth, (req, res) => {
+    res.render('user/profile', { 
+        fname: req.user.fname, 
+        lname: req.user.lname,
+        user: req.user  // passing the entire user object
+    });
 });
 
 // Authentication logic
@@ -64,7 +131,7 @@ app.post('/register', async (req, res) => {
         const newUser = new registerCollection(data);
         await newUser.save();
 
-        res.status(201).render("login", {
+        res.status(201).render("auth/login", {
             naming: req.body.uname
         });
     } catch (error) {
@@ -73,24 +140,31 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.post('/login', async (req, res) => {
-    try {
-        const user = await registerCollection.findOne({ uname: req.body.uname });
+// app.post('/login', async (req, res) => {
+//     try {
+//         const user = await registerCollection.findOne({ uname: req.body.uname });
 
-        if (!user) {
-            return res.status(400).send("User not found");
-        }
+//         if (!user) {
+//             return res.status(400).send("User not found");
+//         }
 
-        if (user.password === req.body.password) {
-            res.status(200).render("user/reports", { naming: user.uname });
-        } else {
-            res.status(400).send("Incorrect password");
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("An error occurred during login");
-    }
-});
+//         if (user.password === req.body.password) {
+//             res.status(200).render("user/reports", { naming: user.uname });
+//         } else {
+//             res.status(400).send("Incorrect password");
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send("An error occurred during login");
+//     }
+// });
+
+// Login logic
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/reports',
+    failureRedirect: '/login',
+    failureFlash: false
+}));
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
