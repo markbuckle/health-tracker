@@ -353,7 +353,7 @@
     position: static;
 }
 .category-subtitle {
-    margin: auto 5px auto auto;
+    margin: auto 0 auto auto;
     font-family: 'Poppins-SemiBold', sans-serif;
     font-size: 18px;
     font-weight: 600;
@@ -376,11 +376,10 @@
     position: absolute;
     width: 8px;
     height: 8px;
-    border-right: 2px solid #219fa3;
-    border-bottom: 2px solid #219fa3;
+    border-right: 3px solid #219fa3;
+    border-bottom: 3px solid #219fa3;
     transform: rotate(45deg);
-    top: 0;
-    left: 4px;
+    left: 2px;
 }
 .dropdown-arrow.active {
     transform: rotate(180deg);
