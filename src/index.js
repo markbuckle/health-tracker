@@ -82,7 +82,7 @@ app.post('/login', async (req, res) => {
         }
 
         if (user.password === req.body.password) {
-            res.status(200).render("index", { naming: user.uname });
+            res.status(200).render("user/reports", { naming: user.uname });
         } else {
             res.status(400).send("Incorrect password");
         }
