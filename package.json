@@ -6,13 +6,14 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "build": "npm ci",
-    "clean": "rm -rf node_modules",
-    "postinstall": "npm run build"
-  },
+"scripts": {
+  "start": "node src/index.js",
+  "dev": "nodemon src/index.js",
+  "build": "npm install && npm run build-assets",
+  "clean": "rm -rf node_modules",
+  "postinstall": "npm run build",
+  "build-assets": "your build command here"
+},
   "keywords": ["health", "tracker", "authentication"],
   "author": "",
   "license": "ISC",

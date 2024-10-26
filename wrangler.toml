@@ -1,11 +1,7 @@
-[
-build
-]
-command = "npm install"
+[build]
+command = "npm install && npm run build"
 publish = "public"
 node_version = "18.x"
 
-[
-build.environment
-]
-NODE_ENV = "production"
+[build.environment]
+NODE_ENV = 
