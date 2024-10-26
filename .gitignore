@@ -1,8 +1,10 @@
 /node_modules
-/webflow-export
+/webflow-export/
 /public/css/healthdashboard.webflow.css
 /public/css/normalize.css
 /public/css/webflow.css
 /public/js
 /public/archive
 /src/archive
+.env
+dotenv

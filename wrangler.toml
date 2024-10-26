@@ -1,0 +1,11 @@
+[
+build
+]
+command = "npm install"
+publish = "public"
+node_version = "18.x"
+
+[
+build.environment
+]
+NODE_ENV = "production"
