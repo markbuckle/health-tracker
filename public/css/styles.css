@@ -1,6 +1,208 @@
+/* ------ Upload Page ----- */
+.div-block-9 {
+    background-color: #fff;
+    border-radius: 15px;
+    width: auto;
+    margin-top: 0;
+  }
+  
+  .upload-page-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    font-family: Poppins, sans-serif;
+  }
+  
+  .button-2 {
+    background-color: #acdcb4;
+    border: 3px dashed #699670;
+    color: black;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    height: 60px;
+    margin: 15px auto auto;
+    font-family: 'Poppins-Regular', sans-serif;
+    font-size: 18px;
+    display: flex;
+  }
+  
+  .upload-page-header {
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    display: flex;
+  }
+
+/* ---- Dashboard ----- */
+
+/* ------ fonts ----- */
+@font-face {
+    font-family: 'Poppins-Bold';
+    src: url('../fonts/Poppins-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins-Regular';
+    src: url('../fonts/Poppins-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Poppins-SemiBold';
+    src: url('../fonts/Poppins-SemiBold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+/* ------ colours ----- */
+:root {
+    --black: #000;
+    --dark-green: #194b1e8e;
+    --dark-grey: #3b3b3bca;
+    --primary-color: #4379ba;
+    --bg-color: #cef3e2;
+    --font-primary: 'Poppins', sans-serif;
+    --shadow-color: rgba(18, 18, 18, 0.07);
+    --card-radius: 16px;
+    --white: #fff;
+}
+
+/* ------ buttons ----- */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;  /* Better than margin-top for spacing between buttons */
+    padding: 1rem;
+  }
+  
+  /* Base Button Styles */
+  .button-basics {
+    /* Typography */
+    font-family: 'Poppins-SemiBold', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    
+    /* Sizing and Spacing */
+    padding: 0.75rem 1.5rem;
+    min-width: 70px;
+    width: auto;
+    
+    /* Visual Style */
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    
+    /* Animation */
+    transition: all 0.3s ease;
+    
+    /* Remove default button styles */
+    appearance: none;
+    -webkit-appearance: none;
+    
+    /* Ensure proper text contrast */
+    color: white;
+    
+    /* Prevent text selection */
+    user-select: none;
+  }
+  
+  /* Button Links */
+  .button a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Green Button */
+  .button-green {
+    background-color: #5cb15d;
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+  }
+  
+  .button-green:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+  }
+  
+  .button-green:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(76, 175, 80, 0.2);
+  }
+  
+  /* Blue Button */
+  .button-blue {
+    background-color: #63b1f1;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+  }
+  
+  .button-blue:hover {
+    background-color: #1e88e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+  }
+  
+  .button-blue:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(33, 150, 243, 0.3);
+  }
+  
+  /* Primary Button */
+  .btn-primary {
+    background-color: #8add9a;
+    color: #000;
+    border-radius: 76px;
+    padding: 12px 24px;
+    width: 45%;
+    box-shadow: 0 1px 4px rgba(74, 58, 255, 0.26);
+    border: 1px solid var(--dark-green);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Poppins-SemiBold.ttf', sans-serif;
+    font-size: 20px;
+    text-shadow: 0 1px 1px #0003;
+  }
+  
+  .btn-primary:hover {
+    color: #fff;
+    background-color: #6bcd7a;
+    transform: scale3d(1.02, 1.02, 1.01);
+    box-shadow: 0 4px 20px rgba(74, 58, 255, 0.3);
+  }
+  .flex-horizontal {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+  
+  /* Disabled State */
+  .button-basics:disabled,
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Focus State for Accessibility */
+  .button-basics:focus,
+  .btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  }
+  
 /* ---- profile page ---- */
 .basic-info-div {
     background-color: #fff;
+    border-radius: 15px;
 }
 .username-heading {
     margin: 10px auto 10px 10px;
@@ -38,7 +240,7 @@
     background-color: #b4e8b3;
     border-radius: 20px;
 }
-.update-profile-text {
+.button-text {
     font-family: 'Poppins-Regular', sans-serif;
     font-size: 16px;
     font-weight: 300;
@@ -57,13 +259,6 @@
     padding: 4px;
     display: flex;
 }
-.heading-3 {
-    width: auto;
-    margin-top: 10px;
-    font-family: Poppins, sans-serif;
-    font-size: 26px;
-    font-weight: 300;
-}
 .form {
     margin-bottom: 0;
     margin-left: 0;
@@ -72,6 +267,21 @@
 .form-text-field {
     border-radius: 5px;
     width: 50%;
+}
+/* Make sure form inputs and buttons are clickable */
+
+.form-click-button,
+.profile-button,
+.button-5 {
+    position: relative;
+    z-index: 1002;
+    pointer-events: auto;
+    cursor: pointer;
+}
+.form-text-field {
+    position: relative;
+    z-index: 1002;
+    pointer-events: auto;
 }
 .field-label {
     margin-top: 10px;
@@ -157,6 +367,16 @@
     text-decoration: underline;
     display: block;
   }
+
+  .header-container-3{
+    background: transparent;
+    display: flex;
+    justify-content: flex-start;  /* Changed to flex-start to align logo to left */
+    align-items: center;
+    height: 80px;
+    width: 100%;
+    box-sizing: border-box;
+  }
 /* ----- modal styles ------ */
 .modal {
     z-index: 999;
@@ -171,49 +391,57 @@
 }
 .modal-form {
     width: auto;
+    pointer-events: auto;
 }
-.modal-wrapper {
-    z-index: 999;
-    justify-content: center;
-    align-items: center;
-    width: auto;
-    height: auto;
-    display: none;
-    position: fixed;
-    inset: 0%;
-}
+.modal-wrapper,
+.modal-wrapper-1, 
+.modal-wrapper-2, 
 .modal-wrapper-3 {
     z-index: 999;
-    justify-content: center;
-    align-items: center;
     display: none;
     position: fixed;
     inset: 0%;
-  }
+    justify-content: center;
+    align-items: center;
+    pointer-events: all;
+}
+.modal-wrapper-1.active,
+.modal-wrapper-2.active,
+.modal-wrapper-3.active {
+    display: flex;
+}
 .modal-background {
-    z-index: auto;
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
-    cursor: pointer;
-    background-color: #00000054;
-    position: absolute;
+    z-index: 1000;
+    position: fixed; /* Changed from absolute to fixed */
     inset: 0%;
+    background-color: rgba(0, 0, 0, 0.33);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    cursor: pointer;
+    pointer-events: auto;
 }
 .modal-card {
-    z-index: 1;
-    background-color: var(--white);
+    z-index: 1001;
+    position: relative;
+    background-color: white;
     border-radius: 20px;
-    flex-flow: column;
-    justify-content: center;
-    align-items: flex-start;
+    padding: 15px;
     width: 100%;
     max-width: 425px;
-    height: auto;
-    margin: 0;
-    padding: 15px;
-    display: flex;
+    pointer-events: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+/* Ensure modal content doesn't trigger background clicks */
+.modal-content {
     position: relative;
-    inset: auto;
+    z-index: 1002;
+}
+.modal-button {
+    width: auto;
+    margin-top: 10px;
+    font-family: Poppins, sans-serif;
+    font-size: 26px;
+    font-weight: 300;
 }
 .modal-close-button {
     justify-content: flex-end;
@@ -239,13 +467,24 @@
     display: flex;
 }
 .modal-return-button {
+    z-index: 1002;
     margin: 10px;
+    cursor: pointer;
 }
 .modal-return-button.w--current {
     justify-content: center;
     align-items: center;
     margin: 10px 0 10px 5px;
     display: flex;
+}
+/* Ensure modal content stays above background */
+.modal-content,
+.modal-form,
+.modal-header,
+.modal-footer {
+    position: relative;
+    z-index: 1002;
+    pointer-events: auto;
 }
 /* ----- user pages ------ */
 * {
@@ -942,167 +1181,6 @@
 .tab-pane-ongoing-2 {
     margin-top: 5px;
 }
-/* ------ fonts ----- */
-@font-face {
-    font-family: 'Poppins-Bold';
-    src: url('../fonts/Poppins-Bold.ttf') format('truetype');
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Poppins-Regular';
-    src: url('../fonts/Poppins-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
-    font-family: 'Poppins-SemiBold';
-    src: url('../fonts/Poppins-SemiBold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-/* ------ colours ----- */
-:root {
-    --black: #000;
-    --dark-green: #194b1e8e;
-    --dark-grey: #3b3b3bca;
-    --primary-color: #4379ba;
-    --bg-color: #cef3e2;
-    --font-primary: 'Poppins', sans-serif;
-    --shadow-color: rgba(18, 18, 18, 0.07);
-    --card-radius: 16px;
-}
-
-/* ------ buttons ----- */
-.button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;  /* Better than margin-top for spacing between buttons */
-    padding: 1rem;
-  }
-  
-  /* Base Button Styles */
-  .button-basics {
-    /* Typography */
-    font-family: 'Poppins-SemiBold', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.5;
-    text-align: center;
-    text-decoration: none;
-    
-    /* Sizing and Spacing */
-    padding: 0.75rem 1.5rem;
-    min-width: 70px;
-    width: auto;
-    
-    /* Visual Style */
-    border: 2px solid transparent;
-    border-radius: 8px;
-    cursor: pointer;
-    
-    /* Animation */
-    transition: all 0.3s ease;
-    
-    /* Remove default button styles */
-    appearance: none;
-    -webkit-appearance: none;
-    
-    /* Ensure proper text contrast */
-    color: white;
-    
-    /* Prevent text selection */
-    user-select: none;
-  }
-  
-  /* Button Links */
-  .button a {
-    color: inherit;
-    text-decoration: none;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* Green Button */
-  .button-green {
-    background-color: #5cb15d;
-    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
-  }
-  
-  .button-green:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
-  }
-  
-  .button-green:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(76, 175, 80, 0.2);
-  }
-  
-  /* Blue Button */
-  .button-blue {
-    background-color: #63b1f1;
-    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
-  }
-  
-  .button-blue:hover {
-    background-color: #1e88e5;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
-  }
-  
-  .button-blue:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(33, 150, 243, 0.3);
-  }
-  
-  /* Primary Button */
-  .btn-primary {
-    background-color: #8add9a;
-    color: #000;
-    border-radius: 76px;
-    padding: 12px 24px;
-    width: 45%;
-    box-shadow: 0 1px 4px rgba(74, 58, 255, 0.26);
-    border: 1px solid var(--dark-green);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-family: 'Poppins-SemiBold.ttf', sans-serif;
-    font-size: 20px;
-    text-shadow: 0 1px 1px #0003;
-  }
-  
-  .btn-primary:hover {
-    color: #fff;
-    background-color: #6bcd7a;
-    transform: scale3d(1.02, 1.02, 1.01);
-    box-shadow: 0 4px 20px rgba(74, 58, 255, 0.3);
-  }
-  .flex-horizontal {
-    justify-content: center;
-    align-items: center;
-    display: flex;
-  }
-  
-  /* Disabled State */
-  .button-basics:disabled,
-  .btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-  
-  /* Focus State for Accessibility */
-  .button-basics:focus,
-  .btn-primary:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
-  }
-  
 
 /* ------ register page----- */
 
