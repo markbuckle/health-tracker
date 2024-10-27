@@ -4,7 +4,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "build": "mkdir -p public/templates && cp -r templates/* public/templates/ && cp -r public/* dist/",
+    "build": "mkdir -p dist && mkdir -p public/templates && cp -r templates/* public/templates/ && cp -r src dist/ && cp -r public/* dist/",
     "dev": "nodemon src/index.js"
   },
   "dependencies": {
