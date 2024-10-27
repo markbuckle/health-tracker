@@ -6,14 +6,21 @@
   "engines": {
     "node": ">=18.0.0"
   },
-"scripts": {
-  "start": "node src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
   "dev": "nodemon src/index.js",
-  "clean": "if exist public\\css\\* del /Q public\\css\\* && if exist public\\js\\* del /Q public\\js\\*",
-  "build": "npm run copy-templates && echo Built successfully",
-  "copy-templates": "xcopy /E /I /Y templates\\*.hbs public\\templates\\"
+  "clean": "node_modules/.bin/fs-extra remove node_modules",
+  "clean-public": "node_modules/.bin/fs-extra remove public/templates",
+  "build": "npm run clean-public && npm run copy-assets",
+  "copy-assets": "npm run copy-templates && npm run copy-static",
+  "copy-templates": "copyfiles -u 1 \"templates/**/*.hbs\" public/templates/",
+  "copy-static": "copyfiles -u 1 \"public/css/**/*\" public/dist/"
 },
-  "keywords": ["health", "tracker", "authentication"],
+  "keywords": [
+    "health",
+    "tracker",
+    "authentication"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -31,6 +38,8 @@
     "sequelize": "^6.37.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "copyfiles": "^2.4.1",
+    "nodemon": "^3.1.7",
+    "rimraf": "^5.0.10"
   }
 }

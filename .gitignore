@@ -1,4 +1,16 @@
-/node_modules
+/node_modules/
+node_modules/
+.env
+dotenv
+.DS_Store
+public/dist/
+public/templates//webflow-export/
+public/css/healthdashboard.webflow.css
+public/css/normalize.css
+public/css/webflow.css
+public/js
+public/archive
+src/archive
 /webflow-export/
 /public/css/healthdashboard.webflow.css
 /public/css/normalize.css
@@ -6,5 +18,3 @@
 /public/js
 /public/archive
 /src/archive
-.env
-dotenv

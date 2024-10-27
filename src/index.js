@@ -6,10 +6,11 @@ const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { registerCollection } = require("./mongodb");
 const port = process.env.PORT || 3000;
-const templatePath = process.env.NODE_ENV === 'production'
-    ? path.join(__dirname, '../public/templates')
-    : path.join(__dirname, '../templates');
+const templatePath = path.join(__dirname, process.env.NODE_ENV === 'production'
+  ? '../public/templates' 
+  : '../templates');
 const publicPath = path.join(__dirname, '../public');
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());
@@ -21,19 +22,29 @@ app.use(express.static(publicPath))
 // const partialsPath = path.join(__dirname, '../templates/partials');
 // hbs.registerPartials(partialPath)
 
-// error handling for template loading
-if (!fs.existsSync(templatePath)) {
-    console.error(`Template directory not found: ${templatePath}`);
-    process.exit(1);
-}
+// Add error handling for static files
+app.use(express.static(publicPath));
+app.use((err, req, res, next) => {
+  if (err) {
+    console.error('Static file error:', err);
+    return res.status(500).send('Error loading static files');
+  }
+  next();
+});
 
 // Session setup - MUST come before passport middleware
+if (!process.env.SESSION_SECRET) {
+    console.error('SESSION_SECRET is not set in environment variables');
+    process.exit(1);
+}
 app.use(session({
-    secret: 'your_secret_key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        httpOnly: true // Prevent XSS attacks
     }
 }));
 
