@@ -17,7 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
-app.use(express.static(publicPath))
 // If you want to use partials, uncomment this line and specify the correct path
 // const partialsPath = path.join(__dirname, '../templates/partials');
 // hbs.registerPartials(partialPath)
