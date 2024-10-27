@@ -1,42 +1,24 @@
 {
   "name": "health-tracker",
   "version": "1.0.0",
-  "description": "Health tracking application with user authentication",
   "main": "src/index.js",
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
-    "copy-templates": "mkdir -p public/templates && cp -r templates/* public/templates/",
-    "copy-static": "cp -r public/* dist/",
-    "prebuild": "rm -rf dist && mkdir dist",
-    "build": "npm run prebuild && npm run copy-templates && npm run copy-static && webpack --mode production"
+    "start": "node src/index.js",
+    "build": "mkdir -p public/templates && cp -r templates/* public/templates/ && cp -r public/* dist/",
+    "dev": "nodemon src/index.js"
   },
-  "keywords": [
-    "health",
-    "tracker",
-    "authentication"
-  ],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "connect-mongo": "^5.1.0",
-    "dotenv": "^16.4.0",
-    "express": "^4.21.1",
-    "express-session": "^1.18.1",
-    "handlebars": "^4.7.8",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "hbs": "^4.2.0",
-    "mongoose": "^8.7.2",
-    "passport": "^0.7.0",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.11.3",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.4"
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
-    "copyfiles": "^2.4.1",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
