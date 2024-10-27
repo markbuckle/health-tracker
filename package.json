@@ -9,10 +9,9 @@
 "scripts": {
   "start": "node src/index.js",
   "dev": "nodemon src/index.js",
-  "build": "npm install && npm run build-assets",
-  "clean": "rm -rf node_modules",
-  "postinstall": "npm run build",
-  "build-assets": "your build command here"
+  "clean": "if exist public\\css\\* del /Q public\\css\\* && if exist public\\js\\* del /Q public\\js\\*",
+  "build": "npm run copy-templates && echo Built successfully",
+  "copy-templates": "xcopy /E /I /Y templates\\*.hbs public\\templates\\"
 },
   "keywords": ["health", "tracker", "authentication"],
   "author": "",

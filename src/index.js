@@ -6,7 +6,9 @@ const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { registerCollection } = require("./mongodb");
 const port = process.env.PORT || 3000;
-const templatePath = path.join(__dirname, '../templates');
+const templatePath = process.env.NODE_ENV === 'production'
+    ? path.join(__dirname, '../public/templates')
+    : path.join(__dirname, '../templates');
 const publicPath = path.join(__dirname, '../public');
 
 const app = express();
@@ -15,7 +17,15 @@ app.use(express.urlencoded({ extended: false }));
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
 app.use(express.static(publicPath))
+// If you want to use partials, uncomment this line and specify the correct path
+// const partialsPath = path.join(__dirname, '../templates/partials');
 // hbs.registerPartials(partialPath)
+
+// error handling for template loading
+if (!fs.existsSync(templatePath)) {
+    console.error(`Template directory not found: ${templatePath}`);
+    process.exit(1);
+}
 
 // Session setup - MUST come before passport middleware
 app.use(session({
