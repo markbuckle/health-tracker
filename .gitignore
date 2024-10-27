@@ -3,7 +3,6 @@ node_modules/
 .env
 dotenv
 .DS_Store
-public/dist/
 public/templates//webflow-export/
 public/css/healthdashboard.webflow.css
 public/css/normalize.css
@@ -18,4 +17,3 @@ src/archive
 /public/js
 /public/archive
 /src/archive
-/dist/
