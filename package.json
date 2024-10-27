@@ -9,11 +9,10 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "build": "npm run clean-public && npm run copy-assets",
-    "copy-assets": "npm run copy-templates && npm run copy-static",
+    "build": "npm run copy-templates && npm run copy-static",
     "copy-templates": "copyfiles -u 1 \"templates/**/*.hbs\" public/templates/",
     "copy-static": "copyfiles -u 1 \"public/css/**/*\" public/dist/"
-},
+  },
   "keywords": [
     "health",
     "tracker",
