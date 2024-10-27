@@ -1,26 +1,17 @@
 version: 1
-applications:
-  - frontend:
-      phases:
-        preBuild:
-          commands:
-            - npm ci
-        build:
-          commands:
-            - npm run build
-      artifacts:
-        baseDirectory: public
-        files:
-          - '**/*'
-  - backend:
-      phases:
-        preBuild:
-          commands:
-            - npm ci
-        build:
-          commands:
-            - npm run build
-      artifacts:
-        baseDirectory: public
-        files:
-          - '**/*'
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd health-tracker-v2
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: health-tracker-v2/public
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - health-tracker-v2/node_modules/**/*
