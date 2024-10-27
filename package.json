@@ -8,13 +8,11 @@
   },
   "scripts": {
     "start": "node src/index.js",
-  "dev": "nodemon src/index.js",
-  "clean": "node_modules/.bin/fs-extra remove node_modules",
-  "clean-public": "node_modules/.bin/fs-extra remove public/templates",
-  "build": "npm run clean-public && npm run copy-assets",
-  "copy-assets": "npm run copy-templates && npm run copy-static",
-  "copy-templates": "copyfiles -u 1 \"templates/**/*.hbs\" public/templates/",
-  "copy-static": "copyfiles -u 1 \"public/css/**/*\" public/dist/"
+    "dev": "nodemon src/index.js",
+    "build": "npm run clean-public && npm run copy-assets",
+    "copy-assets": "npm run copy-templates && npm run copy-static",
+    "copy-templates": "copyfiles -u 1 \"templates/**/*.hbs\" public/templates/",
+    "copy-static": "copyfiles -u 1 \"public/css/**/*\" public/dist/"
 },
   "keywords": [
     "health",
@@ -39,7 +37,6 @@
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
-    "nodemon": "^3.1.7",
-    "rimraf": "^5.0.10"
+    "nodemon": "^3.1.7"
   }
 }
