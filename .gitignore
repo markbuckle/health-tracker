@@ -17,3 +17,5 @@ src/archive
 /public/js
 /public/archive
 /src/archive
+/.ebextensions/
+deploy.zip

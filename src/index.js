@@ -5,7 +5,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { registerCollection } = require("./mongodb");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
+// const port = process.env.PORT || 3000;
 const templatePath = path.join(__dirname, process.env.NODE_ENV === 'production'
   ? '../public/templates' 
   : '../templates');
@@ -23,13 +24,6 @@ app.set("views", templatePath);
 
 // Add error handling for static files
 app.use(express.static(publicPath));
-app.use((err, req, res, next) => {
-  if (err) {
-    console.error('Static file error:', err);
-    return res.status(500).send('Error loading static files');
-  }
-  next();
-});
 
 // Session setup - MUST come before passport middleware
 if (!process.env.SESSION_SECRET) {
