@@ -19,3 +19,4 @@ src/archive
 /src/archive
 /.ebextensions/
 deploy.zip
+notes.md
