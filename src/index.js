@@ -5,11 +5,13 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { registerCollection } = require("./mongodb");
-const port = process.env.PORT || 8080;
-// const port = process.env.PORT || 3000;
-const templatePath = path.join(__dirname, process.env.NODE_ENV === 'production'
-  ? '../public/templates' 
-  : '../templates');
+// const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
+// const templatePath = path.join(__dirname, process.env.NODE_ENV === 'production'
+//   ? '../public/templates' 
+//   : '../templates');
+const templatePath = path.join(__dirname, '../templates');
+
 const publicPath = path.join(__dirname, '../public');
 require('dotenv').config();
 
@@ -36,8 +38,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        httpOnly: true // Prevent XSS attacks
+        // secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        // httpOnly: true // Prevent XSS attacks
     }
 }));
 
