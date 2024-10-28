@@ -1,5 +1,35 @@
 # Personalized Health Tracker
 
+The app enables users to mae sense of complex medical information. 
+
+### Features:
+- Landing Page
+- Demo page
+- How It Works Page
+- User Authentication 
+- Multi-Database Integration
+- Active Content Management System (Coming soon)
+- PIPEDA & HIPAA Compliance (Coming soon)
+
+### Tech Stack:
+- HTML
+- Handlebars
+- CSS
+- Javascript
+- Node.js
+- Express.js
+- Passport.js
+- MongoDB
+- PostgreSQL
+
+### Production
+- Coming soon.
+
+### Setup Steps
+The rest of this readme provides an in-depth overview this project.
+
+# Introduction
+
 Many patients globally do not have complete access to their healthcare records.
 Even when they do, the information is not provided in a way that allows patients
 to understand their data while being provided with actionable takeaways.
