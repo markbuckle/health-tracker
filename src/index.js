@@ -13,6 +13,7 @@ const port = process.env.PORT || 3000;
 const templatePath = path.join(__dirname, '../templates');
 const publicPath = path.join(__dirname, '../public');
 require('dotenv').config();
+const MongoStore = require('connect-mongo');
 
 (async () => {
     try {
@@ -41,6 +42,10 @@ require('dotenv').config();
             secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: false,
+            store: MongoStore.create({
+                mongoUrl: process.env.DB_STRING,
+                touchAfter: 24 * 3600 // Only update sessions every 24 hours unless changed
+            }),
             cookie: {
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
                 secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
