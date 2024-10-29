@@ -13,6 +13,7 @@ public/archive
 /public/css/webflow.css
 /public/archive
 src/archive
+src/generateSecret.js
 /src/archive
 notes.md
 .vercelcopy
