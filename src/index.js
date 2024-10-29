@@ -131,34 +131,6 @@ app.get('/dashboard', checkAuth, (req, res) => {
     res.render('user/dashboard', { naming: req.user.uname });
 });
 
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).render('error', {
-        message: process.env.NODE_ENV === 'production' 
-            ? 'Something went wrong!' 
-            : err.message
-    });
-});
-
-// 404 handler
-app.use((req, res) => {
-    // res.status(404).render('404');
-    try {
-        res.status(404).render('404', {}, (err, html) => {
-            if (err) {
-                console.error('Error rendering 404 template:', err);
-                res.status(404).send('404 - Page Not Found');
-            } else {
-                res.send(html);
-            }
-        });
-    } catch (err) {
-        console.error('Error in 404 handler:', err);
-        res.status(404).send('404 - Page Not Found');
-    }
-});
-
 // Authentication logic
 app.post('/register', async (req, res) => {
     const data = {
@@ -194,11 +166,43 @@ app.post('/register', async (req, res) => {
 });
 
 // Login logic
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/reports',
-    failureRedirect: '/login',
-    failureFlash: false
-}));
+app.post('/login', (req, res, next) => {
+    console.log('Login attempt received for username:', req.body.uname); // Debug log
+    
+    passport.authenticate('local', {
+        successRedirect: '/reports',
+        failureRedirect: '/login',
+        failureFlash: false
+    })(req, res, next);
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).render('error', {
+        message: process.env.NODE_ENV === 'production' 
+            ? 'Something went wrong!' 
+            : err.message
+    });
+});
+
+// 404 handler
+app.use((req, res) => {
+    // res.status(404).render('404');
+    try {
+        res.status(404).render('404', {}, (err, html) => {
+            if (err) {
+                console.error('Error rendering 404 template:', err);
+                res.status(404).send('404 - Page Not Found');
+            } else {
+                res.send(html);
+            }
+        });
+    } catch (err) {
+        console.error('Error in 404 handler:', err);
+        res.status(404).send('404 - Page Not Found');
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
