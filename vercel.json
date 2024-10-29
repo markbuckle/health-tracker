@@ -5,9 +5,9 @@
             "use": "@vercel/static-build",
             "config": { "distDir": "public" } },
         { "src": "src/index.js", "use": "@vercel/node" },
+        { "src": "src/mongodb.js", "use": "@vercel/node" },
         { "src": "public/**/*", "use": "@vercel/static" },
-        { "src": "templates/**", "use": "@vercel/node" }
-    
+        { "src": "templates/**", "use": "@vercel/static" }
     ],
     "routes": [
       { "src": "/src/(.*)", "dest": "/src/$1" },
@@ -15,6 +15,7 @@
       { "src": "/static/(.*)", "dest": "/public/$1" },
       { "handle": "filesystem" },
       { "src": "/(.*)", "dest": "/src/index.js" },
+      { "src": "/(.*)", "dest": "/src/mongodb.js" },
       { "src": "/(.*)", "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"], "dest": "/index.js" }
     ],
     "env": { 
