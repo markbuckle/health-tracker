@@ -1,20 +1,31 @@
 {
     "version": 2,
     "builds": [
+        { "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": { "distDir": "public" } },
         { "src": "src/index.js", "use": "@vercel/node" },
         { "src": "public/**/*", "use": "@vercel/static" },
         { "src": "templates/**", "use": "@vercel/static" }
+    
     ],
     "routes": [
-        { "src": "/css/(.*)", "dest": "/public/css/$1" },
-        { "src": "/static/(.*)", "dest": "/public/$1" },
-        { "handle": "filesystem" },
-        { "src": "/(.*)", "dest": "/src/index.js" }
+      { "src": "/src/(.*)", "dest": "/src/$1" },
+      { "src": "/css/(.*)", "dest": "/public/css/$1" },
+      { "src": "/static/(.*)", "dest": "/public/$1" },
+      { "handle": "filesystem" },
+      { "src": "/(.*)", "dest": "/src/index.js" },
+      { "src": "/(.*)", "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"], "dest": "/index.js" }
     ],
-    "env": {
+    "env": { 
         "NODE_ENV": "production"
     },
-    "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-    ]
-}
+    "functions": {
+      "src/index.js": {
+        "runtime": "nodejs18.x"
+      },
+      "src/mongodb.js": {
+        "runtime": "nodejs18.x"
+      }
+    }
+  }
