@@ -19,13 +19,5 @@
     ],
     "env": { 
         "NODE_ENV": "production"
-    },
-    "functions": {
-      "src/index.js": {
-        "runtime": "nodejs18.x"
-      },
-      "src/mongodb.js": {
-        "runtime": "nodejs18.x"
-      }
     }
-  }
+}
