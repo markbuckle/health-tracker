@@ -3,7 +3,7 @@
     "builds": [
         { "src": "package.json",
             "use": "@vercel/static-build",
-            "config": { "distDir": "public" } },
+            "config": { "distDir": "templates" } },
         { "src": "src/index.js", "use": "@vercel/node" },
         { "src": "src/mongodb.js", "use": "@vercel/node" },
         { "src": "public/**/*", "use": "@vercel/static" },
@@ -15,7 +15,6 @@
       { "src": "/static/(.*)", "dest": "/public/$1" },
       { "handle": "filesystem" },
       { "src": "/(.*)", "dest": "/src/index.js" },
-      { "src": "/(.*)", "dest": "/src/mongodb.js" },
       { "src": "/(.*)", "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"], "dest": "/index.js" }
     ],
     "env": { 
