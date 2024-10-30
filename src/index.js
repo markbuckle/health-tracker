@@ -42,8 +42,14 @@ app.use(session({
         httpOnly: true, // Prevent XSS attacks
         sameSite: 'lax'
     },
-    name: 'sessionId' // session cookie security
+    name: 'sessionId', // session cookie security
+    rolling: true // Extends session lifetime on activity
 }));
+
+// Add proxy trust for Vercel
+app.set('trust proxy', 1);
+
+app.use(session(sessionConfig));
 
 // Add this right after your session middleware to check if sessions are working
 app.use((req, res, next) => {
@@ -100,10 +106,17 @@ passport.deserializeUser(async (id, done) => {
 
 // Authentication middleware
 function checkAuth(req, res, next) {
+    console.log('CheckAuth - Session:', req.session);
+    console.log('CheckAuth - User:', req.user);
+    console.log('CheckAuth - IsAuthenticated:', req.isAuthenticated());
+
     if (req.isAuthenticated()) { // or use your own custom authentication check
         return next();
     } else {
-        res.redirect('/login');
+         // Store the intended destination
+        req.session.returnTo = req.originalUrl;
+        console.log('Not authenticated, redirecting to login');
+        return res.redirect('/login');
     }
 }
 
@@ -203,7 +216,20 @@ app.post('/login', (req, res, next) => {
                     return next(err);
                 }
                 console.log('Login successful for user:', user.uname);
-                return res.status(302).redirect('/reports');
+                console.log('Session after login:', req.session);
+
+                // return res.status(302).redirect('/reports');
+
+                // Ensure session is saved before redirect
+                req.session.save((err) => {
+                    if (err) {
+                        console.error('Session save error:', err);
+                        return next(err);
+                    }
+                    const returnTo = req.session.returnTo || '/reports';
+                    delete req.session.returnTo;
+                    return res.redirect(returnTo);
+                });
             });
         })(req, res, next);
 });
