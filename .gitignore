@@ -6,8 +6,8 @@ webflow-export/
 public/css/healthdashboard.webflow.css
 public/css/normalize.css
 public/css/webflow.css
-public/archive
-src/archive
+public/archive/
+src/archive/
 notes.md
 public/js/
 .vercelcopy

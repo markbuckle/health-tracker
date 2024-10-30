@@ -24,6 +24,10 @@ app.set("views", templatePath);
 // const partialsPath = path.join(__dirname, '../templates/partials');
 // hbs.registerPartials(partialPath)
 
+// Add proxy trust for Vercel
+app.set('trust proxy', 1);
+// app.use(session(sessionConfig));
+
 // Add error handling for static files
 app.use(express.static(publicPath));
 
@@ -45,11 +49,6 @@ app.use(session({
     name: 'sessionId', // session cookie security
     rolling: true // Extends session lifetime on activity
 }));
-
-// Add proxy trust for Vercel
-app.set('trust proxy', 1);
-
-app.use(session(sessionConfig));
 
 // Add this right after your session middleware to check if sessions are working
 app.use((req, res, next) => {
