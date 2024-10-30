@@ -5,6 +5,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { registerCollection } = require("./mongodb");
+const MongoStore = require('connect-mongo');
 // const port = process.env.PORT || 8080;
 const port = process.env.PORT || 3000;
 // const templatePath = path.join(__dirname, process.env.NODE_ENV === 'production'
@@ -36,12 +37,15 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.DB_STRING,
+        ttl: 24 * 60 * 60, // 24 hours
+    }),
     cookie: {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        // secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        // httpOnly: true // Prevent XSS attacks
-        // sameSite: 'lax'
-    }
+        httpOnly: true,
+        sameSite: 'lax',
+    },
 }));
 
 // Passport setup
