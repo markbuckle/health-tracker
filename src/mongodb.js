@@ -2,6 +2,17 @@ const mongoose = require("mongoose");
 
 const mongoURI = process.env.DB_STRING || "mongodb://localhost:27017/HealthLyncDatabase";
 
+// Define mongoose options
+const mongooseOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    autoIndex: true, // Build indexes
+    maxPoolSize: 10, // Maintain up to 10 socket connections
+    serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 10 seconds
+    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+    family: 4 // Use IPv4, skip trying IPv6
+};
+
 // Connect with options
 mongoose.connect(mongoURI, mongooseOptions)
     .then(() => {
