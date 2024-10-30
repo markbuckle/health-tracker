@@ -7,10 +7,6 @@
     "rewrites": [
         { "source": "/(.*)", "destination": "/src" }
     ],
-    "routes": [
-        { "handle": "filesystem" },
-        { "src": "/(.*)", "dest": "/src/index.js" }
-    ],
     "env": { 
         "NODE_ENV": "production"
     }
