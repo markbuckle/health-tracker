@@ -7,9 +7,6 @@
     "rewrites": [
         { "source": "/(.*)", "destination": "/src/index.js" }
     ],
-    "env": {
-        "NODE_ENV": "production"
-    },
     "headers": [
         {
             "source": "/public/(.*)",
