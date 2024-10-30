@@ -8,6 +8,7 @@ public/css/normalize.css
 public/css/webflow.css
 public/archive/
 src/archive/
+archive/
 notes.md
 public/js/
 .vercelcopy
