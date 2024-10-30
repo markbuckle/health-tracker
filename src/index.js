@@ -26,16 +26,15 @@ app.set("views", templatePath);
 
 // Add proxy trust for Vercel
 app.set('trust proxy', 1);
-app.use(session(sessionConfig));
 
 // Add error handling for static files
 app.use(express.static(publicPath));
 
 // Session setup - MUST come before passport middleware
-if (!process.env.SESSION_SECRET) {
-    console.error('SESSION_SECRET is not set in environment variables');
-    process.exit(1);
-}
+// if (!process.env.SESSION_SECRET) {
+//     console.error('SESSION_SECRET is not set in environment variables');
+//     process.exit(1);
+// }
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
