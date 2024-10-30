@@ -5,14 +5,14 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { registerCollection } = require("./mongodb");
-const port = process.env.PORT || 3000;
-const templatePath = path.join(__dirname, '../templates');
-const publicPath = path.join(__dirname, '../public');
-require('dotenv').config();
 // const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 // const templatePath = path.join(__dirname, process.env.NODE_ENV === 'production'
 //   ? '../public/templates' 
 //   : '../templates');
+const templatePath = path.join(__dirname, '../templates');
+const publicPath = path.join(__dirname, '../public');
+require('dotenv').config();
 
 // express app setup
 const app = express();
@@ -24,37 +24,25 @@ app.set("views", templatePath);
 // const partialsPath = path.join(__dirname, '../templates/partials');
 // hbs.registerPartials(partialPath)
 
-// Add proxy trust for Vercel
-app.set('trust proxy', 1);
-
 // Add error handling for static files
 app.use(express.static(publicPath));
 
 // Session setup - MUST come before passport middleware
-// if (!process.env.SESSION_SECRET) {
-//     console.error('SESSION_SECRET is not set in environment variables');
-//     process.exit(1);
-// }
+if (!process.env.SESSION_SECRET) {
+    console.error('SESSION_SECRET is not set in environment variables');
+    process.exit(1);
+}
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        httpOnly: true, // Prevent XSS attacks
-        sameSite: 'lax'
-    },
-    name: 'sessionId', // session cookie security
-    rolling: true // Extends session lifetime on activity
+        // secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        // httpOnly: true // Prevent XSS attacks
+        // sameSite: 'lax'
+    }
 }));
-
-// Add this right after your session middleware to check if sessions are working
-app.use((req, res, next) => {
-    console.log('Session ID:', req.sessionID);
-    console.log('Session data:', req.session);
-    next();
-});
 
 // Passport setup
 app.use(passport.initialize());
@@ -66,55 +54,39 @@ passport.use(new LocalStrategy({
 },
 async (username, password, done) => {
     try {
-        console.log('Searching for user in database:', username);
         const user = await registerCollection.findOne({ uname: username });
-
         if (!user) {
-            console.log('User not found in database');
             return done(null, false, { message: 'User not found' });
         }
         // In production, use proper password hashing comparison
         if (user.password !== password) {
-            console.log('Password mismatch');
             return done(null, false, { message: 'Incorrect password' });
         }
-        console.log('User authenticated successfully');
         return done(null, user);
     } catch (error) {
-        console.error('Database error during authentication:', error);
         return done(error);
     }
 }));
 
 passport.serializeUser((user, done) => {
-    console.log('Serializing user:', user._id);
-    done(null, user._id); // User._id for MongoDB
+    done(null, user._id); // Use _id for MongoDB
 });
 
 passport.deserializeUser(async (id, done) => {
     try {
-        console.log('Deserializing user ID:', id);
         const user = await registerCollection.findById(id);
         done(null, user);
     } catch (error) {
-        console.error('Error deserializing user:', error);
         done(error);
     }
 });
 
 // Authentication middleware
 function checkAuth(req, res, next) {
-    console.log('CheckAuth - Session:', req.session);
-    console.log('CheckAuth - User:', req.user);
-    console.log('CheckAuth - IsAuthenticated:', req.isAuthenticated());
-
     if (req.isAuthenticated()) { // or use your own custom authentication check
         return next();
     } else {
-         // Store the intended destination
-        req.session.returnTo = req.originalUrl;
-        console.log('Not authenticated, redirecting to login');
-        return res.redirect('/login');
+        res.redirect('/login');
     }
 }
 
@@ -195,41 +167,13 @@ app.post('/register', async (req, res) => {
 
 // Login logic
 app.post('/login', (req, res, next) => {
-    console.log('Login attempt received for username:', req.body.uname);
-        
-        passport.authenticate('local', function(err, user, info) {
-            if (err) {
-                console.error('Authentication error:', err);
-                return next(err);
-            }
-            
-            if (!user) {
-                console.log('Authentication failed:', info);
-                return res.status(401).redirect('/login');
-            }
-            
-            req.logIn(user, function(err) {
-                if (err) {
-                    console.error('Login error:', err);
-                    return next(err);
-                }
-                console.log('Login successful for user:', user.uname);
-                console.log('Session after login:', req.session);
-
-                // return res.status(302).redirect('/reports');
-
-                // Ensure session is saved before redirect
-                req.session.save((err) => {
-                    if (err) {
-                        console.error('Session save error:', err);
-                        return next(err);
-                    }
-                    const returnTo = req.session.returnTo || '/reports';
-                    delete req.session.returnTo;
-                    return res.redirect(returnTo);
-                });
-            });
-        })(req, res, next);
+    console.log('Login attempt received for username:', req.body.uname); // Debug log
+    
+    passport.authenticate('local', {
+        successRedirect: '/reports',
+        failureRedirect: '/login',
+        failureFlash: false
+    })(req, res, next);
 });
 
 // Global error handler
