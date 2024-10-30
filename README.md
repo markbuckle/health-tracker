@@ -23,7 +23,7 @@ The app enables users to mae sense of complex medical information.
 - PostgreSQL
 
 ### Production
-- Coming soon.
+- Vercel.
 
 ### Setup Steps
 The rest of this readme provides an in-depth overview this project.
@@ -325,4 +325,13 @@ In your terminal, run:
 
 ```bash
 npm install --save base64url
+```
+
+## Deployment
+
+For deploying this dynamic project I have chosen to used Vercel as it works well with node.js/express.js projects. 
+
+To test your app locally, be sure to install the vercel CLI:
+```pwsh
+npm i -g vercel
 ```
