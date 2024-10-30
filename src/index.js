@@ -88,7 +88,7 @@ async (username, password, done) => {
 
 passport.serializeUser((user, done) => {
     console.log('Serializing user:', user._id);
-    done(null, user._id); // Use _id for MongoDB
+    done(null, user._id); // User._id for MongoDB
 });
 
 passport.deserializeUser(async (id, done) => {
