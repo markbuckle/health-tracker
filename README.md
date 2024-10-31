@@ -57,28 +57,16 @@ Here is the VS code folder structure I am currently using:
 
 ```mermaid
 graph TD;
-    A[project-root] --> B[webflow-export]
-    A --> C[server]
+    A[project-root] --> B[templates]
+    A --> C[src]
     A --> D[public]
-    A --> E[src]
-    A --> F[config]
-    A --> G[scripts]
 
-    B --> B1[css/original]
-    B --> B2[js/original]
-    B --> B3[images]
-    B --> B4[index.html]
-    B --> B5[other-pages.html]
+    B --> B1[auth/]
+    B --> B2[user/]
     D --> D1[css]
-    D --> D2[js]
-    D --> D3[assets]
-    E --> E1[styles]
-    E --> E2[scripts]
-    C --> C1[routes]
-    C --> C2[models]
-    C --> C3[services]
-    C --> C4[middleware]
-    C --> C5[server.js]
+    D --> D2[fonts]
+    D --> D3[images]
+    D --> D3[js]
 ```
 
 Things to consider as the project scales:
