@@ -66,7 +66,7 @@ graph TD;
     D --> D1[css]
     D --> D2[fonts]
     D --> D3[images]
-    D --> D3[js]
+    D --> D4[js]
 ```
 
 Things to consider as the project scales:
