@@ -43,7 +43,7 @@
     --shadow-lg: 0 4px 20px;
     --shadow-color: rgba(18, 18, 18, 0.07);
 
-    --button-font-size: clamp(0.8rem, 2vw, 1rem);
+    --button-font-size: clamp(0.6rem, 2vw, 0.8rem); 
     --primary-font-size: clamp(1rem, 2.5vw, 20px);
 
     --content-width: 90%;
@@ -83,8 +83,8 @@
 .button-basics {
     /* Typography */
     font-family: 'Poppins-SemiBold', sans-serif;
-    /* font-size: var(--button-font-size); */
-    font-size: 90%;
+    font-size: var(--button-font-size);
+    /* font-size: 90%; */
     font-weight: 500;
     line-height: 1;
     text-align: center;
@@ -92,10 +92,6 @@
     text-decoration: none;
     
     /* Sizing and Spacing */
-    padding-top: clamp(0.5rem, 1vw, 1rem);
-    padding-bottom: clamp(0.5rem, 1vw, 1rem);
-    margin-top: clamp(1rem, 2vw, 1.5rem);
-    margin-bottom: clamp(1rem, 2vw, 1.5rem);
     min-width: clamp(70px, 15vw, 80px);
     height: 80%;
     /* height: var(--header-height-scrolled); */
@@ -119,7 +115,16 @@
     /* Prevent text selection */
     user-select: none;
 }
-  
+.header-buttons {
+    padding-top: clamp(0.5rem, 1vw, 1rem);
+    padding-bottom: clamp(0.5rem, 1vw, 1rem);
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+.auth-buttons {
+    padding: 1rem;
+    margin: 0;
+}
 /* Button Links */
 .button a {
     color: inherit;
@@ -819,6 +824,8 @@
 /* ----- user pages ------ */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 .sidebar {
     background-color: #fefefe;
@@ -828,46 +835,74 @@
     position: fixed;
     left: 0;
     top: 0;
-    overflow: auto;
+    overflow-y: auto;
     z-index: 10000;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-  }
+    transition: transform 0.3s ease-in-out;
+}
+/* ------ Mobile-Sidebar Media Query ------ */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 80vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 1000;
+        transition: left 0.3s ease-in-out;
+    }
 
-  .sidebar-logo-wrapper {
+    .sidebar.open {
+        left: 0;
+    }
+
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 10001;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+}
+.sidebar-logo-wrapper {
     padding: 30px 24px 10px;
     text-align: center;
-  }
+}
 
-  .sidebar-logo-link {
+.sidebar-logo-link {
     color: #333333;
     text-decoration: none;
     display: block;
     cursor: pointer;
-  }
-
-  .sidebar-logo {
-    height: 60px;
-    margin: 0 auto;
-  }
-  .nav-divider-basics {
+}
+.sidebar-logo {
+    max-height: 60px;
+    width: auto;
+}
+.nav-divider-basics {
     background-color: #e1e6f0;
     height: 1px;
-  }
-  .nav-divider-top {
+}
+.nav-divider-top {
     margin-top: 0;
     margin-bottom: auto;
     margin-left: 1rem;
     margin-right: 1rem;
-  }
-  .nav-divider-bottom {
+}
+.nav-divider-bottom {
     margin-top: auto;
     margin-bottom: 0;
     margin-left: 1rem;
     margin-right: 1rem;
-  }
-  .page-link {
+}
+.page-link {
     width: auto;
     height: 50px;
     margin-left: 0.75rem;
@@ -876,53 +911,73 @@
     margin-bottom: 0.4rem;
     text-decoration: none;
     display: inline-flex;
-  }
-  .page-link:hover {
+}
+.page-link:hover {
     background-color: #cdcdcd;
     border-radius: 10px;
-  }
-  
-  .page-link:active {
+}
+
+.page-link:active {
     background-color: #ebf8ff;
-  }
-  
-  .page-link.w--current {
+}
+
+.page-link.w--current {
     background-color: #cdcdcd;
     border-radius: 10px;
-  }
-  .nav-icon {
+}
+.nav-icon {
     filter: grayscale();
     mix-blend-mode: normal;
     max-width: 120%;
     margin: auto auto auto 10px;
     text-decoration: none;
     display: block;
-  }
-  .page-link-text-block {
+}
+.page-link-text-block {
     display: flex;
     flex: 1;
     align-items: center;
     margin: 0;
     font-family: 'Poppins-Regular', sans-serif;
-    font-size: 20px;
+    font-size: clamp(16px, 4vw, 20px);
     opacity: 1;
     color: var(--dark-grey);
     mix-blend-mode: normal;
     background-color: transparent;
-  }
-  .page-link-text-block.reports:active {
+}
+.page-link-text-block.reports:active {
     font-weight: 700;
-  }
-  .page-link-text-span {
+}
+.page-link-text-span {
     margin: auto auto auto 10px;
-  }
-  
-  .page-link-text-span:hover {
+}
+
+.page-link-text-span:hover {
     mix-blend-mode: exclusion;
-  }
-  .sidebar-bottom-spacer {
+}
+/* Additional responsive tweaks */
+@media screen and (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        max-height: 100vh;
+    }
+
+    .page-link-text-block {
+        font-size: 16px;
+    }
+
+    .sidebar-logo {
+        max-height: 40px;
+    }
+}
+/* Ensure full responsiveness for images and icons */
+img, .nav-icon {
+    max-width: 100%;
+    height: auto;
+}
+.sidebar-bottom-spacer {
     height: 3%;
-  }
+}
 .demo-header {
     background-color: transparent;
     margin-left: auto;
@@ -950,14 +1005,27 @@
 .spacer-block {
     flex: 1;
 }
+
 .dashboard-content {
-    background-color: transparent;
-    flex: 1;
-    width: auto;
     margin-left: 250px;
     padding: 0 30px 30px 20px;
-    position: static;
-    overflow: hidden;
+    transition: margin-left 0.3s ease-in-out;
+}
+/* Responsive adjustments for smaller screens */
+@media screen and (max-width: 768px) {
+    .header-container-2 {
+        margin-left: 0;
+        padding: 1rem 15px;
+    }
+
+    .dashboard-content {
+        margin-left: 0;
+        padding: 0 15px 15px;
+    }
+
+    .heading {
+        font-size: 24px;
+    }
 }
 .cms-notice {
     padding-bottom: 20px;
@@ -970,11 +1038,9 @@
 }
 .w-layout-grid {
     display: grid;
-    grid-row-gap: 16px;
-    grid-column-gap: 16px;
-    grid-template-rows: auto auto;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-columns: 1fr;
+    grid-gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-rows: auto;
 }
 .main-grid {
     grid-column-gap: 24px;
@@ -996,6 +1062,7 @@
 }
 .authentication-logo img {
         width: auto;
+        height: auto;
         transition: all 0.3s ease;
         cursor: pointer;
         z-index: 50;
@@ -1012,6 +1079,7 @@
     inset: 0%;
     min-height: 0;
 }
+
 .register-block {
     background-color: #fff;
     border-radius: 1.2rem;
@@ -1034,7 +1102,8 @@
     margin-bottom: 0;
 }
 .heading {
-    font-size: clamp(32px, 5vw, 42px);  /* Responsive font size */
+    font-size: clamp(28px, 5vw, 42px);  /* Responsive font size */
+    justify-content: center;
     text-align: center;
     margin-top: 1rem;
     font-family: 'Poppins-Bold', sans-serif;
@@ -1042,32 +1111,41 @@
     color: rgba(2, 2, 2, 0.76);
 }
 .subheading {
-    font-size: clamp(28px, 4vw, 34px);  /* Responsive font size */
+    font-size: clamp(24px, 4vw, 34px);  /* Responsive font size */
     text-align: center;
     margin-top: 1rem;
     font-family: 'Poppins-SemiBold', sans-serif;
     font-weight: bold;
     color: rgba(104, 104, 104, 0.847);
 }
-.standard-text {
-    margin-top: 0;
-    color: rgb(44, 44, 44);
+.standard-text,
+.hyperlink-text,
+.form-label,
+.back-link {
     font-family: 'Poppins-Regular', sans-serif;
+}
+.standard-text {
+    color: rgb(44, 44, 44);
     text-decoration: none;
 }
 .hyperlink-text {
-    margin-top: 1rem;
     color: rgb(108, 108, 108);
-    font-family: 'Poppins-Regular', sans-serif;
     text-decoration: underline;
+    cursor: pointer;
 }
-
 .form-label {
     color: #828895;
-    font-family: Poppins, sans-serif;
     font-weight: 500;
+    margin-top: 0.25rem;
 }
-
+.back-link {
+    color: #828895;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.back-link:hover {
+    color: #00b300;
+}
 .inner-form-div {
     display: flex;
     flex-direction: column;
@@ -1078,13 +1156,15 @@
 .form-input {
     border: none;
     border-bottom: 1px solid #e4e7eb;
-    margin-top: 0.25rem;
+    margin-top: -0.25rem;
     margin-bottom: 0.25rem;
     padding: 0.25rem 0;
+    font-size: clamp(14px, 3vw, 16px);
+    font-family: 'Poppins-Regular', sans-serif;
     display: block;
     width: 100%;
     font-size: 14px;
-    line-height: 1.42857143;
+    line-height: 1.5;
     color: #333333;
     background-color: transparent;
     transition: border-color 0.3s ease;
@@ -1094,10 +1174,78 @@
     outline: none;
     border-bottom-color: #00b300;
 }
-.back-link {
-    color: #828895;
-    text-decoration: none;
-    font-family: Poppins, sans-serif;
+/* Responsive adjustments for very small screens */
+@media screen and (max-width: 480px) {
+    .authentication-logo {
+        margin: 0.5rem 1rem;
+    }
+
+    .authentication-logo img {
+        max-width: 100px;
+    }
+
+    .form-wrap {
+        padding: 0.5rem;
+        min-height: calc(100vh - 80px);
+    }
+
+    .register-block {
+        max-width: 100%;
+        border-radius: 0;
+        padding: 1rem;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .heading {
+        font-size: clamp(24px, 5vw, 32px);
+    }
+
+    .subheading {
+        font-size: clamp(20px, 4vw, 28px);
+    }
+
+    .form-input {
+        font-size: clamp(12px, 3vw, 14px);
+    }
+}
+
+/* Responsive adjustments for tablets */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    .register-block {
+        max-width: 90%;
+        padding: 1.5rem;
+    }
+}
+
+/* Horizontal form layout for wider screens */
+@media screen and (min-width: 769px) {
+    .form-wrap {
+        background-color: transparent;
+    }
+
+    .register-block {
+        box-shadow: 0 0 2rem rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Accessibility and interaction improvements */
+.form-input:hover {
+    border-bottom-color: rgba(0, 179, 0, 0.5);
+}
+
+.form-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Responsive form button (assuming you have a submit button) */
+.form-submit-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: clamp(14px, 3vw, 16px);
+    border-radius: 0.5rem;
+    margin-top: 1rem;
 }
 
 /* ----- passwords -----*/
@@ -1410,6 +1558,8 @@
 }
 .mobile {
     margin-top: clamp(2rem, 5vw, 4rem);
+    max-width: 55%;
+    height: auto;
 }
 .quote-container {
     background-color: #b3d6ff00;
