@@ -23,7 +23,7 @@ The app enables users to mae sense of complex medical information.
 - PostgreSQL
 
 ### Production
-- Vercel.
+- Vercel
 
 ### Setup Steps
 The rest of this readme provides an in-depth overview this project.
