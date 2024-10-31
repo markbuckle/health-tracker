@@ -1509,6 +1509,7 @@ img, .nav-icon {
         margin-right: 1rem;
     }
     .mobile {
+        display: none;
         margin-top: clamp(1rem, 5vw, 3rem);
         width: auto;
     }
