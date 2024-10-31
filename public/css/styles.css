@@ -1002,6 +1002,16 @@ img, .nav-icon {
     align-items: center;
     margin: 0 auto 0 0;
 }
+.heading2 {
+    color: rgba(2, 2, 2, 0.76);
+    font-family: 'Poppins-Bold', sans-serif;
+    font-size: clamp(28px, 5vw, 42px); 
+    font-weight: 700;
+    display: flex;
+    justify-content: flex-start;
+    margin: 0 auto 0 0;
+    margin-top: 1rem;
+}
 .spacer-block {
     flex: 1;
 }
@@ -2014,6 +2024,7 @@ img, .nav-icon {
     margin-left: 10px;
     padding: 5px 5px 5px 0;
     font-size: 17px;
+    font-family: 'Poppins-Regular', sans-serif;
 }
 .edit-button-modal {
     color: #000;
