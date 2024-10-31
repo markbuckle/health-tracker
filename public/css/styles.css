@@ -876,6 +876,7 @@
     width: auto;
     display: none;
     position: static;
+    border-radius: 10px;
 }
 .category-dropdown-list.w--open {
     display: inline-block;
@@ -890,8 +891,22 @@
     position: static;
 }
 .dropdown-content-bottom {
+    display: none; /* Initially hidden */
+    transition: max-height 0.3s ease-in-out;
+    max-height: 0; /* Initially set max-height to 0 */
+}
+.dropdown-content-bottom.show {
+    display: block; /* Show when the 'show' class is added */
+    max-height: 500px; /* Adjust based on the content height */
+    padding: 0; /* Add some padding if needed */
     background-color: #fff;
     width: auto;
+    overflow: visible;
+    border-radius: 10px;
+}
+.dropdown-arrow.active {
+    transform: rotate(180deg); /* Arrow rotation */
+    transition: transform 0.3s; /* Smooth rotation */
 }
 .table-headers {
     background-color: #f8f9fb;
