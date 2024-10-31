@@ -1482,28 +1482,26 @@ img, .nav-icon {
     .mobile {
         margin-top: clamp(1rem, 5vw, 3rem);
         width: auto;
+        display: none;
     }
 }
 
 @media screen and (max-width: 768px) {
     .content-container {
-        width: 95%;
-        padding: 0 1rem;
-    }
-    
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }    
     .header-container {
         justify-content: space-between;
     }
-    
     .logo-block {
         width: auto;
         margin-left: 1rem;
     }
-    
     .center-header {
         display: none; /* Hide center navigation on mobile */
     }
-    
     .authentication-block {
         width: auto;
         margin-right: 1rem;
@@ -1511,7 +1509,7 @@ img, .nav-icon {
     .mobile {
         display: none;
         margin-top: clamp(1rem, 5vw, 3rem);
-        width: auto;
+        max-width: 120% !important;
     }
     
     /* Add a mobile menu button here if needed */
