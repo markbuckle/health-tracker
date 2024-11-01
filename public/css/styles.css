@@ -1509,8 +1509,12 @@ img, .nav-icon {
     .mobile {
         display: none;
         margin-top: clamp(1rem, 5vw, 3rem);
-        max-width: 120% !important;
+        max-width: 120%;
     }
+    .demo-page-img {
+        margin-top: 1rem;
+        min-width: 120% !important;
+    }    
     
     /* Add a mobile menu button here if needed */
 }
@@ -1663,7 +1667,7 @@ img, .nav-icon {
 /* ------- Index/homepage Media Queries ------- */
 @media screen and (max-width: 768px) {
     :root {
-        --content-width: 95%;
+        --content-width: 100%;
     }
     
     .hero-title {
