@@ -2170,7 +2170,7 @@ img, .nav-icon {
   }
 .profile-button.save {
     color: #000;
-    vertical-align: bottom;
+    /* vertical-align: bottom; */
     background-color: #d7effc;
     border-radius: 20px;
     font-family: Poppins, sans-serif;
