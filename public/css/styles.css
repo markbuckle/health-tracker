@@ -118,7 +118,7 @@
     margin-top: clamp(1rem, 2vw, 1.5rem);
     margin-bottom: clamp(1rem, 2vw, 1.5rem);
     /* Sizing and Spacing */
-    min-width: clamp(70px, 15vw, 80px);
+    min-width: clamp(50px, 15vw, 60px);
     height: 80%;
 }
 .auth-buttons {
@@ -234,7 +234,9 @@
         margin: 0.25rem 0;
     }
     .header-buttons {
-        padding: 0.1rem;
+        padding-top: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+        padding: 0;
         margin: 0.1rem;
         /* Sizing and Spacing */
         max-width: 100px;
@@ -254,11 +256,11 @@
 
 /* ----- Button Touch Device Optimizations ----- */
 @media (hover: none) {
-    .button-basics,
+    /* .button-basics,
     .btn-primary {
         /* Disable hover effects on touch devices */
-        transform: none !important;
-    }
+        /* transform: none !important; */
+    /* } */ 
     
     /* Provide touch feedback instead */
     .button-basics:active,
@@ -1488,7 +1490,7 @@ img, .nav-icon {
 
 @media screen and (max-width: 768px) {
     .content-container {
-        width: 100%;
+        width: 90% !important;
         padding: 0;
         margin: 0;
     }    
@@ -1513,7 +1515,7 @@ img, .nav-icon {
     }
     .demo-page-img {
         margin-top: 1rem;
-        min-width: 120% !important;
+        min-width: 100% !important;
     }    
     
     /* Add a mobile menu button here if needed */
@@ -1521,7 +1523,7 @@ img, .nav-icon {
 
 @media screen and (max-width: 480px) {
     .content-container {
-        width: 100%;
+        width: 90% !important; 
         padding: 0;
         margin: 0;
     }
@@ -1555,7 +1557,7 @@ img, .nav-icon {
     }
     .demo-page-img {
         margin-top: 1rem;
-        min-width: 120% !important;
+        min-width: 100% !important;
     }    
 }
 
@@ -1597,7 +1599,8 @@ img, .nav-icon {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: clamp(1rem, 3vw, 1.5rem) auto clamp(2rem, 6vw, 4rem);
+    margin-top: 4rem;
+    /* margin: clamp(1rem, 3vw, 1.5rem) auto clamp(2rem, 6vw, 4rem); */
     padding: 0 0.25rem;
 
     /* Typography */
@@ -1656,12 +1659,9 @@ img, .nav-icon {
 .demo-page-img{
     border: 1px solid #999797;
     border-radius: 20px;
-    width: auto;
-    min-width: auto;
-    max-width: min(90%, 1200px);
-    margin: auto;
+    /* max-width: min(90%, 1200px); */
+    margin: 0;
     padding-bottom: 0;
-    display: block;
     box-shadow: -4px 10px 16px 5px #0003;
 }
 /* ------- Index/homepage Media Queries ------- */
@@ -1671,7 +1671,7 @@ img, .nav-icon {
     }
     
     .hero-title {
-        margin: 4rem auto 2rem;
+        margin: 6rem auto 2rem;
         font-size: clamp(14px, 3vw, 18px);
     }
     
@@ -1685,6 +1685,10 @@ img, .nav-icon {
     .hero {
         padding-top: var(--spacing-md);
         display: block;
+    }
+    .hero-title {
+        margin: 6rem auto 2rem;
+        font-size: clamp(20px, 3vw, 28px);
     }
     .hero-container {
         align-items: center;
