@@ -22,8 +22,8 @@ app.use(express.urlencoded({ extended: false }));
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
 // If you want to use partials, uncomment this line and specify the correct path
-// const partialsPath = path.join(__dirname, '../templates/partials');
-// hbs.registerPartials(partialPath)
+const partialsPath = path.join(__dirname, '../templates/partials');
+hbs.registerPartials(partialsPath)
 
 // Add error handling for static files
 app.use(express.static(publicPath));
@@ -113,6 +113,21 @@ app.get('/how-it-works', (req, res) => {
 
 app.get('/demo', (req, res) => {
     res.render('demo');
+});
+
+// app.get('/header', (req, res) => {
+//     res.render('partials/header');
+// });
+
+// app.get('/footer', (req, res) => {
+//     res.render('partials/footer');
+// });
+
+// app.get('/sidebar', (req, res) => {
+//     res.render('partials/sidebar');
+// });
+app.get('/', (req, res) => {
+     res.render('main');
 });
 
 app.get('/profile', checkAuth, (req, res) => {
