@@ -1,3 +1,41 @@
+// ---------------- HOME PAGE AND HOW-IT-WORKS -------------------- //
+
+// Header scroll animation
+function initializeHeaderScroll() {
+  const header = document.getElementById('header');
+  const headerContainer = document.getElementById('headerContainer');
+  const logo = document.getElementById('logo');
+  
+  // Check if elements exist to prevent errors
+  if (!header || !headerContainer || !logo) {
+      console.warn('One or more header elements not found');
+      return;
+  }
+
+  function handleScroll() {
+      const scrollPosition = window.scrollY;
+      
+      if (scrollPosition > 50) {
+          header.classList.add('header-scrolled');
+          headerContainer.classList.add('header-container-scrolled');
+          logo.classList.add('logo-scrolled');
+      } else {
+          header.classList.remove('header-scrolled');
+          headerContainer.classList.remove('header-container-scrolled');
+          logo.classList.remove('logo-scrolled');
+      }
+  }
+
+  // Add scroll event listener
+  window.addEventListener('scroll', handleScroll);
+  
+  // Run once on page load to set initial state
+  handleScroll();
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeHeaderScroll);
+
 // ---------------- SIDEBAR - RESPONSIVE MOBILE -------------------- //
 function responsiveSidebar() {
     document.addEventListener('DOMContentLoaded', () => {
