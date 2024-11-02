@@ -7,28 +7,7 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body class="HIW-body">
-    <header id="header" class="header">
-        <div id="headerContainer" class="header-container">
-            <a href="/" class="logo-block">
-                <img id="logo" src="images/logo2_1.png" loading="lazy" alt="Logo"></a>
-            <div class="center-header">
-              <a href="/demo" class="header-links">Demo</a>
-              <a href="/how-it-works"  class="header-links">Getting Started</a>
-            </div>
-            <div class="authentication-block">
-              <a href="/login" class="button-basics button-blue">Log In</a>
-              <a href="/register" class="button-basics button-green">Sign Up</a>
-              <a href="https://github.com/markbuckle/health-tracker" class="icon-link">
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                    width="25" height="25" fill="none" viewbox="0 0 20 16" app="ikonik" 
-                    class="icon-div">
-                  <path fill="#64a5ce" 
-                        d="M5.707 3.293a1 1 0 0 0-1.414 0l-4 4a1 1 0 0 0 0 1.414l4 4a1 1 0 1 0 1.414-1.414L2.414 8l3.293-3.293a1 1 0 0 0 0-1.414Zm14 4-4-4a1 1 0 1 0-1.414 1.414L17.586 8l-3.293 3.293a1 1 0 1 0 1.414 1.414l4-4a1 1 0 0 0 0-1.414ZM11.142.01a1 1 0 0 0-1.132.848l-2 14a1 1 0 1 0 1.98.284l2-14A1 1 0 0 0 11.142.01Z" 
-                        app="ikonik" class="icon-symbol"></path>
-                </svg></a>
-            </div>
-        </div>
-    </header>
+    {{> header pageTitle="Health Tracker"}}
      <main class="content-section">
         <h2 class="section-title">How it works</h2>
         
@@ -94,46 +73,7 @@
         <div class="white-strip2">
             <img src="images/wave-green.svg" loading="lazy" alt=""></div>
         </section>
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-columns">
-                <div class="footer-column">
-                    <h3 class="footer-heading">Join Us Today</h3>
-                    <nav class="footer-nav">
-                        <a href="/demo">Demo</a>
-                        <a href="#">Sign Up (Coming soon)</a>
-                        <a href="#">Log In (Coming soon)</a>
-                    </nav>
-                </div>
-                
-                <div class="footer-column">
-                    <h3 class="footer-heading">Learning Hub</h3>
-                    <nav class="footer-nav">
-                        <a href="/how-it-works">About</a>
-                        <a href="#">Blogs (Coming soon)</a>
-                        <a href="#">Podcasts (Coming soon)</a>
-                    </nav>
-                </div>
-                
-                <div class="footer-column">
-                    <h3 class="footer-heading">Legal</h3>
-                    <nav class="footer-nav">
-                        <a href="#">Privacy (Coming soon)</a>
-                        <a href="#">Terms of Service (Coming soon)</a>
-                    </nav>
-                </div>
-            </div>
-            <div class="divider"></div>
-            <div class="social-block">
-                <a href="https://github.com/markbuckle/health-tracker" class="remove-underline">
-                    <div class="source-code-link">Source Code &lt;/&gt;</div>
-                </a>
-                <div class="social-icons">
-                    <!-- Add social icons here if needed -->
-                </div>
-            </div>
-        </div>
-    </footer>
+    {{> footer}}
     <script> // header scroll animation
         window.addEventListener('scroll', function() {
             const header = document.getElementById('header');
