@@ -81,7 +81,7 @@
   
 /* Base Button Styles */
 .button-basics {
-    display: inline-flex;
+    /* display: inline-flex; */
     align-items: center;
     align-content: center;
     text-align: center;
@@ -197,6 +197,7 @@
 }
 .flex-horizontal {
     justify-content: center;
+    align-content: center;
     align-items: center;
     display: flex;
     flex-wrap: wrap;
