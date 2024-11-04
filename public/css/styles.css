@@ -242,7 +242,7 @@
         font-size: 1rem;
         padding: 0.75rem 1.5rem;
         min-width: 100px;
-        height: 45px;
+        height: auto;
     }
 }
 
