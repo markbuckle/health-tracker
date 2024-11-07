@@ -1,39 +1,65 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Index</title>
-    <link rel="stylesheet" href="/css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Index</title>
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body class="home-body">
-    {{> header pageTitle="Health Tracker"}}
-    <section class="content-container">
-        <div class="hero">
-            <div class="hero-container">
-              <h1 class="hero-title">Your secure and easy-to-use personalized health tracker</h1>
-              <a href="/demo" class="button-basics btn-primary">
-                <div class="flex-horizontal">Try the demo
-                </div>
-              </a>
-            </div>
-            <img src="images/iphonelayered.png" loading="lazy" alt="" class="mobile">
+  {{> header pageTitle="Health Tracker"}}
+  <section class="hero content-container">
+    <div class="hero-container">
+      <h1 class="hero-title">Your secure and easy-to-use personalized health tracker</h1>
+      <a href="/how-it-works" class="button-basics btn-secondary">
+        <div class="flex-horizontal">Getting Started
         </div>
-        <div class="quote-container">
-            <div class="quote-1">Optimize your health with unique and actionable insights</div>
-          </div>
-          <div>
-            <img src="images/Dashboard.png" loading="lazy" width="Auto" height="Auto" alt="" 
-            class="demo-page-img"></div>
-          <div class="quote-container">
-            <div class="quote-2">&quot;This (system) change will not happen by the medical establishment, either; it will happen only if and when patients and physicians demand it&quot; <br>- Dr. Peter Attia in his book Outlive<br>‍</div>
-          </div>
-    </section>
-    <section>
-        <div class="white-strip">
-            <img src="images/wave.svg" loading="lazy" alt=""></div>
-      </section>
-    {{> footer}}
-    <script src="js/main.js" defer type="module"></script>
+      </a>
+      <a href="/demo" class="button-basics btn-primary">
+        <div class="flex-horizontal">Try the demo
+        </div>
+      </a>
+    </div>
+    <img src="images/iphonelayered.png" loading="lazy" alt="" class="mobile">
+  </section>
+  <div class="wave-light-bg">
+    <div class="wave-pattern">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3261 217" preserveAspectRatio="none">
+        <g>
+          <path fill="#b3d6ff"
+            d="M0 59c111 46 287 119 535 95 313-30 322-144 692-144 369 0 372 120 773 120s673-104 881-104c143 0 270 6 380 18V0H0v59Z">
+          </path>
+          <path fill="#b3d6ff" fill-opacity=".5"
+            d="M0 128c174 67 357 119 620 67 155-31 335-184 688-178 271 4 446 144 847 144 351 0 443-144 726-154h380V0H0v128Z">
+          </path>
+          <path fill="#b3d6ff" fill-opacity=".25"
+            d="M0 15c372 10 530 118 886 124 244 4 333-113 616-113 316 0 554 149 781 149 308 0 415-107 598-112 138-5 265 1 380 17V0H0v15Z">
+          </path>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="quote-background">
+    <div class="content-container quote-container">
+      <div class="quote-1">Optimize your health with unique and actionable insights</div>
+    </div>
+  </div>
+  <div class="dashboard-img">
+    <div class="content-container">
+      <img src="images/Dashboard.png" loading="lazy" width="Auto" height="Auto" alt="" class="demo-page-img">
+    </div>
+  </div>
+  <div class="quote-background">
+    <div class="content-container quote-container">
+      <div class="quote-2">&quot;This (system) change will not happen by the medical establishment, either; it will
+        happen only if and when patients and physicians demand it&quot; <br>- Dr. Peter Attia in his book Outlive<br>‍
+      </div>
+    </div>
+  </div>
+  {{> footer}}
+  <script src="js/main.js" defer type="module"></script>
 </body>
+
 </html>
