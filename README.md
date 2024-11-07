@@ -51,8 +51,6 @@ Other notes:
   [Apex Charts](https://apexcharts.com/)
 - Modals can be found on the Profile page.
 
-Please see the currently deployed site here: https://healthdashboard.webflow.io/
-
 Here is the VS code folder structure I am currently using:
 
 ```mermaid
