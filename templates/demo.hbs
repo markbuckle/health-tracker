@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html data-wf-page="6607e92c69a774defe3df0b8" data-wf-site="6606de22e8c152e6b19be98a">
+<html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Demo</title>
@@ -18,40 +19,103 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
+
 <body class="user-body">
-  <div class="sidebar">
-    <div class="sidebar-logo-wrapper">
-      <a href="/" class="sidebar-logo-link">
-        <img src="images/logo2.png" loading="lazy" alt="Logo" class="sidebar-logo"></a>
+  <header class="mobile-header">
+    <div class="mobile-header-container">
+      <!-- Logo on the left -->
+      <div class="mobile-header-logo">
+        <a href="/" class="mobile-header-logo-link">
+          <img src="images/logo2.png" loading="lazy" alt="Logo" class="header-logo">
+        </a>
+      </div>
+      <!-- Empty div for spacing -->
+      <div class="mobile-header-right"></div>
+      <!-- Absolutely centered hamburger -->
+      <button type="button" class="mobile-menu-toggle" onclick="toggleMenu()">
+        &#9776;
+      </button>
     </div>
-    <div class="nav-divider-basics nav-divider-top"></div>
-    <a href="/profile" class="page-link">
+    <nav class="mobile-menu">
+      <a id="Profile" href="/profile" class="page-link w-inline-block">
         <img loading="lazy" src="images/user.svg" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Profile</span></div>
-    </a>
-    <a href="/upload" class="page-link">
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Profile</span>
+        </div>
+      </a>
+      <a id="Upload" href="/upload" class="page-link w-inline-block">
         <img src="images/file-text.svg" loading="lazy" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Upload</span></div>
-    </a>
-    <a id="Reports" href="/demo" aria-current="page" class="page-link w-inline-block w--current"><img
-        src="images/clipboard.svg" loading="lazy" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Reports</span></div>
-    </a>
-    <a href="/dashboard" class="page-link w-inline-block"><img src="images/layout.svg" loading="lazy" alt="Icon"
-        class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Dashboard</span></div>
-    </a>
-    <div class="nav-divider-basics nav-divider-bottom"></div>
-    <a href="/how-it-works" class="page-link w-inline-block"><img src="images/help-circle.svg" loading="lazy" alt="Icon"
-        class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Help</span></div>
-    </a>
-    <a id="Log-out" href="/" class="page-link w-inline-block"><img src="images/unlock.svg" loading="lazy"
-        alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Log out</span></div>
-    </a>
-    <div class="sidebar-bottom-spacer"></div>
-  </div>
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Upload</span>
+        </div>
+      </a>
+      <a id="Reports" href="/reports" aria-current="page" class="page-link w-inline-block w--current">
+        <img src="images/clipboard.svg" loading="lazy" alt="Icon" class="nav-icon">
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Reports</span>
+        </div>
+      </a>
+      <a id="Dashboard" href="/dashboard" class="page-link w-inline-block">
+        <img src="images/layout.svg" loading="lazy" alt="Icon" class="nav-icon">
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Dashboard</span>
+        </div>
+      </a>
+      <a href="/how-it-works" class="page-link w-inline-block">
+        <img src="images/help-circle.svg" loading="lazy" alt="Icon" class="nav-icon">
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Help</span>
+        </div>
+      </a>
+      <a id="Log-out" href="/" class="page-link w-inline-block">
+        <img src="images/unlock.svg" loading="lazy" alt="Icon" class="nav-icon">
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Log out</span>
+        </div>
+      </a>
+    </nav>
+  </header>
+  <section class="demo-header">
+    <div class="header-container-2">
+      <div>
+        <h2 class="heading"></h2>
+        <div class="spacer-block"></div>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-logo-wrapper">
+        <a href="/" class="sidebar-logo-link">
+          <img src="images/logo2.png" loading="lazy" alt="Logo" class="sidebar-logo"></a>
+      </div>
+      <div class="nav-divider-basics nav-divider-top"></div>
+      <a href="/profile" class="page-link">
+        <img loading="lazy" src="images/user.svg" alt="Icon" class="nav-icon">
+        <div class="page-link-text-block"><span class="page-link-text-span">Profile</span></div>
+      </a>
+      <a href="/upload" class="page-link">
+        <img src="images/file-text.svg" loading="lazy" alt="Icon" class="nav-icon">
+        <div class="page-link-text-block"><span class="page-link-text-span">Upload</span></div>
+      </a>
+      <a id="Reports" href="/demo" aria-current="page" class="page-link w-inline-block w--current"><img
+          src="images/clipboard.svg" loading="lazy" alt="Icon" class="nav-icon">
+        <div class="page-link-text-block"><span class="page-link-text-span">Reports</span></div>
+      </a>
+      <a href="/dashboard" class="page-link w-inline-block"><img src="images/layout.svg" loading="lazy" alt="Icon"
+          class="nav-icon">
+        <div class="page-link-text-block"><span class="page-link-text-span">Dashboard</span></div>
+      </a>
+      <div class="nav-divider-basics nav-divider-bottom"></div>
+      <a href="/how-it-works" class="page-link w-inline-block"><img src="images/help-circle.svg" loading="lazy"
+          alt="Icon" class="nav-icon">
+        <div class="page-link-text-block"><span class="page-link-text-span">Help</span></div>
+      </a>
+      <a id="Log-out" href="/" class="page-link w-inline-block"><img src="images/unlock.svg" loading="lazy" alt="Icon"
+          class="nav-icon">
+        <div class="page-link-text-block"><span class="page-link-text-span">Log out</span></div>
+      </a>
+      <div class="sidebar-bottom-spacer"></div>
+    </div>
+  </section>
   <section class="demo-header">
     <div class="header-container-2">
       <div>
@@ -80,7 +144,8 @@
                 <div id="Cardiovascular" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="a0de055a-2ffd-ee2f-5620-a172b0a076f7" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="a0de055a-2ffd-ee2f-5620-a172b0a076f7"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Cardiovascular</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -102,7 +167,8 @@
                           <div class="biomarker-container-hover">
                             <div class="">
                               <div class="w-layout-grid biomarker-table-top _3-columns">
-                                <div id="w-node-_763645d3-01dc-eb7c-a4f7-d45fd6bf42f7-fe3df0b8" class="biomarker">Apo-B
+                                <div id="w-node-_763645d3-01dc-eb7c-a4f7-d45fd6bf42f7-fe3df0b8" class="biomarker">
+                                  Apo-B
                                 </div>
                                 <div id="w-node-_763645d3-01dc-eb7c-a4f7-d45fd6bf42f1-fe3df0b8"
                                   style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
@@ -153,9 +219,11 @@
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
                                       class="biomarker-textbox">In recent years the importance the role of
                                       apopolipoprotein B (Apo-B) plays in major vascular diseases has become
-                                      increasingly clear. ApoB is the main component of atherogenesis (plaque building).
+                                      increasingly clear. ApoB is the main component of atherogenesis (plaque
+                                      building).
                                       ApoB represents a direct measure of the total atherogenic particles (the sum of
-                                      LDL, IDL, VLDL, and Lpa) in the circulation that can enter the arterial wall. ApoB
+                                      LDL, IDL, VLDL, and Lpa) in the circulation that can enter the arterial wall.
+                                      ApoB
                                       is a more accurate measure of the risk posed by these particles than the mass of
                                       cholesterol they contain, estimated by LDL cholesterol (LDL-C) or non-HDL
                                       cholesterol.<a
@@ -282,18 +350,22 @@
                                 <div class="columns-3 w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Lp(a) is the single most important – and most prevalent
+                                      class="biomarker-textbox">Lp(a) is the single most important – and most
+                                      prevalent
                                       – hereditary risk factor for cardiovascular disease (CVD) no matter what other
-                                      risk factors a patient may or may not have such as smoking, diabetes, hypertension
+                                      risk factors a patient may or may not have such as smoking, diabetes,
+                                      hypertension
                                       or non-Lp(a) dyslipidemia.<a href="#" class="link-2"><sup
                                           class="superscript">2</sup></a>
                                     </p>
                                   </div>
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">No chart for Lp(a) as this marker is typically a once in
+                                      class="biomarker-textbox">No chart for Lp(a) as this marker is typically a once
+                                      in
                                       a lifetime test, unless deemed &quot;high&quot; and you would like to track
-                                      progress with interventions. Please reach out to our team if this is the case for
+                                      progress with interventions. Please reach out to our team if this is the case
+                                      for
                                       you.</p>
                                   </div>
                                 </div>
@@ -307,7 +379,8 @@
                           <div class="biomarker-container-hover">
                             <div class="biomarker-top">
                               <div class="w-layout-grid biomarker-table-top _3-columns">
-                                <div id="w-node-_662b27ab-4035-842c-ff3e-fabdab2e8b53-fe3df0b8" class="biomarker">LDL-C
+                                <div id="w-node-_662b27ab-4035-842c-ff3e-fabdab2e8b53-fe3df0b8" class="biomarker">
+                                  LDL-C
                                 </div>
                                 <div
                                   style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
@@ -687,7 +760,8 @@
                           <div class="biomarker-container-hover">
                             <div class="biomarker-top">
                               <div class="w-layout-grid biomarker-table-top _3-columns">
-                                <div id="w-node-_5deacedc-e7eb-ebd8-2bbc-3a2a05df319a-fe3df0b8" class="biomarker">Total
+                                <div id="w-node-_5deacedc-e7eb-ebd8-2bbc-3a2a05df319a-fe3df0b8" class="biomarker">
+                                  Total
                                   Cholesterol</div>
                                 <div
                                   style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
@@ -735,11 +809,13 @@
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
                                       class="biomarker-textbox">An approximation for the total cholesterol levels. The
-                                      most common formula used is: LDL-C + HDL-C + 20% of Triglycerides. Note that this
-                                      marker includes HDL-C and therefore the below formula is a better marker in terms
-                                      of risk scores. That said, Lp(a) and Apo-B scores are still superior indicators.<a
-                                        href="https://www.nhlbi.nih.gov/health/high-blood-triglycerides" target="_blank"
-                                        class="link-2"><sup class="superscript">5</sup></a>
+                                      most common formula used is: LDL-C + HDL-C + 20% of Triglycerides. Note that
+                                      this
+                                      marker includes HDL-C and therefore the below formula is a better marker in
+                                      terms
+                                      of risk scores. That said, Lp(a) and Apo-B scores are still superior
+                                      indicators.<a href="https://www.nhlbi.nih.gov/health/high-blood-triglycerides"
+                                        target="_blank" class="link-2"><sup class="superscript">5</sup></a>
                                     </p>
                                   </div>
                                   <div class="w-col w-col-6">
@@ -940,7 +1016,8 @@
                 <div id="Metabolic" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="13bf7d90-e10f-50c9-cdcb-e4083bec4bee" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="13bf7d90-e10f-50c9-cdcb-e4083bec4bee"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Metabolic</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -962,7 +1039,8 @@
                           <div class="biomarker-container-hover">
                             <div class="biomarker-top">
                               <div class="w-layout-grid biomarker-table-top _3-columns">
-                                <div id="w-node-_13bf7d90-e10f-50c9-cdcb-e4083bec4c08-fe3df0b8" class="biomarker">HbA1C
+                                <div id="w-node-_13bf7d90-e10f-50c9-cdcb-e4083bec4c08-fe3df0b8" class="biomarker">
+                                  HbA1C
                                 </div>
                                 <div
                                   style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
@@ -1010,7 +1088,8 @@
                                 <div class="columns w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Average blood glucose (sugar) over the past 3 months.<a
+                                      class="biomarker-textbox">Average blood glucose (sugar) over the past 3
+                                      months.<a
                                         href="https://www.thelancet.com/journals/lanhl/article/PIIS2666-7568(21)00120-3/fulltext"
                                         class="link-2"><sup class="superscript">1</sup></a>
                                     </p>
@@ -1087,7 +1166,8 @@
                           <div class="biomarker-container-hover">
                             <div class="biomarker-top">
                               <div class="w-layout-grid biomarker-table-top _3-columns">
-                                <div id="w-node-_13bf7d90-e10f-50c9-cdcb-e4083bec4c21-fe3df0b8" class="biomarker">Fasted
+                                <div id="w-node-_13bf7d90-e10f-50c9-cdcb-e4083bec4c21-fe3df0b8" class="biomarker">
+                                  Fasted
                                   Glucose</div>
                                 <div
                                   style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
@@ -1141,7 +1221,8 @@
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
                                       class="biomarker-textbox">No chart for fasted glucose levels. The best option to
-                                      monitor and learn your glucose fluctuations is to use a continuous glucose monitor
+                                      monitor and learn your glucose fluctuations is to use a continuous glucose
+                                      monitor
                                       such as the Dexcom or an intermittently scanned glucose monitor such as the
                                       Freestyle Libre</p>
                                   </div>
@@ -1203,7 +1284,8 @@
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
                                       class="biomarker-textbox">A good indicator risk for type 2 diabetes. Rising
-                                      insulin levels tend to happen as a precursor to insulin resistance, before we see
+                                      insulin levels tend to happen as a precursor to insulin resistance, before we
+                                      see
                                       an increase in fasting blood sugar.<a
                                         href="https://peterattiamd.com/cumulative-effects-of-ldl-c-reduction-in-mitigating-cardiovascular-risk/"
                                         target="_blank" class="link-2"><sup class="superscript">3</sup></a>
@@ -1282,7 +1364,8 @@
                 <div id="Immune" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="a76ab1b7-5b95-2cfa-adef-0b5b922d39f5" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="a76ab1b7-5b95-2cfa-adef-0b5b922d39f5"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Immune</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -1295,7 +1378,8 @@
                             details<br></div>
                           <div id="w-node-a76ab1b7-5b95-2cfa-adef-0b5b922d3a01-fe3df0b8" class="caption-large">
                                Results</div>
-                          <div id="w-node-a76ab1b7-5b95-2cfa-adef-0b5b922d3a03-fe3df0b8" class="caption-large">RANGE BAR
+                          <div id="w-node-a76ab1b7-5b95-2cfa-adef-0b5b922d3a03-fe3df0b8" class="caption-large">
+                            RANGE BAR
                                       </div>
                         </div>
                         <article id="Biomarker-Container" data-w-id="a76ab1b7-5b95-2cfa-adef-0b5b922d3a05"
@@ -1352,7 +1436,8 @@
                                 <div class="columns w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Inflammation marker rises significantly in the presence
+                                      class="biomarker-textbox">Inflammation marker rises significantly in the
+                                      presence
                                       of inflammation, injury, or infection.<a
                                         href="https://www.thelancet.com/journals/lanhl/article/PIIS2666-7568(21)00120-3/fulltext"
                                         class="link-2"><sup class="superscript">1</sup></a>
@@ -1416,7 +1501,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">General inflammation, B12, folate status, and insight on
+                                      class="biomarker-textbox">General inflammation, B12, folate status, and insight
+                                      on
                                       methylation abilities (important for blood pressure and detox). <a href="#"
                                         class="link-2"><sup class="superscript">2</sup></a>
                                     </p>
@@ -1434,7 +1520,8 @@
                 <div id="Liver" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="74abb507-b07a-f538-9d3b-3864b572a96d" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="74abb507-b07a-f538-9d3b-3864b572a96d"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Liver</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -1506,11 +1593,14 @@
                                 <div class="columns w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that helps
-                                      indicate liver damage. When hepatoytes are stressed they release enzymes including
+                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that
+                                      helps
+                                      indicate liver damage. When hepatoytes are stressed they release enzymes
+                                      including
                                       ALT and AST in the bloodstream. It&#x27;s important to note that ALT and AST are
                                       not great proxies for overall liver function. If ALT or AST are elevated, its
-                                      important to determine why are those enzymes elevated; is it an isolated situation
+                                      important to determine why are those enzymes elevated; is it an isolated
+                                      situation
                                       or is it chronic?</p>
                                   </div>
                                   <div class="w-col w-col-6"></div>
@@ -1643,7 +1733,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver enzyme
+                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver
+                                      enzyme
                                       that helps indicate liver damage.<a href="#" class="link-2"></a>
                                     </p>
                                   </div>
@@ -1710,7 +1801,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -1772,7 +1864,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -1788,7 +1881,8 @@
                 <div id="Kidney" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="2024cd63-6661-56d1-2bf3-ceef4de0d2e8" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="2024cd63-6661-56d1-2bf3-ceef4de0d2e8"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Kidney</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -1860,11 +1954,14 @@
                                 <div class="columns w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that helps
-                                      indicate liver damage. When hepatoytes are stressed they release enzymes including
+                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that
+                                      helps
+                                      indicate liver damage. When hepatoytes are stressed they release enzymes
+                                      including
                                       ALT and AST in the bloodstream. It&#x27;s important to note that ALT and AST are
                                       not great proxies for overall liver function. If ALT or AST are elevated, its
-                                      important to determine why are those enzymes elevated; is it an isolated situation
+                                      important to determine why are those enzymes elevated; is it an isolated
+                                      situation
                                       or is it chronic?</p>
                                   </div>
                                   <div class="w-col w-col-6"></div>
@@ -1997,7 +2094,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver enzyme
+                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver
+                                      enzyme
                                       that helps indicate liver damage.<a href="#" class="link-2"></a>
                                     </p>
                                   </div>
@@ -2064,7 +2162,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -2126,7 +2225,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -2142,7 +2242,8 @@
                 <div id="Iron" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="e36d51a4-5a88-9ea7-a319-6131eca917f1" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="e36d51a4-5a88-9ea7-a319-6131eca917f1"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Iron</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -2155,7 +2256,8 @@
                             details<br></div>
                           <div id="w-node-e36d51a4-5a88-9ea7-a319-6131eca917fd-fe3df0b8" class="caption-large">
                                Results</div>
-                          <div id="w-node-e36d51a4-5a88-9ea7-a319-6131eca917ff-fe3df0b8" class="caption-large">RANGE BAR
+                          <div id="w-node-e36d51a4-5a88-9ea7-a319-6131eca917ff-fe3df0b8" class="caption-large">
+                            RANGE BAR
                                       </div>
                         </div>
                         <article id="Biomarker-Container" data-w-id="e36d51a4-5a88-9ea7-a319-6131eca91801"
@@ -2214,11 +2316,14 @@
                                 <div class="columns w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that helps
-                                      indicate liver damage. When hepatoytes are stressed they release enzymes including
+                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that
+                                      helps
+                                      indicate liver damage. When hepatoytes are stressed they release enzymes
+                                      including
                                       ALT and AST in the bloodstream. It&#x27;s important to note that ALT and AST are
                                       not great proxies for overall liver function. If ALT or AST are elevated, its
-                                      important to determine why are those enzymes elevated; is it an isolated situation
+                                      important to determine why are those enzymes elevated; is it an isolated
+                                      situation
                                       or is it chronic?</p>
                                   </div>
                                   <div class="w-col w-col-6"></div>
@@ -2351,7 +2456,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver enzyme
+                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver
+                                      enzyme
                                       that helps indicate liver damage.<a href="#" class="link-2"></a>
                                     </p>
                                   </div>
@@ -2418,7 +2524,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -2480,7 +2587,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -2496,7 +2604,8 @@
                 <div id="Hormones" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="293f08be-95d2-a838-142f-04c60bace252" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="293f08be-95d2-a838-142f-04c60bace252"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Hormones</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -2567,11 +2676,14 @@
                                 <div class="columns w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that helps
-                                      indicate liver damage. When hepatoytes are stressed they release enzymes including
+                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that
+                                      helps
+                                      indicate liver damage. When hepatoytes are stressed they release enzymes
+                                      including
                                       ALT and AST in the bloodstream. It&#x27;s important to note that ALT and AST are
                                       not great proxies for overall liver function. If ALT or AST are elevated, its
-                                      important to determine why are those enzymes elevated; is it an isolated situation
+                                      important to determine why are those enzymes elevated; is it an isolated
+                                      situation
                                       or is it chronic?</p>
                                   </div>
                                   <div class="w-col w-col-6"></div>
@@ -2704,7 +2816,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver enzyme
+                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver
+                                      enzyme
                                       that helps indicate liver damage.<a href="#" class="link-2"></a>
                                     </p>
                                   </div>
@@ -2771,7 +2884,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -2833,7 +2947,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -2849,7 +2964,8 @@
                 <div id="Nutrients" class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="373667fb-04b7-0112-c235-92841dacd864" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="373667fb-04b7-0112-c235-92841dacd864"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Nutrients</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -2921,11 +3037,14 @@
                                 <div class="columns w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that helps
-                                      indicate liver damage. When hepatoytes are stressed they release enzymes including
+                                      class="biomarker-textbox">Alanine transaminase (ALT) is a liver enzyme that
+                                      helps
+                                      indicate liver damage. When hepatoytes are stressed they release enzymes
+                                      including
                                       ALT and AST in the bloodstream. It&#x27;s important to note that ALT and AST are
                                       not great proxies for overall liver function. If ALT or AST are elevated, its
-                                      important to determine why are those enzymes elevated; is it an isolated situation
+                                      important to determine why are those enzymes elevated; is it an isolated
+                                      situation
                                       or is it chronic?</p>
                                   </div>
                                   <div class="w-col w-col-6"></div>
@@ -3058,7 +3177,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver enzyme
+                                      class="biomarker-textbox">Gamma-glutamyltransferase (GGT) is another liver
+                                      enzyme
                                       that helps indicate liver damage.<a href="#" class="link-2"></a>
                                     </p>
                                   </div>
@@ -3125,7 +3245,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -3187,7 +3308,8 @@
                                 <div class="columns-2 w-row">
                                   <div class="w-col w-col-6 w-col-medium-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme that
+                                      class="biomarker-textbox">Alkaline phosphatase (ALP) is another liver enzyme
+                                      that
                                       helps indicate liver damage.</p>
                                   </div>
                                   <div class="w-col w-col-6 w-col-medium-6"></div>
@@ -3210,7 +3332,8 @@
                 <div class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="96aba6e8-d7ee-f36b-70ef-c1a6c71f3a25" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="96aba6e8-d7ee-f36b-70ef-c1a6c71f3a25"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Quarterly / Annually</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -3232,7 +3355,8 @@
                           <div class="biomarker-container-hover">
                             <div class="biomarker-top">
                               <div class="w-layout-grid biomarker-table-top _3-columns">
-                                <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a3f-fe3df0b8" class="biomarker">Apo-B
+                                <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a3f-fe3df0b8" class="biomarker">
+                                  Apo-B
                                 </div>
                                 <div
                                   style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
@@ -3283,9 +3407,11 @@
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
                                       class="biomarker-textbox">In recent years the importance the role of
                                       apopolipoprotein B (Apo-B) plays in major vascular diseases has become
-                                      increasingly clear. ApoB is the main component of atherogenesis (plaque building).
+                                      increasingly clear. ApoB is the main component of atherogenesis (plaque
+                                      building).
                                       ApoB represents a direct measure of the total atherogenic particles (the sum of
-                                      LDL, IDL, VLDL, and Lpa) in the circulation that can enter the arterial wall. ApoB
+                                      LDL, IDL, VLDL, and Lpa) in the circulation that can enter the arterial wall.
+                                      ApoB
                                       is a more accurate measure of the risk posed by these particles than the mass of
                                       cholesterol they contain, estimated by LDL cholesterol (LDL-C) or non-HDL
                                       cholesterol.<a
@@ -3365,7 +3491,8 @@
                           <div class="biomarker-container-hover">
                             <div class="biomarker-top">
                               <div class="w-layout-grid biomarker-table-top _3-columns">
-                                <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a72-fe3df0b8" class="biomarker">LDL-C
+                                <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a72-fe3df0b8" class="biomarker">
+                                  LDL-C
                                 </div>
                                 <div
                                   style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
@@ -3748,7 +3875,8 @@
                 <div class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="ff923584-199d-04b5-b21f-fe7a22c39524" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="ff923584-199d-04b5-b21f-fe7a22c39524"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">Every 1- 5 years</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -3761,7 +3889,8 @@
                             details<br></div>
                           <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c39530-fe3df0b8" class="caption-large">
                                Results</div>
-                          <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c39532-fe3df0b8" class="caption-large">RANGE BAR
+                          <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c39532-fe3df0b8" class="caption-large">
+                            RANGE BAR
                                       </div>
                         </div>
                         <article id="Biomarker-Container" data-w-id="ff923584-199d-04b5-b21f-fe7a22c39534"
@@ -3899,7 +4028,8 @@
                 <div class="dropdown-content-top">
                   <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                     <div class="category-dropdown-toggle w-dropdown-toggle">
-                      <div data-w-id="de977581-3bd8-f6ea-7880-3c4b3639fd6a" class="category-title-dropdown-container dropdown-container">
+                      <div data-w-id="de977581-3bd8-f6ea-7880-3c4b3639fd6a"
+                        class="category-title-dropdown-container dropdown-container">
                         <h3 class="category-subtitle">One time</h3>
                         <span class="dropdown-arrow"></span>
                       </div>
@@ -3912,7 +4042,8 @@
                             details<br></div>
                           <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd76-fe3df0b8" class="caption-large">
                                Results</div>
-                          <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd78-fe3df0b8" class="caption-large">RANGE BAR
+                          <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd78-fe3df0b8" class="caption-large">
+                            RANGE BAR
                                       </div>
                         </div>
                         <article id="Biomarker-Container" data-w-id="de977581-3bd8-f6ea-7880-3c4b3639fd93"
@@ -3968,18 +4099,22 @@
                                 <div class="w-row">
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">Lp(a) is the single most important – and most prevalent
+                                      class="biomarker-textbox">Lp(a) is the single most important – and most
+                                      prevalent
                                       – hereditary risk factor for cardiovascular disease (CVD) no matter what other
-                                      risk factors a patient may or may not have such as smoking, diabetes, hypertension
+                                      risk factors a patient may or may not have such as smoking, diabetes,
+                                      hypertension
                                       or non-Lp(a) dyslipidemia.<a href="#" class="link-2"><sup
                                           class="superscript">2</sup></a>
                                     </p>
                                   </div>
                                   <div class="w-col w-col-6">
                                     <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                      class="biomarker-textbox">No chart for Lp(a) as this marker is typically a once in
+                                      class="biomarker-textbox">No chart for Lp(a) as this marker is typically a once
+                                      in
                                       a lifetime test, unless deemed &quot;high&quot; and you would like to track
-                                      progress with interventions. Please reach out to our team if this is the case for
+                                      progress with interventions. Please reach out to our team if this is the case
+                                      for
                                       you.</p>
                                   </div>
                                 </div>
@@ -4001,24 +4136,9 @@
   <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6606de22e8c152e6b19be98a"
     type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
     crossorigin="anonymous"></script>
-    <script src="/js/main.js" defer></script>
+  <script src="/js/main.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script> 
-    // Target elements by class name 
-    const elements = document.querySelectorAll('.dashboard-container, .w-layout-grid, .tabs, .in-page-menu, .labs-content, .dropdown-wrapper, .dropdown-content-top'); 
-    
-    // Add event listeners to log interactions 
-    elements.forEach(element => { 
-      element.addEventListener('click', (e) => {
-        console.log('Clicked:', e.target); 
-      }); 
-      element.addEventListener('mouseover', (e) => {
-        console.log('Mouseover:', e.target); 
-      });
-      // Add more event listeners as needed 
-      });
-    </script>
 </body>
 
 </html>
