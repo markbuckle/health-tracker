@@ -37,17 +37,17 @@ function initializeHeaderScroll() {
 document.addEventListener('DOMContentLoaded', initializeHeaderScroll);
 
 // ---------------- SIDEBAR - RESPONSIVE MOBILE -------------------- //
-function responsiveSidebar() {
-    document.addEventListener('DOMContentLoaded', () => {
-        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-        const sidebar = document.querySelector('.sidebar');
+// function responsiveSidebar() {
+//     document.addEventListener('DOMContentLoaded', () => {
+//         const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+//         const sidebar = document.querySelector('.sidebar');
 
-        mobileMenuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
-    });
-}
-responsiveSidebar();
+//         mobileMenuToggle.addEventListener('click', () => {
+//             sidebar.classList.toggle('open');
+//         });
+//     });
+// }
+// responsiveSidebar();
 
   // ---------------- REPORTS PAGE - DASHBOARD INTERACTIONS -------------------- //
 
