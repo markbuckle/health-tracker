@@ -36,6 +36,15 @@ function initializeHeaderScroll() {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeHeaderScroll);
 
+// ---------------- MOBILE HEADER -------------------- //
+
+  function toggleMenu() {
+    var menu = document.querySelector('.mobile-menu');
+    menu.classList.toggle('mobile-menu-closed');
+  }
+
+  toggleMenu();
+
 // ---------------- SIDEBAR - RESPONSIVE MOBILE -------------------- //
 // function responsiveSidebar() {
 //     document.addEventListener('DOMContentLoaded', () => {

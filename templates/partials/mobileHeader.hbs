@@ -1,0 +1,54 @@
+<header id="mobile-header" class="mobile-header">
+    <div class="mobile-header-container">
+        <!-- Logo on the left -->
+        <div class="mobile-header-logo">
+            <a href="/" class="mobile-header-logo-link">
+                <img src="images/logo2.png" loading="lazy" alt="Logo" class="header-logo">
+            </a>
+        </div>
+        <!-- Empty div for spacing -->
+        <div class="mobile-header-right"></div>
+        <!-- Absolutely centered hamburger -->
+        <button type="button" class="mobile-menu-toggle" onclick="toggleMenu()">
+            &#9776;
+        </button>
+    </div>
+    <nav class="mobile-menu">
+        <a id="Profile" href="/profile" class="page-link w-inline-block">
+            <img loading="lazy" src="images/user.svg" alt="Icon" class="nav-icon">
+            <div class="page-link-text-block">
+                <span class="page-link-text-span">Profile</span>
+            </div>
+        </a>
+        <a id="Upload" href="/upload" class="page-link w-inline-block">
+            <img src="images/file-text.svg" loading="lazy" alt="Icon" class="nav-icon">
+            <div class="page-link-text-block">
+                <span class="page-link-text-span">Upload</span>
+            </div>
+        </a>
+        <a id="Reports" href="/reports" aria-current="page" class="page-link w-inline-block">
+            <img src="images/clipboard.svg" loading="lazy" alt="Icon" class="nav-icon">
+            <div class="page-link-text-block">
+                <span class="page-link-text-span">Reports</span>
+            </div>
+        </a>
+        <a id="Dashboard" href="/dashboard" class="page-link w-inline-block">
+            <img src="images/layout.svg" loading="lazy" alt="Icon" class="nav-icon">
+            <div class="page-link-text-block">
+                <span class="page-link-text-span">Dashboard</span>
+            </div>
+        </a>
+        <a href="/how-it-works" class="page-link w-inline-block">
+            <img src="images/help-circle.svg" loading="lazy" alt="Icon" class="nav-icon">
+            <div class="page-link-text-block">
+                <span class="page-link-text-span">Help</span>
+            </div>
+        </a>
+        <a id="Log-out" href="/" class="page-link w-inline-block">
+            <img src="images/unlock.svg" loading="lazy" alt="Icon" class="nav-icon">
+            <div class="page-link-text-block">
+                <span class="page-link-text-span">Log out</span>
+            </div>
+        </a>
+    </nav>
+</header>
