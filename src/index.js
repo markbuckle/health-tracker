@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
+const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
@@ -10,17 +11,35 @@ const templatePath = path.join(__dirname, '../templates');
 const publicPath = path.join(__dirname, '../public');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
-// const port = process.env.PORT || 8080;
-// const templatePath = path.join(__dirname, process.env.NODE_ENV === 'production'
-//   ? '../public/templates' 
-//   : '../templates');
 
 // express app setup
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Register Handlebars helpers 
+hbs.registerHelper('ifEqual', function(arg1, arg2, options) { 
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+hbs.registerHelper('formatDate', function(date) { 
+    if (!date) return ''; 
+    return new Date(date).toISOString().split('T')[0]; 
+}); 
+hbs.registerHelper('eq', function(a, b) { 
+    return a === b;
+});
+
+hbs.registerHelper('getLast', function(array) { 
+    return array[array.length - 1];
+});
+
+hbs.registerHelper('json', function(context) { 
+    return JSON.stringify(context); 
+});
+
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
+
 // If you want to use partials, uncomment this line and specify the correct path
 const partialsPath = path.join(__dirname, '../templates/partials');
 hbs.registerPartials(partialsPath)
@@ -45,6 +64,7 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
         httpOnly: true,
         sameSite: 'lax',
+        // secure: process.env.NODE_ENV === 'production'
     },
 }));
 
@@ -115,17 +135,6 @@ app.get('/demo', (req, res) => {
     res.render('demo');
 });
 
-// app.get('/header', (req, res) => {
-//     res.render('partials/header');
-// });
-
-// app.get('/footer', (req, res) => {
-//     res.render('partials/footer');
-// });
-
-// app.get('/sidebar', (req, res) => {
-//     res.render('partials/sidebar');
-// });
 app.get('/', (req, res) => {
      res.render('main');
 });
@@ -134,7 +143,10 @@ app.get('/profile', checkAuth, (req, res) => {
     res.render('user/profile', { 
         fname: req.user.fname, 
         lname: req.user.lname,
-        user: req.user  // passing the entire user object
+        uname: req.user.uname,
+        user: req.user, // passes the entire user object
+        profile: req.user.profile || {}, 
+        bloodType: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-', 'Unknown', 'Other'],
     });
 });
 
@@ -195,31 +207,216 @@ app.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).render('error', {
-        message: process.env.NODE_ENV === 'production' 
-            ? 'Something went wrong!' 
-            : err.message
-    });
-});
-
-// 404 handler
-app.use((req, res) => {
-    // res.status(404).render('404');
+app.post('/update-profile', checkAuth, async (req, res) => {
     try {
-        res.status(404).render('404', {}, (err, html) => {
-            if (err) {
-                console.error('Error rendering 404 template:', err);
-                res.status(404).send('404 - Page Not Found');
-            } else {
-                res.send(html);
+        const { fname, lname, birthDate, sex, bloodType, customBloodType, familyCondition, relatives, addNotes, habitType, status, lifestyleNotes, entryId, action} = req.body;
+
+        // Log request body for debugging 
+        console.log('Request Body:', req.body);
+
+        // Find the user and update profile
+        const user = await registerCollection.findById(req.user._id);
+        
+        if (!user) {
+            console.log('User not found');
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+        // Ensure profile is initialized 
+        if (!user.profile) { 
+            user.profile = {}; 
+        }
+
+        // Check if values are provided, if not, update with the specified value 
+        // this approach preserves existing values
+        if (fname) user.profile.fname = fname;
+        if (lname) user.profile.lname = lname;
+        if (birthDate) user.profile.birthDate = birthDate;
+        if (sex) user.profile.sex = sex;
+        
+        if (bloodType) {
+            if (bloodType === 'Other') { 
+                user.profile.bloodType = 'Other'; 
+                user.profile.customBloodType = customBloodType; 
+            } else { 
+                user.profile.bloodType = bloodType; 
+                user.profile.customBloodType = null; 
             }
+        }
+        // Ensure familyHistory is initialized 
+        if (!Array.isArray(user.profile.familyHistory)) { 
+            user.profile.familyHistory = []; 
+        }
+
+        // Handle family history updates
+        if (action) {
+            switch (action) {
+                case 'add':
+                    if (familyCondition && relatives) {
+                        user.profile.familyHistory.push({
+                            familyCondition,
+                            relatives: relatives.split(','),
+                            addNotes: addNotes || ''
+                        });
+                    }
+                    break;
+
+                case 'edit':
+                    if (entryId && familyCondition && relatives) {
+                        const entryIndex = user.profile.familyHistory.findIndex(
+                            entry => entry._id.toString() === entryId
+                        );
+                        if (entryIndex !== -1) {
+                            user.profile.familyHistory[entryIndex].familyCondition = familyCondition;
+                            user.profile.familyHistory[entryIndex].relatives = relatives.split(',');
+                            user.profile.familyHistory[entryIndex].addNotes = addNotes || '';
+                        }
+                    }
+                    break;
+
+                case 'delete':
+                    if (entryId) {
+                        try {
+                            console.log('Attempting to delete entry with ID:', entryId);
+                            
+                            // Find the most recent version of the user
+                            const targetUser = await registerCollection.findById(user._id);
+                            if (!targetUser) {
+                                throw new Error('User not found');
+                            }
+
+                            console.log('Family history before:', targetUser.profile.familyHistory);
+
+                            // Remove the family history entry
+                            targetUser.profile.familyHistory = targetUser.profile.familyHistory.filter(
+                                entry => entry._id.toString() !== entryId
+                            );
+
+                            // Use findOneAndUpdate instead of save to avoid version conflicts
+                            const updatedUser = await registerCollection.findOneAndUpdate(
+                                { _id: user._id },
+                                { $set: { 'profile.familyHistory': targetUser.profile.familyHistory } },
+                                { new: true } // This option returns the updated document
+                            );
+
+                            if (!updatedUser) {
+                                throw new Error('Failed to update user');
+                            }
+
+                            // Update the local user object to match
+                            user.profile.familyHistory = updatedUser.profile.familyHistory;
+
+                            console.log('Delete operation completed');
+                            console.log('Family history after:', updatedUser.profile.familyHistory);
+
+                            // No need to call save() again
+                        } catch (error) {
+                            console.error('Error deleting entry:', error);
+                            throw new Error('Failed to delete family history entry: ' + error.message);
+                        }
+                    }
+                    break;
+                }
+            }
+            // Ensure familyHistory is initialized 
+            if (!Array.isArray(user.profile.lifestyle)) { 
+                user.profile.lifestyle = []; 
+            }
+             // Handle lifestyle updates
+            if (action) {
+                switch (action) {
+                    case 'add':
+                        if (habitType && status) {
+                            user.profile.lifestyle.push({
+                                habitType,
+                                status: status,
+                                lifestyleNotes: lifestyleNotes || ''
+                            });
+                        }
+                        break;
+
+                    case 'edit':
+                        if (entryId && habitType && status) {
+                            const entryIndex = user.profile.lifestyle.findIndex(
+                                entry => entry._id.toString() === entryId
+                            );
+                            if (entryIndex !== -1) {
+                                user.profile.lifestyle[entryIndex].habitType = habitType;
+                                user.profile.lifestyle[entryIndex].status = status; 
+                                user.profile.lifestyle[entryIndex].lifestyleNotes = lifestyleNotes || '';
+                            }
+                        }
+                        break;
+
+                    case 'delete':
+                        if (entryId) {
+                            try {
+                                console.log('Attempting to delete entry with ID:', entryId);
+                                
+                                // Find the most recent version of the user
+                                const targetUser = await registerCollection.findById(user._id);
+                                if (!targetUser) {
+                                    throw new Error('User not found');
+                                }
+
+                                console.log('Lifestyle before:', targetUser.profile.lifestyle);
+
+                                // Remove the family history entry
+                                targetUser.profile.lifestyle = targetUser.profile.lifestyle.filter(
+                                    entry => entry._id.toString() !== entryId
+                                );
+
+                                // Use findOneAndUpdate instead of save to avoid version conflicts
+                                const updatedUser = await registerCollection.findOneAndUpdate(
+                                    { _id: user._id },
+                                    { $set: { 'profile.lifestyle': targetUser.profile.lifestyle } },
+                                    { new: true } // This option returns the updated document
+                                );
+
+                                if (!updatedUser) {
+                                    throw new Error('Failed to update user');
+                                }
+
+                                // Update the local user object to match
+                                user.profile.lifestyle = updatedUser.profile.lifestyle;
+
+                                console.log('Delete operation completed');
+                                console.log('Lifestyle after:', updatedUser.profile.lifestyle);
+
+                                // No need to call save() again
+                            } catch (error) {
+                                console.error('Error deleting entry:', error);
+                                throw new Error('Failed to delete lifestyle entry: ' + error.message);
+                            }
+                        }
+                        break;
+                    }
+                }
+        // Calculate and set age
+        user.profile.age = user.calculateAge();
+
+        // Save the updated user
+        await user.save();
+
+        res.json({
+            success: true,
+            age: user.profile.age,
+            bloodType: user.profile.bloodType,
+            customBloodType: user.profile.customBloodType,
+            sex: user.profile.sex,
+            familyHistory: user.profile.familyHistory,
+            lifestyle: user.profile.lifestyle
         });
-    } catch (err) {
-        console.error('Error in 404 handler:', err);
-        res.status(404).send('404 - Page Not Found');
+
+    } catch (error) {
+        console.error('Profile update error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error updating profile',
+            error: error.message
+        });
     }
 });
 
