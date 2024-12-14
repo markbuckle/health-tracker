@@ -251,7 +251,7 @@
           <option value="AB-" {{#ifEqual profile.bloodType 'AB-' }}selected{{/ifEqual}}>AB-</option>
           <option value="Other" {{#ifEqual profile.bloodType 'Other' }}selected{{/ifEqual}}>Other</option>
         </select>
-        <div class="customBloodTypeContainer">
+        <div class="customBloodTypeContainer" style="display: none;">
           <label for="customBloodType" class="field-label">Other Blood Types:</label>
           <input class="form-text-field" name="customBloodType" id="customBloodType" aria-label="Custom Blood Type"
             aria-required="true" maxlength="256" type="text"
@@ -492,17 +492,26 @@
       // ====== Form Utility Functions ======
       function checkBloodType() {
         const bloodTypeSelect = document.getElementById('bloodType');
+        const customBloodTypeContainer = document.querySelector('.customBloodTypeContainer');
         const customBloodTypeInput = document.getElementById('customBloodType');
+
         if (bloodTypeSelect.value === 'Other') {
-          customBloodTypeInput.style.display = 'block';
+          customBloodTypeContainer.style.display = 'block';
           customBloodTypeInput.setAttribute('required', 'true');
         } else {
-          customBloodTypeInput.style.display = 'none';
+          customBloodTypeContainer.style.display = 'none';
           customBloodTypeInput.removeAttribute('required');
+          customBloodTypeInput.value = ''; // Clear the input when hidden
         }
       }
 
-      checkBloodType(); // Handle initial state if 'Other' is already selected
+      // Add event listener to blood type select
+      document.getElementById('bloodType')?.addEventListener('change', checkBloodType);
+
+      // Run on initial page load to set correct state
+      document.addEventListener('DOMContentLoaded', function () {
+        checkBloodType();
+      });
 
       // ====== Event Listeners ======
       // Modal trigger buttons
@@ -935,7 +944,8 @@
       // Status Buttons (single select)
       document.querySelectorAll('.status-container .profile-modal-button').forEach(button => {
         button.addEventListener('click', function () {
-          const relativesContainer = this.closest('.status-container');
+          const statusContainer = this.closest('.status-container');
+
 
           // Remove selected state from all status buttons
           statusContainer.querySelectorAll('.profile-modal-button').forEach(btn => {
