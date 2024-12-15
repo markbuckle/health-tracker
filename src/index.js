@@ -40,7 +40,7 @@ hbs.registerHelper('json', function(context) {
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
 
-// If you want to use partials, uncomment this line and specify the correct path
+// Partial paths
 const partialsPath = path.join(__dirname, '../templates/partials');
 hbs.registerPartials(partialsPath)
 
@@ -201,7 +201,7 @@ app.post('/login', (req, res, next) => {
     console.log('Login attempt received for username:', req.body.uname); // Debug log
     
     passport.authenticate('local', {
-        successRedirect: '/reports',
+        successRedirect: '/profile',
         failureRedirect: '/login',
         failureFlash: false
     })(req, res, next);
