@@ -12,6 +12,7 @@
 
 <body class="user-body">
   {{> mobileHeader}}
+
   <div class="sidebar">
     <div class="sidebar-logo-wrapper">
       <a href="/" class="sidebar-logo-link">
@@ -45,6 +46,7 @@
     </a>
     <div class="sidebar-bottom-spacer"></div>
   </div>
+
   <section class="demo-header">
     <div class="header-container-2">
       <div>
@@ -54,6 +56,7 @@
       </div>
     </div>
   </section>
+
   <div class="dashboard-content">
     <div class="dashboard-container">
       <div class="w-layout-grid main-grid">
@@ -78,17 +81,6 @@
                       {{#if uname}}{{uname}}{{else}}-{{/if}}
                     </span>
                   </h1>
-                  {{!-- <img src="../../public/images/edit-icon.svg" alt="Edit Icon" class="edit-icon" /> --}}
-                  <svg class="edit-icon" data-w-id="b0d1b8fd-a0bc-a9b0-1b2d-f52c65a24a78"
-                    xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewbox="0 0 24 25" fill="none"
-                    app="ikonik">
-                    <path
-                      d="M21.2999 12.0761C20.7999 11.5761 20.1999 11.3761 19.4999 11.3761C18.8999 11.3761 18.1999 11.5761 17.6999 12.0761L15.9999 13.8761L15.3999 14.4761L14.7999 15.0761L12.3999 17.4761C11.3999 18.4761 10.6999 19.8761 10.5999 21.2761C10.5999 21.5761 10.4999 21.7761 10.4999 22.0761C10.4999 22.5761 10.8999 22.8761 11.2999 22.8761C12.3999 22.8761 13.4999 22.5761 14.4999 22.0761C14.9999 21.7761 15.4999 21.4761 15.8999 20.9761L18.8999 17.9761L19.4999 17.3761L21.2999 15.5761C21.7999 15.0761 21.9999 14.4761 21.9999 13.7761C21.9999 13.1761 21.6999 12.5761 21.2999 12.0761Z"
-                      fill="currentColor" app="ikonik" class="path-s2hh9"></path>
-                    <path
-                      d="M8.79996 21.276C8.99996 19.376 9.79996 17.676 11.2 16.276L15 12.476C15.8 11.676 16.4 10.676 16.6 9.57604C16.7 8.67604 16.6 7.67604 16.4 6.97604C15.7 4.77604 13.7 3.07604 11.3 2.97604C8.09996 2.87604 5.49996 5.37604 5.49996 8.57604C5.49996 10.476 6.39996 12.076 7.79996 13.076C5.29996 13.976 3.29996 15.876 2.19996 18.376C1.79996 19.376 1.89996 20.476 2.49996 21.376C3.19996 22.376 4.19996 22.976 5.39996 22.976H8.89996C8.79996 22.676 8.69996 22.476 8.69996 22.176C8.69996 21.876 8.79996 21.576 8.79996 21.276Z"
-                      fill="currentColor" app="ikonik" class="path-09e0u"></path>
-                  </svg>
                 </div>
                 <div class="form-info"><strong>Age:</strong>
                   <span id="ageDisplay">
@@ -195,19 +187,9 @@
     <div class="modal-card">
       <div class="modal-header">
         <a class="modal-return-button w-inline-block w--current" data-w-id="e51537ba-0bb8-7d9d-b7be-455102aac1f4"
-          href="/profile" aria-current="page">
-          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewbox="0 0 24 24" fill="none" app="ikonik"
-            class="back-icon">
-            <defs app="ikonik">
-              <clippath app="ikonik">
-                <rect width="24" height="24" fill="currentColor" app="ikonik" class="rect-hkbnx"></rect>
-              </clippath>
-            </defs>
-            <g clip-path="url(#clip0_6_13443)" app="ikonik">
-              <path d="M11.67 3.8701L9.9 2.1001L0 12.0001L9.9 21.9001L11.67 20.1301L3.54 12.0001L11.67 3.8701Z"
-                fill="currentColor" app="ikonik" class="path-ky26q"></path>
-            </g>
-          </svg></a>
+          aria-current="page">
+          {{> svg/backArrow}}
+        </a>
         <h1 class="modal-button">Edit Profile</h1>
       </div>
       <form class="modal-form" id="basicInfoForm" method="post" action="/update-profile">
@@ -272,25 +254,13 @@
     </div>
   </div>
 
-  </div>
   <div class="modal-wrapper modal-wrapper-2">
     <div data-w-id="41ca9b8f-4431-5ecc-bd68-c6d4e55deb39" class="modal-background"></div>
     <div class="modal-card">
       <div class="modal-header">
-        <a data-w-id="41ca9b8f-4431-5ecc-bd68-c6d4e55deb3c" href="/profile" aria-current="page"
+        <a data-w-id="41ca9b8f-4431-5ecc-bd68-c6d4e55deb3c" aria-current="page"
           class="modal-return-button w-inline-block w--current">
-          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewbox="0 0 24 24" fill="none" app="ikonik"
-            class="back-icon">
-            <defs app="ikonik">
-              <clippath app="ikonik">
-                <rect width="24" height="24" fill="currentColor" app="ikonik" class="rect-hkbnx"></rect>
-              </clippath>
-            </defs>
-            <g clip-path="url(#clip0_6_13443)" app="ikonik">
-              <path d="M11.67 3.8701L9.9 2.1001L0 12.0001L9.9 21.9001L11.67 20.1301L3.54 12.0001L11.67 3.8701Z"
-                fill="currentColor" app="ikonik" class="path-ky26q"></path>
-            </g>
-          </svg></a>
+          {{> svg/backArrow}}</a>
         <h1 class="modal-button">Family History</h1>
       </div>
       <form class="modal-form" id="familyHistoryForm" name="familyHistoryForm" method="post" action="/update-profile">
@@ -355,20 +325,10 @@
     <div data-w-id="40ffae57-f195-d2e7-75f9-2c5c8c8a26c4" class="modal-background"></div>
     <div class="modal-card">
       <div class="modal-header">
-        <a data-w-id="40ffae57-f195-d2e7-75f9-2c5c8c8a26c7" href="/profile" aria-current="page"
+        <a data-w-id="40ffae57-f195-d2e7-75f9-2c5c8c8a26c7" aria-current="page"
           class="modal-return-button w-inline-block w--current">
-          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewbox="0 0 24 24" fill="none" app="ikonik"
-            class="back-icon">
-            <defs app="ikonik">
-              <clippath app="ikonik">
-                <rect width="24" height="24" fill="currentColor" app="ikonik" class="rect-hkbnx"></rect>
-              </clippath>
-            </defs>
-            <g clip-path="url(#clip0_6_13443)" app="ikonik">
-              <path d="M11.67 3.8701L9.9 2.1001L0 12.0001L9.9 21.9001L11.67 20.1301L3.54 12.0001L11.67 3.8701Z"
-                fill="currentColor" app="ikonik" class="path-ky26q"></path>
-            </g>
-          </svg></a>
+          {{> svg/backArrow}}
+        </a>
         <h1 class="modal-button">Lifestyle</h1>
       </div>
       <form class="modal-form" id="lifestyleForm" id="lifestyleForm" method="post" action="/update-profile">
@@ -424,6 +384,13 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // Check if there's a stored active tab
+      const storedTab = sessionStorage.getItem('activeTab');
+      if (storedTab) {
+        setActiveTab(storedTab);
+        // Clear the stored tab
+        sessionStorage.removeItem('activeTab');
+      }
       // ====== Modal Management Functions ======
       function closeModal(modal) {
         modal.style.opacity = '0';
@@ -437,6 +404,25 @@
           modal.style.opacity = '1';
           modal.style.visibility = 'visible';
         }, 10);
+      }
+
+      function getCurrentTab() {
+        const activeTab = document.querySelector('.w-tab-link.w--current');
+        return activeTab ? activeTab.getAttribute('data-w-tab') : 'Basic Info';
+      }
+
+      function setActiveTab(tabName) {
+        const tab = document.querySelector(`[data-w-tab="${tabName}"]`);
+        if (tab) {
+          // Remove current class from all tabs and content
+          document.querySelectorAll('.w-tab-link').forEach(t => t.classList.remove('w--current'));
+          document.querySelectorAll('.w-tab-pane').forEach(p => p.classList.remove('w--tab-active'));
+
+          // Add current class to selected tab and its content
+          tab.classList.add('w--current');
+          const pane = document.querySelector(`.w-tab-pane[data-w-tab="${tabName}"]`);
+          if (pane) pane.classList.add('w--tab-active');
+        }
       }
 
       function clearFamilyHistoryForm() {
@@ -515,7 +501,6 @@
 
       // ====== Event Listeners ======
       // Modal trigger buttons
-      const editIconButton = document.querySelector('[data-w-id="b0d1b8fd-a0bc-a9b0-1b2d-f52c65a24a78"]');
       const updateProfileButton = document.querySelector('[data-w-id="65b6bed8-11da-b724-4dff-815803cad964"]');
       const addFamilyHistoryButton = document.querySelector('[data-w-id="c8ca94ba-1795-c52c-c05a-743d4de0b7f5"]');
       const addLifestyleButton = document.querySelector('[data-w-id="6caf6800-67a3-949e-e379-02601e73d169"]');
@@ -591,6 +576,7 @@
           }
         });
       });
+
       // Lifestyle edit entry functionality
       document.querySelectorAll('.lifestyle-entry .edit-entry-button').forEach(button => {
         button.addEventListener('click', async function () {
@@ -665,6 +651,7 @@
           }
         });
       });
+
       // Family History Delete entry functionality
       document.querySelectorAll('.family-history-entry .delete-entry-button').forEach(button => {
         button.addEventListener('click', async function () {
@@ -704,6 +691,7 @@
           }
         });
       });
+
       // Lifestyle delete button functionality
       document.querySelectorAll('.lifestyle-entry .delete-entry-button').forEach(button => {
         button.addEventListener('click', async function () {
@@ -744,15 +732,8 @@
           }
         });
       });
-      // Button Click Handlers
-      if (editIconButton) {
-        editIconButton.addEventListener('click', (e) => {
-          e.preventDefault();
-          const targetModal = document.querySelector('.modal-wrapper-1');
-          if (targetModal) openModal(targetModal);
-        });
-      }
 
+      // Button Click Handlers
       if (updateProfileButton) {
         updateProfileButton.addEventListener('click', (e) => {
           e.preventDefault();
@@ -781,6 +762,7 @@
       // Modal Close Handlers
       document.querySelectorAll('.modal-background, .modal-return-button, .cancel-button').forEach(element => {
         element.addEventListener('click', (e) => {
+          e.preventDefault(); // Prevent default link behavior
           const parentModal = element.closest('.modal-wrapper, .modal-wrapper-1, .modal-wrapper-2, .modal-wrapper-3');
           if (parentModal) closeModal(parentModal);
         });
@@ -789,6 +771,7 @@
       // Basic Info Form Submission
       document.getElementById('basicInfoForm')?.addEventListener('submit', async function (e) {
         e.preventDefault();
+        const currentTab = getCurrentTab();
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
 
@@ -825,6 +808,7 @@
             if (modal) {
               closeModal(modal);
             }
+            setActiveTab(currentTab);
           } else {
             throw new Error(result.message || 'Failed to update profile');
           }
@@ -837,6 +821,7 @@
       // Family history Form Submission
       document.getElementById('familyHistoryForm')?.addEventListener('submit', async function (e) {
         e.preventDefault();
+        const currentTab = getCurrentTab();
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
 
@@ -855,6 +840,7 @@
 
           const result = await response.json();
           if (result.success) {
+            sessionStorage.setItem('activeTab', currentTab);
             window.location.reload();
           } else {
             throw new Error(result.message || 'Failed to update entry');
@@ -868,6 +854,7 @@
       // Lifestyle Form Submission
       document.getElementById('lifestyleForm')?.addEventListener('submit', async function (e) {
         e.preventDefault();
+        const currentTab = getCurrentTab();
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
 
@@ -886,6 +873,7 @@
 
           const result = await response.json();
           if (result.success) {
+            sessionStorage.setItem('activeTab', currentTab);
             window.location.reload();
           } else {
             throw new Error(result.message || 'Failed to update entry');
