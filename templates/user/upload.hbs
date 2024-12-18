@@ -60,21 +60,20 @@
   <div class="dashboard-content">
     <div class="dashboard-container">
 
-      {{!-- # Uncomment to bring tabs back in --}}
-      {{!-- <div class="w-layout-grid main-grid">
+      <div class="w-layout-grid main-grid">
         <div data-duration-in="300" data-duration-out="100" data-current="All projects" data-easing="ease"
           class="tabs w-tabs">
           <div class="in-page-menu w-tab-menu">
-            <a data-w-tab="All projects" class="in-page-link w-inline-block w-tab-link w--current">
+            <a data-w-tab="Uploads" class="in-page-link w-inline-block w-tab-link w--current">
               <div class="text-block-4">File Uploads</div>
             </a>
-            <a data-w-tab="Ongoing" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block-5">Data Imports</div>
+            <a data-w-tab="Output" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block-5">File Output</div>
             </a>
-          </div> --}}
+          </div>
 
           <div class="labs-content w-tab-content">
-            <div data-w-tab="All projects" class="tab-pane-basic-info w-tab-pane w--tab-active">
+            <div data-w-tab="Uploads" class="tab-pane-basic-info w-tab-pane w--tab-active">
               <div class="dropdown-wrapper user-content-bg">
                 <div class="div-block-9">
                   <div class="upload-page-text">HealthLync extracts data from your bloodwork/lab files automatically.
@@ -93,10 +92,36 @@
                     <div id="fileList" class="file-list"></div>
                     <button id="processFiles" class="process-button" disabled>Upload File(s)</button>
                   </div>
-                  <div class="upload-page-text">Supported file types:
+                  <div class="upload-page-text2">Supported file types:
                     <li>PDFs</li>
                     <li>Photos &amp; Images (JPEG
                       and PNG)</li>... More to come
+                  </div>
+
+                  <div class="upload-page-text">Uploaded documents:</div>
+                  <div class="file-list-header">
+                    <div class="file-list-title">Name</div>
+                    <div class="file-list-title">Date</div>
+                    <div class="file-list-title">Uploaded</div>
+                  </div>
+                  <div class="uploaded-documents-list">
+                    {{#if user.files}}
+                      {{#each user.files}}
+                      <div class="file-list-row">
+                        <a href="/uploads/{{this.filename}}" class="file-list-item" target="_blank">
+                          <div class="file-name">{{this.originalName}}</div>
+                          <div class="file-date">{{formatDate this.uploadDate}}</div>
+                          <div class="file-uploaded">{{formatDate this.uploadDate}}</div>
+                        </a>
+                        <button class="delete-file-btn" data-file-id="{{this._id}}">
+                          <span class="delete-icon">×</span>
+                        </button>
+                      </div>
+                      {{/each}}
+                        {{else}}
+                      <div class="no-files-message">No documents uploaded yet</div>
+                      {{/if}}
+                      </div>
                   </div>
                 </div>
               </div>
@@ -105,17 +130,15 @@
               </div>
             </div>
 
-            {{!-- <div data-w-tab="Ongoing" class="tab-pane-ongoing w-tab-pane">
-              <div class="dropdown-wrapper">
+            <div data-w-tab="Output" class="tab-pane-ongoing w-tab-pane">
+              <div class="dropdown-wrapper user-content-bg">
                 <div class="div-block-9">
-                  <div class="upload-page-header">Large Data Import</div>
-                  <a href="#" class="button-2">Upload file(s)</a>
-                  <div class="upload-page-text">Supported file types:<br>‍<br>.csv<br>.tsv<br>.dsv<br><br>Max file
-                    size:<br>‍<br></div>
+                  <div class="upload-page-text">Data from uploaded file(s)</div>
+                  <div class="upload-page-text"><br>‍<br><br><br><br>
+                  <br>‍<br></div>
                 </div>
               </div>
-            </div> --}}
-
+            </div>
           </div>
         </div>
       </div>
@@ -231,6 +254,40 @@
         } catch (error) {
           alert('Error processing files: ' + error.message);
         }
+      });
+
+       // Handle file deletions
+      document.querySelectorAll('.delete-file-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+          if (!confirm('Are you sure you want to delete this file?')) return;
+
+          const fileId = this.dataset.fileId;
+          try {
+            const response = await fetch('/delete-file', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ fileId })
+            });
+
+            if (response.ok) {
+              // Remove the file row from the UI
+              this.closest('.file-list-row').remove();
+              
+              // If no files left, show the no files message
+              const filesList = document.querySelector('.uploaded-documents-list');
+              if (!filesList.querySelector('.file-list-row')) {
+                filesList.innerHTML = '<div class="no-files-message">No documents uploaded yet</div>';
+              }
+            } else {
+              throw new Error('Failed to delete file');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete file: ' + error.message);
+          }
+        });
       });
     });
   </script>
