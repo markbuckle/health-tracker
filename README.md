@@ -313,6 +313,24 @@ In your terminal, run:
 npm install --save base64url
 ```
 
+### Profile Page
+
+### File Uploads
+
+We used multer (a middleware for handling multipart/form-data) to handle file uploads:
+```pwsh
+npm install multer
+```
+
+The current implementation:
+<li>Sets up multer to handle file uploads</li>
+<li>Creates an uploads directory in your public folder</li>
+<li>Validates file types and sizes</li>
+<li>Stores file information in the user's document</li>
+<li>Includes error handling</li>
+
+The files are stored in public/uploads/ and the information is saved in MongoDB.
+
 ## Deployment
 
 For deploying this dynamic project I have chosen to used Vercel as it works well with node.js/express.js projects. 

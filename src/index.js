@@ -9,6 +9,8 @@ const { registerCollection } = require("./mongodb");
 const MongoStore = require('connect-mongo');
 const templatePath = path.join(__dirname, '../templates');
 const publicPath = path.join(__dirname, '../public');
+const multer = require('multer');
+const fs = require('fs');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
@@ -418,6 +420,111 @@ app.post('/update-profile', checkAuth, async (req, res) => {
             error: error.message
         });
     }
+});
+
+// Configure MULTER for file upload 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Create uploads directory if it doesn't exist
+        const uploadDir = path.join(__dirname, '../public/uploads');
+        if (!fs.existsSync(uploadDir)){
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        // Create unique filename with original extension
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+// File filter to only allow PDFs and images
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Invalid file type. Only PDF, JPEG, and PNG files are allowed.'), false);
+    }
+};
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 200 * 1024 * 1024 // 200MB limit
+    }
+});
+
+app.post('/upload-files', checkAuth, upload.array('files'), async (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'No files were uploaded.' 
+            });
+        }
+
+        // Get the user
+        const user = await registerCollection.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+
+        // Process each uploaded file
+        const uploadedFiles = req.files.map(file => ({
+            filename: file.filename,
+            originalName: file.originalname,
+            path: file.path,
+            size: file.size,
+            mimetype: file.mimetype,
+            uploadDate: new Date()
+        }));
+
+        // Add files to user's document storage
+        // You'll need to add a files field to your user schema in mongodb.js
+        if (!user.files) {
+            user.files = [];
+        }
+        user.files.push(...uploadedFiles);
+
+        await user.save();
+
+        res.json({
+            success: true,
+            message: 'Files uploaded successfully',
+            files: uploadedFiles
+        });
+
+    } catch (error) {
+        console.error('File upload error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error processing files',
+            error: error.message 
+        });
+    }
+});
+
+// Error handler for multer errors
+app.use((error, req, res, next) => {
+    if (error instanceof multer.MulterError) {
+        if (error.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({
+                success: false,
+                message: 'File is too large. Maximum size is 200MB.'
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+    next(error);
 });
 
 app.listen(port, () => {

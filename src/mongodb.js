@@ -74,6 +74,18 @@ const profileSchema = new mongoose.Schema({
     }
 }, { _id: false });
 
+const fileSchema = new mongoose.Schema({
+    filename: String,
+    originalName: String,
+    path: String,
+    size: Number,
+    mimetype: String,
+    uploadDate: {
+        type: Date,
+        default: Date.now
+    }
+}, { _id: true });
+
 // User Schema
 const registerSchema = new mongoose.Schema({
     fname: {
@@ -100,7 +112,8 @@ const registerSchema = new mongoose.Schema({
     profile: { 
         type: profileSchema, 
         default: () => ({})
-    }
+    },
+    files: [fileSchema]
 },{ 
     timestamps: false // Adds createdAt and updatedAt field
 });
