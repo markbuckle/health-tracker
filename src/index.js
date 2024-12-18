@@ -152,8 +152,21 @@ app.get('/profile', checkAuth, (req, res) => {
     });
 });
 
-app.get('/upload', checkAuth, (req, res) => {
-    res.render('user/upload', { naming: req.user.uname });
+app.get('/upload', checkAuth, async (req, res) => {
+    try {
+        // Fetch the uploaded user document with files
+        const user = await registerCollection.findById(req.user._id).lean();
+        
+        // console.log('User files:', user.files); // Add this for debugging
+        
+        res.render('user/upload', { 
+            naming: user.uname,
+            user: user // Make sure you're passing the entire user object
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).send('Error loading upload page');
+    }
 });
 
 app.get('/reports', checkAuth, (req, res) => {
@@ -526,6 +539,40 @@ app.use((error, req, res, next) => {
     }
     next(error);
 });
+
+app.post('/delete-file', checkAuth, async (req, res) => {
+    try {
+      const { fileId } = req.body;
+      const user = await registerCollection.findById(req.user._id);
+      
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+  
+      // Find the file to get its filename
+      const file = user.files.id(fileId);
+      if (!file) {
+        return res.status(404).json({ success: false, message: 'File not found' });
+      }
+  
+      // Delete the physical file
+      const filePath = path.join(__dirname, '../public/uploads', file.filename);
+      fs.unlink(filePath, (err) => {
+        if (err && err.code !== 'ENOENT') {
+          console.error('Error deleting file:', err);
+        }
+      });
+  
+      // Remove file from user's files array
+      user.files.pull(fileId);
+      await user.save();
+  
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      res.status(500).json({ success: false, message: error.message });
+    }
+  });
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
