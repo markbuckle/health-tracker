@@ -1,3 +1,8 @@
+/* ------ Default Styles -------- */
+body {
+    font-family: "Poppins-Regular", sans-serif;
+}
+
 /* ------ Mobile Header Styles ------ */
 .mobile-header {
     display: none;
@@ -2399,11 +2404,6 @@ img, .nav-icon {
     background-color: #f8fafc;
   }
   
-  /* .file-list-item {
-    display: contents;
-    text-decoration: none;
-    color: inherit;
-  } */
   .file-list-item {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
@@ -2411,12 +2411,7 @@ img, .nav-icon {
     text-decoration: none;
     color: inherit;
     grid-column: 1 / span 3; /* Span the first three columns */
-  }
-
-  
-  .file-name {
-    color: #3b82f6;
-    font-weight: 500;
+    cursor: default;
   }
   
   .file-date, .file-uploaded {
@@ -2562,6 +2557,10 @@ img, .nav-icon {
   .file-name {
     color: #1e293b;
     font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .file-name:hover {
+    color: #4a894f;
   }
   
   .remove-file {
@@ -2595,6 +2594,53 @@ img, .nav-icon {
   .process-button:not(:disabled):hover {
     background-color: #779f7e;
   }
+/* --- Upload page Lab Results ---- */
+
+.lab-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .lab-result-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+  
+  .lab-result-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+  }
+  
+  .lab-values {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .lab-value {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 0.25rem;
+  }
+  
+  .test-name {
+    font-weight: 500;
+    color: #64748b;
+  }
+  
+  .test-value {
+    font-size: 1.125rem;
+    color: #1e293b;
+  }
+
 /* ---- Dashboard ----- */
 /* ---- profile page ---- */
 .basic-info-div {

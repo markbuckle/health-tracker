@@ -86,6 +86,37 @@ const fileSchema = new mongoose.Schema({
     }
 }, { _id: true });
 
+const labValueSchema = new mongoose.Schema({
+    value: Number,
+    unit: String,
+    rawText: String,
+    inRange: Boolean
+}, { _id: false });
+
+const labResultSchema = new mongoose.Schema({
+    filename: String,
+    uploadDate: Date,
+    labValues: {
+        type: Map,
+        of: labValueSchema
+    }
+    // labValues: {
+    //     'Vitamin D': labValueSchema,
+    //     'Estrogen': labValueSchema,
+    //     'White Blood Count': labValueSchema,
+    //     'Red Blood Count': labValueSchema,
+    //     'Hemoglobin': labValueSchema,
+    //     'Testosterone': labValueSchema,
+    //     'Testosterone Bioavailable': labValueSchema,
+    //     'Sex Hormone Binding Globulin': labValueSchema,
+    //     'T4': labValueSchema,
+    //     'T4 Free': labValueSchema,
+    //     'FSH': labValueSchema,
+    //     'TSH': labValueSchema,
+        // Add more as needed
+    // }
+}, { _id: true });
+
 // User Schema
 const registerSchema = new mongoose.Schema({
     fname: {
@@ -113,7 +144,8 @@ const registerSchema = new mongoose.Schema({
         type: profileSchema, 
         default: () => ({})
     },
-    files: [fileSchema]
+    files: [fileSchema],
+    labResults: [labResultSchema]
 },{ 
     timestamps: false // Adds createdAt and updatedAt field
 });

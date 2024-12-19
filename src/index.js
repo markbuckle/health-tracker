@@ -39,6 +39,12 @@ hbs.registerHelper('json', function(context) {
     return JSON.stringify(context); 
 });
 
+hbs.registerHelper('isCurrentFile', function(labResultFilename, currentFiles) {
+    // Extract just the filename without path for comparison
+    const baseName = path.basename(labResultFilename);
+    return currentFiles.some(file => file.originalName === baseName);
+});
+
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
 
@@ -156,12 +162,12 @@ app.get('/upload', checkAuth, async (req, res) => {
     try {
         // Fetch the uploaded user document with files
         const user = await registerCollection.findById(req.user._id).lean();
-        
-        // console.log('User files:', user.files); // Add this for debugging
-        
+        const labResults = user.labResults || [];
+
         res.render('user/upload', { 
             naming: user.uname,
-            user: user // Make sure you're passing the entire user object
+            user: user, 
+            labResults: labResults 
         });
     } catch (error) {
         console.error('Error fetching user data:', error);
@@ -470,6 +476,8 @@ const upload = multer({
     }
 });
 
+const { extractFromPDF, extractFromImage } = require('./utils/labParser');
+
 app.post('/upload-files', checkAuth, upload.array('files'), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) {
@@ -489,28 +497,77 @@ app.post('/upload-files', checkAuth, upload.array('files'), async (req, res) => 
         }
 
         // Process each uploaded file
-        const uploadedFiles = req.files.map(file => ({
-            filename: file.filename,
-            originalName: file.originalname,
-            path: file.path,
-            size: file.size,
-            mimetype: file.mimetype,
-            uploadDate: new Date()
-        }));
+        const uploadedFiles = [];
+        for (const file of req.files) {
+            let labValues = null;
+            
+            // Extract lab values based on file type
+            try {
+                if (file.mimetype === 'application/pdf') {
+                    console.log('Processing PDF file:', file.originalname);
+                    labValues = await extractFromPDF(file.path);
+                    console.log('Extracted lab values:', labValues);
+                } else if (file.mimetype.startsWith('image/')) {
+                    console.log('Processing image file:', file.originalname);
+                    labValues = await extractFromImage(file.path);
+                    console.log('Extracted lab values:', labValues);
+                }
+            } catch (error) {
+                console.error(`Error extracting data from ${file.originalname}:`, error);
+                // Continue with upload even if extraction fails
+            }
+
+            // Create file object with extracted data
+            const fileObject = {
+                filename: file.filename,
+                originalName: file.originalname,
+                path: file.path,
+                size: file.size,
+                mimetype: file.mimetype,
+                uploadDate: new Date(),
+                labValues: labValues || {} // Add extracted lab values
+            };
+
+            uploadedFiles.push(fileObject);
+        }
 
         // Add files to user's document storage
-        // You'll need to add a files field to your user schema in mongodb.js
         if (!user.files) {
             user.files = [];
         }
         user.files.push(...uploadedFiles);
+
+         // Initialize labResults array if it doesn't exist
+         if (!user.labResults) {
+            user.labResults = [];
+        }
+
+        // Add lab results
+        const labResults = uploadedFiles
+            .filter(file => file.labValues && Object.keys(file.labValues).length > 0)
+            .map(file => ({
+                filename: file.originalName,
+                uploadDate: file.uploadDate,
+                labValues: file.labValues
+            }));
+        
+        console.log('Processed lab results:', labResults);
+            
+        if (labResults.length > 0) {
+            user.labResults.push(...labResults);
+        }
 
         await user.save();
 
         res.json({
             success: true,
             message: 'Files uploaded successfully',
-            files: uploadedFiles
+            files: uploadedFiles,
+            extractedData: labResults
+            // extractedData: uploadedFiles.map(file => ({
+            //     filename: file.originalName,
+            //     labValues: file.labValues
+            // }))
         });
 
     } catch (error) {
@@ -550,21 +607,29 @@ app.post('/delete-file', checkAuth, async (req, res) => {
       }
   
       // Find the file to get its filename
-      const file = user.files.id(fileId);
-      if (!file) {
-        return res.status(404).json({ success: false, message: 'File not found' });
+      const fileToDelete = user.files.id(fileId);
+      if (!fileToDelete) {
+          return res.status(404).json({ success: false, message: 'File not found' });
       }
   
-      // Delete the physical file
-      const filePath = path.join(__dirname, '../public/uploads', file.filename);
-      fs.unlink(filePath, (err) => {
-        if (err && err.code !== 'ENOENT') {
-          console.error('Error deleting file:', err);
-        }
-      });
+        // Delete the physical file
+        const filePath = path.join(__dirname, '../public/uploads', fileToDelete.filename);
+        fs.unlink(filePath, (err) => {
+            if (err && err.code !== 'ENOENT') {
+                console.error('Error deleting file:', err);
+            }
+        });
   
       // Remove file from user's files array
       user.files.pull(fileId);
+
+      // Remove corresponding lab results
+      if (user.labResults) {
+        user.labResults = user.labResults.filter(result => 
+            result.filename !== fileToDelete.originalName
+        );
+    }
+    
       await user.save();
   
       res.json({ success: true });
