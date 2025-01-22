@@ -74,6 +74,17 @@ const profileSchema = new mongoose.Schema({
     }
 }, { _id: false });
 
+const labValueSchema = new mongoose.Schema({
+    value: Number,
+    unit: String,
+    rawText: String,
+    referenceRange: String,
+    confidence: Number,
+    loincCode: String, // For future LOINC implementation
+    normalizedValue: Number, // For future unit normalization
+    normalizedUnit: String
+}, { _id: false });
+
 const fileSchema = new mongoose.Schema({
     filename: String,
     originalName: String,
@@ -83,15 +94,18 @@ const fileSchema = new mongoose.Schema({
     uploadDate: {
         type: Date,
         default: Date.now
-    }
-}, { _id: true });
-
-const labValueSchema = new mongoose.Schema({
-    value: Number,
-    unit: String,
-    rawText: String,
-    inRange: Boolean
-}, { _id: false });
+    },
+    testDate: {  // Add this field
+        type: Date,
+        default: null
+    },
+    extractionMethod: String, // 'pdfjs', 'doctr', or 'tesseract'
+    labValues: {
+        type: Map,
+        of: labValueSchema
+    },
+    processingErrors: [String]
+});
 
 const labResultSchema = new mongoose.Schema({
     filename: String,
@@ -100,21 +114,6 @@ const labResultSchema = new mongoose.Schema({
         type: Map,
         of: labValueSchema
     }
-    // labValues: {
-    //     'Vitamin D': labValueSchema,
-    //     'Estrogen': labValueSchema,
-    //     'White Blood Count': labValueSchema,
-    //     'Red Blood Count': labValueSchema,
-    //     'Hemoglobin': labValueSchema,
-    //     'Testosterone': labValueSchema,
-    //     'Testosterone Bioavailable': labValueSchema,
-    //     'Sex Hormone Binding Globulin': labValueSchema,
-    //     'T4': labValueSchema,
-    //     'T4 Free': labValueSchema,
-    //     'FSH': labValueSchema,
-    //     'TSH': labValueSchema,
-        // Add more as needed
-    // }
 }, { _id: true });
 
 // User Schema

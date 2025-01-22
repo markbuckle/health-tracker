@@ -1,167 +1,284 @@
-const fs = require('fs'); //  import the node.js file system (FS) module
+const fs = require('fs');
 const path = require('path');
-const { createWorker } = require('tesseract.js'); // Import the Tesseract.js library's createWorker function
-const pdf = require('pdf-parse'); // Import the pdf-parse library for extracting text from PDF files
-const { PDFExtract } = require('pdf.js-extract'); // Import the PDFExtract class from the pdf.js-extract library (though it's not used in the code)
-const pdfExtract = new PDFExtract();
-const { createCanvas } = require('canvas');
+const { createWorker } = require('tesseract.js');
+const pdf = require('pdf-parse');
+const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+const { createCanvas, loadImage } = require('canvas');
+const { labPatterns, datePatterns, enhancedTestosteronePatterns, structuredTestPatterns } = require('./labPatterns');
 
-let pdfjsLib;
-(async () => {
-    const pdfjs = await import('pdfjs-dist/legacy/build/pdf.js');
-    pdfjsLib = pdfjs.default;
-    // Set workerSrc to a string path
-    pdfjsLib.GlobalWorkerOptions.workerSrc = path.join(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.js');
-})();
+pdfjsLib.GlobalWorkerOptions.workerSrc = path.join(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.js');
 
-// Define lab value patterns to extract specific lab values from text
-const labPatterns = {
-    // Current patterns enhanced
-    'Vitamin D': /(?:Vitamin ?D|25-OH Vitamin D|25-Hydroxyvitamin D)[^0-9]*(\d+\.?\d*)\s*(ng\/mL|IU\/L|nmol\/L)/i,
-    'Estrogen': /(?:Estrogen|Estradiol|E2)[^0-9]*(\d+\.?\d*)\s*(pg\/mL|pmol\/L)/i,
-    'White Blood Count': /(?:White Blood (?:Cell )?Count|WBC)[^0-9]*(\d+\.?\d*)\s*(K\/uL|×10⁹\/L|10\^9\/L)/i,
-    'Red Blood Count': /(?:Red Blood (?:Cell )?Count|RBC)[^0-9]*(\d+\.?\d*)\s*(M\/uL|×10¹²\/L|10\^12\/L)/i,
-    'Hemoglobin': /(?:Hemoglobin|Hgb|Hb)[^0-9]*(\d+\.?\d*)\s*(g\/dL|g\/L)/i,
-    'Platelets': /(?:Platelets?|PLT)[^0-9]*(\d+\.?\d*)\s*(K\/uL|×10⁹\/L|10\^9\/L)/i,
-    'Hematocrit': /(?:Hematocrit|HCT)[^0-9]*(\d+\.?\d*)\s*(%|L\/L)/i,
+function parseLabValues(text) {
+    const results = {};
+    const normalizedText = text.replace(/\s+/g, ' ').trim();
+    const lines = text.split('\n');
 
-    // current file
-    'SHBG': /sex hormone binding globulin\s+(\d+(?:\.\d+)?)\s+(?:\d+(?:\.\d+)?-\d+(?:\.\d+)?)\s*(nmol\/L)/i,
-    'Testosterone Bioavailable': /testosterone bioavailable\s+(\d+(?:\.\d+)?)\s+(?:\d+(?:\.\d+)?-\d+(?:\.\d+)?)\s*(nmol\/L)/i,
-    'T4 FREE': /t4 free\s+(\d+(?:\.\d+)?)\s+(?:\d+(?:[\.,]\d+)?[-,]?\d+(?:[\.,]\d+)?)\s*(?:pmol\/L|pmol\/l|prolil?)/i,
-    'FSH': /fsh\s+(\d+(?:\.\d+)?)\s+(?:\d+(?:\.\d+)?-\d+(?:\.\d+)?)\s*(?:IU\/L|[IU]\/L|iu\/l|ui)/i,
-    'TSH': /tsh\s+(\d+(?:\.\d+)?)\s+(?:\d+(?:\.\d+)?-\d+(?:\.\d+)?)\s*(?:mIU\/L|miu\/l|miu)/i,
+    // Debug logging
+    console.log('Starting lab value parsing...');
+    
+    // First try structured format (TEST NAME RESULT format)
+    for (const line of lines) {
+        if (line.includes('TEST NAME') && line.includes('RESULT') && line.includes('UNITS')) {
+            const nextLine = lines[lines.indexOf(line) + 1];
+            if (nextLine) {
+                const parts = nextLine.split(/\s+/);
+                const testName = parts[0];
+                const value = parts.find(p => /^[\d.]+$/.test(p));
+                const refRange = parts.find(p => /^\d+\.?\d*[-–]\d+\.?\d*$/.test(p));
+                const unit = parts[parts.length - 1];
 
-    // Others
-    'T4': /(?:T4|Thyroxine)[^0-9]*(\d+\.?\d*)\s*(pmol\/L|μg\/dL)/i,
-    'T3': /(?:T3|Triiodothyronine)[^0-9]*(\d+\.?\d*)\s*(pmol\/L|ng\/dL)/i,
-    'T3 FREE': /(?:Free T3|T3 FREE|FT3)[^0-9]*(\d+\.?\d*)\s*(pmol\/L|pg\/mL)/i,
-    'Testosterone': /(?:Testosterone|Total Testosterone|TEST)[^0-9]*(\d+\.?\d*)\s*(nmol\/L|ng\/dL)/i,
-    'Cortisol': /(?:Cortisol|Serum Cortisol)[^0-9]*(\d+\.?\d*)\s*(nmol\/L|μg\/dL)/i,
-    'Prolactin': /(?:Prolactin|PRL)[^0-9]*(\d+\.?\d*)\s*(ng\/mL|μg\/L)/i,
-    'LH': /(?:LH|Luteinizing Hormone)[^0-9]*(\d+\.?\d*)\s*(IU\/L|mIU\/mL)/i
-    // Add more patterns as needed
-};
-
-// Function to extract text from a PDF file and parse lab values
-async function extractFromPDF(filePath) {
-    try {
-        while (!pdfjsLib) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+                if (testName && value) {
+                    console.log(`Found structured format match: ${testName} = ${value} ${unit}`);
+                    results[testName] = {
+                        value: parseFloat(value).toFixed(2),
+                        unit: unit,
+                        rawText: nextLine.trim(),
+                        referenceRange: refRange,
+                        confidence: 1,
+                        matchType: 'structured'
+                    };
+                }
+            }
         }
+    }
 
-        let results = {};
-        const dataBuffer = fs.readFileSync(filePath);
-        console.log('Reading PDF file:', filePath);
-
+    // Then try enhanced testosterone patterns
+    for (const [testName, pattern] of Object.entries(enhancedTestosteronePatterns)) {
         try {
-            const data = await pdf(dataBuffer);
-            console.log('Extracted raw text:', data.text);
-            if (data.text.trim()) {
-                results = parseLabValues(data.text);
+            const match = pattern.regex.exec(normalizedText);
+            if (match) {
+                console.log(`Found testosterone match: ${testName} = ${match[1]}`);
+                const refRangeMatch = normalizedText.match(new RegExp(`${testName}.*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`));
+                
+                results[testName] = {
+                    value: Number(match[1]).toFixed(pattern.precision || 2),
+                    unit: pattern.standardUnit,
+                    rawText: match[0].trim(),
+                    referenceRange: refRangeMatch ? refRangeMatch[1] : null,
+                    confidence: 1,
+                    matchType: 'enhanced'
+                };
             }
         } catch (error) {
-            console.log('Error with text extraction:', error);
+            console.error(`Error parsing ${testName}:`, error);
+        }
+    }
+
+    // Finally try standard patterns for remaining values
+    for (const [testName, pattern] of Object.entries(labPatterns)) {
+        // Skip if already found by other methods
+        if (results[testName]) continue;
+
+        try {
+            const match = pattern.regex.exec(normalizedText);
+            if (match) {
+                console.log(`Found standard match: ${testName} = ${match[1]}`);
+                const matchLine = lines.find(line => line.includes(match[0])) || '';
+                const refRangeMatch = matchLine.match(/\d+\.?\d*\s*[-–]\s*\d+\.?\d*/);
+
+                results[testName] = {
+                    value: parseFloat(match[1]).toFixed(pattern.precision || 2),
+                    unit: pattern.standardUnit,
+                    rawText: matchLine.trim(),
+                    referenceRange: refRangeMatch ? refRangeMatch[0] : null,
+                    confidence: 1,
+                    matchType: 'standard'
+                };
+            }
+        } catch (error) {
+            console.error(`Error parsing ${testName}:`, error);
+        }
+    }
+
+    // Log final results
+    console.log('Parsed results:', {
+        totalValues: Object.keys(results).length,
+        foundTests: Object.keys(results),
+        details: results
+    });
+
+    return results;
+}
+
+async function preprocessImage(imageBuffer) {
+    // Load image into canvas
+    const image = await loadImage(imageBuffer);
+    const canvas = createCanvas(image.width, image.height);
+    const ctx = canvas.getContext('2d');
+    
+    // Draw original image
+    ctx.drawImage(image, 0, 0);
+    
+    // Get image data
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    
+    // Convert to grayscale and increase contrast
+    for (let i = 0; i < data.length; i += 4) {
+        const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        
+        // Increase contrast
+        const contrast = 1.2; // Adjust this value for more/less contrast
+        const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+        const newBrightness = factor * (brightness - 128) + 128;
+        
+        // Thresholding for better text detection
+        const threshold = 128;
+        const finalValue = newBrightness > threshold ? 255 : 0;
+        
+        data[i] = finalValue;     // R
+        data[i + 1] = finalValue; // G 
+        data[i + 2] = finalValue; // B
+    }
+    
+    // Put processed image back
+    ctx.putImageData(imageData, 0, 0);
+    
+    // Scale up image for better OCR
+    const scaleFactor = 2;
+    const scaledCanvas = createCanvas(canvas.width * scaleFactor, canvas.height * scaleFactor);
+    const scaledCtx = scaledCanvas.getContext('2d');
+    
+    // Use better scaling algorithm
+    scaledCtx.imageSmoothingEnabled = false;
+    scaledCtx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    
+    return scaledCanvas.toBuffer('image/png');
+}
+
+async function performOCR(imageBuffer) {
+    const worker = await createWorker();
+    try {
+        const { data: { text, confidence } } = await worker.recognize(imageBuffer);
+        console.log('Raw OCR output:', text);
+        console.log(`Tesseract confidence: ${confidence}%`);
+
+        // Parse lab values only - move testDate extraction to main function
+        const labValues = parseLabValues(text);
+        
+        // Add confidence metadata
+        Object.keys(labValues).forEach(key => {
+            labValues[key].confidence = confidence / 100;
+            labValues[key].confidenceLevel = interpretConfidence(confidence);
+        });
+
+        return { text, labValues };
+    } finally {
+        await worker.terminate();
+    }
+}
+
+async function extractFromPDF(filePath) {
+    try {
+        const dataBuffer = fs.readFileSync(filePath);
+        let labValues = {};
+        let testDate = null;
+        
+        try {
+            const data = await pdf(dataBuffer);
+            if (data.text.trim()) {
+                console.log('PDF.js extracted text:', data.text);
+                labValues = parseLabValues(data.text);
+                testDate = extractTestDate(data.text);
+            }
+        } catch (error) {
+            console.log('PDF.js extraction failed:', error);
         }
 
-        // If no results or partial results, try OCR
-        if (Object.keys(results).length === 0) {
-            console.log('No results found with text extraction, trying OCR...');
-
-            const loadingTask = pdfjsLib.getDocument({ data: dataBuffer });
-            const pdfDocument = await loadingTask.promise;
+        if (Object.keys(labValues).length === 0) {
+            console.log('No results from PDF.js, trying OCR...');
+            const pdfDocument = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
             const numPages = pdfDocument.numPages;
-            console.log(`PDF has ${numPages} pages`);
-
-            let allText = '';
+            let allResults = {};
             
-            // Process each page
             for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                console.log(`Processing page ${pageNum}`);
+                console.log(`Processing page ${pageNum} of ${numPages}`);
                 const page = await pdfDocument.getPage(pageNum);
-
-                const scale = 2.0;
-                const viewport = page.getViewport({ scale });
+                const viewport = page.getViewport({ scale: 2.0 });
                 const canvas = createCanvas(viewport.width, viewport.height);
                 const context = canvas.getContext('2d');
 
-                const renderContext = {
+                await page.render({
                     canvasContext: context,
                     viewport: viewport
-                };
+                }).promise;
 
-                await page.render(renderContext).promise;
-
-                // Use Tesseract.js for OCR
-                const worker = await createWorker();
-                const { data: { text } } = await worker.recognize(canvas.toBuffer('image/png'));
-                console.log(`OCR extracted text from page ${pageNum}:`, text);
+                const results = await performOCR(canvas.toBuffer('image/png'));
                 
-                allText += text + '\n';
-                await worker.terminate();
-            }
+                // Try to get test date from first page if we don't have one yet
+                if (!testDate) {
+                    testDate = extractTestDate(results.text);
+                }
 
-            // Parse values from all pages combined
-            const pageResults = parseLabValues(allText);
-            results = { ...results, ...pageResults };
+                allResults = { ...allResults, ...results.labValues };
+            }
+            
+            labValues = allResults;
         }
 
-        return results;
+        return {
+            labValues,
+            testDate
+        };
     } catch (error) {
         console.error('Error extracting from PDF:', error);
         throw error;
     }
 }
 
-// Function to extract text from an image file using Tesseract.js and parse lab values
-async function extractFromImage(filePath) {
-    const worker = await createWorker('eng'); // Create a Tesseract.js worker for OCR
-    try {
-        const { data: { text } } = await worker.recognize(filePath); // Use the worker to recognize text in the image file
-        await worker.terminate(); // Terminate the worker after use
-        return parseLabValues(text); // Parse and return the extracted lab values
-    } catch (error) {
-        console.error('Error extracting from image:', error);
-        await worker.terminate(); // Ensure the worker is terminated even if an error occurs
-        throw error;
+function extractTestDate(text) {
+    if (!text || typeof text !== 'string') {
+        console.log('Invalid text provided to extractTestDate');
+        return null;
     }
-}
 
-// Function to parse lab values from text using defined patterns
-function parseLabValues(text) {
-    const results = {}; // Initialize an empty object to store the parsed results
-    const normalizedText = text.toLowerCase().replace(/\s+/g, ' ');
+    // Sort patterns by priority
+    const sortedPatterns = [...datePatterns].sort((a, b) => a.priority - b.priority);
 
-    console.log('Normalized text for parsing:', normalizedText);
-    
-    // Loop through each defined lab pattern
-    for (const [testName, pattern] of Object.entries(labPatterns)) { 
-        // For debugging, log each pattern being tried
-        console.log(`Trying pattern for ${testName}:`, pattern);
-
-        const match = text.match(pattern); // Attempt to match the pattern in the text
-        
-        // If a match is found, extract and store the value, unit, and raw text
+    for (const pattern of sortedPatterns) {
+        const match = pattern.regex.exec(text);
         if (match) {
-            console.log(`Found match for ${testName}:`, match); // Add this to see matches
-            results[testName] = {
-                value: parseFloat(match[1]),
-                unit: match[2],
-                rawText: match[0],
-                referenceRange: match[3] || null  // Add reference range if found
-            };
-        } else {
-            console.log(`No match found for ${testName}`);
+            try {
+                const dateStr = match[1].trim();
+                const parts = dateStr.split(/[-\s]/);
+
+                // Handle format "DD-MMM-YYYY"
+                if (parts.length === 3) {
+                    const monthMap = {
+                        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+                        'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+                    };
+
+                    // Check if first part is day or year
+                    if (parts[0].length === 2) { // DD-MMM-YYYY
+                        const day = parseInt(parts[0]);
+                        const month = monthMap[parts[1]];
+                        const year = parseInt(parts[2].split(' ')[0]); // Remove any time component
+                        return new Date(year, month, day);
+                    } else { // YYYY-MMM-DD
+                        const year = parseInt(parts[0]);
+                        const month = monthMap[parts[1]];
+                        const day = parseInt(parts[2].split(' ')[0]); // Remove any time component
+                        return new Date(year, month, day);
+                    }
+                }
+            } catch (error) {
+                console.log(`Error parsing date: ${error}`);
+            }
         }
     }
-    
-    // Return the parsed lab values
-    return results;
+    return null;
 }
 
-// Export the functions for use in other modules
+function interpretConfidence(confidence) {
+    if (confidence >= 90) return 'high';
+    if (confidence >= 75) return 'medium';
+    return 'low';
+}
+
 module.exports = {
+    preprocessImage,
     extractFromPDF,
-    extractFromImage,
-    parseLabValues
+    parseLabValues,
+    extractTestDate
 };

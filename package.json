@@ -10,20 +10,30 @@
     "postinstall": "npm run vercel-build"
   },
   "dependencies": {
+    "canvas": "2.11.2",
+    "connect-mongo": "^5.0.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "hbs": "^4.2.0",
     "mongoose": "^8.7.3",
+    "multer": "1.4.5-lts.1",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "connect-mongo": "^5.0.0" 
+    "pdf-parse": "1.1.1",
+    "pdf.js-extract": "0.2.1",
+    "pdfjs-dist": "2.16.105",
+    "plotly.js-dist": "2.35.3",
+    "react": "19.0.0",
+    "react-plotly.js": "2.6.0",
+    "tesseract.js": "5.1.1",
+    "ws": "8.18.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
   "engines": {
-    "node": "18.x",
+    "node": ">=18.x",
     "npm": ">=9.0.0"
   },
   "private": true

@@ -31,7 +31,7 @@
         loading="lazy" alt="Icon" class="nav-icon">
       <div class="page-link-text-block"><span class="page-link-text-span">Reports</span></div>
     </a>
-    <a id="Dashboard" href="/dashboard" class="page-link w-inline-block">
+    <a id="Insights" href="/insights" class="page-link w-inline-block">
       <img src="images/layout.svg" loading="lazy" alt="Icon" class="nav-icon">
       <div class="page-link-text-block"><span class="page-link-text-span">Dashboard</span></div>
     </a>
@@ -71,7 +71,11 @@
             <a data-w-tab="Lifestyle" class="in-page-link w-inline-block w-tab-link">
               <div class="text-block-5">Lifestyle</div>
             </a>
+            <a data-w-tab="Meds-Sups" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block-5">Meds & Sups</div>
+            </a>
           </div>
+
           <div class="w-tab-content">
             <div data-w-tab="Basic Info" class="w-tab-pane w--tab-active">
               <div class="dropdown-wrapper user-content-bg">
@@ -82,12 +86,12 @@
                     </span>
                   </h1>
                 </div>
-                <div class="form-info"><strong>Age:</strong>
+                <div class="form-info-output"><strong>Age:</strong>
                   <span id="ageDisplay">
                     {{#if profile.age}}{{profile.age}}{{else}}-{{/if}}
                   </span>
                 </div>
-                <div class="form-info"><strong>Blood Type:</strong>
+                <div class="form-info-output"><strong>Blood Type:</strong>
                   <span id="bloodTypeDisplay">
                     {{#ifEqual profile.bloodType "Other"}}
                     {{profile.customBloodType}}
@@ -173,6 +177,40 @@
               </div>
               <a data-w-id="6caf6800-67a3-949e-e379-02601e73d169" href="#" class="edit-button-modal w-inline-block">
                 <div class="button-text">+ Add lifestyle habits</div>
+              </a>
+            </div>
+
+            <div data-w-tab="Meds-Sups" class="w-tab-pane">
+              <div class="dropdown-wrapper user-content-bg">
+                <div class="header-container-3">
+                  <h1 class="username-heading">Medications & Supplements</h1>
+                </div>
+                <div class="history-info">
+                  {{#if profile.lifestyle.length}}
+                  {{#each profile.lifestyle}}
+                  <div class="lifestyle-entry">
+                    <div class="form-info">
+                      <p><strong>Habit Type:</strong> {{habitType}}</p>
+                    </div>
+                    <div class="form-info">
+                      <p><strong>Status:</strong> {{status}}</p>
+                    </div>
+                    <div class="form-info">
+                      <p><strong>Notes:</strong> {{lifestyleNotes}}</p>
+                    </div>
+                    <div>
+                      <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
+                      <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
+                    </div>
+                  </div>
+                  {{/each}}
+                  {{else}}
+                  <div class="form-info">No Medications or Supplements recorded</div>
+                  {{/if}}
+                </div>
+              </div>
+              <a data-w-id="6caf6800-67a3-949e-e379-02601e73d169" href="#" class="edit-button-modal w-inline-block">
+                <div class="button-text">+ Add medications or supplements</div>
               </a>
             </div>
 

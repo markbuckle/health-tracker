@@ -10,16 +10,32 @@
 
 <body class="home-body">
   {{> header pageTitle="Health Tracker"}}
+
   <section class="hero content-container">
     <div class="hero-container">
-      <h1 class="hero-title">Your secure and easy-to-use personalized health tracker</h1>
-      <a href="/demo" class="button-basics btn-primary">
-        <div class="flex-horizontal">Try the demo
+      <h1 class="hero-title">
+        <!-- First line -->
+        <div class="title-line">
+          <span class="word-sequence group1">Your</span>
+          <span class="word-sequence group1 green secure-wrapper">secure <span class="shield"></span></span>
         </div>
+        <!-- Second line -->
+        <div class="title-line">
+          <span class="word-sequence group2">and</span>
+          <span class="word-sequence green typing group2">easy-to-use</span>
+        </div>
+        <!-- Third line -->
+        <div class="title-line phrase">
+          <span class="word-sequence phrase">personalized health<br>tracker</span>
+        </div>
+      </h1>
+      <a href="/demo" class="button-basics btn-primary">
+        <div class="flex-horizontal">Try the demo</div>
       </a>
     </div>
     <img src="images/iphonelayered.png" loading="lazy" alt="" class="mobile">
   </section>
+
   <div class="wave-light-bg">
     <div class="wave-pattern">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3261 217" preserveAspectRatio="none">
@@ -37,6 +53,68 @@
       </svg>
     </div>
   </div>
+
+  <!-- New animated hero section -->
+  <div class="hero-wrapper">
+    {{!-- <div class="floating-dots" id="floatingDots"></div> --}}
+    <h1 class="hero-title">Perfect for you if you are</h1>
+    <div class="use-cases">
+      <div class="use-case">
+        <div class="icon-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+          </svg>
+        </div>
+        <h3>Seeking to be more proactive with your health</h3>
+        <p>Pick up on markers and trends earlier. Use our correlations and insights.</p>
+      </div>
+
+      <div class="use-case">
+        <div class="icon-circle">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z" />
+          </svg>
+        </div>
+        <h3>Managing chronic conditions</h3>
+        <p>Track symptoms, medications, and progress over time</p>
+      </div>
+
+      <div class="use-case">
+        <div class="icon-circle">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
+        </div>
+        <h3>Caring for loved ones</h3>
+        <p>Keep track of appointments and medical history</p>
+      </div>
+
+      <div class="use-case">
+        <div class="icon-circle">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          </svg>
+        </div>
+        <h3>Searching for a diagnosis</h3>
+        <p>Document symptoms and track patterns</p>
+      </div>
+
+      <div class="use-case">
+        <div class="icon-circle">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z" />
+          </svg>
+        </div>
+        <h3>Boosting overall health</h3>
+        <p>Monitor wellness metrics and lifestyle factors</p>
+      </div>
+    </div>
+  </div>
+
   <div class="quote-background">
     <div class="content-container quote-container">
       <div class="quote-1">Optimize your health with unique and actionable insights</div>
@@ -56,6 +134,93 @@
   </div>
   {{> footer}}
   <script src="js/main.js" defer type="module"></script>
+  <script> // animated hero section (floating dots)
+    // Create floating dots background
+    function createDots() {
+      const container = document.getElementById('floatingDots');
+      const dotCount = 20;
+
+      for (let i = 0; i < dotCount; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+
+        // Random size between 5 and 20px
+        const size = Math.random() * 15 + 5;
+        dot.style.width = `${size}px`;
+        dot.style.height = `${size}px`;
+
+        // Random starting position
+        dot.style.left = `${Math.random() * 100}%`;
+        dot.style.top = `${Math.random() * 100}%`;
+
+        // Random animation duration between 15 and 30 seconds
+        dot.style.animationDuration = `${Math.random() * 15 + 15}s`;
+
+        // Random delay
+        dot.style.animationDelay = `${Math.random() * -30}s`;
+
+        container.appendChild(dot);
+      }
+    }
+
+    // Initialize dots
+    createDots();
+
+    // Add hover effect to use cases
+    document.querySelectorAll('.use-case').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.querySelector('.icon-circle').style.transform = 'translateX(-50%) scale(1.1)';
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.querySelector('.icon-circle').style.transform = 'translateX(-50%) scale(1)';
+      });
+    });
+  </script>
+  <script> // animated hero title
+    document.addEventListener('DOMContentLoaded', () => {
+      // Flag to track if animations have played during this session
+      let animationsHavePlayed = false;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const title = entry.target;
+
+          if (entry.isIntersecting && !animationsHavePlayed) {
+            // First time seeing the title - play animations
+            title.style.visibility = 'visible';
+            animationsHavePlayed = true;
+          } else if (entry.isIntersecting && animationsHavePlayed) {
+            // Already seen the title - show without animations
+            title.style.visibility = 'visible';
+
+            // Remove animations and show content immediately
+            document.querySelectorAll('.word-sequence').forEach(el => {
+              el.style.animation = 'none';
+              el.style.opacity = '1';
+            });
+
+            const shield = document.querySelector('.shield');
+            if (shield) {
+              shield.style.animation = 'none';
+              shield.style.opacity = '0';
+            }
+
+            const typingElement = document.querySelector('.typing');
+            if (typingElement) {
+              typingElement.style.width = '11ch';
+              typingElement.style.animation = 'none';
+              typingElement.style.opacity = '1';
+            }
+          }
+        });
+      }, {
+        threshold: 0.5
+      });
+
+      observer.observe(document.querySelector('.hero-title'));
+    });
+  </script>
 </body>
 
 </html>

@@ -1,17 +1,19 @@
 # Personalized Health Tracker
 
-The app enables users to mae sense of complex medical information. 
+The app enables users to mae sense of complex medical information.
 
 ### Features:
+
 - Landing Page
 - Demo page
 - How It Works Page
-- User Authentication 
+- User Authentication
 - Multi-Database Integration
 - Active Content Management System (Coming soon)
 - PIPEDA & HIPAA Compliance (Coming soon)
 
 ### Tech Stack:
+
 - HTML
 - Handlebars
 - CSS
@@ -23,9 +25,11 @@ The app enables users to mae sense of complex medical information.
 - PostgreSQL
 
 ### Production
+
 - Vercel
 
 ### Setup Steps
+
 The rest of this readme provides an in-depth overview this project.
 
 # Introduction
@@ -317,12 +321,15 @@ npm install --save base64url
 
 ### File Uploads
 
-We used multer (a middleware for handling multipart/form-data) to handle file uploads:
+We used multer (a middleware for handling multipart/form-data) to handle file
+uploads:
+
 ```pwsh
 npm install multer
 ```
 
 The current implementation:
+
 <li>Sets up multer to handle file uploads</li>
 <li>Creates an uploads directory in your public folder</li>
 <li>Validates file types and sizes</li>
@@ -331,11 +338,51 @@ The current implementation:
 
 The files are stored in public/uploads/ and the information is saved in MongoDB.
 
+To read and display file data, we used a combination of OCR (Optical Character
+Recognition) and pattern matching to extract the specific data.
+
+Packages involved in OCR and pattern matching:
+
+```pwsh
+npm install tesseract.js pdf-parse pdfjs-dist@2.16.105 ws
+```
+
+This implementation:
+
+Uses PDF.js first for native text extraction Falls back to an enhanced Tesseract
+configuration Adds better error handling and logging Includes confidence scoring
+Has better text normalization
+
+Uses WebSocket (ws) to create a real-time connection between server and client
+
+Note that the data needs to be buffered and parsed.
+
+<strong>Buffering</strong> refers to the process of temporarily storing data in
+a buffer (a region of physical memory storage) while it is being transferred
+from one place to another. It helps to smooth out data processing by ensuring
+that data flows continuously and efficiently, preventing bottlenecks.
+
+<strong>Parsing</strong> is the process of analyzing a string of symbols, either
+in natural language, computer languages, or data formats, and converting it into
+a structured format that can be easily processed. For example, when reading a
+JSON file, a parser analyzes the JSON text and converts it into a JavaScript
+object that can be easily accessed and manipulated in code.
+
+### Reports Page
+
+To install Plotly React:
+
+```pwsh
+npm install plotly.js-dist react-plotly.js react
+```
+
 ## Deployment
 
-For deploying this dynamic project I have chosen to used Vercel as it works well with node.js/express.js projects. 
+For deploying this dynamic project I have chosen to used Vercel as it works well
+with node.js/express.js projects.
 
 To test your app locally, be sure to install the vercel CLI:
+
 ```pwsh
 npm i -g vercel
 ```
