@@ -1,3 +1,5 @@
+// index.js
+
 const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
@@ -15,33 +17,40 @@ require('dotenv').config();
 // const EventEmitter = require('events'); // for the processing files modal
 // const processEmitter = new EventEmitter(); // for the processing files modal
 const WebSocket = require('ws');
-const { biomarkerData } = require('./data/biomarkerData');
 const { calculateRangePositions } = require('../public/js/rangeCalculations');
+const { biomarkerData, markerCategories } = require('./data/biomarkerData');
 
 // express app setup
 const app = express();
 
-app.use((req, res, next) => {
-    res.setHeader(
-        'Content-Security-Policy',
-        "default-src 'self'; " +
-        // Note: unsafe-eval is required for Plotly
-        "script-src 'self' 'unsafe-eval' 'unsafe-inline' cdnjs.cloudflare.com d3e54v103j8qbb.cloudfront.net cdn.jsdelivr.net cdn.plot.ly www.gstatic.com apis.google.com; " +
-        "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdn.plot.ly; " +
-        "img-src 'self' data: blob: *; " +
-        "font-src 'self' data: fonts.gstatic.com; " +
-        "connect-src 'self' ws: wss: localhost:* cdn.jsdelivr.net; " +
-        "object-src 'none'; " +
-        "media-src 'self'; " +
-        "frame-src 'self'; " +
-        "worker-src 'self' blob:; " +
-        "base-uri 'self'; " +
-        "form-action 'self'"
-    );
+if (process.env.NODE_ENV === 'development') {
+    app.use((req, res, next) => {
+        res.setHeader(
+            'Content-Security-Policy',
+            "default-src 'self'; " +
+            "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'unsafe-hashes' cdnjs.cloudflare.com d3e54v103j8qbb.cloudfront.net cdn.jsdelivr.net cdn.plot.ly www.gstatic.com apis.google.com; " +
+            "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdn.plot.ly; " +
+            "img-src 'self' data: blob: *; " +
+            "font-src 'self' data: fonts.gstatic.com; " +
+            "connect-src 'self' ws: wss: localhost:* cdn.jsdelivr.net cdn.plot.ly; " +
+            "child-src 'self' blob:; " +
+            "worker-src 'self' blob:; " +
+            "object-src 'none'; " +
+            "media-src 'self'; " +
+            "frame-src 'self'; " +
+            "base-uri 'self'; " +
+            "form-action 'self'"
+        );
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        res.setHeader('X-XSS-Protection', '1; mode=block');
 
-    res.removeHeader('X-Content-Security-Policy');
-    next();
-});
+        res.removeHeader('X-Powered-By');
+        res.removeHeader('X-Content-Security-Policy');
+        res.removeHeader('X-WebKit-CSP');
+        next();
+    });
+}
 
 // Then create server with app
 const server = require('http').createServer(app);
@@ -87,9 +96,6 @@ hbs.registerHelper('formatDate', function (date) {
     if (!date) return '';
     return new Date(date).toISOString().split('T')[0];
 });
-hbs.registerHelper('eq', function (a, b) {
-    return a === b;
-});
 
 hbs.registerHelper('getLast', function (array) {
     return array[array.length - 1];
@@ -113,8 +119,24 @@ hbs.registerHelper('gt', function (a, b) {
     return a > b;
 });
 
-hbs.registerHelper('eq', function (a, b) {
-    return a === b;
+// hbs.registerHelper('eq', function(a, b) {
+//     a === b;
+// });
+
+hbs.registerHelper('eq', function(a, b) {
+    if (!a || !b) return false;
+    return String(a).toLowerCase() === String(b).toLowerCase();
+  });
+
+// Add a debug helper
+hbs.registerHelper('log', function(something) {
+    console.log(something);
+    return '';
+  });
+
+hbs.registerHelper('isCategoryEmpty', function(labValues, categoryKey) {
+    if (!labValues) return true;
+    return !Object.values(labValues).some(value => value.category === categoryKey);
 });
 
 hbs.registerHelper('multiply', function (a, b) {
@@ -149,18 +171,46 @@ hbs.registerHelper('formatDateString', function (dateString) {
 });
 
 // grab reference ranges for bar charts
+// hbs.registerHelper('parseReferenceRange', function(range) {
+
+//     if (!range) {
+//         return null;
+//     }
+
+//     // Remove all spaces and handle both hyphen types
+//     const cleanRange = range.toString().replace(/\s+/g, '').replace('–', '-');
+    
+//     // Parse reference range string (assuming format like "0.40-1.05")
+//     const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
+
+//     // if (!matches) {
+//     //     console.warn('Could not parse reference range:', range);
+//     //     return null;
+//     // }
+    
+//     const result = {
+//         min: parseFloat(matches[1]),
+//         max: parseFloat(matches[2])
+//       };
+      
+//     return result;
+// });
+
 hbs.registerHelper('parseReferenceRange', function(range) {
-    if (!range) return null;
+    if (!range) {
+        return null;
+    }
+    // Remove all spaces and handle both hyphen types
+    const cleanRange = range.toString().replace(/\s+/g, '').replace('–', '-');
+    const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
     
-    // Parse reference range string (assuming format like "0.40-1.05")
-    const matches = range.match(/(\d*\.?\d+)-(\d*\.?\d+)/);
-    if (!matches) return null;
-    
-    return {
+    const result = {
         min: parseFloat(matches[1]),
         max: parseFloat(matches[2])
     };
+    return result;
 });
+
 
 // bar chart marker position
 hbs.registerHelper('calculateMarkerPosition', function(value, range) {
@@ -198,10 +248,28 @@ hbs.registerHelper('toLowerCase', function(str) {
     return str.toLowerCase();
 });
 
-// next 4 helper functions are for the calculateRangePositions function
-hbs.registerHelper('calculateRangeScaling', function(min, max) {
-    return calculateRangePositions(min, max);
+hbs.registerHelper('json', function(context) {
+    return JSON.stringify(context);
 });
+
+hbs.registerHelper('lookup', function(obj, key1, key2) {
+    if (!obj || !key1) return null;
+    const value = obj[key1];
+    if (!value) return null;
+    return key2 ? value[key2] : value;
+});
+
+hbs.registerHelper('isInCategory', function(biomarker, categoryId) {
+    if (!biomarker) return false;
+    return biomarker.category === categoryId;
+});
+
+hbs.registerHelper('log', function() {
+    let args = Array.prototype.slice.call(arguments, 0, -1);
+    console.log.apply(console, args);
+});
+
+// next 4 helper functions are for the calculateRangePositions function
 
 hbs.registerHelper('add', function(a, b) {
     return a + b;
@@ -218,6 +286,62 @@ hbs.registerHelper('multiply', function(a, b) {
 hbs.registerHelper('calculateRangeScaling', function(min, max) {
     return calculateRangePositions(parseFloat(min), parseFloat(max));
 });
+
+hbs.registerHelper('concat', function(...args) {
+    // Remove the last argument (Handlebars options object)
+    args.pop();
+    // Join all arguments into a single string
+    return args.join('');
+});
+
+hbs.registerHelper('getBiomarkersForCategory', function(biomarkerData, categoryName) {
+    return Object.values(biomarkerData).filter(biomarker => 
+      biomarker.category.toLowerCase() === categoryName.toLowerCase() && 
+      biomarker.value !== null
+    );
+});
+
+hbs.registerHelper('hasBiomarkersInCategory', function(biomarkerData, categoryName) {
+    return Object.values(biomarkerData).some(biomarker => 
+      biomarker.category === categoryName && 
+      biomarker.value !== null
+    );
+});
+
+hbs.registerHelper('hasBiomarkersInFrequency', function(biomarkerData, frequency) {
+    return Object.values(biomarkerData).some(marker => 
+        marker.frequency === frequency && 
+        marker.value !== null
+    );
+});
+
+hbs.registerHelper('replace', function(str, pattern, replacement) {
+    return str.replace(new RegExp(pattern, 'g'), replacement);
+});
+
+hbs.registerHelper('getUniqueFrequencies', function(biomarkerData) {
+    const frequencies = new Set();
+    Object.values(biomarkerData).forEach(marker => {
+        if (marker && marker.frequency) {
+            frequencies.add(marker.frequency);
+        }
+    });
+    return Array.from(frequencies);
+});
+
+hbs.registerHelper('and', function() {
+    // Convert arguments to Array and remove the last item (Handlebars options object)
+    const args = Array.prototype.slice.call(arguments, 0, -1);
+    return args.every(Boolean);
+});
+
+// hbs.registerHelper('debug', function(optionalValue) {
+//     console.log('Context:', this);
+//     if (optionalValue) {
+//       console.log('Value:', optionalValue);
+//     }
+//     return '';
+// });
 
 app.set("view engine", 'hbs');
 app.set("views", templatePath);
@@ -346,12 +470,9 @@ app.get('/upload', checkAuth, async (req, res) => {
             }))
         });
 
-        const labResults = user.labResults || [];
-
         res.render('user/upload', {
             naming: user.uname,
             user: user,
-            labResults: labResults
         });
     } catch (error) {
         console.error('Error fetching user data:', error);
@@ -361,34 +482,93 @@ app.get('/upload', checkAuth, async (req, res) => {
 
 app.get('/reports', checkAuth, async (req, res) => {
     try {
-        const user = await registerCollection.findById(req.user._id).lean();
-        
-        // Get all lab values with their dates
-        const labData = user.files
-            .filter(f => f.labValues && Object.keys(f.labValues).length > 0)
-            .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
+      // Get the user's latest lab results
+      const user = await registerCollection.findById(req.user._id);
 
-        // Get the most recent file for backward compatibility
-        const recentFile = labData[0];
+      // Get all files with lab values and sort by test date
+      const filesWithLabValues = user.files
+       .filter(file => file.labValues && Object.entries(file.labValues).length > 0)
+       .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
 
-        // Get unique biomarkers
-        const biomarkers = new Set();
-        labData.forEach(file => {
-            Object.keys(file.labValues).forEach(marker => biomarkers.add(marker));
+      // Track all values for each biomarker
+      const biomarkerHistory = {};
+
+      // Helper function to find biomarker by any of its names
+      function findBiomarkerMatch(testName) {
+            return Object.entries(biomarkerData).find(([key, data]) => {
+            const possibleNames = [key, ...(data.alternateNames || [])];
+            return possibleNames.some(name => 
+                name.toLowerCase() === testName.toLowerCase()
+            );
+            });
+      }
+      
+      // When processing lab values
+      filesWithLabValues.forEach(file => {
+        Array.from(file.labValues.entries()).forEach(([labTestName, value]) => {
+          const biomarkerMatch = findBiomarkerMatch(labTestName);
+          if (biomarkerMatch) {
+            const [standardName, biomarkerInfo] = biomarkerMatch;
+            
+            if (!biomarkerHistory[standardName]) {
+              biomarkerHistory[standardName] = [];
+            }
+  
+            biomarkerHistory[standardName].push({
+              value: value.value,
+              unit: value.unit,
+              referenceRange: value.referenceRange,
+              testDate: file.testDate,
+              filename: file.originalName
+            });
+          }
         });
+      });
+      
+      // Get list of all biomarkers
+      const biomarkers = Object.keys(biomarkerHistory);
 
-        res.render('user/reports', { 
-            naming: req.user.uname,
-            user: user,
-            recentLabValues: recentFile?.labValues || {}, // Add this back
+      // Merge static biomarker data with lab values
+      const enrichedBiomarkerData = {};
+      
+      for (const [biomarkerName, biomarkerInfo] of Object.entries(biomarkerData)) {
+        // Access lab value directly from the converted object
+        const allValues = biomarkerHistory[biomarkerName] || [];
+        // Sort by date to get the most recent value
+        const sortedValues = allValues.sort((a, b) => 
+            new Date(b.testDate) - new Date(a.testDate)
+          );
+        const mostRecent = sortedValues[0];
+
+        enrichedBiomarkerData[biomarkerName] = {
+            ...biomarkerInfo,
+            value: mostRecent?.value || null,
+            unit: mostRecent?.unit || null,
+            referenceRange: mostRecent?.referenceRange || null,
+            history: sortedValues
+            };
+        }
+
+        // Create initialData script with sanitized file data
+        const filesForClient = filesWithLabValues.map(file => ({
+            testDate: file.testDate,
+            labValues: Object.fromEntries(file.labValues)
+        }));
+
+        const util = require('util');
+
+        res.render('user/reports', {
+            markerCategories: Object.values(markerCategories),
+            biomarkerData: enrichedBiomarkerData,
             initialData: `<script>window.__INITIAL_DATA__ = ${JSON.stringify({
                 files: user.files,
-                biomarkers: Array.from(biomarkers)
+                biomarkers: Object.keys(biomarkerData),
+                biomarkerInfo: biomarkerData
             })};</script>`
         });
     } catch (error) {
-        console.error('Error fetching reports data:', error);
-        res.status(500).send('Error loading reports page');
+      console.error('Error in /reports route:', error);
+      res.status(500).send('Error generating report');
     }
 });
 
@@ -443,10 +623,15 @@ app.post('/login', (req, res, next) => {
 
 app.post('/update-profile', checkAuth, async (req, res) => {
     try {
-        const { fname, lname, birthDate, sex, bloodType, customBloodType, familyCondition, relatives, addNotes, habitType, status, lifestyleNotes, entryId, action } = req.body;
+        const { fname, lname, birthDate, sex, bloodType, customBloodType, familyCondition, relatives, addNotes, weight, bloodPressure, restingHeartRate, sleep, monitoringNotes, habitType, status, lifestyleNotes, medicine, supplement, entryId, medsAndSupsNotes, action } = req.body;
 
         // Log request body for debugging 
-        console.log('Request Body:', req.body);
+        console.log('Received update request:', {
+            body: req.body,
+            action: req.body.action,
+            entryId: req.body.entryId,
+            type: req.body.type
+        });
 
         // Find the user and update profile
         const user = await registerCollection.findById(req.user._id);
@@ -484,7 +669,7 @@ app.post('/update-profile', checkAuth, async (req, res) => {
             user.profile.familyHistory = [];
         }
 
-        // Handle family history updates
+        // Handle add, edit and delete actions
         if (action) {
             switch (action) {
                 case 'add':
@@ -495,9 +680,26 @@ app.post('/update-profile', checkAuth, async (req, res) => {
                             addNotes: addNotes || ''
                         });
                     }
+                    if (weight && bloodPressure) {
+                        user.profile.monitoring.push({
+                            weight,
+                            bloodPressure,
+                            restingHeartRate,
+                            sleep,
+                            monitoringNotes: monitoringNotes || ''
+                        });
+                    }
+                    if (medicine || supplement) {
+                        user.profile.medsandsups.push({
+                            medicine,
+                            supplement,
+                            medsAndSupsNotes: medsAndSupsNotes || ''
+                        });
+                    }
                     break;
 
                 case 'edit':
+                    // Existing family history edit case
                     if (entryId && familyCondition && relatives) {
                         const entryIndex = user.profile.familyHistory.findIndex(
                             entry => entry._id.toString() === entryId
@@ -506,6 +708,34 @@ app.post('/update-profile', checkAuth, async (req, res) => {
                             user.profile.familyHistory[entryIndex].familyCondition = familyCondition;
                             user.profile.familyHistory[entryIndex].relatives = relatives.split(',');
                             user.profile.familyHistory[entryIndex].addNotes = addNotes || '';
+                        }
+                    }
+                    console.log('Processing edit action');
+                    // Add monitoring edit case
+                    if (entryId && weight && bloodPressure) {
+                        console.log('Attempting to edit monitoring entry:', entryId);
+                        const monitoringIndex = user.profile.monitoring.findIndex(
+                            entry => entry._id.toString() === entryId
+                        );
+                        if (monitoringIndex !== -1) {
+                            console.log('Before update:', user.profile.monitoring[monitoringIndex]);
+                            user.profile.monitoring[monitoringIndex].weight = weight;
+                            user.profile.monitoring[monitoringIndex].bloodPressure = bloodPressure;
+                            user.profile.monitoring[monitoringIndex].restingHeartRate = restingHeartRate;
+                            user.profile.monitoring[monitoringIndex].sleep = sleep;
+                            user.profile.monitoring[monitoringIndex].monitoringNotes = monitoringNotes || '';
+                            console.log('After update:', user.profile.monitoring[monitoringIndex]);
+                        }
+                    }
+                    // Add meds & sups edit case
+                    if (entryId && (medicine || supplement)) {
+                        const medsAndSupsIndex = user.profile.medsandsups.findIndex(
+                            entry => entry._id.toString() === entryId
+                        );
+                        if (medsAndSupsIndex !== -1) {
+                            user.profile.medsandsups[medsAndSupsIndex].medicine = medicine;
+                            user.profile.medsandsups[medsAndSupsIndex].supplement = supplement;
+                            user.profile.medsandsups[medsAndSupsIndex].medsAndSupsNotes = medsAndSupsNotes || '';
                         }
                     }
                     break;
@@ -520,18 +750,40 @@ app.post('/update-profile', checkAuth, async (req, res) => {
                             if (!targetUser) {
                                 throw new Error('User not found');
                             }
+                            
+                            let updateField;
+                            let targetArray;
 
-                            console.log('Family history before:', targetUser.profile.familyHistory);
+                              // Determine which array to update based on the type
+                            switch (req.body.type) {
+                                case 'monitoring':
+                                    updateField = 'profile.monitoring';
+                                    targetArray = targetUser.profile.monitoring;
+                                    break;
+                                case 'medsandsups':
+                                    updateField = 'profile.medsandsups';
+                                    targetArray = targetUser.profile.medsandsups;
+                                    break;
+                                default:
+                                    updateField = 'profile.familyHistory';
+                                    targetArray = targetUser.profile.familyHistory;
+                            }
 
-                            // Remove the family history entry
-                            targetUser.profile.familyHistory = targetUser.profile.familyHistory.filter(
+                            // // Remove the family history entry
+                            // targetUser.profile.familyHistory = targetUser.profile.familyHistory.filter(
+                            //     entry => entry._id.toString() !== entryId
+                            // );
+
+                            // Filter out the entry to be deleted
+                            const filteredArray = targetArray.filter(
                                 entry => entry._id.toString() !== entryId
                             );
 
                             // Use findOneAndUpdate instead of save to avoid version conflicts
                             const updatedUser = await registerCollection.findOneAndUpdate(
                                 { _id: user._id },
-                                { $set: { 'profile.familyHistory': targetUser.profile.familyHistory } },
+                                { $set: { [updateField]: filteredArray } },
+                                // { $set: { 'profile.familyHistory': targetUser.profile.familyHistory } },
                                 { new: true } // This option returns the updated document
                             );
 
@@ -540,24 +792,36 @@ app.post('/update-profile', checkAuth, async (req, res) => {
                             }
 
                             // Update the local user object to match
-                            user.profile.familyHistory = updatedUser.profile.familyHistory;
+                            user.profile[updateField.split('.')[1]] = updatedUser.profile[updateField.split('.')[1]];
+                            // user.profile.familyHistory = updatedUser.profile.familyHistory;
 
                             console.log('Delete operation completed');
-                            console.log('Family history after:', updatedUser.profile.familyHistory);
+                            console.log(`${updateField} after:`, updatedUser.profile[updateField.split('.')[1]]);
+                            // console.log('Family history after:', updatedUser.profile.familyHistory);
 
                             // No need to call save() again
                         } catch (error) {
                             console.error('Error deleting entry:', error);
-                            throw new Error('Failed to delete family history entry: ' + error.message);
+                            throw new Error(`Failed to delete entry: ${error.message}`);
+                            // throw new Error('Failed to delete family history entry: ' + error.message);
                         }
                     }
                     break;
             }
         }
-        // Ensure familyHistory is initialized 
+
+        // Initialize Monitoring array
+        if (!Array.isArray(user.profile.monitoring)) {
+            user.profile.monitoring = [];
+        }
+        // Initialize lifestyle array
         if (!Array.isArray(user.profile.lifestyle)) {
             user.profile.lifestyle = [];
         }
+        if (!Array.isArray(user.profile.medsandsups)) {
+            user.profile.medsandsups = [];
+        }
+
         // Handle lifestyle updates
         if (action) {
             switch (action) {
@@ -628,11 +892,20 @@ app.post('/update-profile', checkAuth, async (req, res) => {
                     break;
             }
         }
+        
         // Calculate and set age
         user.profile.age = user.calculateAge();
 
+        // Before saving:
+        console.log('About to save user with updated profile:', {
+            monitoring: user.profile.monitoring
+        });
+
         // Save the updated user
         await user.save();
+
+        // After saving:
+        console.log('Save completed successfully');
 
         res.json({
             success: true,
@@ -641,7 +914,9 @@ app.post('/update-profile', checkAuth, async (req, res) => {
             customBloodType: user.profile.customBloodType,
             sex: user.profile.sex,
             familyHistory: user.profile.familyHistory,
-            lifestyle: user.profile.lifestyle
+            lifestyle: user.profile.lifestyle,
+            monitoring: user.profile.monitoring,
+            medsandsups: user.profile.medsandsups
         });
 
     } catch (error) {
@@ -830,13 +1105,6 @@ app.post('/delete-file', checkAuth, async (req, res) => {
 
         // Remove file from user's files array
         user.files.pull(fileId);
-
-        // Remove corresponding lab results
-        if (user.labResults) {
-            user.labResults = user.labResults.filter(result =>
-                result.filename !== fileToDelete.originalName
-            );
-        }
 
         await user.save();
 

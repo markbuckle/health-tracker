@@ -1,25 +1,60 @@
-function createBiomarkerChart(biomarkerElement, biomarkerName) {
-    if (typeof Plotly === 'undefined') {
-        console.error('Plotly is not loaded');
-        return;
-    }
+// Add this helper function at the start
+function findLabValue(file, name) {
+    // Get the biomarker data and its alternate names
+    const biomarkerInfo = window.__INITIAL_DATA__?.biomarkerInfo?.[name];
+    const possibleNames = [name, ...(biomarkerInfo?.alternateNames || [])];
+    
+    // Try the standard format first
+    for (const possibleName of possibleNames) {
+        let value = null;
 
-    if (!biomarkerElement) return;
+        // Check if labValues is a Map or an Object
+        if (file.labValues instanceof Map) {
+            value = file.labValues.get(possibleName);
+        } else {
+            value = file.labValues?.[possibleName];
+        }
+
+        if (value) {
+            return {
+                value: parseFloat(value.value),
+                unit: value.unit,
+                referenceRange: value.referenceRange?.replace(/\s+/g, '')  // Remove spaces
+            };
+        }
+    }
+    return null;
+}
+
+function createBiomarkerChart(biomarkerElement, biomarkerName) {
+    // Debug current tab and element state
+    const parentTab = biomarkerElement.closest('[data-w-tab]');
+    const tabId = parentTab?.getAttribute('data-w-tab');
 
     const files = window.__INITIAL_DATA__?.files || [];
 
     // Transform and sort the data
     const chartData = files
-        .filter(file => file.labValues?.[biomarkerName])
-        .map(file => ({
-            date: new Date(file.testDate),
-            value: parseFloat(file.labValues[biomarkerName].value),
-            unit: file.labValues[biomarkerName].unit,
-            referenceRange: file.labValues[biomarkerName].referenceRange
-        }))
+        .filter(file => {
+            const value = findLabValue(file, biomarkerName);
+            return value !== null;
+            // return value;
+        })
+        .map(file => {
+            const labValue = findLabValue(file, biomarkerName);
+            const data = {
+                date: new Date(file.testDate),
+                value: parseFloat(labValue.value),
+                unit: labValue.unit,
+                referenceRange: labValue.referenceRange
+            };
+            return data;
+        })
         .sort((a, b) => a.date - b.date);
 
-    if (chartData.length === 0) return;
+    if (chartData.length === 0) {
+        return;
+    }
 
     const dates = chartData.map(d => d.date);
     const values = chartData.map(d => d.value);
@@ -185,6 +220,15 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         }
     });
 
+     // Create a simpler test plot for debugging
+     const plotData = [{
+        x: chartData.map(d => d.date),
+        y: chartData.map(d => d.value),
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: biomarkerName
+    }];
+
     const layout = {
         title: {
             text: `${biomarkerName} Levels Over Time`,
@@ -199,6 +243,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             yanchor: 'top'
         },
         height: 400,
+        width: null,
         autosize: true,
         margin: { l: 30, r: 30, t: 60, b: 40 },
         responsive: true, // Add responsive behaviors
@@ -283,7 +328,9 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         modeBarButtonsToRemove: ['autoScale2d'] // Add specific responsive rules
     };
 
-    Plotly.newPlot(biomarkerElement.id, traces, layout, config).then(() => {
+    Plotly.newPlot(biomarkerElement.id, traces, layout, config, plotData).then(() => {
+        // Force a relayout to ensure proper sizing
+        Plotly.Plots.resize(biomarkerElement);
         // Fix the y-axis unit label rotation
         const fixYAxisRotation = () => {
             // Wait a brief moment for Plotly to finish its rendering
@@ -325,10 +372,41 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
 // Initialize all biomarker charts
 document.addEventListener('DOMContentLoaded', function() {
     const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
-    biomarkers.forEach(biomarker => {
-        const chartElement = document.getElementById(`biomarker-trend-${biomarker.toLowerCase()}`);
-        if (chartElement) {
-            createBiomarkerChart(chartElement, biomarker);
-        }
+    
+    // Your original working code
+    function initializeCharts() {
+        biomarkers.forEach(biomarker => {
+            const standardizedName = biomarker.toLowerCase()
+                .replace(/[()]/g, '')
+                .replace(/\s+/g, '');
+                
+            // Try both regular and frequency-specific IDs
+            const elementId = `biomarker-trend-${standardizedName}`;
+            const freqElementId = `biomarker-trend-${standardizedName}-freq`;
+            const allElementId = `biomarker-trend-${standardizedName}-all`;
+            
+            // Initialize charts for both IDs if they exist
+            [elementId, freqElementId, allElementId].forEach(id => {
+                const chartElement = document.getElementById(id);
+                if (chartElement) {
+                    try {
+                        createBiomarkerChart(chartElement, biomarker);
+                    } catch (error) {
+                        console.error(`Error creating chart for ${biomarker} (${id}):`, error);
+                    }
+                }
+            });
+        });
+    }
+
+    // Initial load
+    initializeCharts();
+
+    // Simple tab change handler
+    document.querySelectorAll('[data-w-tab]').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Re-run the original initialization after a delay
+            setTimeout(initializeCharts, 250);
+        });
     });
 });

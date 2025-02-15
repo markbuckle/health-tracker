@@ -1,12 +1,22 @@
 // bar chart range calculations
 function calculateRangePositions(min, max) {
+
     const svgWidth = 420;
     const chartStart = 7;
     const chartWidth = 405;
+
+    if (min === null || min === undefined || max === null || max === undefined || isNaN(min) || isNaN(max)) {
+        return null;
+    }
+
+    const range = max - min;
     
     const valueToX = (value, type = 'normal') => {
         if (typeof value !== 'number') value = parseFloat(value);
-        if (isNaN(value)) return chartStart;
+        if (isNaN(value)) {
+            console.warn('Invalid value in valueToX:', value);
+            return chartStart;
+        }
 
         const effectiveMax = max;
         
@@ -26,9 +36,10 @@ function calculateRangePositions(min, max) {
                 const percentage = value / effectiveMax;
                 return chartStart + (percentage * chartWidth * 0.7);
         }
+        return result;
     };
 
-    return {
+    const scaling = {
         low: {
             x: chartStart,
             width: valueToX(min) - chartStart
@@ -55,6 +66,7 @@ function calculateRangePositions(min, max) {
             }
         }
     };
+    return scaling;
 }
 
 // Make it available globally for the browser

@@ -1,3 +1,5 @@
+// mongoDB.js
+
 const mongoose = require("mongoose");
 
 const mongoURI = process.env.DB_STRING || "mongodb://localhost:27017/HealthLyncDatabase";
@@ -26,6 +28,29 @@ const familyHistorySchema = new mongoose.Schema({
     }
     }, { _id: true });
 
+const monitoringSchema = new mongoose.Schema({
+    weight: { 
+        type: String, 
+        default: null 
+    },
+    bloodPressure: { 
+        type: String, 
+        default: null 
+    },
+    restingHeartRate: { 
+        type: String, 
+        default: null 
+    },
+    sleep: { 
+        type: String, 
+        default: null 
+    },
+    monitoringNotes: { 
+        type: String, 
+        default: null 
+    }
+}, { _id: true });
+
 const lifestyleSchema = new mongoose.Schema({
     habitType: { 
         type: String, 
@@ -41,6 +66,21 @@ const lifestyleSchema = new mongoose.Schema({
     }
     }, { _id: true });
     
+const medsAndSupsSchema = new mongoose.Schema({
+    medicine: { 
+        type: String, 
+        default: null 
+    },
+    supplement: { 
+        type: String, 
+        default: null 
+    },
+    medsAndSupsNotes: {
+        type: String, 
+        default: null 
+    }
+}, { _id: true });
+
 const profileSchema = new mongoose.Schema({
     birthDate: {
         type: Date,
@@ -71,6 +111,14 @@ const profileSchema = new mongoose.Schema({
     lifestyle: {
         type: [lifestyleSchema], 
         default: []
+    },
+    monitoring: { 
+        type: [monitoringSchema], 
+        default: [] 
+    },
+    medsandsups: { 
+        type: [medsAndSupsSchema], 
+        default: [] 
     }
 }, { _id: false });
 
@@ -107,15 +155,6 @@ const fileSchema = new mongoose.Schema({
     processingErrors: [String]
 });
 
-const labResultSchema = new mongoose.Schema({
-    filename: String,
-    uploadDate: Date,
-    labValues: {
-        type: Map,
-        of: labValueSchema
-    }
-}, { _id: true });
-
 // User Schema
 const registerSchema = new mongoose.Schema({
     fname: {
@@ -143,8 +182,7 @@ const registerSchema = new mongoose.Schema({
         type: profileSchema, 
         default: () => ({})
     },
-    files: [fileSchema],
-    labResults: [labResultSchema]
+    files: [fileSchema]
 },{ 
     timestamps: false // Adds createdAt and updatedAt field
 });

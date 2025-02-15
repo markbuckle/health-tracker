@@ -31,7 +31,7 @@
     </a>
     <a id="Insights" href="/insights" class="page-link w-inline-block w--current">
       <img src="images/layout.svg" loading="lazy" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Dashboard</span></div>
+      <div class="page-link-text-block"><span class="page-link-text-span">Insights</span></div>
     </a>
     <div class="nav-divider-basics nav-divider-bottom"></div>
     <a href="/how-it-works" class="page-link w-inline-block"><img src="images/help-circle.svg" loading="lazy" alt="Icon"
@@ -68,12 +68,16 @@
               <div class="text-block-5">Actions</div>
             </a>
           </div>
+
           <div class="w-tab-content">
             <div data-w-tab="All projects" class="w-tab-pane w--tab-active">
               <div class="dropdown-wrapper">
                 <div class="basic-info-div">
                   <div class="header-container-3">
-                    <h1 class="username-heading">Overall Wellness Score</h1>
+                    <div class="header-container-3-spacing">
+                      <h1 class="username-heading">Overall Wellness Score</h1>
+                      <button class="info-button" aria-label="Show wellness information">i</button>
+                    </div>
                   </div>
                   <div class="nav-divider-bottom-2 nav-divider-top profile"></div>
                   <div class="history-info">Prevention</div>
@@ -81,6 +85,9 @@
                   <div class="history-info">Action</div>
                 </div>
               </div>
+              <a href="#" class="edit-button-modal w-inline-block">
+                <div class="button-text">+ Wellness Metrics</div>
+              </a>
             </div>
             <div class="table-module">
               <div class="table-content"></div>
@@ -91,7 +98,89 @@
       </div>
     </div>
   </div>
+
+  {{!-- Wellness Info Modal--}}
+  <div class="modal-wrapper modal-wrapper-1">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a class="modal-return-button w-inline-block w--current" aria-current="page">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Wellness Indicators</h1>
+      </div>
+
+      <div class="modal-description">These "Wellness Scores" are a simple estimation of how well you're doing at
+        preventive health.
+
+        Each preventive action is backed by hard science,
+        and you can follow the hyperlinks in each description to learn more from the source.
+
+        Don't worry if your score is low. This usually just means you haven't entered much data or connected many
+        sources yet. To get the most out of your Wellness Score, click into each score factor to learn what data you
+        need
+        to add and how to improve it.</div>
+
+
+      <div class="modal-footer">
+        <a href="/insights" aria-current="page" class="cancel-button cancel-space">Close</a>
+      </div>
+
+    </div>
   </div>
+
+  {{!-- Wellness Metrics Modal--}}
+  <div class="modal-wrapper modal-wrapper-6">
+    <div class="modal-background"></div>
+    <div class="modal-card wellness-metrics">
+      <div class="modal-header">
+        <a class="modal-return-button w-inline-block w--current" data-w-id="e51537ba-0bb8-7d9d-b7be-455102aac1f4"
+          aria-current="page">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Wellness Score</h1>
+        <div class="score-circle">0</div>
+      </div>
+
+      <div class="metrics-section">
+        <h2 class="metrics-heading">Prevention</h2>
+        <div class="metrics-list">
+          <div class="metric-item">
+            <span>Medical checkup • last 2 years</span>
+            <span class="metric-status">✕</span>
+            <span class="metric-arrow">›</span>
+          </div>
+          <!-- Add other prevention metrics similarly -->
+        </div>
+
+        <h2 class="metrics-heading">Monitoring</h2>
+        <div class="metrics-list">
+          <div class="metric-item">
+            <span>Active provider connection</span>
+            <span class="metric-status">✕</span>
+            <span class="metric-arrow">›</span>
+          </div>
+          <!-- Add other monitoring metrics -->
+        </div>
+
+        <h2 class="metrics-heading">Actions</h2>
+        <div class="metrics-list">
+          <div class="metric-item">
+            <span>Sleep 7+ hours daily • last 7 days</span>
+            <span class="metric-arrow">›</span>
+          </div>
+          <!-- Add other action metrics -->
+        </div>
+      </div>
+      <div class="metrics-footer">
+        <small>Click on a score factor above to see details</small>
+        <small>Factors are personalized by age and sex</small>
+        <small>The score is mainly preventive, it is not a complete picture of your health</small>
+        <small>New factors and personal insights will be added over time</small>
+      </div>
+    </div>
+  </div>
+
   <section class="background report-background">
     <div class="w-layout-blockcontainer container-4 w-container"></div>
   </section>
@@ -101,6 +190,37 @@
   <script src="js/main.js" type="text/javascript"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script> // modals
+
+    // Info button modal
+    document.querySelector('.info-button').addEventListener('click', () => {
+      document.querySelector('.modal-wrapper-1').classList.add('active');
+    });
+
+    // Wellness metrics modal
+    document.querySelector('.edit-button-modal').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelector('.modal-wrapper-6').classList.add('active');
+    });
+
+    // Close handlers
+    document.querySelectorAll('.modal-background, .cancel-button').forEach(element => {
+      element.addEventListener('click', () => {
+        document.querySelectorAll('.modal-wrapper-1, .modal-wrapper-6').forEach(modal => {
+          modal.classList.remove('active');
+        });
+      });
+    });
+
+    // Return button 
+    document.querySelectorAll('.modal-return-button').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.modal-wrapper-1, .modal-wrapper-6').forEach(modal => {
+          modal.classList.remove('active');
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

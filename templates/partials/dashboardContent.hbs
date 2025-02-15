@@ -1,30 +1,241 @@
 {{{initialData}}}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
 <section class="dashboard-content">
   {{!-- <div class="cms-notice">* Content Management System coming soon</div> --}}
   <div class="dashboard-container">
     <div class="w-layout-grid main-grid">
       <div data-duration-in="300" data-duration-out="100" data-current="All projects" data-easing="ease" class="w-tabs">
 
-        <div class="in-page-menu">
-          <a data-w-tab="All projects" class="in-page-link w-inline-block w-tab-link w--current">
-            <div class="text-block-4">By category</div>
-          </a>
-          <a data-w-tab="Ongoing" class="in-page-link w-inline-block w-tab-link">
-            <div class="text-block-5">By frequency</div>
-          </a>
+        <div class="in-page-container">
+          <div class="in-page-menu">
+            <a data-w-tab="By category" class="in-page-link w-inline-block w-tab-link w--current">
+              <div class="text-block-4">By category</div>
+            </a>
+            <a data-w-tab="By Frequency" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block-5">By frequency</div>
+            </a>
+            <a data-w-tab="All" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block-5">All</div>
+            </a>
+          </div>
+          <div class="search-wrapper">
+            <div class="search-container">
+              <button class="search-icon">
+                {{> svg/searchIcon}}
+              </button>
+              <input type="text" class="search-input" placeholder="Search biomarkers...">
+              <button class="clear-icon hidden">
+                {{> svg/searchBar}}
+              </button>
+            </div>
+          </div>
         </div>
 
+
         <div class="w-tab-content">
-          <div data-w-tab="All projects" class="w-tab-pane w--tab-active">
+          <div data-w-tab="By category" class="w-tab-pane w--tab-active">
             <div class="dropdown-wrapper">
 
-              <div id="Cardiovascular" class="dropdown-content-top">
+              <!-- Categories WITH biomarkers -->
+              {{#each markerCategories as |category|}}
+              {{#if (hasBiomarkersInCategory ../biomarkerData category.name)}}
+              <div id="{{category.name}}" class="dropdown-content-top">
                 <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
                   <div class="category-dropdown-toggle w-dropdown-toggle">
                     <div class="category-title-dropdown-container dropdown-container">
-                      <h3 class="category-subtitle">Cardiovascular</h3>
+                      <h3 class="category-subtitle">{{category.name}}</h3>
+                      <span class="dropdown-arrow"></span>
+                    </div>
+                  </div>
+                  <nav class="category-dropdown-list w-dropdown-list">
+                    <div class="dropdown-content-bottom">
+                      <div class="w-layout-grid table-headers _3-columns">
+                        <div class="caption-large">Marker</div>
+                        <div class="caption-large">details<br></div>
+                        <div class="caption-large">Results</div>
+                        <div class="caption-large">RANGE BAR</div>
+                      </div>
+                        {{#each ../biomarkerData as |biomarker biomarkerName|}}
+                        {{#if (eq biomarker.category category.name)}}
+                        {{#if biomarker.value}}
+                        <article class="biomarker-container">
+                          <div class="biomarker-container-hover">
+                            <div>
+                              <div class="w-layout-grid biomarker-table-top _3-columns">
+                                <div class="biomarker">{{biomarkerName}}</div>
+                                <div class="biomarker-dropdown">
+                                  <div class="stripe-1"></div>
+                                  <div class="stripe-2"></div>
+                                </div>
+                                <div class="biomarker-result">{{biomarker.value}} {{biomarker.unit}}</div>
+                                <div class="html-embed w-embed">
+                                  <div id="range-bar-{{toLowerCase (replace biomarkerName ' ' '')}}" class="svgBoxContainer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0, 0, 420, 90" width="95%"
+                                      class="svgBoxContent">
+
+                                      <!-- Gradients -->
+                                      <defs>
+                                        <linearGradient id="optimalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}" x1="0%" y1="0%" x2="0%" y2="100%">
+                                          <stop offset="0%" style="stop-color:#9be29b;stop-opacity:1" />
+                                          <stop offset="100%" style="stop-color:#85bb83;stop-opacity:1" />
+                                        </linearGradient>
+                                        <linearGradient id="normalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}" x1="0%" y1="0%" x2="0%" y2="100%">
+                                          <stop offset="0%" style="stop-color:#c7ebc5;stop-opacity:1" />
+                                          <stop offset="100%" style="stop-color:#b7ddb5;stop-opacity:1" />
+                                        </linearGradient>
+                                        <linearGradient id="highGradient-{{toLowerCase (replace biomarkerName ' ' '')}}" x1="0%" y1="0%" x2="0%" y2="100%">
+                                          <stop offset="0%" style="stop-color:#ffb7b7;stop-opacity:1" />
+                                          <stop offset="100%" style="stop-color:#f0a7a7;stop-opacity:1" />
+                                        </linearGradient>
+                                        <linearGradient id="lowGradient-{{toLowerCase (replace biomarkerName ' ' '')}}" x1="0%" y1="0%" x2="0%" y2="100%">
+                                          <stop offset="0%" style="stop-color:#ffb7b7;stop-opacity:1" />
+                                          <stop offset="100%" style="stop-color:#f0a7a7;stop-opacity:1" />
+                                        </linearGradient>
+                                      </defs>
+
+                                      {{!-- Range Bar Lengths, Colors, Shapes, etc --}}
+                                      {{#with (parseReferenceRange this.referenceRange) as |range|}}
+                                      {{#with (calculateRangeScaling range.min range.max) as |scaling|}}
+                                      <!-- Left red section (low range) -->
+                                      <path d="M{{scaling.low.x}},36 
+                                            h{{scaling.low.width}} 
+                                            v10 
+                                            h-{{scaling.low.width}} 
+                                            a5,5 0 0 1 -5,-5 
+                                            v0 
+                                            a5,5 0 0 1 5,-5" fill="url(#lowGradient-{{toLowerCase (replace biomarkerName ' ' '')}})" />
+
+                                      <!-- Middle green section (normal range) -->
+                                      <rect width="{{scaling.normal.width}}" height="10" stroke-width="0"
+                                        fill="url(#normalGradient-{{toLowerCase (replace biomarkerName ' ' '')}})" x="{{scaling.normal.x}}" y="36" />
+
+                                      <!-- Right red section (High range) -->
+                                      <path d="M{{scaling.high.x}},36 
+                                        h{{scaling.high.width}} 
+                                        a5,5 0 0 1 5,5 
+                                        v0 
+                                        a5,5 0 0 1 -5,5 
+                                        h-{{scaling.high.width}} 
+                                        v-10" fill="url(#highGradient-{{toLowerCase (replace biomarkerName ' ' '')}})" />
+
+                                      {{!-- Optimal range - Hidden for now --}}
+                                      {{!-- <rect class="jssR01" width="80" height="10" stroke-width="0" fill="#85bb83"
+                                        x="106" y="36" rx="5" ry="5"></rect> --}}
+
+                                      <!-- Vertical dividing lines -->
+                                      {{!--
+                                      <line x1="76" y1="36" x2="76" y2="46" stroke="black" stroke-width="1" />
+                                      <line x1="210" y1="36" x2="210" y2="46" stroke="black" stroke-width="1" /> --}}
+
+                                      <!-- Range numbers -->
+
+                                      <!-- left value -->
+                                      <text text-anchor="middle" class="jssN01" x="{{scaling.getLabelPosition 0}}" y="58"
+                                        style="font-size: 12px;">
+                                        0</text>
+                                      <!-- Low/Normal threshold -->
+                                      <text text-anchor="middle" class="jssN01" x="{{scaling.getLabelPosition range.min}}"
+                                        y="58" style="font-size: 12px;">{{range.min}}</text>
+                                      <!-- Normal/High transition -->
+                                      <text text-anchor="middle" class="jssN03"
+                                        x="{{scaling.getLabelPosition range.max 'max'}}" y="58"
+                                        style="font-size: 12px;">{{range.max}}</text>
+                                      <!-- High threshold -->
+                                      <text text-anchor="middle" class="jssN03" x="{{scaling.getLabelPosition range.max}}"
+                                        y="58" style="font-size: 12px;"></text>
+
+                                      <!-- Range labels -->
+                                      <text text-anchor="middle" class="jssT01"
+                                        x="{{add scaling.low.x (multiply scaling.low.width 0.5)}}" y="75"
+                                        style="font-size: 12px;">Low</text>
+                                      <text text-anchor="middle" class="jssT02"
+                                        x="{{add scaling.normal.x (multiply scaling.normal.width 0.5)}}" y="75"
+                                        style="font-size: 12px;">Normal</text>
+                                      <text text-anchor="middle" class="jssT02"
+                                        x="{{add scaling.high.x (multiply scaling.high.width 0.5)}}" y="75"
+                                        style="font-size: 12px;">High</text>
+
+                                      <!-- Marker -->
+                                      <circle class="jssC01" cx="{{scaling.getMarkerPosition ../../value}}" cy="41" r="3"
+                                        stroke="black" stroke-width="4" fill="black"></circle>
+                                      <!-- Value display -->
+                                      <text text-anchor="middle" class="jssN04"
+                                        x="{{scaling.getMarkerPosition ../../value}}" y="25" style="font-size: 12px;"
+                                        fill="black" direction="ltr">{{../../value}}
+                                        {{../../unit}}</text>
+                                      {{/with}}
+                                      {{/with}}
+                                    </svg>
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="biomarker-bottom">
+                              <div class="biomarker-content-divider">
+                                <div class="biomarker-content-divider2"></div>
+                              </div>
+                              <div class="biomarker-textbox-container">
+                                <div class="columns w-row">
+                                  <div class="column-2 w-col w-col-6">
+                                    <p class="biomarker-textbox">{{biomarker.description}}
+                                      <a href={{biomarker.link}} class="link-2">
+                                        <sup class="superscript">{{biomarker.id}}</sup></a>
+                                    </p>
+                                  </div>
+                                  <div class="column w-col w-col-6">
+                                    <div class="html-embed chart w-embed">
+                                      <div id="biomarker-trend-{{toLowerCase (replace biomarkerName ' ' '')}}"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                        {{/if}}
+                        {{/if}}
+                        {{/each}}
+                        </div>
+                      </nav>
+                    </div>
+              </div>
+              {{/if}}
+              {{/each}}
+
+              <!-- Categories WITHOUT biomarkers -->
+              {{#each markerCategories as |category|}}
+              {{#unless (hasBiomarkersInCategory ../biomarkerData category.name)}}
+              <div id="{{category.name}}" class="dropdown-content-top inactive-category">
+                <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
+                  <div class="category-dropdown-toggle w-dropdown-toggle">
+                    <div class="category-title-dropdown-container dropdown-container">
+                      <h3 class="category-subtitle">{{category.name}}</h3>
+                      <span class="dropdown-arrow"></span>
+                    </div>
+                  </div>
+                  <nav class="category-dropdown-list w-dropdown-list">
+                    <div class="dropdown-content-bottom">
+                      <div class="no-biomarkers-message-container">
+                        <div class="no-biomarkers-message">No lab results available</div>
+                      </div>
+                    </div>
+                  </nav>
+                  </div>
+              </div>
+              {{/unless}}
+              {{/each}}
+            </div>
+          </div>
+
+          <div data-w-tab="By Frequency" class="w-tab-pane">
+            <div class="dropdown-wrapper">
+              
+              <!-- Frequencies WITH biomarkers -->
+              {{#each (getUniqueFrequencies biomarkerData) as |frequency|}}
+              {{#if (hasBiomarkersInFrequency ../biomarkerData frequency)}}
+              <div class="dropdown-content-top">
+                <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
+                  <div class="category-dropdown-toggle w-dropdown-toggle">
+                    <div class="category-title-dropdown-container dropdown-container">
+                      <h3 class="category-subtitle">{{frequency}}</h3>
                       <span class="dropdown-arrow"></span>
                     </div>
                   </div>
@@ -37,45 +248,46 @@
                         <div class="caption-large">RANGE BAR</div>
                       </div>
 
-                      {{#if user.files}}
-                      {{#each recentLabValues}}
-                      <article id="Biomarker-Container" class="biomarker-container">
+                      {{#each ../biomarkerData as |biomarker biomarkerName|}}
+                      {{#if (and biomarker.frequency (eq biomarker.frequency frequency))}}
+                      {{#if biomarker.value}}
+                      <article class="biomarker-container">
                         <div class="biomarker-container-hover">
                           <div>
                             <div class="w-layout-grid biomarker-table-top _3-columns">
-                              <div id="" class="biomarker">{{@key}}</div>
+                              <div class="biomarker">{{biomarkerName}}</div>
                               <div class="biomarker-dropdown">
                                 <div class="stripe-1"></div>
                                 <div class="stripe-2"></div>
                               </div>
-                              <div id="" class="biomarker-result">{{this.value}} {{this.unit}}</div>
-                              <div id="" class="html-embed w-embed">
-                                <div id="range-bar" class="svgBoxContainer">
+                              <div class="biomarker-result">{{biomarker.value}} {{biomarker.unit}}</div>
+                              <div class="html-embed w-embed">
+                                <div id="range-bar-{{toLowerCase (replace biomarkerName ' ' '')}}" class="svgBoxContainer">
                                   <svg xmlns="http://www.w3.org/2000/svg" viewbox="0, 0, 420, 90" width="95%"
                                     class="svgBoxContent">
 
                                     <!-- Gradients -->
                                     <defs>
-                                      <linearGradient id="optimalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                      <linearGradient id="optimalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-freq" x1="0%" y1="0%" x2="0%" y2="100%">
                                         <stop offset="0%" style="stop-color:#9be29b;stop-opacity:1" />
                                         <stop offset="100%" style="stop-color:#85bb83;stop-opacity:1" />
                                       </linearGradient>
-                                      <linearGradient id="normalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                      <linearGradient id="normalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-freq" x1="0%" y1="0%" x2="0%" y2="100%">
                                         <stop offset="0%" style="stop-color:#c7ebc5;stop-opacity:1" />
                                         <stop offset="100%" style="stop-color:#b7ddb5;stop-opacity:1" />
                                       </linearGradient>
-                                      <linearGradient id="highGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                      <linearGradient id="highGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-freq" x1="0%" y1="0%" x2="0%" y2="100%">
                                         <stop offset="0%" style="stop-color:#ffb7b7;stop-opacity:1" />
                                         <stop offset="100%" style="stop-color:#f0a7a7;stop-opacity:1" />
                                       </linearGradient>
-                                      <linearGradient id="lowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                      <linearGradient id="lowGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-freq" x1="0%" y1="0%" x2="0%" y2="100%">
                                         <stop offset="0%" style="stop-color:#ffb7b7;stop-opacity:1" />
                                         <stop offset="100%" style="stop-color:#f0a7a7;stop-opacity:1" />
                                       </linearGradient>
                                     </defs>
 
                                     {{!-- Range Bar Lengths, Colors, Shapes, etc --}}
-                                    {{#with (parseReferenceRange this.referenceRange) as |range|}}
+                                    {{#with (parseReferenceRange biomarker.referenceRange) as |range|}}
                                     {{#with (calculateRangeScaling range.min range.max) as |scaling|}}
                                     <!-- Left red section (low range) -->
                                     <path d="M{{scaling.low.x}},36 
@@ -84,11 +296,12 @@
                                           h-{{scaling.low.width}} 
                                           a5,5 0 0 1 -5,-5 
                                           v0 
-                                          a5,5 0 0 1 5,-5" fill="url(#lowGradient)" />
+                                          a5,5 0 0 1 5,-5" 
+                                          fill="url(#lowGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-freq)" />
 
                                     <!-- Middle green section (normal range) -->
                                     <rect width="{{scaling.normal.width}}" height="10" stroke-width="0"
-                                      fill="url(#normalGradient)" x="{{scaling.normal.x}}" y="36" />
+                                      fill="url(#normalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-freq)" x="{{scaling.normal.x}}" y="36"/>
 
                                     <!-- Right red section (High range) -->
                                     <path d="M{{scaling.high.x}},36 
@@ -97,7 +310,7 @@
                                       v0 
                                       a5,5 0 0 1 -5,5 
                                       h-{{scaling.high.width}} 
-                                      v-10" fill="url(#highGradient)" />
+                                      v-10" fill="url(#highGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-freq)"/>
 
                                     {{!-- Optimal range - Hidden for now --}}
                                     {{!-- <rect class="jssR01" width="80" height="10" stroke-width="0" fill="#85bb83"
@@ -137,16 +350,16 @@
                                       style="font-size: 12px;">High</text>
 
                                     <!-- Marker -->
-                                    <circle class="jssC01" cx="{{scaling.getMarkerPosition ../../value}}" cy="41" r="3"
+                                    <circle class="jssC01" cx="{{scaling.getMarkerPosition biomarker.value}}" cy="41" r="3"
                                       stroke="black" stroke-width="4" fill="black"></circle>
                                     <!-- Value display -->
                                     <text text-anchor="middle" class="jssN04"
-                                      x="{{scaling.getMarkerPosition ../../value}}" y="25" style="font-size: 12px;"
-                                      fill="black" direction="ltr">{{../../value}}
-                                      {{../../unit}}</text>
+                                      x="{{scaling.getMarkerPosition biomarker.value}}" y="25" style="font-size: 12px;"
+                                      fill="black" direction="ltr">{{biomarker.value}}
+                                      {{biomarker.unit}}</text>
                                     {{/with}}
                                     {{/with}}
-                                  </svg>
+                                  </svg>                              
                                 </div>
                               </div>
                             </div>
@@ -158,15 +371,15 @@
                             <div class="biomarker-textbox-container">
                               <div class="columns w-row">
                                 <div class="column-2 w-col w-col-6">
-                                  <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                    class="biomarker-textbox">{{getBiomarkerDescription @key}}<a
-                                      href="https://www.thelancet.com/journals/lanhl/article/PIIS2666-7568(21)00120-3/fulltext"
-                                      class="link-2"><sup class="superscript"> 1</sup></a>
+                                  <p class="biomarker-textbox">{{biomarker.description}}
+                                    <a href={{biomarker.link}} class="link-2">
+                                      <sup class="superscript">{{biomarker.id}}</sup>
+                                    </a>
                                   </p>
                                 </div>
                                 <div class="column w-col w-col-6">
                                   <div class="html-embed chart w-embed">
-                                    <div id="biomarker-trend-{{toLowerCase @key}}"></div>
+                                    <div id="biomarker-trend-{{toLowerCase (replace biomarkerName ' ' '')}}-freq"></div>
                                   </div>
                                 </div>
                               </div>
@@ -174,443 +387,192 @@
                           </div>
                         </div>
                       </article>
-                      {{/each}}
-                      {{else}}
-                      <div class="no-biomarkers-message">No lab results available</div>
                       {{/if}}
+                      {{/if}}
+                      {{/each}}
+                      </div>
+                    </nav>
+                  </div>
+                </div>
+              {{/if}}
+            {{/each}}
 
+                  <!-- Frequencies WITHOUT biomarkers -->
+            {{#each (getUniqueFrequencies biomarkerData) as |frequency|}}
+            {{#unless (hasBiomarkersInFrequency ../biomarkerData frequency)}}
+              <div class="dropdown-content-top inactive-category">
+                <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
+                  <div class="category-dropdown-toggle w-dropdown-toggle">
+                    <div class="category-title-dropdown-container dropdown-container">
+                      <h3 class="category-subtitle">{{frequency}}</h3>
+                      <span class="dropdown-arrow"></span>
+                    </div>
+                  </div>
+                  <nav class="category-dropdown-list w-dropdown-list">
+                    <div class="dropdown-content-bottom">
+                      <div class="no-biomarkers-message-container">
+                        <div class="no-biomarkers-message">No lab results available</div>
+                      </div>
                     </div>
                   </nav>
                 </div>
               </div>
-
-
-            </div>
-            <div class="table-module">
-              <div class="table-content"></div>
+              {{/unless}}
+              {{/each}}
             </div>
           </div>
-          <div data-w-tab="Ongoing" class="tab-pane-ongoing-2 w-tab-pane">
-            <div class="dropdown-wrapper">
-              <div class="dropdown-content-top">
-                <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
-                  <div class="category-dropdown-toggle w-dropdown-toggle">
-                    <div data-w-id="96aba6e8-d7ee-f36b-70ef-c1a6c71f3a25"
-                      class="category-title-dropdown-container dropdown-container">
-                      <h3 class="category-subtitle">Quarterly / Annually</h3>
-                      <span class="dropdown-arrow"></span>
-                    </div>
-                  </div>
-                  <nav class="category-dropdown-list w-dropdown-list">
-                    <div class="dropdown-content-bottom">
-                      <div class="w-layout-grid table-headers _3-columns">
-                        <div class="caption-large">Marker</div>
-                        <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a2e-fe3df0b8" class="caption-large">
-                          details<br></div>
-                        <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a31-fe3df0b8" class="caption-large">
-                             Results</div>
-                        <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a33-fe3df0b8" class="caption-large">
-                          RANGE BAR           </div>
-                      </div>
 
-                      <article id="Biomarker-Container" data-w-id="96aba6e8-d7ee-f36b-70ef-c1a6c71f3a35"
-                        style="opacity:1;-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)"
-                        class="biomarker-container">
-                        <div class="biomarker-container-hover">
-                          <div class="biomarker-top">
-                            <div class="w-layout-grid biomarker-table-top _3-columns">
-                              <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a3f-fe3df0b8" class="biomarker">
-                                Apo-B
-                              </div>
-                              <div
-                                style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
-                                class="biomarker-dropdown">
-                                <div class="stripe-1"></div>
-                                <div style="height:1.5em;opacity:1" class="stripe-2"></div>
-                              </div>
-                              <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a3c-fe3df0b8" class="biomarker-result">
-                                0.63 g/L</div>
-                              <div id="w-node-_96aba6e8-d7ee-f36b-70ef-c1a6c71f3a3e-fe3df0b8"
-                                class="html-embed w-embed">
-                                <div id="range-bar" class="svgBoxContainer">
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewbox="0, 0, 420, 90" width="95%"
-                                    class="svgBoxContent">
-                                    <rect class="jssR03" width="200" height="10" stroke-width="0" fill="#f0a7a7" x="210"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <rect class="jssR02" width="140" height="10" stroke-width="0" fill="#b7ddb5" x="76"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <rect class="jssR01" width="80" height="10" stroke-width="0" fill="#85bb83" x="2"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <text text-anchor="middle" class="jssN01" x="6" y="63" direction="ltr">0</text>
-                                    <text text-anchor="middle" class="jssT01" x="40" y="80"
-                                      direction="ltr">Optimal</text>
-                                    <text text-anchor="middle" class="jssN02" x="80" y="63" direction="ltr">0.40</text>
-                                    <text text-anchor="middle" class="jssT02" x="150" y="80"
-                                      direction="ltr">Normal</text>
-                                    <text text-anchor="middle" class="jssN03" x="210" y="63" direction="ltr">1.05</text>
-                                    <text text-anchor="middle" class="jssT02" x="305" y="80" direction="ltr">High</text>
-                                    <circle class="jssC01" cx="126" cy="41" r="3" stroke="black" stroke-width="4"
-                                      fill="black"></circle>
-                                    <text text-anchor="middle" class="jssN04" x="126" y="23" fill="black"
-                                      direction="ltr">0.63 (g/L)</text>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div style="height:0px" class="biomarker-bottom">
-                            <div class="biomarker-content-divider">
-                              <div class="biomarker-content-divider2"></div>
-                            </div>
-                            <div class="biomarker-textbox-container">
-                              <div class="columns w-row">
-                                <div class="w-col w-col-6">
-                                  <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                    class="biomarker-textbox">In recent years the importance the role of
-                                    apopolipoprotein B (Apo-B) plays in major vascular diseases has become
-                                    increasingly clear. ApoB is the main component of atherogenesis (plaque
-                                    building).
-                                    ApoB represents a direct measure of the total atherogenic particles (the sum
-                                    of
-                                    LDL, IDL, VLDL, and Lpa) in the circulation that can enter the arterial wall.
-                                    ApoB
-                                    is a more accurate measure of the risk posed by these particles than the mass
-                                    of
-                                    cholesterol they contain, estimated by LDL cholesterol (LDL-C) or non-HDL
-                                    cholesterol.<a
-                                      href="https://www.thelancet.com/journals/lanhl/article/PIIS2666-7568(21)00120-3/fulltext"
-                                      class="link-2"><sup class="superscript">1</sup></a>
-                                  </p>
-                                </div>
-                                <div class="w-col w-col-6">
-                                  <div class="html-embed chart w-embed w-script">
-                                    <div id="chart1"></div>
-                                    <script>
-                                      // !-- chart type      
-                                      var options = {
-                                        chart: {
-                                          type: 'line'
-                                        },
-                                        stroke: {
-                                          curve: 'smooth',
-                                        },
-                                        markers: {
-                                          size: 2,
-                                        },
-                                        fill: {
-                                          type: 'gradient',
-                                          gradient: {
-                                            shade: 'dark',
-                                            type: "horizontal",
-                                            shadeIntensity: 0.75,
-                                            opacityFrom: 0.9,
-                                            opacityTo: 0.9,
-                                            colorStops: [
-                                              {
-                                                offset: 0,
-                                                color: "#EB656F",
-                                                opacity: 1
-                                              },
-                                              {
-                                                offset: 50,
-                                                color: "#FAD375",
-                                                opacity: 1
-                                              },
-                                              {
-                                                offset: 90,
-                                                color: "#95DA74",
-                                                opacity: 1
-                                              }
-                                            ]
-                                          }
-                                        },
-                                        legend: {
-                                          show: true,
-                                          position: 'bottom',
-                                          horizontalAlign: 'center',
-                                        },
-                                        series: [{
-                                          name: 'Apo-B',
-                                          data: [1.21, 1.13, 0.74, 0.63]
-                                        }],
-                                        xaxis: {
-                                          categories: ["April", "July", "October", "January"]
-                                        }
-                                      }
-                                      var chart = new
-                                        ApexCharts(document.querySelector("#chart1"), options);
-                                      chart.render();
-                                    </script>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+          <div data-w-tab="All" class="w-tab-pane">
+            <div class="dropdown-wrapper">
+                <div class="table-headers-all">
+                  <div class="caption-large">Marker</div>
+                  <div class="caption-large">details<br></div>
+                  <div class="caption-large">Results</div>
+                  <div class="caption-large">RANGE BAR</div>
+                </div>
+
+                {{#each biomarkerData as |biomarker biomarkerName|}}
+                {{#if biomarker.value}}
+                <article class="biomarker-container">
+                  <div class="biomarker-container-hover">
+                    <div>
+                      <div class="w-layout-grid-all biomarker-table-top _3-columns">
+                        <div class="biomarker">{{biomarkerName}}</div>
+                        <div class="biomarker-dropdown">
+                          <div class="stripe-1"></div>
+                          <div class="stripe-2"></div>
+                        </div>
+                        <div class="biomarker-result">{{biomarker.value}} {{biomarker.unit}}</div>
+                        <div class="html-embed w-embed">
+                          <div id="range-bar-{{toLowerCase (replace biomarkerName ' ' '')}}" class="svgBoxContainer">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0, 0, 420, 90" width="95%"
+                              class="svgBoxContent">
+
+                              <!-- Gradients -->
+                              <defs>
+                                <linearGradient id="optimalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-all" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" style="stop-color:#9be29b;stop-opacity:1" />
+                                  <stop offset="100%" style="stop-color:#85bb83;stop-opacity:1" />
+                                </linearGradient>
+                                <linearGradient id="normalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-all" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" style="stop-color:#c7ebc5;stop-opacity:1" />
+                                  <stop offset="100%" style="stop-color:#b7ddb5;stop-opacity:1" />
+                                </linearGradient>
+                                <linearGradient id="highGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-all" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" style="stop-color:#ffb7b7;stop-opacity:1" />
+                                  <stop offset="100%" style="stop-color:#f0a7a7;stop-opacity:1" />
+                                </linearGradient>
+                                <linearGradient id="lowGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-all" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" style="stop-color:#ffb7b7;stop-opacity:1" />
+                                  <stop offset="100%" style="stop-color:#f0a7a7;stop-opacity:1" />
+                                </linearGradient>
+                              </defs>
+
+                              {{!-- Range Bar Lengths, Colors, Shapes, etc --}}
+                              {{#with (parseReferenceRange biomarker.referenceRange) as |range|}}
+                              {{#with (calculateRangeScaling range.min range.max) as |scaling|}}
+                              <!-- Left red section (low range) -->
+                              <path d="M{{scaling.low.x}},36 
+                                    h{{scaling.low.width}} 
+                                    v10 
+                                    h-{{scaling.low.width}} 
+                                    a5,5 0 0 1 -5,-5 
+                                    v0 
+                                    a5,5 0 0 1 5,-5" fill="url(#lowGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-all)"/>
+
+                              <!-- Middle green section (normal range) -->
+                              <rect width="{{scaling.normal.width}}" height="10" stroke-width="0"
+                                fill="url(#normalGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-all)"x="{{scaling.normal.x}}" y="36" />
+
+                              <!-- Right red section (High range) -->
+                              <path d="M{{scaling.high.x}},36 
+                                h{{scaling.high.width}} 
+                                a5,5 0 0 1 5,5 
+                                v0 
+                                a5,5 0 0 1 -5,5 
+                                h-{{scaling.high.width}} 
+                                v-10" 
+                                fill="url(#highGradient-{{toLowerCase (replace biomarkerName ' ' '')}}-all)" />
+
+                              {{!-- Optimal range - Hidden for now --}}
+                              {{!-- <rect class="jssR01" width="80" height="10" stroke-width="0" fill="#85bb83"
+                                x="106" y="36" rx="5" ry="5"></rect> --}}
+
+                              <!-- Vertical dividing lines -->
+                              {{!--
+                              <line x1="76" y1="36" x2="76" y2="46" stroke="black" stroke-width="1" />
+                              <line x1="210" y1="36" x2="210" y2="46" stroke="black" stroke-width="1" /> --}}
+
+                              <!-- Range numbers -->
+
+                              <!-- left value -->
+                              <text text-anchor="middle" class="jssN01" x="{{scaling.getLabelPosition 0}}" y="58"
+                                style="font-size: 12px;">
+                                0</text>
+                              <!-- Low/Normal threshold -->
+                              <text text-anchor="middle" class="jssN01" x="{{scaling.getLabelPosition range.min}}"
+                                y="58" style="font-size: 12px;">{{range.min}}</text>
+                              <!-- Normal/High transition -->
+                              <text text-anchor="middle" class="jssN03"
+                                x="{{scaling.getLabelPosition range.max 'max'}}" y="58"
+                                style="font-size: 12px;">{{range.max}}</text>
+                              <!-- High threshold -->
+                              <text text-anchor="middle" class="jssN03" x="{{scaling.getLabelPosition range.max}}"
+                                y="58" style="font-size: 12px;"></text>
+
+                              <!-- Range labels -->
+                              <text text-anchor="middle" class="jssT01"
+                                x="{{add scaling.low.x (multiply scaling.low.width 0.5)}}" y="75"
+                                style="font-size: 12px;">Low</text>
+                              <text text-anchor="middle" class="jssT02"
+                                x="{{add scaling.normal.x (multiply scaling.normal.width 0.5)}}" y="75"
+                                style="font-size: 12px;">Normal</text>
+                              <text text-anchor="middle" class="jssT02"
+                                x="{{add scaling.high.x (multiply scaling.high.width 0.5)}}" y="75"
+                                style="font-size: 12px;">High</text>
+
+                              <!-- Marker -->
+                              <circle class="jssC01" cx="{{scaling.getMarkerPosition biomarker.value}}" cy="41" r="3"
+                                stroke="black" stroke-width="4" fill="black"></circle>
+                              <!-- Value display -->
+                              <text text-anchor="middle" class="jssN04"
+                                x="{{scaling.getMarkerPosition biomarker.value}}" y="25" style="font-size: 12px;"
+                                fill="black" direction="ltr">{{biomarker.value}}
+                                {{biomarker.unit}}</text>
+                              {{/with}}
+                              {{/with}}
+                            </svg>
                           </div>
                         </div>
-                      </article>
-
                     </div>
-                  </nav>
-                </div>
-              </div>
-            </div>
-
-            <div class="dropdown-wrapper">
-              <div class="dropdown-content-top">
-                <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
-                  <div class="category-dropdown-toggle w-dropdown-toggle">
-                    <div data-w-id="ff923584-199d-04b5-b21f-fe7a22c39524"
-                      class="category-title-dropdown-container dropdown-container">
-                      <h3 class="category-subtitle">Every 1- 5 years</h3>
-                      <span class="dropdown-arrow"></span>
-                    </div>
-                  </div>
-                  <nav class="category-dropdown-list w-dropdown-list">
-                    <div class="dropdown-content-bottom">
-                      <div class="w-layout-grid table-headers _3-columns">
-                        <div class="caption-large">Marker</div>
-                        <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c3952d-fe3df0b8" class="caption-large">
-                          details<br></div>
-                        <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c39530-fe3df0b8" class="caption-large">
-                             Results</div>
-                        <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c39532-fe3df0b8" class="caption-large">
-                          RANGE BAR
-                                    </div>
+                    <div class="biomarker-bottom">
+                      <div class="biomarker-content-divider">
+                        <div class="biomarker-content-divider2"></div>
                       </div>
-
-                      <article id="Biomarker-Container" data-w-id="ff923584-199d-04b5-b21f-fe7a22c39534"
-                        style="opacity:1;-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)"
-                        class="biomarker-container">
-                        <div class="biomarker-container-hover">
-                          <div class="biomarker-top">
-                            <div class="w-layout-grid biomarker-table-top _3-columns">
-                              <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c3953e-fe3df0b8" class="biomarker">
-                                Testosterone</div>
-                              <div
-                                style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
-                                class="biomarker-dropdown">
-                                <div class="stripe-1"></div>
-                                <div style="height:1.5em;opacity:1" class="stripe-2"></div>
-                              </div>
-                              <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c3953b-fe3df0b8" class="biomarker-result">
-                                0.63 g/L</div>
-                              <div id="w-node-ff923584-199d-04b5-b21f-fe7a22c3953d-fe3df0b8" class="html-embed w-embed">
-                                <div id="range-bar" class="svgBoxContainer">
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewbox="0, 0, 420, 90" width="95%"
-                                    class="svgBoxContent">
-                                    <rect class="jssR03" width="200" height="10" stroke-width="0" fill="#f0a7a7" x="210"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <rect class="jssR02" width="140" height="10" stroke-width="0" fill="#b7ddb5" x="76"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <rect class="jssR01" width="80" height="10" stroke-width="0" fill="#85bb83" x="2"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <text text-anchor="middle" class="jssN01" x="6" y="63" direction="ltr">0</text>
-                                    <text text-anchor="middle" class="jssT01" x="40" y="80"
-                                      direction="ltr">Optimal</text>
-                                    <text text-anchor="middle" class="jssN02" x="80" y="63" direction="ltr">0.40</text>
-                                    <text text-anchor="middle" class="jssT02" x="150" y="80"
-                                      direction="ltr">Normal</text>
-                                    <text text-anchor="middle" class="jssN03" x="210" y="63" direction="ltr">1.05</text>
-                                    <text text-anchor="middle" class="jssT02" x="305" y="80" direction="ltr">High</text>
-                                    <circle class="jssC01" cx="126" cy="41" r="3" stroke="black" stroke-width="4"
-                                      fill="black"></circle>
-                                    <text text-anchor="middle" class="jssN04" x="126" y="23" fill="black"
-                                      direction="ltr">0.63 (g/L)</text>
-                                  </svg>
-                                </div>
-                              </div>
+                      <div class="biomarker-textbox-container">
+                        <div class="columns w-row">
+                          <div class="column-2 w-col w-col-6">
+                            <p class="biomarker-textbox">{{biomarker.description}}
+                              <a href={{biomarker.link}} class="link-2">
+                                <sup class="superscript">{{biomarker.id}}</sup></a>
+                            </p>
+                          </div>
+                          <div class="column w-col w-col-6">
+                            <div class="html-embed chart w-embed">
+                              <div id="biomarker-trend-{{toLowerCase (replace biomarkerName ' ' '')}}-all"></div>
                             </div>
                           </div>
-                          <div style="height:0px" class="biomarker-bottom">
-                            <div class="biomarker-content-divider">
-                              <div class="biomarker-content-divider2"></div>
-                            </div>
-                            <div class="biomarker-textbox-container">
-                              <div class="columns w-row">
-                                <div class="w-col w-col-6">
-                                  <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                    class="biomarker-textbox">Insert Testosterone description here <a
-                                      href="https://www.thelancet.com/journals/lanhl/article/PIIS2666-7568(21)00120-3/fulltext"
-                                      class="link-2"><sup class="superscript">1</sup></a>
-                                  </p>
-                                </div>
-                                <div class="w-col w-col-6">
-                                  <div class="html-embed chart w-embed w-script">
-                                    <div id="chart1"></div>
-                                    <script>
-                                      // !-- chart type      
-                                      var options = {
-                                        chart: {
-                                          type: 'line'
-                                        },
-                                        stroke: {
-                                          curve: 'smooth',
-                                        },
-                                        markers: {
-                                          size: 2,
-                                        },
-                                        fill: {
-                                          type: 'gradient',
-                                          gradient: {
-                                            shade: 'dark',
-                                            type: "horizontal",
-                                            shadeIntensity: 0.75,
-                                            opacityFrom: 0.9,
-                                            opacityTo: 0.9,
-                                            colorStops: [
-                                              {
-                                                offset: 0,
-                                                color: "#EB656F",
-                                                opacity: 1
-                                              },
-                                              {
-                                                offset: 50,
-                                                color: "#FAD375",
-                                                opacity: 1
-                                              },
-                                              {
-                                                offset: 90,
-                                                color: "#95DA74",
-                                                opacity: 1
-                                              }
-                                            ]
-                                          }
-                                        },
-                                        legend: {
-                                          show: true,
-                                          position: 'bottom',
-                                          horizontalAlign: 'center',
-                                        },
-                                        series: [{
-                                          name: 'Apo-B',
-                                          data: [1.21, 1.13, 0.74, 0.63]
-                                        }],
-                                        xaxis: {
-                                          categories: ["April", "July", "October", "January"]
-                                        }
-                                      }
-                                      var chart = new
-                                        ApexCharts(document.querySelector("#chart1"), options);
-                                      chart.render();
-                                    </script>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-
-                    </div>
-                  </nav>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown-wrapper">
-              <div class="dropdown-content-top">
-                <div data-hover="false" data-delay="0" class="category-dropdown-icon-2 w-dropdown">
-                  <div class="category-dropdown-toggle w-dropdown-toggle">
-                    <div data-w-id="de977581-3bd8-f6ea-7880-3c4b3639fd6a"
-                      class="category-title-dropdown-container dropdown-container">
-                      <h3 class="category-subtitle">One time</h3>
-                      <span class="dropdown-arrow"></span>
-                    </div>
-                  </div>
-                  <nav class="category-dropdown-list w-dropdown-list">
-                    <div class="dropdown-content-bottom">
-                      <div class="w-layout-grid table-headers _3-columns">
-                        <div class="caption-large">Marker</div>
-                        <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd73-fe3df0b8" class="caption-large">
-                          details<br></div>
-                        <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd76-fe3df0b8" class="caption-large">
-                          Results</div>
-                        <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd78-fe3df0b8" class="caption-large">
-                          RANGE BAR
                         </div>
                       </div>
-
-                      <article id="Biomarker-Container" data-w-id="de977581-3bd8-f6ea-7880-3c4b3639fd93"
-                        style="opacity:1;-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)"
-                        class="biomarker-container">
-                        <div class="biomarker-container-hover">
-                          <div class="biomarker-top">
-                            <div class="w-layout-grid biomarker-table-top _3-columns">
-                              <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd9d-fe3df0b8" class="biomarker">
-                                Lp(a)
-                              </div>
-                              <div
-                                style="-webkit-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-moz-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);-ms-transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0);transform:translate3d(0, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0deg) skew(0, 0)"
-                                class="biomarker-dropdown">
-                                <div class="stripe-1"></div>
-                                <div style="height:1.5em;opacity:1" class="stripe-2"></div>
-                              </div>
-                              <div id="w-node-de977581-3bd8-f6ea-7880-3c4b3639fd9a-fe3df0b8" class="biomarker-result">
-                                40 nmol/L</div>
-                              <div class="html-embed w-embed">
-                                <div id="range-bar" class="svgBoxContainer">
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewbox="0, 0, 420, 90" width="95%"
-                                    class="svgBoxContent">
-                                    <rect class="jssR03" width="200" height="10" stroke-width="0" fill="#f0a7a7" x="210"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <rect class="jssR02" width="160" height="10" stroke-width="0" fill="#b7ddb5" x="55"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <rect class="jssR01" width="60" height="10" stroke-width="0" fill="#85bb83" x="2"
-                                      y="36" rx="5" ry="5"></rect>
-                                    <text text-anchor="middle" class="jssN01" x="6" y="63" direction="ltr">0</text>
-                                    <text text-anchor="middle" class="jssT01" x="40" y="80"
-                                      direction="ltr">Optimal</text>
-                                    <text text-anchor="middle" class="jssN02" x="60" y="63" direction="ltr">30</text>
-                                    <text text-anchor="middle" class="jssT02" x="120" y="80"
-                                      direction="ltr">Normal</text>
-                                    <text text-anchor="middle" class="jssN03" x="210" y="63" direction="ltr">100</text>
-                                    <text text-anchor="middle" class="jssT02" x="305" y="80" direction="ltr">High</text>
-                                    <circle class="jssC01" cx="40" cy="41" r="3" stroke="black" stroke-width="4"
-                                      fill="black"></circle>
-                                    <text text-anchor="middle" class="jssN04" x="40" y="23" fill="black"
-                                      direction="ltr">20 (nmol/L)</text>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div style="height:0px" class="biomarker-bottom">
-                            <div class="biomarker-content-divider">
-                              <div class="biomarker-content-divider2"></div>
-                            </div>
-                            <div class="biomarker-textbox-container">
-                              <div class="w-row">
-                                <div class="w-col w-col-6">
-                                  <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                    class="biomarker-textbox">Lp(a) is the single most important – and most
-                                    prevalent
-                                    – hereditary risk factor for cardiovascular disease (CVD) no matter what other
-                                    risk factors a patient may or may not have such as smoking, diabetes,
-                                    hypertension
-                                    or non-Lp(a) dyslipidemia.<a href="#" class="link-2"><sup
-                                        class="superscript">2</sup></a>
-                                  </p>
-                                </div>
-                                <div class="w-col w-col-6">
-                                  <p style="-webkit-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 50%, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
-                                    class="biomarker-textbox">No chart for Lp(a) as this marker is typically a
-                                    once
-                                    in
-                                    a lifetime test, unless deemed &quot;high&quot; and you would like to track
-                                    progress with interventions. Please reach out to our team if this is the case
-                                    for
-                                    you.</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-
                     </div>
-                  </nav>
-                </div>
+                  </div>
+                </article>
+                {{/if}}
+                {{/each}}
+                {{#else}}
+                <div class="no-biomarkers-message">No lab results available</div>
+                {{/else}}
               </div>
-            </div>
           </div>
         </div>
       </div>

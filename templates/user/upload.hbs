@@ -1,3 +1,4 @@
+{{!-- Uploads.hbs --}}
 <!DOCTYPE html>
 <html>
 
@@ -42,7 +43,7 @@
     </a>
     <a id="Insights" href="/insights" class="page-link w-inline-block">
       <img src="images/layout.svg" loading="lazy" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Dashboard</span></div>
+      <div class="page-link-text-block"><span class="page-link-text-span">Insights</span></div>
     </a>
     <div class="nav-divider-basics nav-divider-bottom"></div>
     <a href="/how-it-works" class="page-link w-inline-block"><img src="images/help-circle.svg" loading="lazy" alt="Icon"
@@ -61,6 +62,7 @@
       <div>
         <h2 class="heading2">Upload Your Data</h2>
         <h3 class="subheading"></h3>
+        <div class="subheading-2">Please upload as much of your medical history as possible and/or manually input your data</div>
         <div class="spacer-block"></div>
       </div>
     </div>
@@ -132,11 +134,11 @@
                     <button id="processFiles" class="process-button" disabled>Upload File(s)</button>
                   </div>
                   <div class="upload-page-text-container">
-                    <div class="upload-page-text2">Supported file types:
+                    {{!-- <div class="upload-page-text2">Supported file types:
                       <li>PDFs</li>
                       <li>Photos &amp; Images (JPEG
                         and PNG)</li>... More to come
-                    </div>
+                    </div> --}}
                   </div>
                   {{!-- <div class="upload-page-text">Once your data is uploaded successfully, pop on over to the File
                     Output
@@ -192,8 +194,8 @@
               <div class="div-block-9">
                 <div class="upload-page-text">Data from uploaded file(s):</div>
 
-                {{#if user.files}}
-                {{#each user.files}}
+                {{#if user.files}} {{!-- Check if user has any files in mongoDB - see registerSchema --}}
+                {{#each user.files}} {{!-- Loop through each files  --}}
                 <div class="file-header lab-result-card {{confidenceClass extractionMethod}}">
                   <div class="lab-result-header">
                     <div class="lab-result-header-left">

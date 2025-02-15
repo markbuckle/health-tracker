@@ -6,8 +6,6 @@
   <title>Reports</title>
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <link href="css/styles.css" rel="stylesheet" type="text/css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body class="user-body">
@@ -33,7 +31,7 @@
     </a>
     <a id="Insights" href="/insights" class="page-link w-inline-block"><img src="images/layout.svg" loading="lazy"
         alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Dashboard</span></div>
+      <div class="page-link-text-block"><span class="page-link-text-span">Insights</span></div>
     </a>
     <div class="nav-divider-basics nav-divider-bottom"></div>
     <a href="/how-it-works" class="page-link w-inline-block"><img src="images/help-circle.svg" loading="lazy" alt="Icon"
@@ -52,6 +50,8 @@
       <div>
         <h2 class="heading">Lab Reports</h2>
         <h3 class="subheading"></h3>
+        <div class="subheading-2">Our lab reports show are generated from the files you uploaded plus your manual inputs
+          into Uploads</div>
         <div class="spacer-block"></div>
       </div>
     </div>
@@ -63,8 +63,6 @@
   <script src="js/rangeCalculations.js"></script>
   <script src="js/charts.js"></script>
   <script src="js/main.js" type="text/javascript"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script> // dropdown script
     document.addEventListener('DOMContentLoaded', () => {
       // Get all dropdown toggle elements
@@ -79,7 +77,7 @@
           arrow.classList.toggle('active');
         });
 
-        // Watch for Webflow's dropdown state changes
+        // Watch for dropdown state changes
         const observer = new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
             if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -100,10 +98,32 @@
     });
   </script>
   <script> // dropdown spinner
-    const dropdown = document.querySelector('.biomarker-dropdown');
-    dropdown.addEventListener('click', () => {
-      document.querySelector('.stripe-1').classList.toggle('spin');
-      document.querySelector('.stripe-2').classList.toggle('spin');
+    document.addEventListener('DOMContentLoaded', () => {
+      const biomarkerContainers = document.querySelectorAll('.biomarker-container');
+      
+      biomarkerContainers.forEach(container => {
+        // Get all the necessary elements
+        const tableTop = container.querySelector('.biomarker-table-top');
+        
+        // Function to handle the dropdown state
+        const toggleStripes = (event) => {
+          // Get the stripes within the clicked container's context
+          const targetContainer = event.target.closest('.biomarker-container');
+          const stripe1 = targetContainer.querySelector('.stripe-1');
+          const stripe2 = targetContainer.querySelector('.stripe-2');
+          
+          // Toggle the spin classes
+          if (stripe1 && stripe2) {
+            stripe1.classList.toggle('spin');
+            stripe2.classList.toggle('spin');
+          }
+        };
+        
+        // Add click handlers to both elements for this specific container
+        if (tableTop) {
+          tableTop.addEventListener('click', toggleStripes);
+        }
+      });
     });
   </script>
 </body>
