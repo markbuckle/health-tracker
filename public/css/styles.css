@@ -545,7 +545,7 @@ body {
   position: relative;
   display: none;
   padding: 0;
-  margin: 0;
+  margin-top: 0.5rem;
 }
 .w--tab-active {
   display: block;
@@ -574,7 +574,7 @@ body {
   justify-content: flex-start;
   align-items: stretch;
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 0.5rem;
   display: flex;
   position: static;
 }
@@ -620,7 +620,7 @@ body {
   display: flex;
   flex-direction: column;
   width: auto;
-  padding: 0.25rem 0.3rem;
+  padding: 0;
   margin: 0;
 }
 .user-content-bg {
@@ -3480,15 +3480,15 @@ img,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 65%;
   border: none;
   background-color: #33885182;
   color: white;
   font-family: "Poppins-SemiBold", sans-serif;
-  font-size: 16px;
-  margin: 1.25rem 1rem 1rem 1rem;
+  font-size: 20px;
+  margin: 1rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
   vertical-align: middle;
@@ -3542,7 +3542,7 @@ img,
   /* max-height: 80vh; */
 }
 
-.score-circle {
+/* .score-circle {
   width: 60px;
   height: 60px;
   border: 2px dashed #63b1f1;
@@ -3553,7 +3553,7 @@ img,
   font-size: 24px;
   font-family: "Poppins-SemiBold", sans-serif;
   margin: 20px;
-}
+} */
 
 .metrics-section {
   padding: 20px;
@@ -3584,6 +3584,7 @@ img,
   border-radius: 8px;
   font-family: "Poppins-Regular", sans-serif;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .metric-item:hover {
@@ -3612,6 +3613,58 @@ img,
   color: #666;
   margin-bottom: 8px;
   font-family: "Poppins-Regular", sans-serif;
+}
+.metric-dropdown {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  background-color: #f9fbfd;
+  border-radius: 0 0 8px 8px;
+  margin: -5px 0 10px 0;
+  padding: 0 15px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.metric-dropdown.visible {
+  max-height: 500px; /* Adjust based on content */
+  opacity: 1;
+  padding: 15px;
+}
+.metric-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed #e0e8f0;
+  font-family: "Poppins-Regular", sans-serif;
+}
+.metric-detail:last-child {
+  border-bottom: none;
+}
+.metric-label {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.metric-value {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+/* Improved arrow indicator */
+.metric-arrow {
+  transition: transform 0.3s ease;
+}
+
+.metric-item.active .metric-arrow {
+  transform: rotate(90deg);
+}
+/* Status styling */
+.status-complete {
+  color: #46953f;
+}
+
+.status-incomplete {
+  color: #dc3545;
 }
 /* ---- profile page ---- */
 .basic-info-div {
@@ -4085,4 +4138,250 @@ label[for="customBloodType"] {
 
 .in-page-container {
   display: flex;
+}
+
+/* --------- INSIGHTS PAGE -------- */
+.wellness-summary-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 80vh; /* Ensure card is tall enough */
+}
+.wellness-content {
+  display: flex;
+  gap: 1rem;
+  height: auto; /* Remove fixed height */
+}
+.wellness-categories {
+  flex: 1.5; /* Give more space to categories */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Reduce gap between categories */
+  max-width: 60%;
+}
+.wellness-chart-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
+}
+.chart-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+.chart-wrapper {
+  position: relative;
+  width: 350px;
+  height: 350px;
+  margin-top: 1rem;
+}
+.circular-chart {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+/* Color scheme for the chart */
+.circle.prevention {
+  stroke: #ff8c42; /* Orange */
+}
+
+.circle.monitoring {
+  stroke: #46953f; /* Teal green */
+}
+
+.circle-bg {
+  stroke: #eee;
+  stroke-width: 8;
+  fill: none;
+}
+
+.category-section {
+  background: #f8f9fb;
+  border-radius: 12px;
+  padding: 1.25rem; /* Slightly reduce padding */
+}
+
+.metric-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem; /* Reduce gap between metrics */
+}
+
+.metric-item {
+  padding: 0.75rem 1rem;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Make the category headers more compact */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.category-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Overall score styling */
+.wellness-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.wellness-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+.insights-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+.score-display {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.score-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  height: 8rem;
+  border: 2px dashed #4379ba;
+  border-radius: 50%;
+  background: white;
+  z-index: 2;
+}
+.score-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #4379ba;
+  line-height: 1.1;
+}
+.score-max {
+  font-size: 1.4rem;
+  color: #666;
+}
+
+/* Adjust the stroke widths */
+.circle {
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+@media (max-width: 1024px) {
+  .wellness-content {
+    flex-direction: column;
+  }
+
+  .wellness-categories {
+    max-width: 100%;
+  }
+
+  .wellness-chart-container {
+    order: -1; /* Move chart to top on mobile */
+    padding-top: 0;
+  }
+}
+
+.chart-section {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chart-section:hover .circle.prevention {
+  stroke: #e67e3b; /* Darker orange */
+}
+
+.chart-section:hover .circle.monitoring {
+  stroke: #71b871; /* Darker teal */
+}
+
+.chart-section:hover .circle.risk {
+  stroke: #e6c200; /* Darker yellow */
+}
+
+.chart-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+/* Actions tab styling */
+.recommendations-wrapper {
+  padding: 0.5rem 1rem 0 0;
+}
+.recommendations-header {
+  margin-bottom: 1rem;
+}
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recommendation-item {
+  padding: 1rem;
+  background: #f8f9fb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.recommendation-item:hover {
+  background: #f1f4f8;
+  transform: translateX(4px);
+}
+
+.recommendation-text {
+  font-size: 1.1rem;
+  color: #4a5568;
+  font-family: "Poppins-Regular", sans-serif;
+}
+.circle-progress {
+  transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+  transform: rotate(0deg);
+  transform-origin: center;
+  stroke-linecap: round;
+}
+.score-circle {
+  transition: border-color 0.3s ease;
+}
+.incomplete {
+  font-size: x-large;
+  margin-right: 0.25rem;
+}
+.category-score {
+  margin-right: 0.75rem;
 }
