@@ -485,12 +485,16 @@ app.get("/login", (req, res) => {
   res.render("auth/login");
 });
 
+app.get("/demo", (req, res) => {
+  res.render("demo");
+});
+
 app.get("/how-it-works", (req, res) => {
   res.render("how-it-works");
 });
 
-app.get("/demo", (req, res) => {
-  res.render("demo");
+app.get("/learning", (req, res) => {
+  res.render("learning");
 });
 
 app.get("/", (req, res) => {

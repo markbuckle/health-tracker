@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Learning Center</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+
+  <body class="home-body">
+    {{> header pageTitle="Health Tracker"}}
+
+    <section class="learning-center content-container">
+      <div class="learning-header">
+        <h1 class="learning-title">Explore Health Podcasts</h1>
+        <p class="learning-subtitle">
+          Discover the latest health and wellness podcasts.
+        </p>
+      </div>
+
+      <div class="podcast-container">
+        <!-- Podcast Card 1 -->
+        <div class="podcast-card">
+          <div class="podcast-content">
+            <div class="podcast-image-container">
+              <img
+                src="images/podcasts/thedrive2.png"
+                alt="The Drive with Peter Attia"
+                class="podcast-image"
+              />
+            </div>
+            <div class="podcast-info">
+              <h3 class="podcast-title">The Drive with Peter Attia</h3>
+              <p class="podcast-description">
+                Dr. Peter Attia explores the science of longevity, performance,
+                and health through in-depth interviews with experts.
+              </p>
+              <div class="podcast-links">
+                <a
+                  href="https://podcasts.apple.com/us/podcast/the-peter-attia-drive/id1400828889"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon apple-icon"></span>
+                  Apple Podcasts
+                </a>
+                <a
+                  href="https://open.spotify.com/show/69mUoQ2vjakgFhEtjdYWXh"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon spotify-icon"></span>
+                  Spotify
+                </a>
+                <a
+                  href="https://www.youtube.com/@PeterAttiaMD"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon youtube-icon"></span>
+                  YouTube
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Podcast Card 2 -->
+        <div class="podcast-card">
+          <div class="podcast-content">
+            <div class="podcast-image-container">
+              <img
+                src="images/podcasts/hubermanlab2.png"
+                alt="Huberman Lab Podcast"
+                class="podcast-image"
+              />
+            </div>
+            <div class="podcast-info">
+              <h3 class="podcast-title">Huberman Lab</h3>
+              <p class="podcast-description">
+                Dr. Andrew Huberman discusses neuroscience and practical tools
+                for everyday life, covering topics like sleep, stress, focus,
+                and performance.
+              </p>
+              <div class="podcast-links">
+                <a
+                  href="https://podcasts.apple.com/us/podcast/huberman-lab/id1545953110"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon apple-icon"></span>
+                  Apple Podcasts
+                </a>
+                <a
+                  href="https://open.spotify.com/show/79CkJF3UJTHFV8Dse3Oy0P"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon spotify-icon"></span>
+                  Spotify
+                </a>
+                <a
+                  href="https://www.youtube.com/@hubermanlab"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon youtube-icon"></span>
+                  YouTube
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Podcast Card 3 -->
+        <!-- Podcast Card for Found My Fitness -->
+        <div class="podcast-card">
+          <div class="podcast-content">
+            <div class="podcast-image-container">
+              <img
+                src="images/podcasts/rhondapatrick2.jpg"
+                alt="Found My Fitness with Dr. Rhonda Patrick"
+                class="podcast-image"
+              />
+            </div>
+            <div class="podcast-info">
+              <h3 class="podcast-title">Found My Fitness</h3>
+              <p class="podcast-description">
+                Dr. Rhonda Patrick translates complex scientific research into
+                practical advice on nutrition, aging, and optimal health, with a
+                focus on how lifestyle and nutritional interventions can promote
+                longevity.
+              </p>
+              <div class="podcast-links">
+                <a
+                  href="https://podcasts.apple.com/us/podcast/foundmyfitness/id818198322"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon apple-icon"></span>
+                  Apple Podcasts
+                </a>
+                <a
+                  href="https://open.spotify.com/show/08HpKPvBnFRnNmqZnvrank"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon spotify-icon"></span>
+                  Spotify
+                </a>
+                <a
+                  href="https://www.youtube.com/@FoundMyFitness"
+                  class="podcast-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="platform-icon youtube-icon"></span>
+                  YouTube
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="learning-section-divider"></div>
+
+      <div class="learning-header">
+        <h2 class="learning-subtitle-header">Health Books We Recommend</h2>
+        <p class="learning-subtitle">
+          Educational resources to improve your understanding of health and
+          wellness.
+        </p>
+      </div>
+
+      <div class="books-container">
+        <!-- Book showcase will be added in the future -->
+        <div class="coming-soon-message">
+          <p>Book recommendations coming soon!</p>
+        </div>
+      </div>
+    </section>
+
+    {{> footer}}
+    <script src="js/main.js" defer type="module"></script>
+  </body>
+</html>
