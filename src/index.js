@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
-const { registerCollection } = require("./mongodb");
+const { registerCollection, feedbackCollection } = require("./mongodb");
 const MongoStore = require("connect-mongo");
 const templatePath = path.join(__dirname, "../templates");
 const publicPath = path.join(__dirname, "../public");
@@ -19,6 +19,8 @@ require("dotenv").config();
 const WebSocket = require("ws");
 const { calculateRangePositions } = require("../public/js/rangeCalculations");
 const { biomarkerData, markerCategories } = require("./data/biomarkerData");
+const { Resend } = require("resend"); // npm install resend
+const ragRoutes = require("./db/routes/ragRoutes");
 
 // express app setup
 const app = express();
@@ -1509,6 +1511,61 @@ app.post("/update-file-details", checkAuth, async (req, res) => {
     });
   }
 });
+
+// Initialize Resend with your API key
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Feedback API endpoint
+app.post("/api/feedback", async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    // Create new feedback entry
+    const feedback = new feedbackCollection({
+      name,
+      email,
+      message,
+    });
+
+    // Save to database
+    await feedback.save();
+
+    // Send email notification using Resend
+    const { data, error } = await resend.emails.send({
+      from: "HealthLync <onboarding@resend.dev>", // Use this during testing
+      //from: "HealthLync Feedback <feedback@yourdomain.com>", // Use your verified domain in Resend
+      to: ["markbuckle92@gmail.com"],
+      subject: "New HealthLync Feedback Received",
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e6f0; border-radius: 8px;">
+          <h2 style="color: #5cb15d;">New Feedback Received</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong> ${message}</p>
+          <hr style="border: none; border-top: 1px solid #e1e6f0; margin: 20px 0;">
+          <p style="color: #888; font-size: 12px;">This is an automated message from your HealthLync feedback system.</p>
+        </div>
+      `,
+    });
+
+    if (error) {
+      console.error("Resend API error:", error);
+      // Still return success to the user if the feedback was saved to DB
+      // You might want to log this error or handle it differently
+      return res.status(201).json({ success: true, emailSent: false });
+    }
+
+    res.status(201).json({ success: true, emailSent: true });
+  } catch (error) {
+    console.error("Error processing feedback:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error processing feedback" });
+  }
+});
+
+app.use("/api/rag", ragRoutes);
 
 // Change from app.listen to server.listen at the end of the file
 server.listen(port, () => {

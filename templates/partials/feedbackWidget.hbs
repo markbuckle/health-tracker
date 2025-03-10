@@ -1,0 +1,83 @@
+<!-- feedback.hbs  -->
+<div id="feedback-widget" class="feedback-widget closed">
+  <button id="feedback-toggle" class="feedback-toggle">
+    <!-- Chat bubble icon -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="white"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="chat-icon"
+    >
+      <path
+        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+      ></path>
+    </svg>
+
+    <!-- Question mark with sparkles -->
+  </button>
+
+  <div class="feedback-form-container">
+    <div class="feedback-header">
+      <h2>Send us your feedback</h2>
+      <button id="feedback-close" class="feedback-close">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <form id="feedback-form" class="feedback-form">
+      <div class="form-group">
+        <label for="feedback-name">Name</label>
+        <input
+          type="text"
+          id="feedback-name"
+          name="name"
+          placeholder="Enter your name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="feedback-email">Email</label>
+        <input
+          type="email"
+          id="feedback-email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="feedback-message">Feedback</label>
+        <textarea
+          id="feedback-message"
+          name="message"
+          placeholder="Tell us what you think"
+          rows="5"
+          required
+        ></textarea>
+      </div>
+
+      <button type="submit" class="feedback-submit">Submit</button>
+    </form>
+  </div>
+</div>
