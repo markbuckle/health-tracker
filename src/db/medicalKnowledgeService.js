@@ -1,4 +1,4 @@
-const db = require("./pgConnector");
+const pgConnector = require("./pgConnector");
 const llmService = require("./chatService");
 
 // Function to add a simple document to the knowledge base
@@ -23,7 +23,7 @@ async function addDocument(document) {
 
     const values = [title, content, source, categories, embedding];
 
-    const result = await db.query(text, values);
+    const result = await pgConnector.query(text, values);
     console.log(`Document inserted with ID: ${result.rows[0].id}`);
 
     return result.rows[0].id;
@@ -48,7 +48,7 @@ async function testAddDocument() {
 
 // Function to search for documents similar to a query
 async function searchDocuments(query, options = {}) {
-  const { threshold = 0.75, categories = [] } = options;
+  const { limit = 5, threshold = 0.75, categories = [] } = options;
 
   try {
     console.log(`Searching for: ${query}`);
