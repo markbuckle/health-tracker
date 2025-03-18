@@ -48,7 +48,7 @@ async function testAddDocument() {
 
 // Function to search for documents similar to a query
 async function searchDocuments(query, options = {}) {
-  const { limit = 5, threshold = 0.75, categories = [] } = options;
+  const { limit = 5, threshold = 0.9, categories = [] } = options;
 
   try {
     console.log(`Searching for: ${query}`);
@@ -65,29 +65,39 @@ async function searchDocuments(query, options = {}) {
         embedding <=> $1 AS similarity
       FROM medical_documents
       WHERE embedding IS NOT NULL
-      AND source = 'Peter Attia MD'  /* Filter specifically for your content */
     `;
 
     const params = [queryEmbedding];
     let paramIndex = 2;
 
     // Filter by categories if provided
-    if (categories && categories.length > 0) {
-      sql += ` AND categories && $${paramIndex}`;
-      params.push(categories);
-      paramIndex++;
-    }
+    // if (categories && categories.length > 0) {
+    //   sql += ` AND categories && $${paramIndex}`;
+    //   params.push(categories);
+    //   paramIndex++;
+    // }
 
     // Order by similarity and limit results
     sql += ` ORDER BY similarity ASC LIMIT $${paramIndex}`;
     params.push(limit);
 
+    console.log("Executing SQL query:", sql);
     const result = await pgConnector.query(sql, params);
+    console.log(`Query returned ${result.rows.length} rows`);
 
-    // Only keep results that meet the similarity threshold
+    // Only keep results that meet the similarity threshold. Lower threshold is better for vector similarity
     const documents = result.rows.filter((row) => row.similarity <= threshold);
 
     console.log(`Found ${documents.length} relevant documents`);
+    console.log(
+      "Documents:",
+      documents.map((d) => ({
+        id: d.id,
+        title: d.title,
+        similarity: d.similarity,
+      }))
+    );
+
     return documents;
   } catch (error) {
     console.error("Error searching documents:", error);
