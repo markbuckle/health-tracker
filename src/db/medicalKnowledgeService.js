@@ -76,13 +76,16 @@ async function performRag(query) {
     const documents = await searchDocuments(query);
 
     if (documents.length === 0) {
-      return "I don't have enough information to answer that question.";
+      return {
+        response: "I don't have enough information to answer that question.",
+        sources: [],
+      };
     }
 
-    // Step 2: Format context
+    // Step 2: Format context with better structure
     const context = documents
-      .map((doc) => {
-        return `Title: ${doc.title}\nContent: ${doc.content}`;
+      .map((doc, index) => {
+        return `Document ${index + 1}: ${doc.title}\nContent: ${doc.content}`;
       })
       .join("\n\n");
 

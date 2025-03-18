@@ -1,0 +1,2 @@
+-- PostgreSQL query
+SELECT version();

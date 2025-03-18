@@ -58,7 +58,7 @@ async function generateBasicResponse(query, context) {
   
   Question: ${query}
   
-  Give a clear, direct answer without any commentary about "sleeping on the question" or similar phrases. [/INST]</s>`,
+  Give a clear, direct answer without any commentary. Format your response as plain text with no special formatting. [/INST]</s>`,
         }),
       }
     );
@@ -79,22 +79,67 @@ async function generateBasicResponse(query, context) {
       return "Error: Could not parse response from Hugging Face API";
     }
 
-    // Extract just the answer part using a more robust approach
+    // Extract the generated text
     const fullText = result[0]?.generated_text || "";
 
-    // Better extraction - look for the pattern after [/INST] and remove any </s> tags
+    // Split the text to get only the response part
     let answer = "";
     const parts = fullText.split("[/INST]");
     if (parts.length > 1) {
-      answer = parts[1]
-        .replace(/\s*<\/s>\s*$/, "")
-        .replace(/^\s*<\/s>\s*/, "")
+      // Get the raw answer after [/INST]
+      const rawAnswer = parts[1]
+        .replace(/\s*<\/s>\s*$/, "") // Remove closing </s> tag
+        .replace(/^\s*<\/s>\s*/, "") // Remove opening </s> tag if present
         .trim();
+
+      // Look for the true start of the answer
+      // This targets finding the first proper sentence in the text
+      const sentenceMatch = rawAnswer.match(/[A-Z][^.!?]*[.!?]/);
+      if (sentenceMatch) {
+        // Get the index where the first proper sentence starts
+        const startIndex = rawAnswer.indexOf(sentenceMatch[0]);
+        if (startIndex > 0) {
+          // If it's not at the beginning, take everything from this point
+          answer = rawAnswer.substring(startIndex);
+        } else {
+          answer = rawAnswer;
+        }
+      } else {
+        // If no clear sentence is found, try to clean up by removing non-alphanumeric prefixes
+        answer = rawAnswer.replace(/^[^a-zA-Z0-9\s]+/, "").trim();
+
+        // Also check for common prefixes that appear in the output
+        const commonPrefixes = ["IB.", "力IB.", "BIB.", "BL", "B ", "I ", "L "];
+        for (const prefix of commonPrefixes) {
+          if (answer.startsWith(prefix)) {
+            answer = answer.substring(prefix.length).trim();
+            break;
+          }
+        }
+      }
     } else {
+      // If we can't split by [/INST], just use a more basic approach
       answer = fullText
         .replace(/\s*<\/s>\s*$/, "")
         .replace(/^\s*<\/s>\s*/, "")
+        .replace(/^[^a-zA-Z0-9\s]+/, "")
         .trim();
+    }
+
+    // Final cleanup - remove any remaining non-printable characters and normalize whitespace
+    answer = answer
+      .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control characters
+      .replace(/\s{2,}/g, " ") // Normalize whitespace
+      .trim();
+
+    // Final check for known prefixes that might remain
+    if (
+      answer.startsWith("IB.") ||
+      answer.startsWith("LB.") ||
+      answer.startsWith("BI.") ||
+      answer.startsWith("BL.")
+    ) {
+      answer = answer.substring(3).trim();
     }
 
     if (!answer) {
