@@ -51,14 +51,21 @@ async function generateBasicResponse(query, context) {
           Authorization: `Bearer ${HF_API_TOKEN}`,
         },
         body: JSON.stringify({
-          inputs: `<s>[INST] You are a professional medical assistant providing concise, factual information. 
-  Answer the question directly based ONLY on the following context information:
-  
+          inputs: `<s>[INST] You are a professional medical assistant providing factual information in English only. Your task is to answer a question based SOLELY on the information provided in the following documents. 
+DO NOT use any external knowledge or facts that are not explicitly stated in these documents.
+
+  Documents:
   ${context}
   
   Question: ${query}
+
+  IMPORTANT RULES:
+1. Only use information explicitly stated in the documents above
+2. If the documents don't contain the information needed, say "The provided documents don't contain specific information about this topic."
+3. Do not mention any sources or knowledge outside of these documents
+4. Keep your response concise, accurate, and in English only
   
-  Give a clear, direct answer without any commentary. Format your response as plain text with no special formatting. [/INST]</s>`,
+  Your response: [/INST]</s>`,
         }),
       }
     );

@@ -47,22 +47,48 @@ async function testAddDocument() {
 }
 
 // Function to search for documents similar to a query
-async function searchDocuments(query, limit = 3) {
+async function searchDocuments(query, options = {}) {
+  const { threshold = 0.75, categories = [] } = options;
+
   try {
-    console.log("Searching for:", query);
+    console.log(`Searching for: ${query}`);
+
     const queryEmbedding = await llmService.generateEmbedding(query);
 
-    const searchQuery = `
-        SELECT id, title, content, 1 - (embedding <=> $1) AS similarity
-        FROM medical_literature
-        ORDER BY similarity DESC
-        LIMIT $2
-      `;
+    let sql = `
+      SELECT 
+        id, 
+        title, 
+        content, 
+        source,
+        categories,
+        embedding <=> $1 AS similarity
+      FROM medical_documents
+      WHERE embedding IS NOT NULL
+      AND source = 'Peter Attia MD'  /* Filter specifically for your content */
+    `;
 
-    const result = await db.query(searchQuery, [queryEmbedding, limit]);
-    console.log(`Found ${result.rows.length} relevant documents`);
+    const params = [queryEmbedding];
+    let paramIndex = 2;
 
-    return result.rows;
+    // Filter by categories if provided
+    if (categories && categories.length > 0) {
+      sql += ` AND categories && $${paramIndex}`;
+      params.push(categories);
+      paramIndex++;
+    }
+
+    // Order by similarity and limit results
+    sql += ` ORDER BY similarity ASC LIMIT $${paramIndex}`;
+    params.push(limit);
+
+    const result = await pgConnector.query(sql, params);
+
+    // Only keep results that meet the similarity threshold
+    const documents = result.rows.filter((row) => row.similarity <= threshold);
+
+    console.log(`Found ${documents.length} relevant documents`);
+    return documents;
   } catch (error) {
     console.error("Error searching documents:", error);
     throw error;
@@ -70,33 +96,37 @@ async function searchDocuments(query, limit = 3) {
 }
 
 // Function to perform RAG
-async function performRag(query) {
+async function performRag(query, options = {}) {
   try {
-    // Step 1: Get relevant documents
-    const documents = await searchDocuments(query);
+    // Step 1: Get relevant documents with options
+    const documents = await searchDocuments(query, options);
 
     if (documents.length === 0) {
       return {
-        response: "I don't have enough information to answer that question.",
+        response:
+          "I don't have enough information to answer that question in my medical knowledge database.",
         sources: [],
       };
     }
 
-    // Step 2: Format context with better structure
+    // Step 2: Format context with better structure and source attribution
     const context = documents
       .map((doc, index) => {
-        return `Document ${index + 1}: ${doc.title}\nContent: ${doc.content}`;
+        return `Document ${index + 1} (${doc.title}, Source: ${
+          doc.source || "Unknown"
+        }): ${doc.content}`;
       })
       .join("\n\n");
 
     // Step 3: Generate response
-    const response = await llmService.generateBasicResponse(query, context);
+    const responseText = await llmService.generateBasicResponse(query, context);
 
     return {
-      response,
+      response: responseText,
       sources: documents.map((doc) => ({
         id: doc.id,
         title: doc.title,
+        source: doc.source || "Unknown",
         similarity: doc.similarity,
       })),
     };
