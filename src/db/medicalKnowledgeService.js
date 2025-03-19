@@ -15,7 +15,7 @@ async function addDocument(document) {
 
     // Insert the document with its embedding
     const text = `
-      INSERT INTO medical_literature (
+      INSERT INTO medical_documents (
         title, content, source, categories, embedding
       )
       VALUES ($1, $2, $3, $4, $5::vector)
@@ -48,7 +48,7 @@ async function testAddDocument() {
 
 // Function to search for documents similar to a query
 async function searchDocuments(query, options = {}) {
-  const { limit = 5, threshold = 0.9, categories = [] } = options;
+  const { limit = 5, threshold = 0.3, categories = [] } = options;
 
   try {
     console.log(`Searching for: ${query}`);
@@ -56,13 +56,8 @@ async function searchDocuments(query, options = {}) {
     const queryEmbedding = await llmService.generateEmbedding(query);
 
     let sql = `
-      SELECT 
-        id, 
-        title, 
-        content, 
-        source,
-        categories,
-        embedding <=> $1 AS similarity
+      SELECT id, title, content, source, categories, 
+            1 - (embedding <=> $1) AS similarity
       FROM medical_documents
       WHERE embedding IS NOT NULL
     `;
@@ -71,14 +66,14 @@ async function searchDocuments(query, options = {}) {
     let paramIndex = 2;
 
     // Filter by categories if provided
-    // if (categories && categories.length > 0) {
-    //   sql += ` AND categories && $${paramIndex}`;
-    //   params.push(categories);
-    //   paramIndex++;
-    // }
+    if (categories && categories.length > 0) {
+      sql += ` AND categories && $${paramIndex}`;
+      params.push(categories);
+      paramIndex++;
+    }
 
     // Order by similarity and limit results
-    sql += ` ORDER BY similarity ASC LIMIT $${paramIndex}`;
+    sql += ` ORDER BY similarity DESC LIMIT $${paramIndex}`;
     params.push(limit);
 
     console.log("Executing SQL query:", sql);
@@ -86,7 +81,7 @@ async function searchDocuments(query, options = {}) {
     console.log(`Query returned ${result.rows.length} rows`);
 
     // Only keep results that meet the similarity threshold. Lower threshold is better for vector similarity
-    const documents = result.rows.filter((row) => row.similarity <= threshold);
+    const documents = result.rows.filter((row) => row.similarity >= threshold); // Change <= to >= since DESC
 
     console.log(`Found ${documents.length} relevant documents`);
     console.log(
@@ -95,6 +90,14 @@ async function searchDocuments(query, options = {}) {
         id: d.id,
         title: d.title,
         similarity: d.similarity,
+      }))
+    );
+
+    console.log(
+      "Raw similarity scores:",
+      result.rows.map((row) => ({
+        title: row.title,
+        similarity: row.similarity,
       }))
     );
 
