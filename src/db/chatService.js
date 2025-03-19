@@ -96,24 +96,22 @@ async function generateBasicResponse(query, context) {
         },
         body: JSON.stringify({
           inputs: `<s>[INST] You are a professional medical assistant providing factual information in English only. 
-        Your task is to answer a question based SOLELY on the information provided in the following documents. 
-        DO NOT use any external knowledge or facts that are not explicitly stated in these documents.
-        
-        Documents:
-        ${formattedContext}
-        
-        Question: ${query}
-        
-        IMPORTANT RULES:
-        1. Answer the question directly, without any introduction or preamble
-        2. Do NOT include phrases like "According to the documents" or "Based on the information provided"
-        3. Do NOT use section headers, numbered sections, or bullet points unless they appear in the original documents
-        4. Do NOT include "Introduction:", "Conclusion:", or similar section titles
-        5. If the documents don't contain relevant information, say "The provided documents don't contain specific information about this topic"
-        6. Keep your response concise, accurate, and in plain text format
-        7. Do not organize your response into sections with roman numerals or headers
-        
-        Your response: [/INST]</s>`,
+                    Your task is to answer a question based SOLELY on the information provided in the following documents. 
+                    DO NOT use any external knowledge or facts that are not explicitly stated in these documents. 
+                    Answer the question directly. Do not include any introductory words or phrases like 'According to' or greeting terms.
+
+Documents:
+${formattedContext}
+
+Question: ${query}
+
+IMPORTANT RULES:
+1. Only use information explicitly stated in the documents above
+2. If the documents don't contain the information needed, say "The provided documents don't contain specific information about this topic."
+3. Do not mention any sources or knowledge outside of these documents
+4. Keep your response concise, accurate, and in English only
+
+Your response: [/INST]</s>`,
         }),
       }
     );
@@ -142,24 +140,26 @@ async function generateBasicResponse(query, context) {
     const parts = fullText.split("[/INST]");
     if (parts.length > 1) {
       // Get the raw answer after [/INST]
-      answer = parts[1]
+      const rawAnswer = parts[1]
         .replace(/\s*<\/s>\s*$/, "") // Remove closing </s> tag
         .replace(/^\s*<\/s>\s*/, "") // Remove opening </s> tag if present
         .trim();
 
       // Look for the true start of the answer
       // This targets finding the first proper sentence in the text
-      const sentenceMatch = answer.match(/[A-Z][^.!?]*[.!?]/);
+      const sentenceMatch = rawAnswer.match(/[A-Z][^.!?]*[.!?]/);
       if (sentenceMatch) {
         // Get the index where the first proper sentence starts
-        const startIndex = answer.indexOf(sentenceMatch[0]);
+        const startIndex = rawAnswer.indexOf(sentenceMatch[0]);
         if (startIndex > 0) {
           // If it's not at the beginning, take everything from this point
-          answer = answer.substring(startIndex);
+          answer = rawAnswer.substring(startIndex);
+        } else {
+          answer = rawAnswer;
         }
       } else {
         // If no clear sentence is found, try to clean up by removing non-alphanumeric prefixes
-        answer = answer.replace(/^[^a-zA-Z0-9\s]+/, "").trim();
+        answer = rawAnswer.replace(/^[^a-zA-Z0-9\s]+/, "").trim();
 
         // Also check for common prefixes that appear in the output
         const commonPrefixes = ["IB.", "力IB.", "BIB.", "BL", "B ", "I ", "L "];
@@ -180,7 +180,7 @@ async function generateBasicResponse(query, context) {
     }
 
     // Final cleanup - remove any remaining non-printable characters and normalize whitespace
-    answer = cleanResponse(answer)
+    answer = answer
       .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control characters
       .replace(/\s{2,}/g, " ") // Normalize whitespace
       .trim();
@@ -204,7 +204,7 @@ async function generateBasicResponse(query, context) {
       "Extracted answer first 100 chars:",
       answer.substring(0, 100) + "..."
     );
-    return answer;
+    return cleanResponse(answer);
   } catch (error) {
     console.error("Error generating response with Hugging Face:", error);
     return "Error processing your request: " + error.message;
