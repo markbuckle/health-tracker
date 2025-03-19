@@ -1,5 +1,5 @@
 // test-rag.js
-const { performRag } = require("./medicalKnowledgeService");
+const { performRag } = require("../medicalKnowledgeService");
 
 async function testRag() {
   const testQueries = [
