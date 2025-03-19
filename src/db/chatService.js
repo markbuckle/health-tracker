@@ -26,7 +26,7 @@ function cleanResponse(response) {
     response
       // Remove standard introductory phrases
       .replace(
-        /^(Axir|According to the provided documents,|Based on the context,|In the provided documents,|The documents state that|As mentioned in the documents,)\s*/i,
+        /^(Axir|According to the provided documents,|Based on the context,|In the provided documents,|The documents state that|As mentioned in the documents,|As mentioned in the documents,|IntroductionIn the provided documents,|Original---------------inois a medical professional and according to the documents provided by Peter Attia MD,)\s*/i,
         ""
       )
       // Remove section headers like "I. Introduction", "II. Definition", etc.
