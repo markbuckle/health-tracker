@@ -503,6 +503,10 @@ app.get("/", (req, res) => {
   res.render("main");
 });
 
+app.get("/welcome", (req, res) => {
+  res.render("user/welcome");
+});
+
 app.get("/profile", checkAuth, (req, res) => {
   res.render("user/profile", {
     fname: req.user.fname,
@@ -766,7 +770,8 @@ app.post("/login", (req, res, next) => {
   console.log("Login attempt received for username:", req.body.uname); // Debug log
 
   passport.authenticate("local", {
-    successRedirect: "/profile",
+    successRedirect: "/welcome",
+    // successRedirect: "/profile",
     failureRedirect: "/login",
     failureFlash: false,
   })(req, res, next);

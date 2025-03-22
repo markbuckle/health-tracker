@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link href="css/styles.css" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body class="user-body">
+    {{> mobileHeader}}
+
+    <div class="sidebar">
+      <div class="sidebar-logo-wrapper">
+        <a href="/" class="sidebar-logo-link">
+          <img
+            src="images/logo2.png"
+            loading="lazy"
+            alt="Logo"
+            class="sidebar-logo"
+        /></a>
+      </div>
+      <div class="nav-divider-basics nav-divider-top"></div>
+      <a id="Profile" href="/profile" class="page-link w-inline-block">
+        <img loading="lazy" src="images/user.svg" alt="Icon" class="nav-icon" />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Profile</span>
+        </div>
+      </a>
+      <a id="Upload" href="/upload" class="page-link w-inline-block">
+        <img
+          src="images/file-text.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Upload</span>
+        </div>
+      </a>
+      <a
+        id="Reports"
+        href="/reports"
+        aria-current="page"
+        class="page-link w-inline-block"
+        ><img
+          src="images/clipboard.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Reports</span>
+        </div>
+      </a>
+      <a id="Insights" href="/insights" class="page-link w-inline-block">
+        <img
+          src="images/layout.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Insights</span>
+        </div>
+      </a>
+      <div class="nav-divider-basics nav-divider-bottom"></div>
+      <a href="/how-it-works" class="page-link w-inline-block"
+        ><img
+          src="images/help-circle.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Help</span>
+        </div>
+      </a>
+      <a id="Log-out" href="/" class="page-link w-inline-block"
+        ><img
+          src="images/unlock.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Log out</span>
+        </div>
+      </a>
+      <div class="sidebar-bottom-spacer"></div>
+    </div>
+
+    <!-- Highlight elements for navigation arrows -->
+    <div class="highlight-nav" id="highlightProfile"></div>
+    <div class="highlight-nav" id="highlightUpload"></div>
+    <div class="highlight-nav" id="highlightReports"></div>
+    <div class="highlight-nav" id="highlightInsights"></div>
+
+    <!-- Arrows -->
+    <div class="arrow" id="arrowToProfile">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+        <path
+          d="M10,25 Q30,0 50,25 Q70,50 90,25"
+          stroke="#5cb15d"
+          stroke-width="3"
+          fill="none"
+        />
+        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
+      </svg>
+    </div>
+    <div class="arrow" id="arrowToUpload">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+        <path
+          d="M10,25 Q30,0 50,25 Q70,50 90,25"
+          stroke="#5cb15d"
+          stroke-width="3"
+          fill="none"
+        />
+        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
+      </svg>
+    </div>
+    <div class="arrow" id="arrowToReports">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+        <path
+          d="M10,25 Q30,0 50,25 Q70,50 90,25"
+          stroke="#5cb15d"
+          stroke-width="3"
+          fill="none"
+        />
+        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
+      </svg>
+    </div>
+    <div class="arrow" id="arrowToInsights">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+        <path
+          d="M10,25 Q30,0 50,25 Q70,50 90,25"
+          stroke="#5cb15d"
+          stroke-width="3"
+          fill="none"
+        />
+        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
+      </svg>
+    </div>
+
+    <div class="dashboard-content">
+      <!-- Welcome card -->
+      <div class="welcome-card" id="welcomeCard">
+        <div class="welcome-header">
+          <h1 class="welcome-title">Welcome to HealthLync!</h1>
+          <p class="welcome-subtitle">
+            Your personal health management platform.
+          </p>
+          <button class="get-started-btn" id="getStartedBtn">
+            Get Started
+          </button>
+        </div>
+
+        <div class="feature-overview">
+          <div class="feature-item">
+            <div class="feature-icon">📋</div>
+            <div class="feature-title">Profile</div>
+            <div class="feature-description">
+              Add your personal health details and family medical history
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📄</div>
+            <div class="feature-title">Upload</div>
+            <div class="feature-description">
+              Upload your medical records and lab results
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Reports</div>
+            <div class="feature-description">
+              View detailed reports based on your health data
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💡</div>
+            <div class="feature-title">Insights</div>
+            <div class="feature-description">
+              Get personalized insights and recommendations
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive steps -->
+      <div class="steps-container">
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-container" id="step1">
+          <div class="step-content">
+            <div class="step-title">
+              <span class="step-number">1</span>
+              Set up your profile
+            </div>
+            <div class="step-description">
+              Start by completing your profile. This helps us personalize your
+              experience and provide more accurate insights.
+              <div class="highlight">
+                Navigate to the <strong>Profile</strong> page to add your
+                personal information, family medical history, and lifestyle
+                details.
+              </div>
+            </div>
+            <div class="actions">
+              <button class="button-next" id="step1Next">Next</button>
+              <button class="button-skip" id="skipTutorial">
+                Skip Tutorial
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-container" id="step2">
+          <div class="step-content">
+            <div class="step-title">
+              <span class="step-number">2</span>
+              Upload your health data
+            </div>
+            <div class="step-description">
+              Upload your lab results and medical documents to build your health
+              profile.
+              <div class="highlight">
+                Visit the <strong>Upload</strong> page to add your lab reports,
+                medical records, and other health documents. We'll automatically
+                extract key information.
+              </div>
+            </div>
+            <div class="actions">
+              <button class="button-next" id="step2Next">Next</button>
+              <button class="button-skip" id="skipTutorial2">
+                Skip Tutorial
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-container" id="step3">
+          <div class="step-content">
+            <div class="step-title">
+              <span class="step-number">3</span>
+              View your health reports
+            </div>
+            <div class="step-description">
+              After uploading your data, view comprehensive reports about your
+              health metrics.
+              <div class="highlight">
+                Check the <strong>Reports</strong> page to see detailed analysis
+                of your biomarkers, trends over time, and comparisons to
+                reference ranges.
+              </div>
+            </div>
+            <div class="actions">
+              <button class="button-next" id="step3Next">Next</button>
+              <button class="button-skip" id="skipTutorial3">
+                Skip Tutorial
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-container" id="step4">
+          <div class="step-content">
+            <div class="step-title">
+              <span class="step-number">4</span>
+              Gain personalized insights
+            </div>
+            <div class="step-description">
+              Discover personalized health insights and recommendations based on
+              your data.
+              <div class="highlight">
+                Visit the <strong>Insights</strong> page to receive customized
+                health recommendations and actionable steps to improve your
+                wellbeing.
+              </div>
+            </div>
+            <div class="actions">
+              <button class="button-next" id="step4Next">Let's Start!</button>
+              <button class="button-skip" id="skipTutorial4">
+                Skip Tutorial
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // DOM elements
+        const getStartedBtn = document.getElementById("getStartedBtn");
+        const welcomeCard = document.getElementById("welcomeCard");
+        const stepsContainer = document.querySelector(".steps-container");
+        const progressBar = document.getElementById("progressBar");
+        const skipButtons = document.querySelectorAll(".button-skip");
+
+        // Navigation elements
+        const profileLink = document.getElementById("Profile");
+        const uploadLink = document.getElementById("Upload");
+        const reportsLink = document.getElementById("Reports");
+        const insightsLink = document.getElementById("Insights");
+
+        // Highlight elements
+        const highlightProfile = document.getElementById("highlightProfile");
+        const highlightUpload = document.getElementById("highlightUpload");
+        const highlightReports = document.getElementById("highlightReports");
+        const highlightInsights = document.getElementById("highlightInsights");
+
+        // Arrow elements
+        const arrowToProfile = document.getElementById("arrowToProfile");
+        const arrowToUpload = document.getElementById("arrowToUpload");
+        const arrowToReports = document.getElementById("arrowToReports");
+        const arrowToInsights = document.getElementById("arrowToInsights");
+
+        // Step elements
+        const step1 = document.getElementById("step1");
+        const step2 = document.getElementById("step2");
+        const step3 = document.getElementById("step3");
+        const step4 = document.getElementById("step4");
+
+        // Next buttons
+        const step1Next = document.getElementById("step1Next");
+        const step2Next = document.getElementById("step2Next");
+        const step3Next = document.getElementById("step3Next");
+        const step4Next = document.getElementById("step4Next");
+
+        // Current step tracker
+        let currentStep = 0;
+        const totalSteps = 4;
+
+        // Update progress bar
+        function updateProgress(step) {
+          const progress = (step / totalSteps) * 100;
+          progressBar.style.width = `${progress}%`;
+        }
+
+        // Position elements around a target
+        function positionElementAroundTarget(
+          element,
+          target,
+          position = "below"
+        ) {
+          if (!element || !target) return;
+
+          const targetRect = target.getBoundingClientRect();
+
+          switch (position) {
+            case "below":
+              element.style.top = `${targetRect.bottom + 10}px`;
+              element.style.left = `${
+                targetRect.left + targetRect.width / 2 - 40
+              }px`;
+              break;
+            case "above":
+              element.style.bottom = `${
+                window.innerHeight - targetRect.top + 10
+              }px`;
+              element.style.left = `${
+                targetRect.left + targetRect.width / 2 - 40
+              }px`;
+              break;
+            case "left":
+              element.style.right = `${
+                window.innerWidth - targetRect.left + 10
+              }px`;
+              element.style.top = `${
+                targetRect.top + targetRect.height / 2 - 20
+              }px`;
+              break;
+            case "right":
+              element.style.left = `${targetRect.right + 10}px`;
+              element.style.top = `${
+                targetRect.top + targetRect.height / 2 - 20
+              }px`;
+              break;
+          }
+        }
+
+        // Highlight a navigation item
+        function highlightNavItem(navItem, highlightEl, arrowEl) {
+          if (!navItem || !highlightEl) return;
+
+          const rect = navItem.getBoundingClientRect();
+
+          highlightEl.style.top = `${rect.top - 5}px`;
+          highlightEl.style.left = `${rect.left - 5}px`;
+          highlightEl.style.width = `${rect.width + 10}px`;
+          highlightEl.style.height = `${rect.height + 10}px`;
+          highlightEl.style.display = "block";
+
+          if (arrowEl) {
+            positionElementAroundTarget(arrowEl, navItem, "right");
+            arrowEl.style.display = "block";
+          }
+        }
+
+        // Clear all highlights
+        function clearHighlights() {
+          highlightProfile.style.display = "none";
+          highlightUpload.style.display = "none";
+          highlightReports.style.display = "none";
+          highlightInsights.style.display = "none";
+
+          arrowToProfile.style.display = "none";
+          arrowToUpload.style.display = "none";
+          arrowToReports.style.display = "none";
+          arrowToInsights.style.display = "none";
+        }
+
+        // Show a specific step
+        function showStep(stepNumber) {
+          // Hide all steps
+          step1.style.display = "none";
+          step2.style.display = "none";
+          step3.style.display = "none";
+          step4.style.display = "none";
+
+          // Clear highlights
+          clearHighlights();
+
+          // Show the current step
+          switch (stepNumber) {
+            case 1:
+              step1.style.display = "block";
+              step1.classList.add("fade-in");
+              highlightNavItem(profileLink, highlightProfile, arrowToProfile);
+              break;
+            case 2:
+              step2.style.display = "block";
+              step2.classList.add("fade-in");
+              highlightNavItem(uploadLink, highlightUpload, arrowToUpload);
+              break;
+            case 3:
+              step3.style.display = "block";
+              step3.classList.add("fade-in");
+              highlightNavItem(reportsLink, highlightReports, arrowToReports);
+              break;
+            case 4:
+              step4.style.display = "block";
+              step4.classList.add("fade-in");
+              highlightNavItem(
+                insightsLink,
+                highlightInsights,
+                arrowToInsights
+              );
+              break;
+          }
+
+          // Update progress
+          currentStep = stepNumber;
+          updateProgress(currentStep);
+        }
+
+        // Start tutorial
+        function startTutorial() {
+          welcomeCard.style.display = "none";
+          stepsContainer.style.display = "block";
+          showStep(1);
+        }
+
+        // Complete tutorial
+        function completeTutorial() {
+          stepsContainer.style.display = "none";
+          clearHighlights();
+
+          // Could redirect to a specific page or show a completion message
+          window.location.href = "/profile";
+        }
+
+        // Event listeners
+        getStartedBtn.addEventListener("click", startTutorial);
+
+        step1Next.addEventListener("click", () => showStep(2));
+        step2Next.addEventListener("click", () => showStep(3));
+        step3Next.addEventListener("click", () => showStep(4));
+        step4Next.addEventListener("click", completeTutorial);
+
+        // Skip buttons
+        skipButtons.forEach((button) => {
+          button.addEventListener("click", completeTutorial);
+        });
+
+        // Navigation click handling
+        profileLink.addEventListener("click", (e) => {
+          if (currentStep === 1) {
+            e.preventDefault();
+            showStep(2);
+          }
+        });
+
+        uploadLink.addEventListener("click", (e) => {
+          if (currentStep === 2) {
+            e.preventDefault();
+            showStep(3);
+          }
+        });
+
+        reportsLink.addEventListener("click", (e) => {
+          if (currentStep === 3) {
+            e.preventDefault();
+            showStep(4);
+          }
+        });
+
+        insightsLink.addEventListener("click", (e) => {
+          if (currentStep === 4) {
+            e.preventDefault();
+            completeTutorial();
+          }
+        });
+
+        // Feature item hover synchronization with sidebar
+        const featureItems = document.querySelectorAll(".feature-item");
+
+        // Add hover effect between feature cards and sidebar navigation
+        featureItems.forEach((item) => {
+          const title = item.querySelector(".feature-title").textContent.trim();
+          let navLink;
+
+          switch (title) {
+            case "Profile":
+              navLink = document.getElementById("Profile");
+              break;
+            case "Upload":
+              navLink = document.getElementById("Upload");
+              break;
+            case "Reports":
+              navLink = document.getElementById("Reports");
+              break;
+            case "Insights":
+              navLink = document.getElementById("Insights");
+              break;
+          }
+
+          // Add mouseover/mouseout events to feature items
+          item.addEventListener("mouseover", () => {
+            if (navLink) {
+              navLink.classList.add("sidebar-hover");
+              console.log("Added hover to:", title, navLink); // Added navLink to debug output
+            }
+          });
+
+          item.addEventListener("mouseout", () => {
+            if (navLink) {
+              navLink.classList.remove("sidebar-hover");
+              console.log("Removed hover from:", title); // Debug logging
+            }
+          });
+
+          // Make feature items clickable - redirect to respective pages
+          item.addEventListener("click", () => {
+            if (navLink) window.location.href = navLink.getAttribute("href");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

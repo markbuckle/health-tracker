@@ -1,131 +1,187 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Reports</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link href="css/styles.css" rel="stylesheet" type="text/css" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <title>Reports</title>
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <link href="css/styles.css" rel="stylesheet" type="text/css">
-</head>
+  <body class="user-body">
+    {{> mobileHeader}}
 
-<body class="user-body">
-  {{> mobileHeader}}
-
-  <div class="sidebar">
-    <div class="sidebar-logo-wrapper">
-      <a href="/" class="sidebar-logo-link">
-        <img src="images/logo2.png" loading="lazy" alt="Logo" class="sidebar-logo"></a>
-    </div>
-    <div class="nav-divider-basics nav-divider-top"></div>
-    <a id="Profile" href="/profile" class="page-link w-inline-block">
-      <img loading="lazy" src="images/user.svg" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Profile</span></div>
-    </a>
-    <a id="Upload" href="/upload" class="page-link w-inline-block">
-      <img src="images/file-text.svg" loading="lazy" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Upload</span></div>
-    </a>
-    <a id="Reports" href="/reports" aria-current="page" class="page-link w-inline-block w--current"><img
-        src="images/clipboard.svg" loading="lazy" alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Reports</span></div>
-    </a>
-    <a id="Insights" href="/insights" class="page-link w-inline-block"><img src="images/layout.svg" loading="lazy"
-        alt="Icon" class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Insights</span></div>
-    </a>
-    <div class="nav-divider-basics nav-divider-bottom"></div>
-    <a href="/how-it-works" class="page-link w-inline-block"><img src="images/help-circle.svg" loading="lazy" alt="Icon"
-        class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Help</span></div>
-    </a>
-    <a id="Log-out" href="/" class="page-link w-inline-block"><img src="images/unlock.svg" loading="lazy" alt="Icon"
-        class="nav-icon">
-      <div class="page-link-text-block"><span class="page-link-text-span">Log out</span></div>
-    </a>
-    <div class="sidebar-bottom-spacer"></div>
-  </div>
-
-  <section class="demo-header">
-    <div class="header-container-2">
-      <div>
-        <h2 class="heading">Lab Reports</h2>
-        <h3 class="subheading"></h3>
-        <div class="subheading-2">Our lab reports show are generated from the files you uploaded plus your manual inputs
-          into Uploads</div>
-        <div class="spacer-block"></div>
+    <div class="sidebar">
+      <div class="sidebar-logo-wrapper">
+        <a href="/" class="sidebar-logo-link">
+          <img
+            src="images/logo2.png"
+            loading="lazy"
+            alt="Logo"
+            class="sidebar-logo"
+        /></a>
       </div>
+      <div class="nav-divider-basics nav-divider-top"></div>
+      <a id="Profile" href="/profile" class="page-link w-inline-block">
+        <img loading="lazy" src="images/user.svg" alt="Icon" class="nav-icon" />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Profile</span>
+        </div>
+      </a>
+      <a id="Upload" href="/upload" class="page-link w-inline-block">
+        <img
+          src="images/file-text.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Upload</span>
+        </div>
+      </a>
+      <a
+        id="Reports"
+        href="/reports"
+        aria-current="page"
+        class="page-link w-inline-block w--current"
+        ><img
+          src="images/clipboard.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Reports</span>
+        </div>
+      </a>
+      <a id="Insights" href="/insights" class="page-link w-inline-block"
+        ><img
+          src="images/layout.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Insights</span>
+        </div>
+      </a>
+      <div class="nav-divider-basics nav-divider-bottom"></div>
+      <a href="/how-it-works" class="page-link w-inline-block"
+        ><img
+          src="images/help-circle.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Help</span>
+        </div>
+      </a>
+      <a id="Log-out" href="/" class="page-link w-inline-block"
+        ><img
+          src="images/unlock.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Log out</span>
+        </div>
+      </a>
+      <div class="sidebar-bottom-spacer"></div>
     </div>
-  </section>
 
-  {{> dashboardContent}}
-  {{{initialData}}}
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="js/rangeCalculations.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/main.js" type="text/javascript"></script>
-  <script> // dropdown script
-    document.addEventListener('DOMContentLoaded', () => {
-      // Get all dropdown toggle elements
-      const dropdownToggles = document.querySelectorAll('.category-dropdown-toggle');
+    <section class="demo-header">
+      <div class="header-container-2">
+        <div>
+          <h2 class="heading">Lab Reports</h2>
+          <h3 class="subheading"></h3>
+          <div class="subheading-2">
+            Our lab reports are generated from the data within your file
+            uploaded and/or manual inputs into Uploads
+          </div>
+          <div class="spacer-block"></div>
+        </div>
+      </div>
+    </section>
 
-      dropdownToggles.forEach(toggle => {
-        const arrow = toggle.querySelector('.dropdown-arrow');
-        const dropdownList = toggle.nextElementSibling; // This gets the w-dropdown-list element
+    {{> dashboardContent}} {{{initialData}}}
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="js/rangeCalculations.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/main.js" type="text/javascript"></script>
+    <script>
+      // dropdown script
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all dropdown toggle elements
+        const dropdownToggles = document.querySelectorAll(
+          ".category-dropdown-toggle"
+        );
 
-        // Listen for clicks on the entire toggle area
-        toggle.addEventListener('click', () => {
-          arrow.classList.toggle('active');
-        });
+        dropdownToggles.forEach((toggle) => {
+          const arrow = toggle.querySelector(".dropdown-arrow");
+          const dropdownList = toggle.nextElementSibling; // This gets the w-dropdown-list element
 
-        // Watch for dropdown state changes
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-              // Check if dropdown is open
-              const isOpen = dropdownList.classList.contains('w--open');
-              // Sync arrow rotation with dropdown state
-              arrow.classList.toggle('active', isOpen);
-            }
+          // Listen for clicks on the entire toggle area
+          toggle.addEventListener("click", () => {
+            arrow.classList.toggle("active");
+          });
+
+          // Watch for dropdown state changes
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              if (
+                mutation.type === "attributes" &&
+                mutation.attributeName === "class"
+              ) {
+                // Check if dropdown is open
+                const isOpen = dropdownList.classList.contains("w--open");
+                // Sync arrow rotation with dropdown state
+                arrow.classList.toggle("active", isOpen);
+              }
+            });
+          });
+
+          // Start observing the dropdown list for class changes
+          observer.observe(dropdownList, {
+            attributes: true,
+            attributeFilter: ["class"],
           });
         });
+      });
+    </script>
+    <script>
+      // dropdown spinner
+      document.addEventListener("DOMContentLoaded", () => {
+        const biomarkerContainers = document.querySelectorAll(
+          ".biomarker-container"
+        );
 
-        // Start observing the dropdown list for class changes
-        observer.observe(dropdownList, {
-          attributes: true,
-          attributeFilter: ['class']
+        biomarkerContainers.forEach((container) => {
+          // Get all the necessary elements
+          const tableTop = container.querySelector(".biomarker-table-top");
+
+          // Function to handle the dropdown state
+          const toggleStripes = (event) => {
+            // Get the stripes within the clicked container's context
+            const targetContainer = event.target.closest(
+              ".biomarker-container"
+            );
+            const stripe1 = targetContainer.querySelector(".stripe-1");
+            const stripe2 = targetContainer.querySelector(".stripe-2");
+
+            // Toggle the spin classes
+            if (stripe1 && stripe2) {
+              stripe1.classList.toggle("spin");
+              stripe2.classList.toggle("spin");
+            }
+          };
+
+          // Add click handlers to both elements for this specific container
+          if (tableTop) {
+            tableTop.addEventListener("click", toggleStripes);
+          }
         });
       });
-    });
-  </script>
-  <script> // dropdown spinner
-    document.addEventListener('DOMContentLoaded', () => {
-      const biomarkerContainers = document.querySelectorAll('.biomarker-container');
-      
-      biomarkerContainers.forEach(container => {
-        // Get all the necessary elements
-        const tableTop = container.querySelector('.biomarker-table-top');
-        
-        // Function to handle the dropdown state
-        const toggleStripes = (event) => {
-          // Get the stripes within the clicked container's context
-          const targetContainer = event.target.closest('.biomarker-container');
-          const stripe1 = targetContainer.querySelector('.stripe-1');
-          const stripe2 = targetContainer.querySelector('.stripe-2');
-          
-          // Toggle the spin classes
-          if (stripe1 && stripe2) {
-            stripe1.classList.toggle('spin');
-            stripe2.classList.toggle('spin');
-          }
-        };
-        
-        // Add click handlers to both elements for this specific container
-        if (tableTop) {
-          tableTop.addEventListener('click', toggleStripes);
-        }
-      });
-    });
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

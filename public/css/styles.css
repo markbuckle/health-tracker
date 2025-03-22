@@ -528,7 +528,7 @@ body {
   vertical-align: top;
   text-decoration: none;
   padding: 9px 30px;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   color: #222222;
   background-color: #dddddd;
@@ -585,6 +585,8 @@ body {
   border-radius: 100px;
   flex: none;
   width: auto;
+  min-width: 4rem;
+  text-align: center;
   margin-left: 0;
   margin-right: 10px;
   padding: 4px 12px;
@@ -601,12 +603,13 @@ body {
 }
 .w-inline-block {
   max-width: 100%;
-  display: inline-flex;
+  /* display: inline-flex; */
 }
 .text-block-4,
 .text-block-5 {
   font-family: "Poppins-Regular", sans-serif;
   font-size: 13px;
+  text-align: center;
 }
 .text-block-4 {
   color: #020202;
@@ -4203,6 +4206,9 @@ label[for="customBloodType"] {
   background: #f8f9fb;
   border-radius: 12px;
   padding: 1.25rem; /* Slightly reduce padding */
+  border: 0.1px solid rgb(214, 213, 213);
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
 }
 
 .metric-list {
@@ -4254,6 +4260,7 @@ label[for="customBloodType"] {
   font-weight: 600;
   color: #333;
   margin: 0;
+  align-content: center;
 }
 .score-display {
   position: absolute;
@@ -4368,6 +4375,14 @@ label[for="customBloodType"] {
   font-size: 1.1rem;
   color: #4a5568;
   font-family: "Poppins-Regular", sans-serif;
+}
+.ask-wrapper {
+  padding: 0.5rem 1rem 0 0;
+}
+.ask-header {
+  margin-bottom: 1rem;
+  display: flex;
+  padding-left: 5rem;
 }
 .circle-progress {
   transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
@@ -4941,4 +4956,496 @@ label[for="customBloodType"] {
   .feedback-toggle {
     transition: none;
   }
+}
+
+/* -------- Insights RAG UI Styles --------- */
+
+/* Chat interface styles */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(70vh - 120px);
+  min-height: 400px;
+  max-width: 90%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1rem 5rem;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  padding-top: 1rem;
+  flex-direction: column;
+  background-color: #f8f9fb;
+  border: 0.1px solid rgb(214, 213, 213);
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+.chat-message {
+  display: flex;
+  max-width: 90%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.user-message {
+  align-self: flex-end;
+}
+
+.assistant-message {
+  align-self: flex-start;
+}
+
+.system-message {
+  align-self: center;
+  max-width: 95%;
+}
+
+.message-content {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 1rem;
+  border-radius: 18px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.user-message .message-content {
+  background-color: #4379ba;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-message .message-content {
+  background-color: white;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+.system-message .message-content {
+  background-color: #e3f6e6;
+  color: #333;
+  border-radius: 12px;
+}
+
+.message-content p {
+  margin: 0;
+  line-height: 1.5;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.message-content p + p {
+  margin-top: 0.5rem;
+}
+
+.chat-input-container {
+  display: flex;
+  background-color: white;
+  border-top: 1px solid #e1e6f0;
+  padding: 1rem 0;
+  align-items: flex-end;
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  border-radius: 20px;
+  padding: 0.75rem 1rem;
+  font-family: "Poppins-Regular", sans-serif;
+  background-color: #f8f9fb;
+  resize: none;
+  max-height: 150px;
+  min-height: 20px;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  background-color: white;
+}
+
+.chat-submit-btn {
+  background-color: #5cb15d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-left: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.chat-submit-btn:hover {
+  background-color: #46953f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Loading indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border-radius: 18px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  width: fit-content;
+  margin-top: 0.5rem;
+}
+
+.typing-indicator span {
+  height: 8px;
+  width: 8px;
+  background-color: #8dbbd6;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+  margin-right: 0;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar styling */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #dadce0;
+  border-radius: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background-color: #babbbd;
+}
+
+/* Chat info modal */
+#chatInfoModal .modal-description {
+  margin-bottom: 1.5rem;
+}
+
+.source-item {
+  background-color: #f8f9fb;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.source-item:last-child {
+  margin-bottom: 0;
+}
+
+.source-title {
+  font-weight: 500;
+  color: #4379ba;
+}
+
+.source-similarity {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+/* ------------- Welcome Page styles --------------- */
+
+.step-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.step-number {
+  display: inline-block;
+  background-color: #5cb15d;
+  color: white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+  margin-right: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.step-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.5s ease;
+}
+
+.step-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.step-description {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 1rem;
+  color: #4a4a4a;
+  line-height: 1.6;
+}
+
+.highlight {
+  background-color: rgba(92, 177, 93, 0.1);
+  border-left: 3px solid #5cb15d;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.actions {
+  display: flex;
+  margin-top: 1.5rem;
+  gap: 12px;
+}
+
+.button-next {
+  background-color: #5cb15d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Poppins-Regular", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.button-next:hover {
+  background-color: #46953f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button-skip {
+  background-color: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Poppins-Regular", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.button-skip:hover {
+  background-color: #f5f5f5;
+}
+
+/* Navigation highlight effect */
+.highlight-nav {
+  position: absolute;
+  background-color: rgba(92, 177, 93, 0.2);
+  border: 2px solid #5cb15d;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 100;
+  display: none;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(92, 177, 93, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0);
+  }
+}
+
+/* Arrow styles */
+.arrow {
+  position: absolute;
+  width: 80px;
+  height: 40px;
+  display: none;
+  z-index: 99;
+}
+
+.arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.8s forwards;
+}
+
+/* Progress bar */
+.progress-container {
+  width: 100%;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  margin: 1.5rem 0;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: #5cb15d;
+  width: 0%;
+  transition: width 0.6s ease;
+}
+
+/* Welcome card */
+.welcome-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  color: #5cb15d;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.get-started-btn {
+  display: inline-block;
+  background-color: #5cb15d;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  padding: 12px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  margin: 1rem;
+  box-shadow: 0 4px 10px rgba(92, 177, 93, 0.3);
+  transition: all 0.3s ease;
+}
+
+.get-started-btn:hover {
+  background-color: #46953f;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(92, 177, 93, 0.4);
+}
+
+/* Feature overview */
+.feature-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.feature-item {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.page-link.sidebar-hover {
+  background-color: rgba(92, 177, 93, 0.25) !important;
+  box-shadow: 0 0 0 2px rgba(92, 177, 93, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  color: #5cb15d;
+  margin-bottom: 1rem;
+}
+
+.feature-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.feature-description {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.steps-container {
+  display: none;
 }

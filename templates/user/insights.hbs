@@ -122,6 +122,12 @@
               >
                 <div class="text-block-5">Actions</div>
               </a>
+              <a
+                data-w-tab="Ask"
+                class="in-page-link w-inline-block w-tab-link"
+              >
+                <div class="text-block-5">Ask</div>
+              </a>
             </div>
 
             <!-- Tab Content -->
@@ -271,6 +277,67 @@
                         <span class="recommendation-text">{{this}}</span>
                       </div>
                       {{/each}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ask Tab -->
+              <div data-w-tab="Ask" class="w-tab-pane">
+                <div class="wellness-summary-card">
+                  <div class="ask-wrapper">
+                    <div class="ask-header">
+                      <h2 class="insights-title">Ask Reed</h2>
+                      <button
+                        class="info-button"
+                        aria-label="Show RAG information"
+                      >
+                        {{> svg/info}}
+                      </button>
+                    </div>
+
+                    <!-- Chat interface container -->
+                    <div class="chat-container">
+                      <!-- Messages will appear here -->
+                      <div id="chat-messages" class="chat-messages">
+                        <div class="chat-message system-message">
+                          <div class="message-content">
+                            <p>
+                              Hi there! I'm Reed, your health assistant. I can
+                              answer questions about cardiovascular health,
+                              cholesterol, exercise, and other health topics.
+                              How can I help you today?
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Input area -->
+                      <div class="chat-input-container">
+                        <textarea
+                          id="chat-input"
+                          class="chat-input"
+                          placeholder="Ask me about health topics..."
+                          rows="1"
+                        ></textarea>
+                        <button id="chat-submit" class="chat-submit-btn">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon
+                              points="22 2 15 22 11 13 2 9 22 2"
+                            ></polygon>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -520,6 +587,203 @@
             });
           });
         });
+      });
+    </script>
+    <script>
+      // RAG Chat functionality
+      // Add this to your existing script section or create a new one
+      document.addEventListener("DOMContentLoaded", function () {
+        const chatMessages = document.getElementById("chat-messages");
+        const chatInput = document.getElementById("chat-input");
+        const chatSubmit = document.getElementById("chat-submit");
+
+        // Auto-resize textarea
+        chatInput.addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+
+        // Submit on Enter (but allow Shift+Enter for new lines)
+        chatInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            submitMessage();
+          }
+        });
+
+        // Submit button click
+        chatSubmit.addEventListener("click", submitMessage);
+
+        function submitMessage() {
+          const message = chatInput.value.trim();
+          if (!message) return;
+
+          // Add user message to chat
+          addMessage(message, "user");
+
+          // Clear input
+          chatInput.value = "";
+          chatInput.style.height = "auto";
+
+          // Show typing indicator
+          addTypingIndicator();
+
+          // Send to RAG API
+          sendToRAG(message);
+        }
+
+        function addMessage(message, sender) {
+          const messageDiv = document.createElement("div");
+          messageDiv.className = `chat-message ${sender}-message`;
+
+          const messageContent = document.createElement("div");
+          messageContent.className = "message-content";
+
+          // Parse markdown-like formatting for code blocks and links
+          const formattedText = formatMessage(message);
+          messageContent.innerHTML = `<p>${formattedText}</p>`;
+
+          messageDiv.appendChild(messageContent);
+          chatMessages.appendChild(messageDiv);
+
+          // Scroll to bottom
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function formatMessage(text) {
+          // Handle code blocks (```code```)
+          text = text.replace(
+            /```([\s\S]*?)```/g,
+            "<pre><code>$1</code></pre>"
+          );
+
+          // Handle inline code (`code`)
+          text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+          // Handle links
+          text = text.replace(
+            /\[(.*?)\]\((.*?)\)/g,
+            '<a href="$2" target="_blank">$1</a>'
+          );
+
+          // Handle line breaks
+          text = text.replace(/\n/g, "<br>");
+
+          return text;
+        }
+
+        function addTypingIndicator() {
+          const typingDiv = document.createElement("div");
+          typingDiv.className = "chat-message assistant-message typing";
+          typingDiv.innerHTML = `
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    `;
+          chatMessages.appendChild(typingDiv);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+          const typingIndicator = document.querySelector(".typing");
+          if (typingIndicator) {
+            typingIndicator.remove();
+          }
+        }
+
+        async function sendToRAG(query) {
+          try {
+            const response = await fetch("/api/rag/ask", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ query }),
+            });
+
+            const data = await response.json();
+
+            // Remove typing indicator
+            removeTypingIndicator();
+
+            // Add response to chat
+            addMessage(data.response, "assistant");
+
+            // Store sources for info button
+            window.lastSources = data.sources;
+          } catch (error) {
+            console.error("Error:", error);
+            removeTypingIndicator();
+            addMessage(
+              "Sorry, I couldn't process your request. Please try again later.",
+              "assistant"
+            );
+          }
+        }
+
+        // Add info button functionality to show sources
+        document
+          .querySelector('[data-w-tab="Ask"] .info-button')
+          .addEventListener("click", function () {
+            showChatInfoModal();
+          });
+
+        function showChatInfoModal() {
+          // Create sources HTML if available
+          let sourcesHTML = "";
+          if (window.lastSources && window.lastSources.length > 0) {
+            sourcesHTML = "<h3>Last Query Sources:</h3>";
+            window.lastSources.forEach((source) => {
+              sourcesHTML += `
+          <div class="source-item">
+            <div class="source-title">${source.title}</div>
+            <div class="source-similarity">Relevance: ${Math.round(
+              source.similarity * 100
+            )}%</div>
+          </div>
+        `;
+            });
+          }
+
+          // Show modal with chat info and sources
+          const modal = document.createElement("div");
+          modal.id = "chatInfoModal";
+          modal.className = "modal-wrapper modal-wrapper-1 active";
+          modal.innerHTML = `
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <div class="modal-header">
+          <a class="modal-return-button w-inline-block w--current" aria-current="page">
+            {{> svg/backArrow}}
+          </a>
+          <h1 class="modal-button">About Reed</h1>
+        </div>
+        <div class="modal-description">
+          <p>Reed is your health knowledge assistant powered by retrieval-augmented generation (RAG). Reed only provides information based on trusted health resources in our database.</p>
+          <p>Unlike generic AI chatbots, Reed doesn't make things up - it will only answer with information it can find in reliable sources.</p>
+          ${sourcesHTML}
+        </div>
+        <div class="modal-footer">
+          <a class="cancel-button cancel-space">Close</a>
+        </div>
+      </div>
+    `;
+
+          document.body.appendChild(modal);
+
+          // Add event listeners to close modal
+          modal
+            .querySelector(".modal-background")
+            .addEventListener("click", () => modal.remove());
+          modal
+            .querySelector(".cancel-button")
+            .addEventListener("click", () => modal.remove());
+          modal
+            .querySelector(".modal-return-button")
+            .addEventListener("click", () => modal.remove());
+        }
       });
     </script>
   </body>
