@@ -362,16 +362,6 @@
         let currentStep = 0;
         const totalSteps = 4;
 
-        // Debug mouseover events
-        document.body.addEventListener(
-          "mouseover",
-          function (event) {
-            // Uncomment the next line to see ALL mouseover events (warning: will flood console)
-            // console.log('Mouse over element:', event.target);
-          },
-          true
-        );
-
         // Initialize features hover synchronization
         function initializeFeatureHover() {
           const featureItems = document.querySelectorAll(".feature-item");
@@ -406,33 +396,24 @@
             if (sidebarLink) {
               // When hovering over a feature item
               item.addEventListener("mouseenter", () => {
-                console.log("Hover ENTER on feature:", target);
-
                 // Set attribute on body
                 document.body.setAttribute(
                   `data-${target.toLowerCase()}-hover`,
                   "true"
                 );
-
-                console.log("Applied hover effect to", target);
               });
 
               // Mouseleave event
               item.addEventListener("mouseleave", () => {
-                console.log("Hover EXIT on feature:", target);
-
                 // Remove attribute from body
                 document.body.removeAttribute(
                   `data-${target.toLowerCase()}-hover`
                 );
-
-                console.log("Removed hover effect from", target);
               });
 
               // Click event for testing
               item.addEventListener("click", (e) => {
                 e.preventDefault(); // Prevent navigation
-                console.log("clicked feature:", target, "- toggled changes");
 
                 // Toggle text and visual style directly
                 const textSpan = sidebarLink.querySelector(

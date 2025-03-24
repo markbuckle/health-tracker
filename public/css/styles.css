@@ -5398,8 +5398,8 @@ label[for="customBloodType"] {
 
 .get-started-btn:hover {
   background-color: #46953f;
-  transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(92, 177, 93, 0.4);
+  cursor: pointer;
 }
 
 /* Feature overview */
@@ -5420,13 +5420,9 @@ label[for="customBloodType"] {
 
 .feature-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.page-link.sidebar-hover {
-  background-color: rgba(92, 177, 93, 0.25) !important;
-  box-shadow: 0 0 0 2px rgba(92, 177, 93, 0.3) !important;
-  transition: all 0.3s ease !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--green-primary);
+  cursor: pointer;
 }
 
 .feature-icon {
@@ -5448,4 +5444,32 @@ label[for="customBloodType"] {
 
 .steps-container {
   display: none;
+}
+/* Force override for sidebar links when hovering on features */
+body[data-profile-hover="true"] #Profile {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+
+body[data-upload-hover="true"] #Upload {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+
+body[data-reports-hover="true"] #Reports {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+
+body[data-insights-hover="true"] #Insights {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
 }

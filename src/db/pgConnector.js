@@ -5,7 +5,7 @@ require("dotenv").config({ path: "../../.env" });
 const pool = new Pool({
   connectionString:
     process.env.POSTGRES_URI ||
-    "postgresql://postgres:postgres@localhost:5432/postgres",
+    "postgresql://postgres:BroBeans_2317@localhost:5432/postgres",
   ssl: false,
 });
 
