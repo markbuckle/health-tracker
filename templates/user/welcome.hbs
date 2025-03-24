@@ -156,28 +156,28 @@
         </div>
 
         <div class="feature-overview">
-          <div class="feature-item">
+          <div class="feature-item" data-target="Profile">
             <div class="feature-icon">📋</div>
             <div class="feature-title">Profile</div>
             <div class="feature-description">
               Add your personal health details and family medical history
             </div>
           </div>
-          <div class="feature-item">
+          <div class="feature-item" data-target="Upload">
             <div class="feature-icon">📄</div>
             <div class="feature-title">Upload</div>
             <div class="feature-description">
               Upload your medical records and lab results
             </div>
           </div>
-          <div class="feature-item">
+          <div class="feature-item" data-target="Reports">
             <div class="feature-icon">📊</div>
             <div class="feature-title">Reports</div>
             <div class="feature-description">
               View detailed reports based on your health data
             </div>
           </div>
-          <div class="feature-item">
+          <div class="feature-item" data-target="Insights">
             <div class="feature-icon">💡</div>
             <div class="feature-title">Insights</div>
             <div class="feature-description">
@@ -310,6 +310,30 @@
         const reportsLink = document.getElementById("Reports");
         const insightsLink = document.getElementById("Insights");
 
+        // Direct DOM inspection for debugging
+        console.log("DIRECT DOM INSPECTION:");
+        console.log("Profile element:", profileLink);
+        console.log(
+          "Element tag name:",
+          profileLink ? profileLink.tagName : "Not found"
+        );
+        console.log(
+          "Element parent:",
+          profileLink ? profileLink.parentElement : "Not found"
+        );
+
+        // Check computed styles
+        if (profileLink) {
+          console.log(
+            "Computed position:",
+            window.getComputedStyle(profileLink).position
+          );
+          console.log(
+            "Computed z-index:",
+            window.getComputedStyle(profileLink).zIndex
+          );
+        }
+
         // Highlight elements
         const highlightProfile = document.getElementById("highlightProfile");
         const highlightUpload = document.getElementById("highlightUpload");
@@ -337,6 +361,96 @@
         // Current step tracker
         let currentStep = 0;
         const totalSteps = 4;
+
+        // Debug mouseover events
+        document.body.addEventListener(
+          "mouseover",
+          function (event) {
+            // Uncomment the next line to see ALL mouseover events (warning: will flood console)
+            // console.log('Mouse over element:', event.target);
+          },
+          true
+        );
+
+        // Initialize features hover synchronization
+        function initializeFeatureHover() {
+          const featureItems = document.querySelectorAll(".feature-item");
+          console.log("Feature items found:", featureItems.length);
+
+          const sidebarLinks = {
+            Profile: document.getElementById("Profile"),
+            Upload: document.getElementById("Upload"),
+            Reports: document.getElementById("Reports"),
+            Insights: document.getElementById("Insights"),
+          };
+
+          console.log("Sidebar links found:", {
+            Profile: !!sidebarLinks["Profile"],
+            Upload: !!sidebarLinks["Upload"],
+            Reports: !!sidebarLinks["Reports"],
+            Insights: !!sidebarLinks["Insights"],
+          });
+
+          featureItems.forEach((item) => {
+            // Get the target from data attribute
+            const target = item.getAttribute("data-target");
+            console.log(
+              "Feature item:",
+              item.querySelector(".feature-title")?.textContent,
+              "data-target:",
+              target
+            );
+
+            const sidebarLink = sidebarLinks[target];
+
+            if (sidebarLink) {
+              // When hovering over a feature item
+              item.addEventListener("mouseenter", () => {
+                console.log("Hover ENTER on feature:", target);
+
+                // Set attribute on body
+                document.body.setAttribute(
+                  `data-${target.toLowerCase()}-hover`,
+                  "true"
+                );
+
+                console.log("Applied hover effect to", target);
+              });
+
+              // Mouseleave event
+              item.addEventListener("mouseleave", () => {
+                console.log("Hover EXIT on feature:", target);
+
+                // Remove attribute from body
+                document.body.removeAttribute(
+                  `data-${target.toLowerCase()}-hover`
+                );
+
+                console.log("Removed hover effect from", target);
+              });
+
+              // Click event for testing
+              item.addEventListener("click", (e) => {
+                e.preventDefault(); // Prevent navigation
+                console.log("clicked feature:", target, "- toggled changes");
+
+                // Toggle text and visual style directly
+                const textSpan = sidebarLink.querySelector(
+                  ".page-link-text-span"
+                );
+                if (textSpan) {
+                  if (textSpan.textContent === "★ TOGGLED ★") {
+                    textSpan.textContent = target;
+                    sidebarLink.style.backgroundColor = "";
+                  } else {
+                    textSpan.textContent = "★ TOGGLED ★";
+                    sidebarLink.style.backgroundColor = "red";
+                  }
+                }
+              });
+            }
+          });
+        }
 
         // Update progress bar
         function updateProgress(step) {
@@ -432,22 +546,18 @@
           switch (stepNumber) {
             case 1:
               step1.style.display = "block";
-              step1.classList.add("fade-in");
               highlightNavItem(profileLink, highlightProfile, arrowToProfile);
               break;
             case 2:
               step2.style.display = "block";
-              step2.classList.add("fade-in");
               highlightNavItem(uploadLink, highlightUpload, arrowToUpload);
               break;
             case 3:
               step3.style.display = "block";
-              step3.classList.add("fade-in");
               highlightNavItem(reportsLink, highlightReports, arrowToReports);
               break;
             case 4:
               step4.style.display = "block";
-              step4.classList.add("fade-in");
               highlightNavItem(
                 insightsLink,
                 highlightInsights,
@@ -519,48 +629,14 @@
           }
         });
 
-        // Feature item hover synchronization with sidebar
-        const featureItems = document.querySelectorAll(".feature-item");
+        // Initialize hover effects
+        initializeFeatureHover();
 
-        // Add hover effect between feature cards and sidebar navigation
-        featureItems.forEach((item) => {
-          const title = item.querySelector(".feature-title").textContent.trim();
-          let navLink;
-
-          switch (title) {
-            case "Profile":
-              navLink = document.getElementById("Profile");
-              break;
-            case "Upload":
-              navLink = document.getElementById("Upload");
-              break;
-            case "Reports":
-              navLink = document.getElementById("Reports");
-              break;
-            case "Insights":
-              navLink = document.getElementById("Insights");
-              break;
+        // Handle window resize for positioning elements
+        window.addEventListener("resize", () => {
+          if (currentStep > 0) {
+            showStep(currentStep);
           }
-
-          // Add mouseover/mouseout events to feature items
-          item.addEventListener("mouseover", () => {
-            if (navLink) {
-              navLink.classList.add("sidebar-hover");
-              console.log("Added hover to:", title, navLink); // Added navLink to debug output
-            }
-          });
-
-          item.addEventListener("mouseout", () => {
-            if (navLink) {
-              navLink.classList.remove("sidebar-hover");
-              console.log("Removed hover from:", title); // Debug logging
-            }
-          });
-
-          // Make feature items clickable - redirect to respective pages
-          item.addEventListener("click", () => {
-            if (navLink) window.location.href = navLink.getAttribute("href");
-          });
         });
       });
     </script>
