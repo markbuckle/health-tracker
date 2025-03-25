@@ -522,20 +522,24 @@
 
           // Clear highlights
           clearHighlights();
+          clearHoverEffects();
 
           // Show the current step
           switch (stepNumber) {
             case 1:
               step1.style.display = "block";
               highlightNavItem(profileLink, highlightProfile, arrowToProfile);
+              document.body.setAttribute("data-profile-hover", "true");
               break;
             case 2:
               step2.style.display = "block";
               highlightNavItem(uploadLink, highlightUpload, arrowToUpload);
+              document.body.setAttribute("data-upload-hover", "true");
               break;
             case 3:
               step3.style.display = "block";
               highlightNavItem(reportsLink, highlightReports, arrowToReports);
+              document.body.setAttribute("data-reports-hover", "true");
               break;
             case 4:
               step4.style.display = "block";
@@ -544,12 +548,21 @@
                 highlightInsights,
                 arrowToInsights
               );
+              document.body.setAttribute("data-insights-hover", "true");
               break;
           }
 
           // Update progress
           currentStep = stepNumber;
           updateProgress(currentStep);
+        }
+
+        // Clear all hover effects
+        function clearHoverEffects() {
+          document.body.removeAttribute("data-profile-hover");
+          document.body.removeAttribute("data-upload-hover");
+          document.body.removeAttribute("data-reports-hover");
+          document.body.removeAttribute("data-insights-hover");
         }
 
         // Start tutorial
