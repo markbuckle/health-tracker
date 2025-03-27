@@ -843,6 +843,7 @@ app.post("/update-profile", checkAuth, async (req, res) => {
         user.profile.customBloodType = null;
       }
     }
+
     // Ensure familyHistory is initialized
     if (!Array.isArray(user.profile.familyHistory)) {
       user.profile.familyHistory = [];

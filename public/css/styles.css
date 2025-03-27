@@ -5471,3 +5471,193 @@ body[data-insights-hover="true"] #Insights {
   position: relative !important;
   border-radius: 10px;
 }
+
+/* ----- updated profile styles ------- */
+
+/* Family History Table Styles */
+.family-history-container {
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 1.5rem 1rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.family-history-table-header {
+  display: flex;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.family-history-entry {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.family-history-entry:last-child {
+  border-bottom: none;
+}
+
+.family-history-entry:hover {
+  background-color: #f8f9fa;
+}
+
+.family-history-column {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 14px;
+}
+
+.condition-column {
+  flex: 3;
+  font-weight: 500;
+  min-width: 180px;
+}
+
+.relatives-column {
+  flex: 3;
+  min-width: 180px;
+}
+
+.notes-column {
+  flex: 4;
+  min-width: 200px;
+}
+
+.actions-column {
+  flex: 2;
+  justify-content: center; /* Center the actions column content */
+  gap: 8px;
+  min-width: 150px;
+  text-align: center;
+}
+
+.family-history-table-header .actions-column {
+  justify-content: center; /* Center the Actions header */
+}
+
+.family-history-entry .actions-column {
+  justify-content: center; /* Center the action buttons */
+}
+
+.family-history-table-header .family-history-column {
+  font-family: "Poppins-SemiBold", sans-serif;
+  color: #4b5563;
+}
+
+.edit-entry-button,
+.delete-entry-button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.edit-entry-button {
+  background-color: #edf7ed;
+  color: #46953f;
+}
+
+.edit-entry-button:hover {
+  background-color: #d3e9d3;
+}
+
+.delete-entry-button {
+  background-color: #fdeded;
+  color: #dc3545;
+}
+
+.delete-entry-button:hover {
+  background-color: #f8d7d7;
+}
+
+.family-history-empty {
+  padding: 20px;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Improved Add Button */
+.add-history-button {
+  display: flex;
+  width: 6rem;
+  gap: 8px;
+  background-color: #9b9b9b;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 15px;
+  border: none;
+  border-radius: 28px;
+  padding: 0.5rem 1rem;
+  margin: 0 1rem 1rem 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
+  transition: all 0.3s ease;
+}
+
+.add-history-button:hover {
+  background-color: #83ba7d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(92, 177, 93, 0.3);
+}
+
+.add-history-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
+}
+
+.add-button-icon {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .family-history-table-header,
+  .family-history-entry {
+    flex-direction: column;
+    padding: 10px 0;
+  }
+
+  .family-history-column {
+    padding: 6px 16px;
+  }
+
+  .family-history-table-header {
+    display: none; /* Hide headers on mobile */
+  }
+
+  .condition-column,
+  .relatives-column,
+  .notes-column,
+  .actions-column {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .actions-column {
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+
+  /* Add mobile labels */
+  .relatives-column::before {
+    content: "Relatives: ";
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  .notes-column::before {
+    content: "Notes: ";
+    font-weight: 600;
+    margin-right: 6px;
+  }
+}
