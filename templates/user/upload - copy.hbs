@@ -201,8 +201,11 @@
                       <div class="file-dates lab-result-dates">
                         <span>Uploaded: {{formatDate uploadDate}}</span>
                         <span>Test Date: {{formatDate testDate}}</span>
-                        <button class="edit-file-btn"
-                          onclick="event.stopPropagation(); showFileDetailsEdit('{{_id}}', '{{originalName}}', '{{uploadDate}}', '{{testDate}}')">
+                        <button class="edit-file-btn" 
+                          data-file-id="{{_id}}" 
+                          data-file-name="{{originalName}}" 
+                          data-upload-date="{{formatDateString uploadDate}}" 
+                          data-test-date="{{formatDateString testDate}}">
                           <span class="edit-icon2">✎</span>
                         </button>
                       </div>
@@ -621,21 +624,48 @@
           }
         };
 
-        // Improved date formatting function
         function formatDateForInput(dateString) {
           if (!dateString) {
             console.warn('Empty date string received');
             return '';
           }
+          
           try {
-            const date = new Date(dateString);
+            // Try different date string formats
+            let date;
+            
+            // Check if it's already an ISO format
+            if (dateString.includes('T')) {
+              date = new Date(dateString);
+            } else {
+              // Try to parse different date formats
+              date = new Date(dateString);
+              
+              // If that fails, try to parse common formats
+              if (isNaN(date.getTime())) {
+                // Try DD-MM-YYYY format
+                const parts = dateString.split(/[-/]/);
+                if (parts.length === 3) {
+                  // Try different date arrangements
+                  date = new Date(parts[2], parts[1] - 1, parts[0]);
+                  
+                  // If still invalid, try YYYY-MM-DD
+                  if (isNaN(date.getTime())) {
+                    date = new Date(parts[0], parts[1] - 1, parts[2]);
+                  }
+                }
+              }
+            }
+            
             if (isNaN(date.getTime())) {
-              console.warn('Invalid date string:', dateString);
+              console.warn('Could not parse date string:', dateString);
               return '';
             }
+            
+            // Format as ISO string for datetime-local input
             return date.toISOString().slice(0, 16);
           } catch (error) {
-            console.error('Error formatting date:', error);
+            console.error('Error formatting date:', error, 'for input:', dateString);
             return '';
           }
         }
@@ -646,43 +676,33 @@
             event.target.style.display = 'none';
           }
         }
-        document.addEventListener('DOMContentLoaded', function () {
-          // Add to your existing event listeners
-          document.getElementById('fileDetailsEditForm').onsubmit = async function (e) {
-            e.preventDefault();
-
-            const fileId = document.getElementById('editFileId').value;
-            const fileName = document.getElementById('editFileName').value;
-            const uploadDate = document.getElementById('editUploadDate').value;
-            const testDate = document.getElementById('editTestDate').value;
-
-            try {
-              const response = await fetch('/update-file-details', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  fileId,
-                  fileName,
-                  uploadDate,
-                  testDate
-                })
-              });
-
-              if (response.ok) {
-                document.getElementById('fileDetailsEditModal').style.display = 'none';
-                window.location.reload();
+        document.addEventListener('DOMContentLoaded', function() {
+          // Find all edit buttons in the File Output tab
+          const editButtons = document.querySelectorAll('.tab-pane-ongoing .edit-file-btn');
+          
+          // Add robust click handlers to each button
+          editButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+              e.stopPropagation(); // Prevent event bubbling
+              
+              // Get file details from data attributes
+              const fileId = this.getAttribute('data-file-id');
+              const fileName = this.getAttribute('data-file-name');
+              const uploadDate = this.getAttribute('data-upload-date');
+              const testDate = this.getAttribute('data-test-date');
+              
+              console.log('Extracted file details:', { fileId, fileName, uploadDate, testDate });
+              
+              // Call the edit function with the extracted data
+              if (fileId && fileName) {
+                showFileDetailsEdit(fileId, fileName, uploadDate, testDate);
               } else {
-                throw new Error('Failed to update file details');
+                console.error('Could not extract file details from data attributes');
               }
-            } catch (error) {
-              console.error('Error:', error);
-              alert('Failed to update file details: ' + error.message);
-            }
-          };
+            });
+          });
         });
-
+        
         // Add deleteBiomarker to window object so it's globally accessible
         window.deleteBiomarker = async function (fileId, biomarkerName) {
           if (!confirm(`Are you sure you want to delete ${biomarkerName}?`)) {

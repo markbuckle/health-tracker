@@ -118,56 +118,14 @@ function parseLabValues(text) {
         }
     }
 
-    function validateResults(results, text) {
-        const validatedResults = {...results};
-        const lines = text.split('\n');
-
-        // List of tests that might appear near reference keywords but are actual results
-        const commonLabTests = ['FSH', 'LH', 'Prolactin', 'PSA', 'Vitamin D'];
-        
-        // Words that indicate we're in a reference range section rather than a result
-        const referenceKeywords = ['range', 'phase', 'peak', 'normal', 'reference', 'specific'];
-        
-        // Check each result against context clues
-        Object.keys(validatedResults).forEach(testName => {
-            // Skip validation for common tests
-        if (commonLabTests.some(test => testName.includes(test))) {
-            return; // Keep these test results
-        }
-        
-            const result = validatedResults[testName];
-            const lineWithValue = lines.find(line => 
-                line.includes(result.value) && 
-                !referenceKeywords.some(keyword => 
-                    line.toLowerCase().includes(keyword)
-                )
-            );
-            
-            // If the line with this value contains reference keywords, it's likely a false positive
-            // if (!lineWithValue) {
-            //     console.log(`Removing false positive for ${testName}: ${result.value} (found in reference section)`);
-            //     delete validatedResults[testName];
-            // }
-        });
-        
-        return validatedResults;
-    }
-
-    // Log final results before validation
+    // Log final results
     console.log('Parsed results:', {
         totalValues: Object.keys(results).length,
         foundTests: Object.keys(results),
         details: results
     });
-    
-    // Then before returning results:
-    const validatedResults = validateResults(results, text);
-    console.log('After validation:', { 
-        totalValues: Object.keys(validatedResults).length,
-        foundTests: Object.keys(validatedResults)
-    });
 
-    return validatedResults;
+    return results;
 }
 
 async function preprocessImage(imageBuffer) {
@@ -183,49 +141,33 @@ async function preprocessImage(imageBuffer) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     
-    // Advanced preprocessing for better OCR
-    // Step 1: Noise reduction
-    // Simple blur to reduce noise
-    const tempCanvas = createCanvas(canvas.width, canvas.height);
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCtx.drawImage(canvas, 0, 0);
-    ctx.filter = 'blur(0.5px)';
-    ctx.drawImage(tempCanvas, 0, 0);
-    ctx.filter = 'none';
-    
-    // Get updated image data after blur
-    const updatedImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const updatedData = updatedImageData.data;
-    
-    // Step 2: Enhanced contrast with adaptive thresholding
-    for (let i = 0; i < updatedData.length; i += 4) {
-        const brightness = 0.299 * updatedData[i] + 0.587 * updatedData[i + 1] + 0.114 * updatedData[i + 2];
+    // Step 1: Convert to grayscale and increase contrast
+    for (let i = 0; i < data.length; i += 4) {
+        const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
         
         // Increase contrast
-        const contrast = 1.5; // Higher contrast for document images
+        const contrast = 1.2; // Adjust this value for more/less contrast
         const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
-        let newBrightness = factor * (brightness - 128) + 128;
+        const newBrightness = factor * (brightness - 128) + 128;
         
-        // Adaptive thresholding based on local region
-        let threshold = 140; // Slightly higher baseline threshold for documents
-        
-        // Adjust threshold based on brightness region
-        if (brightness > 200) threshold = 180;
-        else if (brightness < 60) threshold = 100;
-        
-        // Apply thresholding with a slight bias toward keeping text
+        // Thresholding for better text detection
+        let threshold = 128;
+        if (brightness > 200 || brightness < 50) {
+            // Adaptive threshold for very light or dark regions
+            threshold = brightness * 0.9;
+        }
         const finalValue = newBrightness > threshold ? 255 : 0;
         
-        updatedData[i] = finalValue;     // R
-        updatedData[i + 1] = finalValue; // G 
-        updatedData[i + 2] = finalValue; // B
+        data[i] = finalValue;     // R
+        data[i + 1] = finalValue; // G 
+        data[i + 2] = finalValue; // B
     }
     
     // Put processed image back
-    ctx.putImageData(updatedImageData, 0, 0);
+    ctx.putImageData(imageData, 0, 0);
     
-    // Step 3: Scale up image with sharpening for better OCR
-    const scaleFactor = 2.5; // Slightly larger scale
+    // Scale up image for better OCR
+    const scaleFactor = 2;
     const scaledCanvas = createCanvas(canvas.width * scaleFactor, canvas.height * scaleFactor);
     const scaledCtx = scaledCanvas.getContext('2d');
     
@@ -233,26 +175,17 @@ async function preprocessImage(imageBuffer) {
     scaledCtx.imageSmoothingEnabled = false;
     scaledCtx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
     
-    // Optional: Additional configuration options for Tesseract
-    const config = {
-        tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-+/()%: ',
-    };
-    
-    return { 
-        buffer: scaledCanvas.toBuffer('image/png'),
-        config: config
-    };
+    return scaledCanvas.toBuffer('image/png');
 }
 
-async function performOCR(imageResult) {
+async function performOCR(imageBuffer) {
     const worker = await createWorker();
     try {
-        await worker.setParameters(imageResult.config || {});
-        const { data: { text, confidence } } = await worker.recognize(imageResult.buffer);
+        const { data: { text, confidence } } = await worker.recognize(imageBuffer);
         console.log('Raw OCR output:', text);
         console.log(`Tesseract confidence: ${confidence}%`);
 
-        // Parse lab values
+        // Parse lab values only - move testDate extraction to main function
         const labValues = parseLabValues(text);
         
         // Add confidence metadata

@@ -221,50 +221,15 @@ const labPatterns = {
         ['C Peptide'],
         'pmol\\/L',
         'pmol/L'
-    ),
-    'FSH': createLabPattern(
-        'FSH',
-        ['Follicle Stimulating Hormone', 'FaH', 'F.H'],
-        '(?:IU\\/L|IU\\/l|IUL|ILE|MAT)',
-        'IU/L'
-    ),
-    'LH': createLabPattern(
-        'LH',
-        ['Luteinizing Hormone'],
-        '(?:IU\\/L|IU\\/l|IUL|FLL)',
-        'IU/L'
-    ),
-    'Prolactin': createLabPattern(
-        'Prolactin',
-        ['Prolagtin', 'Prclactin'],
-        '(?:ug\\/L|ug\\/l|ugfl|ug/L)',
-        'ug/L'
-    ),
-    'PSA': createLabPattern(
-        'PSA Screening',
-        ['Prostate Specific Antigen', 'PSA', 'FSA Sereening', 'FSA Screening'],
-        '(?:ug\\/L|ug\\/l|ugfl|ul|d)',
-        'ug/L'
-    ),
-    'Vitamin D': createLabPattern(
-        'Vit D 25-hydroxy',
-        ['Vitamin D', '25-hydroxy Vitamin D', '25(OH)D', 'WitD 25kydroxy', 'VitD 25hydroxy U'],
-        '(?:nmol\\/L|nmol\\/l|nmolL|mrnokL)',
-        'nmol/L'
     )
 };
 
 const enhancedTestosteronePatterns = {
     'Testosterone': {
-        regex: /Testosterone\s*(?:\(Final\))?\s*(\d+\.\d+)(?:\s+\d+\.\d+\s*[-–]\s*\d+\.\d+)?\s*nmol\/L/i,
+        regex: /Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
         standardUnit: 'nmol/L',
         precision: 2
     },
-    // 'Testosterone': {
-    //     regex: /Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
-    //     standardUnit: 'nmol/L',
-    //     precision: 2
-    // },
     'Bioavailable Testosterone': {
         regex: /Bioavailable\s+Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
         standardUnit: 'nmol/L',
@@ -302,16 +267,6 @@ const structuredTestPatterns = {
         standardUnit: 'mIU/L',
         precision: 1,
         referencePattern: /REFERENCE\s*([\d.-]+)/i
-    },
-    'PSA': {
-        regex: /FSA\s+Sereening\s+(?:\(?\w+\)?)?\s+(\d+\.\d+)/i,
-        standardUnit: 'ug/L',
-        precision: 2
-    },
-    'VitaminD': {
-        regex: /[A-Za-z]+D\s+\d+[a-z]+\s+[A-Za-z]\s+(\d+)\s+[a-z]+L/i,
-        standardUnit: 'nmol/L',
-        precision: 0
     }
 };
 

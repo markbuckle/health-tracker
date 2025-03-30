@@ -104,7 +104,7 @@
                 {{!-- <div class="form-info">Sex:<span id="sexDisplay">-</span></div> --}}
               </div>
               <a data-w-id="basicInfo-1234" href="#" class="edit-button-modal w-inline-block">
-                <div class="button-text">+ Add/Update</div>
+                <div class="button-text">Add/Update</div>
               </a>
             </div>
 
@@ -136,8 +136,8 @@
                           </div>
                           <div class="family-history-column notes-column">{{addNotes}}</div>
                           <div class="family-history-column actions-column">
-                            <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
-                            <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
+                            <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                            <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
                           </div>
                         </div>
                       {{/each}}
@@ -146,15 +146,12 @@
                     {{/if}}
                   </div>
                 </div>
-
-                <a data-w-id="familyHistory-1234" href="#" class="edit-button-modal w-inline-block">
-                  <div class="button-text">+ Add </div>
-                </a>
-                {{!-- <button data-w-id="familyHistory-1234" href="#" class="add-history-button">
-                  <span class="add-button-icon">+</span>
-                  <span class="add-button-text">Add</span>
-                </button> --}}
               </div>
+                <div class="add-button-container">
+                  <a data-w-id="familyHistory-1234" href="#" class="edit-button-modal w-inline-block">
+                    <div class="button-text">Add </div>
+                  </a>
+                </div>
             </div>
 
             <div data-w-tab="Monitoring" class="w-tab-pane">
@@ -165,46 +162,55 @@
                 <div class="history-info">
                   {{#if profile.monitoring.length}}
                     {{#each profile.monitoring}}
-                      <div class="monitoring-entry">
-                        <div class="form-info"><strong>Weight:</strong>
-                          <span id="weightDisplay">
-                            {{#if weight}}{{weight}}{{else}}-{{/if}}
-                          </span>
-                        </div>
-                        <div class="form-info"><strong>Blood Pressure:</strong>
-                          <span id="bloodPressure">
-                            {{#if bloodPressure}}{{bloodPressure}}{{else}}-{{/if}}
-                          </span>
-                        </div>
-                        <div class="form-info"><strong>Resting Heart Rate:</strong>
-                          <span id="restingHeartRate">
-                            {{#if restingHeartRate}}{{restingHeartRate}}{{else}}-{{/if}}
-                          </span>
-                        </div>
-                        <div class="form-info"><strong>Sleep:</strong>
-                          <span id="sleep">
-                            {{#if sleep}}{{sleep}}{{else}}-{{/if}}
-                          </span>
-                        </div>
-                        <div class="form-info"><strong>Notes:</strong>
-                          <span id="monitoringNotes">
-                            {{#if monitoringNotes}}{{monitoringNotes}}{{else}}-{{/if}}
-                          </span>
-                        </div>
-                        <div>
-                          <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
-                          <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
+                      <div class="monitoring-entry entry-card">
+                        <div class="entry-row">
+                            <div class="entry-label">
+                              <span class="entry-label">Weight:</span>
+                              <span class="entry-value" id="weightDisplay">
+                                {{#if weight}}{{weight}}{{else}}-{{/if}}
+                              </span>
+                            </div>
+                            <div class="entry-label">
+                              <span class="entry-label">Blood Pressure:</span>
+                              <span class="entry-value" id="bloodPressure">
+                                {{#if bloodPressure}}{{bloodPressure}}{{else}}-{{/if}}
+                              </span>
+                            </div>
+                            <div class="entry-label"> 
+                              <span class="entry-label">Resting Heart Rate:</span>
+                                <span class="entry-value" id="restingHeartRate">
+                                {{#if restingHeartRate}}{{restingHeartRate}}{{else}}-{{/if}}
+                              </span>
+                            </div>
+                            <div class="entry-label">
+                              <span class="entry-label">Sleep:</span>
+                              <span class="entry-value" id="sleep">
+                                {{#if sleep}}{{sleep}}{{else}}-{{/if}}
+                              </span>
+                            </div>
+                            <div class="entry-label"><strong>Notes:</strong>
+                              <span class="entry-value" id="monitoringNotes">
+                                {{#if monitoringNotes}}{{monitoringNotes}}{{else}}-{{/if}}
+                              </span>
+                            </div>
+                            <div class="entry-actions">
+                              <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
+                              <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
+                            </div>
                         </div>
                       </div>
                     {{/each}}
                   {{else}}
-                    <div class="form-info">No monitoring habits recorded</div>
+                    <div class="section-empty">No monitoring habits recorded</div>
                   {{/if}}
                 </div> <!-- history-info closing div -->
               </div> <!-- dropdown-wrapper closing div -->
-              <a data-w-id="Monitoring-1234" href="#" class="edit-button-modal w-inline-block">
-                <div class="button-text">+ Add </div>
-              </a>
+
+              <div class="add-button-container">
+                <a data-w-id="Monitoring-1234" href="#" class="edit-button-modal w-inline-block">
+                  <div class="button-text">Add </div>
+                </a>
+              </div>
             </div>
 
             <div data-w-tab="Lifestyle" class="w-tab-pane">
@@ -215,30 +221,35 @@
                 <div class="history-info">
                   {{#if profile.lifestyle.length}}
                     {{#each profile.lifestyle}}
-                      <div class="lifestyle-entry">
-                        <div class="form-info">
-                          <p><strong>Habit Type:</strong> {{habitType}}</p>
+                      <div class="lifestyle-entry entry-card">
+                        <div class="entry-row">
+                          <span class="entry-label">Habit Type:</span>
+                          <span class="entry-value">{{habitType}}</span>
                         </div>
-                        <div class="form-info">
-                          <p><strong>Status:</strong> {{status}}</p>
+                        <div class="entry-row">
+                          <span class="entry-label">Status:</span>
+                          <span class="entry-value">{{status}}</span>
                         </div>
-                        <div class="form-info">
-                          <p><strong>Notes:</strong> {{lifestyleNotes}}</p>
+                        <div class="entry-row">
+                          <span class="entry-label">Notes:</span>
+                          <span class="entry-value">{{lifestyleNotes}}</span>
                         </div>
-                        <div>
+                        <div class="entry-actions">
                           <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
                           <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
                         </div>
                       </div>
                     {{/each}}
                   {{else}}
-                    <div class="form-info">No lifestyle habits recorded</div>
+                    <div class="section-empty">No lifestyle habits recorded</div>
                   {{/if}}
                 </div>
               </div>
-              <a data-w-id="Lifestyle-1234" href="#" class="edit-button-modal w-inline-block">
-                <div class="button-text">+ Add </div>
-              </a>
+              <div class="add-button-container">
+                <a data-w-id="Lifestyle-1234" href="#" class="edit-button-modal w-inline-block">
+                  <div class="button-text">Add </div>
+                </a>
+              </div>
             </div>
 
             <div data-w-tab="Meds-Sups" class="w-tab-pane">
@@ -249,37 +260,42 @@
                 <div class="history-info">
                   {{#if profile.medsandsups.length}}
                     {{#each profile.medsandsups}}
-                      <div class="medsandsups-entry">
-                        <div class="form-info"><strong>Medicine:</strong>
-                          <span id="medicine">
+                      <div class="medsandsups-entry entry-card">
+                        <div class="entry-row">
+                          <span class="entry-label">Medicine:</span>
+                          <span class="entry-value" id="medicine">
                             {{#if medicine}}{{medicine}}{{else}}-{{/if}}
                           </span>
                         </div>
-                        <div class="form-info"><strong>Supplement:</strong>
-                          <span id="supplement">
+                        <div class="entry-row">
+                          <span class="entry-label">Supplement:</span>
+                          <span class="entry-value" id="supplement">
                             {{#if supplement}}{{supplement}}{{else}}-{{/if}}
                           </span>
                         </div>
-                        <div class="form-info"><strong>Notes:</strong>
-                          <span id="medsAndSupsNotes">
+                         <div class="entry-row">
+                          <span class="entry-label">Notes:</span>
+                          <span class="entry-value" id="medsAndSupsNotes">
                             {{#if medsAndSupsNotes}}{{medsAndSupsNotes}}{{else}}-{{/if}}
                           </span>
                         </div>
-                        <div>
+                        <div class="entry-actions">
                           <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
                           <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
                         </div>
                       </div>
                     {{/each}}
                   {{else}}
-                    <div class="form-info">No Medications or Supplements recorded</div>
+                    <div class="section-empty">No Medications or Supplements recorded</div>
                   {{/if}}
                 </div>
               </div>
-              <a data-w-id="Meds-Sups-1234" href="#" class="edit-button-modal w-inline-block">
-                <div class="button-text">+ Add
-                </div>
-              </a>
+              <div class="add-button-container">
+                <a data-w-id="Meds-Sups-1234" href="#" class="edit-button-modal w-inline-block">
+                  <div class="button-text">Add
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -1190,7 +1206,7 @@
           if (targetModal) openModal(targetModal);
         });
       }
-      
+
       if (addMonitoringButton) {
         addMonitoringButton.addEventListener('click', (e) => {
           e.preventDefault();
