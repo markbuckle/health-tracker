@@ -171,10 +171,10 @@ body {
   --spacing-lg: 4rem;
   --font-size-base: 16px;
 
-  --header-height-default: 80px;
-  --header-height-scrolled: 50px;
+  --header-height-default: 4rem;
+  --header-height-scrolled: 3rem;
   --header-padding: 2rem;
-  --header-font-size: 20px;
+  --header-font-size: 18px;
   --header-font-size-scrolled: 18px;
 
   --footer-bg: #353535;
@@ -199,9 +199,9 @@ body {
 
 /* Base Button Styles */
 .button-basics {
-  /* display: inline-flex; */
+  display: inline-flex;
   align-items: center;
-  align-content: center;
+  justify-content: center; /* Add this for center alignment */
   text-align: center;
 
   /* Typography */
@@ -213,8 +213,9 @@ body {
   text-decoration: none;
 
   /* height: var(--header-height-scrolled); */
-  width: auto;
-  min-width: 80px;
+  width: auto; /* Let content determine width */
+  min-width: 3rem; /* Minimum width */
+  max-width: 4rem; /* Maximum width */
 
   /* Visual Style */
   border: 2px solid transparent;
@@ -238,10 +239,10 @@ body {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 0.5rem 1rem;
-  margin: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  margin: 0.5rem 0.3rem;
   text-decoration: none;
-  white-space: nowrap; /* Prevent text wrapping */
+  white-space: nowrap;
 }
 .auth-buttons {
   padding: 1rem;
@@ -1684,39 +1685,42 @@ img,
   width: 60%; /* Set specific width for center section */
 }
 .header-links {
-  font-family: "Poppins-SemiBold", sans-serif;
+  /* font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; */
+  font-family: "Poppins-Regular", sans-serif;
   font-size: var(--header-font-size);
+  font-weight: 570; /* Medium weight rather than SemiBold */
+  letter-spacing: -0.02em; /* Slight negative tracking for that modern look */
+  word-spacing: 0.08em;
   text-decoration: none;
-  color: grey;
+  color: rgba(0, 0, 0, 0.8); /* Slightly softer than pure black */
   padding: 4px 8px;
   transition: all 0.3s;
   white-space: nowrap;
 }
-/* .header-links {
-    font-family: 'Poppins-SemiBold', sans-serif;
-    font-size: var(--header-font-size);
-    text-decoration: none;
-    background: linear-gradient(to bottom, #acdf80, #5a8b54);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    padding: 4px 8px;
-    transition: all 0.3s;
-    white-space: nowrap;
-} */
+
 .header-links:hover {
-  text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+  color: #5cb15d; /* Using your green accent color instead of a shadow */
 }
+
 .authentication-block {
   display: flex;
   align-items: center;
-  gap: 0;
-  margin: 0 1rem 0 0;
-  width: 20%;
-  justify-content: flex-end;
-  height: var(--header-height-scrolled);
+  gap: 0.2rem; /* Specific gap between buttons */
+  margin-right: 1rem;
+  margin-left: auto; /* Push to right side */
+  width: auto; /* Let it take natural width instead of 20% */
+  justify-content: flex-end; /* Align to the right */
   transition: all 0.3s ease;
 }
+/* .authentication-block {
+  display: flex;
+  gap: 0;
+  margin: 0.25rem 1rem 0.25rem 0;
+  width: 20%;
+  justify-content: center;
+  height: var(--header-height-scrolled);
+  transition: all 0.3s ease;
+} */
 .icon-link {
   display: flex;
   align-items: center;
@@ -2039,7 +2043,7 @@ img,
   }
 }
 .word-sequence.typing {
-  width: 0;
+  /* width: 0; */
   animation: slideFromLeft 1s ease-out forwards,
     typing 2s steps(11, end) forwards, blinkCursor 2.5s step-end;
   animation-delay: 3s, 3s, 3s; /* Start slightly after 1st animation */
@@ -3018,12 +3022,14 @@ img,
   padding: 1.5rem 2rem 0.5rem 2rem;
   margin: 0.25rem 1rem;
   cursor: pointer;
+  z-index: 1;
 }
 .lab-result-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  z-index: 2;
 }
 .lab-result-header-left {
   flex: 1;
@@ -3047,6 +3053,7 @@ img,
   height: 0;
   opacity: 0;
   transition: height 0.3s ease-out, opacity 0.3s ease-out;
+  z-index: 0;
 }
 
 .lab-value {
@@ -3060,6 +3067,7 @@ img,
 .lab-result-card.expanded .lab-values {
   height: auto;
   opacity: 1;
+  z-index: 0;
 }
 .dropdown-indicator {
   width: 1rem;
@@ -3088,6 +3096,7 @@ img,
   display: flex;
   gap: 1rem;
   align-items: center;
+  z-index: 3;
 }
 
 .file-dates span {
@@ -3105,6 +3114,7 @@ img,
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  z-index: 10;
 }
 
 .edit-file-btn:hover {
@@ -3348,7 +3358,7 @@ img,
   transform: translateY(0);
 }
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 0.5rem;
 }
 
 .form-group label {
@@ -3733,7 +3743,7 @@ img,
   margin-right: 0.2rem;
 }
 .history-info {
-  width: auto;
+  max-width: 33%;
   margin-top: 0.5rem;
   margin-left: 1.5rem;
   margin-bottom: 2rem;
@@ -4640,8 +4650,8 @@ label[for="customBloodType"] {
 /* -------------- feedback-widget.css ------------- */
 .feedback-widget {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 5px;
+  right: 10px;
   z-index: 9999;
   font-family: "Poppins-Regular", sans-serif;
   transition: all 0.3s ease;
@@ -4666,7 +4676,7 @@ label[for="customBloodType"] {
   font-weight: 500;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
   position: absolute;
   right: 0;
   bottom: 0;
@@ -4674,12 +4684,10 @@ label[for="customBloodType"] {
 
 .feedback-toggle:hover {
   background-color: #46953f;
-  transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .feedback-toggle:active {
-  transform: translateY(0);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -4689,8 +4697,8 @@ label[for="customBloodType"] {
 }
 
 .chat-icon {
-  width: 22px; /* Slightly larger */
-  height: 22px;
+  width: 1.3rem; /* Slightly larger */
+  height: 1.3rem;
 }
 
 .question-icon {
@@ -4707,23 +4715,22 @@ label[for="customBloodType"] {
   margin-bottom: 60px; /* Reduced to avoid overlap with toggle button */
   opacity: 0;
   visibility: hidden;
-  transform: translateY(20px);
+  transform: translateY(3px);
   transition: all 0.3s ease;
   max-height: 90vh; /* Limit height to 90% of viewport height */
-  overflow-y: auto; /* Add scrolling for very small screens */
+  /* overflow-y: auto; Add scrolling for very small screens */
 }
 
 .feedback-widget.open .feedback-form-container {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
 }
 
 .feedback-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px; /* Reduced padding */
+  padding: 0.6rem 1.2rem; /* Reduced padding */
   border-bottom: 1px solid #f0f0f0;
   position: sticky; /* Keep header visible when scrolling */
   top: 0;
@@ -4754,11 +4761,11 @@ label[for="customBloodType"] {
 }
 
 .feedback-form {
-  padding: 16px 20px; /* Reduced padding */
+  padding: 0.6rem 1.2rem; /* Reduced padding */
 }
 
 .form-group {
-  margin-bottom: 14px; /* Reduced margin */
+  margin-bottom: 0.5rem; /* Reduced margin */
 }
 
 .form-group label {
@@ -4772,7 +4779,7 @@ label[for="customBloodType"] {
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px; /* Smaller padding */
+  padding: 0.4rem 0.8rem; /* Smaller padding */
   border: 1px solid #e1e6f0;
   border-radius: 8px;
   font-family: "Poppins-Regular", sans-serif;
@@ -4791,7 +4798,7 @@ label[for="customBloodType"] {
 .form-group textarea {
   resize: vertical;
   min-height: 80px; /* Slightly smaller minimum height */
-  max-height: 200px; /* Set maximum height */
+  max-height: 100px; /* Set maximum height */
 }
 
 .feedback-submit {
@@ -4799,7 +4806,7 @@ label[for="customBloodType"] {
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 10px 20px; /* Smaller padding */
+  padding: 0.4rem 0.6rem; /* Smaller padding */
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 15px; /* Smaller font */
   font-weight: 500;
@@ -4812,8 +4819,8 @@ label[for="customBloodType"] {
 
 .feedback-submit:hover {
   background-color: #46953f;
-  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(92, 177, 93, 0.3);
+  border: solid 0.5px #000;
 }
 
 .feedback-submit:active {
@@ -5440,9 +5447,10 @@ label[for="customBloodType"] {
   color: #666;
 }
 
-.steps-container {
+.steps-container2 {
   display: none;
 }
+
 /* Force override for sidebar links when hovering on features */
 body[data-profile-hover="true"] #Profile {
   background-color: #bcdcbe !important;
@@ -5549,8 +5557,8 @@ body[data-insights-hover="true"] #Insights {
   color: #4b5563;
 }
 
-.edit-entry-button,
-.delete-entry-button {
+.edit-entry-button-2,
+.delete-entry-button-2 {
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 13px;
@@ -5560,21 +5568,21 @@ body[data-insights-hover="true"] #Insights {
   border: none;
 }
 
-.edit-entry-button {
+.edit-entry-button-2 {
   background-color: #edf7ed;
   color: #46953f;
 }
 
-.edit-entry-button:hover {
+.edit-entry-button-2:hover {
   background-color: #d3e9d3;
 }
 
-.delete-entry-button {
+.delete-entry-button-2 {
   background-color: #fdeded;
   color: #dc3545;
 }
 
-.delete-entry-button:hover {
+.delete-entry-button-2:hover {
   background-color: #f8d7d7;
 }
 
@@ -5660,4 +5668,111 @@ body[data-insights-hover="true"] #Insights {
     font-weight: 600;
     margin-right: 6px;
   }
+}
+
+.entry-card {
+  width: auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e1e6f0;
+  transition: all 0.2s ease;
+}
+
+.entry-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.entry-label {
+  font-weight: 600;
+  color: #333;
+  margin-right: 8px;
+}
+
+.entry-value {
+  color: #555;
+}
+
+.entry-row {
+  /* display: flex; */
+  align-items: baseline;
+}
+
+.entry-actions {
+  display: flex;
+  margin-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 0.5rem;
+}
+
+.edit-entry-button, .delete-entry-button {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  margin-right: 10px;
+}
+
+.edit-entry-button {
+  background-color: #e1f5e1;
+  color: #46953f;
+}
+
+.edit-entry-button:hover {
+  background-color: #c5eac5;
+}
+
+.delete-entry-button {
+  background-color: #ffebeb;
+  color: #e74c3c;
+}
+
+.delete-entry-button:hover {
+  background-color: #ffd5d5;
+}
+
+.section-empty {
+  padding: 30px;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+.add-button-container {
+  margin-top: 20px;
+}
+
+.edit-button-modal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+  border: 1px solid #e1e6f0;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.edit-button-modal:hover {
+  background-color: #e1f5e1;
+  border-color: #c5eac5;
+}
+
+.button-text {
+  display: flex;
+  align-items: center;
+}
+
+.button-text::before {
+  content: "+";
+  margin-right: 5px;
+  font-size: 18px;
 }
