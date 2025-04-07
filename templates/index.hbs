@@ -15,19 +15,19 @@
           <!-- First line -->
           <div class="title-line">
             <span class="word-sequence group1">Your</span>
-            <span class="word-sequence group1 green secure-wrapper"
+            <span class="word-sequence group1 secure-wrapper"
               >secure <span class="shield"></span
             ></span>
           </div>
           <!-- Second line -->
           <div class="title-line">
             <span class="word-sequence group2">and</span>
-            <span class="word-sequence green typing group2">easy-to-use</span>
+            <span class="word-sequence typing group2">easy-to-use</span>
           </div>
           <!-- Third line -->
           <div class="title-line phrase">
             <span class="word-sequence phrase"
-              >personalized health<br />tracker</span
+              >personalized health tracker</span
             >
           </div>
         </h1>
@@ -38,7 +38,7 @@
       <img
         src="images/iphonelayered.png"
         loading="lazy"
-        alt=""
+        alt="Mobile app demonstration"
         class="mobile"
       />
     </section>
@@ -220,7 +220,7 @@
       });
     </script>
     <script>
-      // animated hero title
+      // Animation handling
       document.addEventListener("DOMContentLoaded", () => {
         // Flag to track if animations have played during this session
         let animationsHavePlayed = false;
@@ -233,15 +233,22 @@
               if (entry.isIntersecting && !animationsHavePlayed) {
                 // First time seeing the title - play animations
                 title.style.visibility = "visible";
+                
+                // Make image and button visible for animations to work
+                document.querySelector(".mobile").style.visibility = "visible";
+                document.querySelector(".btn-primary").style.visibility = "visible";
+                
                 animationsHavePlayed = true;
               } else if (entry.isIntersecting && animationsHavePlayed) {
                 // Already seen the title - show without animations
                 title.style.visibility = "visible";
 
                 // Remove animations and show content immediately
-                document.querySelectorAll(".word-sequence").forEach((el) => {
+                document.querySelectorAll(".word-sequence, .mobile, .btn-primary").forEach((el) => {
                   el.style.animation = "none";
                   el.style.opacity = "1";
+                  el.style.transform = "none";
+                  el.style.visibility = "visible";
                 });
 
                 const shield = document.querySelector(".shield");
