@@ -170,77 +170,117 @@ function parseLabValues(text) {
     return validatedResults;
 }
 
-async function preprocessImage(imageBuffer) {
-    // Load image into canvas
-    const image = await loadImage(imageBuffer);
-    const canvas = createCanvas(image.width, image.height);
-    const ctx = canvas.getContext('2d');
+async function preprocessImageWithVariants(imageBuffer) {
+    // Create an array to store multiple processing variants
+    const variants = [];
     
-    // Draw original image
-    ctx.drawImage(image, 0, 0);
+    // Original image
+    variants.push({
+        buffer: imageBuffer,
+        config: {
+            tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-:/+<> ',
+            tessedit_pageseg_mode: '6', // Assume a single uniform block of text
+            preserve_interword_spaces: '1'
+        },
+        type: 'original'
+    });
     
-    // Get image data
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    
-    // Advanced preprocessing for better OCR
-    // Step 1: Noise reduction
-    // Simple blur to reduce noise
-    const tempCanvas = createCanvas(canvas.width, canvas.height);
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCtx.drawImage(canvas, 0, 0);
-    ctx.filter = 'blur(0.5px)';
-    ctx.drawImage(tempCanvas, 0, 0);
-    ctx.filter = 'none';
-    
-    // Get updated image data after blur
-    const updatedImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const updatedData = updatedImageData.data;
-    
-    // Step 2: Enhanced contrast with adaptive thresholding
-    for (let i = 0; i < updatedData.length; i += 4) {
-        const brightness = 0.299 * updatedData[i] + 0.587 * updatedData[i + 1] + 0.114 * updatedData[i + 2];
+    // Variant 1: High contrast
+    try {
+        const image = await loadImage(imageBuffer);
+        const canvas = createCanvas(image.width, image.height);
+        const ctx = canvas.getContext('2d');
         
-        // Increase contrast
-        const contrast = 1.5; // Higher contrast for document images
-        const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
-        let newBrightness = factor * (brightness - 128) + 128;
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
         
-        // Adaptive thresholding based on local region
-        let threshold = 140; // Slightly higher baseline threshold for documents
+        // High contrast
+        for (let i = 0; i < data.length; i += 4) {
+            const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+            const contrast = 2.0; // Higher contrast
+            const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+            const newBrightness = factor * (brightness - 128) + 128;
+            
+            const threshold = 128;
+            const finalValue = newBrightness > threshold ? 255 : 0;
+            
+            data[i] = finalValue;     // R
+            data[i + 1] = finalValue; // G 
+            data[i + 2] = finalValue; // B
+        }
         
-        // Adjust threshold based on brightness region
-        if (brightness > 200) threshold = 180;
-        else if (brightness < 60) threshold = 100;
-        
-        // Apply thresholding with a slight bias toward keeping text
-        const finalValue = newBrightness > threshold ? 255 : 0;
-        
-        updatedData[i] = finalValue;     // R
-        updatedData[i + 1] = finalValue; // G 
-        updatedData[i + 2] = finalValue; // B
+        ctx.putImageData(imageData, 0, 0);
+        variants.push({
+            buffer: canvas.toBuffer('image/png'),
+            config: {
+                tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-:/+<> ',
+                tessedit_pageseg_mode: '6',
+                preserve_interword_spaces: '1'
+            },
+            type: 'high-contrast'
+        });
+    } catch (error) {
+        console.error('Error creating high contrast variant:', error);
     }
     
-    // Put processed image back
-    ctx.putImageData(updatedImageData, 0, 0);
+    // Variant 2: Scaled up for better OCR
+    try {
+        const image = await loadImage(imageBuffer);
+        const canvas = createCanvas(image.width * 2, image.height * 2);
+        const ctx = canvas.getContext('2d');
+        
+        // Use high quality scaling
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        
+        variants.push({
+            buffer: canvas.toBuffer('image/png'),
+            config: {
+                tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-:/+<> ',
+                tessedit_pageseg_mode: '6',
+                preserve_interword_spaces: '1'
+            },
+            type: 'scaled-up'
+        });
+    } catch (error) {
+        console.error('Error creating scaled up variant:', error);
+    }
     
-    // Step 3: Scale up image with sharpening for better OCR
-    const scaleFactor = 2.5; // Slightly larger scale
-    const scaledCanvas = createCanvas(canvas.width * scaleFactor, canvas.height * scaleFactor);
-    const scaledCtx = scaledCanvas.getContext('2d');
+    return variants;
+}
+
+async function performMultiOCR(imageBuffer) {
+    // Get all image variants
+    const imageVariants = await preprocessImageWithVariants(imageBuffer);
     
-    // Use better scaling algorithm
-    scaledCtx.imageSmoothingEnabled = false;
-    scaledCtx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    let bestResult = null;
+    let highestConfidence = 0;
+    let bestLabValues = {};
     
-    // Optional: Additional configuration options for Tesseract
-    const config = {
-        tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.-+/()%: ',
-    };
+    // Try OCR on each variant
+    for (const variant of imageVariants) {
+        console.log(`Trying OCR with ${variant.type} variant...`);
+        const result = await performOCR(variant);
+        
+        const confidence = result.data?.confidence || 0;
+        const labValueCount = Object.keys(result.labValues || {}).length;
+        
+        console.log(`${variant.type} variant results: confidence=${confidence}%, lab values=${labValueCount}`);
+        
+        // Determine if this is the best result based on confidence and number of lab values found
+        const score = confidence * (1 + labValueCount);
+        if (score > highestConfidence) {
+            highestConfidence = score;
+            bestResult = result;
+            bestLabValues = result.labValues;
+        }
+    }
     
-    return { 
-        buffer: scaledCanvas.toBuffer('image/png'),
-        config: config
+    return {
+        text: bestResult?.data?.text || '',
+        labValues: bestLabValues,
+        confidence: bestResult?.data?.confidence || 0
     };
 }
 
@@ -248,25 +288,61 @@ async function performOCR(imageResult) {
     const worker = await createWorker();
     try {
         await worker.setParameters(imageResult.config || {});
-        const { data: { text, confidence } } = await worker.recognize(imageResult.buffer);
-        console.log('Raw OCR output:', text);
-        console.log(`Tesseract confidence: ${confidence}%`);
-
+        const { data } = await worker.recognize(imageResult.buffer);
+        
+        console.log(`OCR with ${imageResult.type} variant - confidence: ${data.confidence}%`);
+        
         // Parse lab values
-        const labValues = parseLabValues(text);
+        const labValues = parseLabValues(data.text);
         
         // Add confidence metadata
         Object.keys(labValues).forEach(key => {
-            labValues[key].confidence = confidence / 100;
-            labValues[key].confidenceLevel = interpretConfidence(confidence);
+            labValues[key].confidence = data.confidence / 100;
+            labValues[key].confidenceLevel = interpretConfidence(data.confidence);
         });
 
-        return { text, labValues };
+        return { data, labValues };
     } finally {
         await worker.terminate();
     }
 }
 
+// 1. Update extractFromImage function
+async function extractFromImage(filePath) {
+    try {
+        const imageBuffer = fs.readFileSync(filePath);
+        // Use multi-attempt OCR instead of preprocessing+single OCR
+        const results = await performMultiOCR(imageBuffer);
+        
+        return {
+            labValues: results.labValues,
+            testDate: extractTestDate(results.text)
+        };
+    } catch (error) {
+        console.error('Error extracting from image:', error);
+        throw error;
+    }
+}
+
+// 2. Update extractFromFile function
+async function extractFromFile(filePath) {
+    try {
+        const extension = path.extname(filePath).toLowerCase();
+        
+        if (['.jpg', '.jpeg', '.png'].includes(extension)) {
+            // Use extractFromImage for image files
+            return await extractFromImage(filePath);
+        } else {
+            // Use extractFromPDF for PDF files
+            return await extractFromPDF(filePath);
+        }
+    } catch (error) {
+        console.error(`Error processing file ${path.basename(filePath)}:`, error);
+        throw error;
+    }
+}
+
+// 3. Update extractFromPDF function
 async function extractFromPDF(filePath) {
     try {
         const dataBuffer = fs.readFileSync(filePath);
@@ -302,7 +378,8 @@ async function extractFromPDF(filePath) {
                     viewport: viewport
                 }).promise;
 
-                const results = await performOCR(canvas.toBuffer('image/png'));
+                // Use multi-attempt OCR instead of single attempt
+                const results = await performMultiOCR(canvas.toBuffer('image/png'));
                 
                 // Try to get test date from first page if we don't have one yet
                 if (!testDate) {
@@ -321,47 +398,6 @@ async function extractFromPDF(filePath) {
         };
     } catch (error) {
         console.error('Error extracting from PDF:', error);
-        throw error;
-    }
-}
-
-async function extractFromImage(filePath) {
-    try {
-        const imageBuffer = fs.readFileSync(filePath);
-        // Preprocess image for better OCR
-        const processedImage = await preprocessImage(imageBuffer);
-        // Perform OCR on the preprocessed image
-        const results = await performOCR(processedImage);
-        
-        return {
-            labValues: results.labValues,
-            testDate: extractTestDate(results.text)
-        };
-    } catch (error) {
-        console.error('Error extracting from image:', error);
-        throw error;
-    }
-}
-
-async function extractFromFile(filePath) {
-    try {
-        const extension = path.extname(filePath).toLowerCase();
-        
-        if (['.jpg', '.jpeg', '.png'].includes(extension)) {
-            // Handle image files directly
-            const imageBuffer = fs.readFileSync(filePath);
-            const processedImage = await preprocessImage(imageBuffer);
-            const results = await performOCR(processedImage);
-            return {
-                labValues: results.labValues,
-                testDate: extractTestDate(results.text)
-            };
-        } else {
-            // Handle PDF files
-            return await extractFromPDF(filePath);
-        }
-    } catch (error) {
-        console.error(`Error processing file ${path.basename(filePath)}:`, error);
         throw error;
     }
 }
@@ -417,7 +453,7 @@ function interpretConfidence(confidence) {
 }
 
 module.exports = {
-    preprocessImage,
+    preprocessImageWithVariants,
     extractFromPDF,
     extractFromFile, 
     extractFromImage,

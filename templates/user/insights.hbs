@@ -97,7 +97,7 @@
     <section class="demo-header">
       <div class="header-container-2">
         <div>
-          <h2 class="heading">Insights Dashboard</h2>
+          <h2 class="heading2">Insights Dashboard</h2>
           <h3 class="subheading"></h3>
           <div class="spacer-block"></div>
         </div>
@@ -114,19 +114,19 @@
                 data-w-tab="Scores"
                 class="in-page-link w-inline-block w-tab-link w--current"
               >
-                <div class="text-block-4">Scores</div>
+                <div class="text-block">Scores</div>
               </a>
               <a
                 data-w-tab="Actions"
                 class="in-page-link w-inline-block w-tab-link"
               >
-                <div class="text-block-5">Actions</div>
+                <div class="text-block">Actions</div>
               </a>
               <a
                 data-w-tab="Ask"
                 class="in-page-link w-inline-block w-tab-link"
               >
-                <div class="text-block-5">Ask</div>
+                <div class="text-block">Ask</div>
               </a>
             </div>
 
@@ -230,18 +230,18 @@
                           <circle
                             cx="50"
                             cy="50"
-                            r="45"
+                            r="26"
                             fill="none"
                             stroke="#eee"
-                            stroke-width="8"
+                            stroke-width="6"
                             class="circle-bg"
                           />
                           <circle
                             cx="50"
                             cy="50"
-                            r="45"
+                            r="26"
                             fill="none"
-                            stroke-width="8"
+                            stroke-width="6"
                             class="circle-progress"
                             id="scoreCircle"
                           />
@@ -500,10 +500,10 @@
       // Add this to your existing wellness chart animations script
       function updateScoreCircle(score) {
         const circle = document.getElementById("scoreCircle");
-        const scoreDisplay = document.getElementById("scoreDisplay");
+        const scoreCircleElement = document.getElementById(".score-circle");
 
         // Calculate circle properties
-        const radius = 45;
+        const radius = 26;
         const circumference = 2 * Math.PI * radius;
         // Calculate offset (reversed to fill clockwise from top)
         const offset = ((100 - score) / 100) * circumference;
@@ -523,7 +523,7 @@
         }
 
         circle.style.stroke = color;
-        scoreDisplay.style.borderColor = color;
+        scoreCircleElement.style.borderColor = color;
       }
 
       // Initialize when page loads

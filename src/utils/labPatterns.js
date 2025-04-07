@@ -251,6 +251,19 @@ const labPatterns = {
         ['Vitamin D', '25-hydroxy Vitamin D', '25(OH)D', 'WitD 25kydroxy', 'VitD 25hydroxy U'],
         '(?:nmol\\/L|nmol\\/l|nmolL|mrnokL)',
         'nmol/L'
+    ),
+    'Thyroperoxidase Antibody': createLabPattern(
+        'Thyroperoxidase Antibody',
+        ['THYROPEROXIDASE ANTIBODY', 'TPO Antibody', 'TPO Ab'],
+        'kIU\\/L',
+        'kIU/L'
+    ),
+    // inflammation
+    'C Reactive Protein': createLabPattern(
+        'C Reactive Protein',
+        ['C REACTIVE PROTEIN', 'CRP', 'C-Reactive Protein', 'REACTIVE PROTEIN'],
+        'mg\\/L',
+        'mg/L'
     )
 };
 

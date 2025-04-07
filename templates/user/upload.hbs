@@ -74,10 +74,10 @@
           class="tabs w-tabs">
           <div class="in-page-menu w-tab-menu">
             <a data-w-tab="Uploads" class="in-page-link w-inline-block w-tab-link w--current">
-              <div class="text-block-4">Upload Files</div>
+              <div class="text-block">Upload Files</div>
             </a>
             <a data-w-tab="Output" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block-5">File Output</div>
+              <div class="text-block">File Output</div>
             </a>
           </div>
 
@@ -115,7 +115,7 @@
             <div data-w-tab="Uploads" class="tab-pane-basic-info w-tab-pane w--tab-active">
               <div class="dropdown-wrapper user-content-bg">
                 <div class="div-block-9">
-                  <div class="upload-page-text">HealthLync extracts data from your bloodwork/lab files automatically.
+                  <div class="upload-page-text-1">HealthLync extracts data from your bloodwork/lab files automatically
                   </div>
                   {{!-- Upload container --}}
                   <div class="file-upload-container">
@@ -142,7 +142,7 @@
                     Output
                     tab above to double-check your uploaded data.
                   </div> --}}
-                  <div class="upload-page-text">Uploaded documents:</div>
+                  <div class="upload-page-text-2">Uploaded documents:</div>
                   <div class="file-list-header">
                     <div class="file-list-title">Name</div>
                     <div class="file-list-title">Test/Collection Date</div>
@@ -190,14 +190,14 @@
           <div data-w-tab="Output" class="tab-pane-ongoing w-tab-pane">
             <div class="dropdown-wrapper user-content-bg">
               <div class="div-block-9">
-                <div class="upload-page-text">Data from uploaded file(s):</div>
+                <div class="upload-page-text-1">Data from uploaded file(s):</div>
 
                 {{#if user.files}} {{!-- Check if user has any files in mongoDB - see registerSchema --}}
                 {{#each user.files}} {{!-- Loop through each files  --}}
-                <div class="file-header lab-result-card {{confidenceClass extractionMethod}}">
+                <div class="lab-result-card {{confidenceClass extractionMethod}}">
                   <div class="lab-result-header">
                     <div class="lab-result-header-left">
-                      <h3>{{originalName}}</h3>
+                      <h5>{{originalName}}</h5>
                       <div class="file-dates lab-result-dates">
                         <span>Uploaded: {{formatDate uploadDate}}</span>
                         <span>Test Date: {{formatDate testDate}}</span>
@@ -333,7 +333,7 @@
           </div>
         </div>
       </div>
-      <div class="upload-page-text"><br>‍<br><br><br><br>
+      <div class="upload-page-text-1"><br>‍<br><br><br><br>
         <br>‍<br>
       </div>
 

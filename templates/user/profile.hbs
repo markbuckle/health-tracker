@@ -59,19 +59,19 @@
         <div class="w-tabs" data-duration-in="300" data-duration-out="100">
           <div class="in-page-menu">
             <a data-w-tab="Basic Info" class="in-page-link w-inline-block w-tab-link w--current">
-              <div class="text-block-4">Basic Info</div>
+              <div class="text-block">Basic Info</div>
             </a>
             <a data-w-tab="History" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block-5">History</div>
+              <div class="text-block">History</div>
             </a>
             <a data-w-tab="Monitoring" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block-5">Monitoring</div>
+              <div class="text-block">Monitoring</div>
             </a>
             <a data-w-tab="Lifestyle" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block-5">Lifestyle</div>
+              <div class="text-block">Lifestyle</div>
             </a>
             <a data-w-tab="Meds-Sups" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block-5">Meds & Sups</div>
+              <div class="text-block">Meds & Sups</div>
             </a>
           </div>
 
@@ -194,8 +194,8 @@
                               </span>
                             </div>
                             <div class="entry-actions">
-                              <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
-                              <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
+                              <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                              <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
                             </div>
                         </div>
                       </div>
@@ -235,8 +235,8 @@
                           <span class="entry-value">{{lifestyleNotes}}</span>
                         </div>
                         <div class="entry-actions">
-                          <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
-                          <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
+                          <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                          <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
                         </div>
                       </div>
                     {{/each}}
@@ -280,8 +280,8 @@
                           </span>
                         </div>
                         <div class="entry-actions">
-                          <button type="button" class="edit-entry-button" data-id="{{_id}}">Edit</button>
-                          <button type="button" class="delete-entry-button" data-id="{{_id}}">Delete</button>
+                          <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                          <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
                         </div>
                       </div>
                     {{/each}}
@@ -709,7 +709,7 @@
       const addMedsAndSupsButton = document.querySelector('[data-w-id="Meds-Sups-1234"]');
 
       // Family History edit entry functionality
-      document.querySelectorAll('.family-history-entry .edit-entry-button').forEach(button => {
+      document.querySelectorAll('.family-history-entry .edit-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           console.log('Family History Edit button clicked');
           const entryId = this.getAttribute('data-id');
@@ -786,7 +786,7 @@
       });
 
       // Family History Delete entry functionality
-      document.querySelectorAll('.family-history-entry .delete-entry-button').forEach(button => {
+      document.querySelectorAll('.family-history-entry .delete-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           if (!confirm('Are you sure you want to delete this entry?')) return;
 
@@ -828,7 +828,7 @@
       });
 
       // Monitoring Edit entry functionality
-      document.querySelectorAll('.monitoring-entry .edit-entry-button').forEach(button => {
+      document.querySelectorAll('.monitoring-entry .edit-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           const entryId = this.getAttribute('data-id');
           console.log('Edit button clicked for monitoring entry:', entryId);
@@ -909,7 +909,7 @@
       });
 
       // Monitoring Delete functionality
-      document.querySelectorAll('.monitoring-entry .delete-entry-button').forEach(button => {
+      document.querySelectorAll('.monitoring-entry .delete-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           if (!confirm('Are you sure you want to delete this entry?')) return;
 
@@ -949,7 +949,7 @@
       });
 
       // Lifestyle edit entry functionality
-      document.querySelectorAll('.lifestyle-entry .edit-entry-button').forEach(button => {
+      document.querySelectorAll('.lifestyle-entry .edit-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           console.log('Lifestyle Edit button clicked');
           const entryId = this.getAttribute('data-id');
@@ -957,9 +957,9 @@
 
           try {
             // Get existing data with corrected selectors
-            const habitTypeElement = entry.querySelector('.form-info:nth-child(1) p');
-            const statusElement = entry.querySelector('.form-info:nth-child(2) p');
-            const notesElement = entry.querySelector('.form-info:nth-child(3) p');
+            const habitTypeElement = entry.querySelector('.entry-row:nth-child(1) .entry-value');
+            const statusElement = entry.querySelector('.entry-row:nth-child(2) .entry-value');
+            const notesElement = entry.querySelector('.entry-row:nth-child(3) .entry-value');
 
             if (!habitTypeElement || !statusElement || !notesElement) {
               throw new Error('Could not find all required elements');
@@ -1028,7 +1028,7 @@
       });
 
       // Lifestyle delete button functionality
-      document.querySelectorAll('.lifestyle-entry .delete-entry-button').forEach(button => {
+      document.querySelectorAll('.lifestyle-entry .delete-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           if (!confirm('Are you sure you want to delete this habit?')) return;
 
@@ -1069,7 +1069,7 @@
       });
 
       // Meds & Supps edit entry functionality
-      document.querySelectorAll('.medsandsups-entry .edit-entry-button').forEach(button => {
+      document.querySelectorAll('.medsandsups-entry .edit-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           const entryId = this.getAttribute('data-id');
           const entry = this.closest('.medsandsups-entry');
@@ -1150,7 +1150,7 @@
       });
 
       // Meds & Sups Delete functionality 
-      document.querySelectorAll('.medsandsups-entry .delete-entry-button').forEach(button => {
+      document.querySelectorAll('.medsandsups-entry .delete-entry-button-2').forEach(button => {
         button.addEventListener('click', async function() {
           if (!confirm('Are you sure you want to delete this entry?')) return;
 

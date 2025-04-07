@@ -4,7 +4,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"> --}}
   <div id="headerContainer" class="header-container">
     <a href="/" class="logo-block">
-      <img id="logo" src="images/logo2_1.png" loading="lazy" alt="Logo" />
+      <img id="logo" src="images/logo2_1.png" loading="lazy" alt="Logo" class="header-logo"/>
     </a>
     <div class="center-header">
       <a href="/demo" class="header-links">Demo</a>
@@ -12,12 +12,9 @@
       <a href="/learning" class="header-links">Learning Center</a>
     </div>
     <div class="authentication-block">
-      <a href="/login" class="button-basics header-buttons button-blue"
-        >Log In</a
-      >
-      <a href="/register" class="button-basics header-buttons button-green"
-        >Sign Up</a
-      ><br />
+      <a href="/login" class="auth-button login-button">Log In</a>
+      <a href="/register" class="auth-button signup-button">Sign Up</a>
+    </div>
       {{!--
       <a href="https://github.com/markbuckle/health-tracker" class="icon-link">
         <svg
