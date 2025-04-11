@@ -730,6 +730,12 @@ app.get("/insights", checkAuth, async (req, res) => {
   try {
     const user = await registerCollection.findById(req.user._id);
 
+    // Define biomarkers from your existing biomarkerData
+    const biomarkers = Object.keys(biomarkerData);
+
+    // Now this will work
+    const biomarkerSummary = calculateBiomarkerSummary(user.files, biomarkers);
+
     // Calculate all inputs in one object
     const inputs = {
       bloodType: user.profile.bloodType.length > 0,
@@ -770,9 +776,6 @@ app.get("/insights", checkAuth, async (req, res) => {
       recommendations.push("Start tracking your blood pressure regularly");
     }
     // Add more recommendations based on your criteria
-
-    // Calculate biomarker statistics
-    const biomarkerSummary = calculateBiomarkerSummary(user.files);
   
     // Get recent files for labs summary tab
     const recentFiles = getRecentFiles(user.files, 5);
@@ -793,145 +796,141 @@ app.get("/insights", checkAuth, async (req, res) => {
 });
 
 // Helper function to calculate biomarker summary
-function calculateBiomarkerSummary(files) {
-  // Default values
-  let inRange = 0;
-  let outOfRange = 0;
-  let improving = 0;
-  let declining = 0;
-
-  if (!files || files.length === 0) {
-    return { inRange, outOfRange, improving, declining };
+function calculateBiomarkerSummary(files, biomarkers) {
+  // Add defensive check at the beginning
+  if (!biomarkers || !Array.isArray(biomarkers) || !files || !Array.isArray(files)) {
+    console.warn("Invalid input to calculateBiomarkerSummary");
+    return {
+      inRange: 0,
+      outOfRange: 0,
+      improving: 0,
+      declining: 0
+    };
   }
 
-  // Get files with lab values and sort by date (oldest first for trend analysis)
-  const filesWithLabValues = files
-    .filter(file => file.labValues && (file.labValues.size > 0 || Object.keys(file.labValues).length > 0))
-    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate));
+  // Initialize counters
+  let inRangeCount = 0;
+  let outOfRangeCount = 0;
+  let improvingCount = 0;
+  let decliningCount = 0;
 
-  if (filesWithLabValues.length === 0) {
-    return { inRange, outOfRange, improving, declining };
-  }
+  // First, collect all biomarker values from all files
+  const allBiomarkerValues = [];
 
-  // Map to track all unique biomarkers across all tests
-  const biomarkerHistory = new Map();
+  files.forEach(file => {
+    if (!file.labValues || !file.testDate) return;
 
-  // Process all files to build biomarker history
-  filesWithLabValues.forEach(file => {
-    const fileDate = new Date(file.testDate);
+    // Check whether labValues is a Map or a regular object
+    const entries = file.labValues.entries && typeof file.labValues.entries === 'function' 
+      ? Array.from(file.labValues.entries())
+      : Object.entries(file.labValues);
     
-    // Handle both Map and Object formats
-    const entries = file.labValues instanceof Map ? 
-      Array.from(file.labValues.entries()) : 
-      Object.entries(file.labValues);
-    
-    entries.forEach(([key, value]) => {
-      if (!value || !value.value || !value.referenceRange) return;
+    entries.forEach(([biomarkerName, value]) => {
+      if (!value || !value.value) return;
       
-      const bioValue = parseFloat(value.value);
-      if (isNaN(bioValue)) return;
+      // Parse the biomarker value
+      const numValue = parseFloat(value.value);
+      if (isNaN(numValue)) return;
       
-      // Parse reference range
-      const rangeParts = value.referenceRange.replace(/\s+/g, '').split('-');
-      if (rangeParts.length !== 2) return;
+      // Parse reference range if available
+      let isInRange = null;
+      let minRef = null;
+      let maxRef = null;
       
-      const minValue = parseFloat(rangeParts[0]);
-      const maxValue = parseFloat(rangeParts[1]);
-      
-      if (isNaN(minValue) || isNaN(maxValue)) return;
-      
-      // Create entry for this biomarker if it doesn't exist
-      if (!biomarkerHistory.has(key)) {
-        biomarkerHistory.set(key, {
-          minRange: minValue,
-          maxRange: maxValue,
-          readings: []
-        });
+      if (value.referenceRange && value.referenceRange.includes('-')) {
+        const cleanRange = value.referenceRange.replace(/\s+/g, '');
+        [minRef, maxRef] = cleanRange.split('-').map(parseFloat);
+        
+        if (!isNaN(minRef) && !isNaN(maxRef)) {
+          isInRange = numValue >= minRef && numValue <= maxRef;
+        }
       }
       
-      // Add this reading
-      biomarkerHistory.get(key).readings.push({
-        value: bioValue,
-        date: fileDate
+      // Add to all values array with metadata
+      allBiomarkerValues.push({
+        name: biomarkerName,
+        value: numValue,
+        date: new Date(file.testDate),
+        inRange: isInRange,
+        minRef,
+        maxRef,
+        fileName: file.originalName || file.filename
       });
     });
   });
   
-  // Analyze each biomarker
-  biomarkerHistory.forEach((data, key) => {
-    // Sort readings by date (newest first)
-    data.readings.sort((a, b) => b.date - a.date);
+  // Count in-range and out-of-range values across all files
+  allBiomarkerValues.forEach(item => {
+    if (item.inRange === true) {
+      inRangeCount++;
+    } else if (item.inRange === false) {
+      outOfRangeCount++;
+    }
+  });
+  
+  // Group biomarkers by name to analyze trends
+  const biomarkersByName = {};
+  
+  allBiomarkerValues.forEach(item => {
+    if (!biomarkersByName[item.name]) {
+      biomarkersByName[item.name] = [];
+    }
+    biomarkersByName[item.name].push(item);
+  });
+  
+  // Analyze trends for each biomarker
+  Object.entries(biomarkersByName).forEach(([name, values]) => {
+    // Need at least 2 points for trend analysis
+    if (values.length < 2) return;
     
-    // Get most recent reading
-    const latestReading = data.readings[0];
+    // Sort by date (oldest to newest)
+    values.sort((a, b) => a.date - b.date);
     
-    // Check if in range
-    if (latestReading.value >= data.minRange && latestReading.value <= data.maxRange) {
-      inRange++;
-    } else {
-      outOfRange++;
-      
-      // Need at least 2 readings to determine trend
-      if (data.readings.length >= 2) {
-        // Get previous reading
-        const previousReading = data.readings[1];
-        
-        // Determine if getting better or worse
-        if (latestReading.value < data.minRange) {
-          // Below range - increasing is good
-          if (latestReading.value > previousReading.value) {
-            improving++;
-          } else if (latestReading.value < previousReading.value) {
-            declining++;
-          }
-        } else if (latestReading.value > data.maxRange) {
-          // Above range - decreasing is good
-          if (latestReading.value < previousReading.value) {
-            improving++;
-          } else if (latestReading.value > previousReading.value) {
-            declining++;
-          }
-        }
-      }
+    // Simple trend detection
+    const oldestValue = values[0].value;
+    const newestValue = values[values.length - 1].value;
+    
+    // If newest value is in range, we don't count it as improving/declining
+    if (values[values.length - 1].inRange === true) {
+      // Already counted in inRangeCount
+      return;
     }
     
-    // Also check for trends within the normal range (improving vs declining)
-    if (data.readings.length >= 2) {
-      const latestReading = data.readings[0];
-      const previousReading = data.readings[1];
+    // If oldest value is out of range and newest is closer to range
+    if (values[0].inRange === false) {
+      const oldest = values[0];
+      const newest = values[values.length - 1];
       
-      // If most recent is in range but previous was out of range, count as improving
-      if (latestReading.value >= data.minRange && latestReading.value <= data.maxRange) {
-        if (previousReading.value < data.minRange || previousReading.value > data.maxRange) {
-          improving++;
-        }
+      // If below range and increasing
+      if (oldest.value < oldest.minRef && newest.value > oldest.value) {
+        improvingCount++;
       }
-      
-      // If trend continues in the right direction
-      if (data.readings.length >= 3) {
-        const trendDirection = latestReading.value - previousReading.value;
-        const earlierReading = data.readings[2];
-        const previousTrend = previousReading.value - earlierReading.value;
-        
-        // If consistent movement toward optimal range
-        if (Math.sign(trendDirection) === Math.sign(previousTrend)) {
-          // Moving in a consistent direction
-          const midpoint = (data.minRange + data.maxRange) / 2;
-          
-          // If moving toward midpoint of range
-          if ((latestReading.value < midpoint && trendDirection > 0) || 
-              (latestReading.value > midpoint && trendDirection < 0)) {
-            improving++;
-          } else {
-            // Moving away from midpoint
-            declining++;
-          }
-        }
+      // If above range and decreasing
+      else if (oldest.value > oldest.maxRef && newest.value < oldest.value) {
+        improvingCount++;
+      }
+      // Otherwise, it's either out of range or declining
+      else if (newest.value < oldest.value) {
+        decliningCount++;
+      } else {
+        // Count as out of range (already counted)
       }
     }
   });
-
-  return { inRange, outOfRange, improving, declining };
+  
+  console.log("Biomarker counts:", {
+    inRange: inRangeCount,
+    outOfRange: outOfRangeCount,
+    improving: improvingCount,
+    declining: decliningCount
+  });
+  
+  return {
+    inRange: inRangeCount,
+    outOfRange: outOfRangeCount,
+    improving: improvingCount,
+    declining: decliningCount
+  };
 }
 
 // Helper function to get most recent files

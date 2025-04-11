@@ -1,20 +1,53 @@
-// Add this helper function at the start
+// Enhanced biomarker trend charts function
+
+// Improved helper function to find lab values regardless of data structure
 function findLabValue(file, name) {
-    // Get the biomarker data and its alternate names
-    const biomarkerInfo = window.__INITIAL_DATA__?.biomarkerInfo?.[name];
-    const possibleNames = [name, ...(biomarkerInfo?.alternateNames || [])];
+    // Skip if file has no lab values
+    if (!file.labValues) return null;
     
-    // Try the standard format first
+    // Get the biomarker data and its alternate names from window.__INITIAL_DATA__
+    const biomarkerInfo = window.__INITIAL_DATA__?.biomarkerInfo?.[name];
+    const alternateNames = biomarkerInfo?.alternateNames || [];
+    
+    // Create an array of all possible names (original plus alternates)
+    const possibleNames = [name, ...alternateNames];
+    
+    // Try each possible name
     for (const possibleName of possibleNames) {
         let value = null;
 
-        // Check if labValues is a Map or an Object
+        // Check for various data structures
         if (file.labValues instanceof Map) {
+            // If labValues is a Map
             value = file.labValues.get(possibleName);
+        } else if (typeof file.labValues.get === 'function') {
+            // If labValues has a get method but isn't a standard Map
+            value = file.labValues.get(possibleName);
+        } else if (file.labValues.entries && typeof file.labValues.entries === 'function') {
+            // If labValues is map-like with entries
+            for (const [key, val] of file.labValues.entries()) {
+                if (key.toLowerCase() === possibleName.toLowerCase()) {
+                    value = val;
+                    break;
+                }
+            }
         } else {
-            value = file.labValues?.[possibleName];
+            // If labValues is a plain object
+            value = file.labValues[possibleName];
+            
+            // Try case-insensitive lookup if direct lookup fails
+            if (!value) {
+                const lowerCaseName = possibleName.toLowerCase();
+                for (const key in file.labValues) {
+                    if (key.toLowerCase() === lowerCaseName) {
+                        value = file.labValues[key];
+                        break;
+                    }
+                }
+            }
         }
 
+        // Return the value if found
         if (value) {
             return {
                 value: parseFloat(value.value),
@@ -23,38 +56,62 @@ function findLabValue(file, name) {
             };
         }
     }
+    
+    // Log when a biomarker isn't found
+    console.debug(`Could not find lab value for biomarker: ${name} in file:`, file.filename || 'unknown file');
+    
     return null;
 }
 
+// Improved function for creating biomarker trend charts
 function createBiomarkerChart(biomarkerElement, biomarkerName) {
-    // Debug current tab and element state
-    const parentTab = biomarkerElement.closest('[data-w-tab]');
-    const tabId = parentTab?.getAttribute('data-w-tab');
-
+    if (!biomarkerElement) {
+        console.warn(`Element for biomarker ${biomarkerName} not found`);
+        return;
+    }
+    
+    console.log(`Creating chart for biomarker: ${biomarkerName} in element:`, biomarkerElement.id);
+    
     const files = window.__INITIAL_DATA__?.files || [];
+    if (files.length === 0) {
+        console.warn('No files found in __INITIAL_DATA__');
+        return;
+    }
+    
+    console.log(`Found ${files.length} files to check for biomarker ${biomarkerName}`);
 
     // Transform and sort the data
     const chartData = files
         .filter(file => {
             const value = findLabValue(file, biomarkerName);
             return value !== null;
-            // return value;
         })
         .map(file => {
             const labValue = findLabValue(file, biomarkerName);
-            const data = {
+            return {
                 date: new Date(file.testDate),
                 value: parseFloat(labValue.value),
                 unit: labValue.unit,
-                referenceRange: labValue.referenceRange
+                referenceRange: labValue.referenceRange,
+                filename: file.originalName || file.filename
             };
-            return data;
         })
         .sort((a, b) => a.date - b.date);
 
     if (chartData.length === 0) {
+        console.warn(`No data points found for biomarker: ${biomarkerName}`);
         return;
     }
+    
+    console.log(`Found ${chartData.length} data points for biomarker: ${biomarkerName}`);
+    
+    // Log some debug information about the data
+    console.log(`Chart data for ${biomarkerName}:`, chartData.map(d => ({
+        date: d.date.toISOString().split('T')[0],
+        value: d.value,
+        unit: d.unit,
+        range: d.referenceRange
+    })));
 
     const dates = chartData.map(d => d.date);
     const values = chartData.map(d => d.value);
@@ -62,31 +119,31 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
 
     // Get reference ranges from the first data point
     const referenceRange = chartData[0]?.referenceRange || '';
-    const [minRef, maxRef] = referenceRange.split('-').map(Number);
+    let minRef, maxRef;
+    
+    // Try to parse the reference range
+    if (referenceRange && referenceRange.includes('-')) {
+        [minRef, maxRef] = referenceRange.split('-').map(Number);
+    } else {
+        // Fallback: use min/max values as references if no proper range exists
+        const padding = 0.1; // 10% padding
+        minRef = Math.min(...values) * (1 - padding);
+        maxRef = Math.max(...values) * (1 + padding);
+        console.warn(`Invalid reference range for ${biomarkerName}, using min/max with padding: ${minRef}-${maxRef}`);
+    }
 
-    // Add validation to ensure we have valid numbers
-    // if (isNaN(minRef) || isNaN(maxRef)) {
-    //     console.warn(`Invalid reference range for ${biomarkerName}: ${referenceRange}`);
-    //     return; // or set default values if preferred
-    // }
-
-    // console.log(`Reference Range for ${biomarkerName}:`, { minRef, maxRef, referenceRange });
+    // Ensure we have valid numbers
+    if (isNaN(minRef) || isNaN(maxRef)) {
+        console.warn(`Invalid reference range for ${biomarkerName}, using min/max of data`);
+        const padding = 0.1; // 10% padding
+        minRef = Math.min(...values) * (1 - padding);
+        maxRef = Math.max(...values) * (1 + padding);
+    }
 
     // Create arrays for each range
-    const lowRange = {
-        x: [],
-        y: []
-    };
-    
-    const normalRange = {
-        x: [],
-        y: []
-    };
-    
-    const highRange = {
-        x: [],
-        y: []
-    };
+    const lowRange = { x: [], y: [] };
+    const normalRange = { x: [], y: [] };
+    const highRange = { x: [], y: [] };
 
     // Helper function to categorize values
     function categorizeValue(value) {
@@ -95,7 +152,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         return 'normal';
     }
 
-    // Process each data point and create connecting points
+    // Process each data point and create connecting points for lines
     for (let i = 0; i < values.length; i++) {
         const currentValue = values[i];
         const currentDate = dates[i];
@@ -158,7 +215,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
                 color: '#EB656F',
                 width: 3
             },
-            showlegend: false,
+            name: 'Low',
             hoverinfo: 'none'
         });
     }
@@ -173,7 +230,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
                 color: '#95DA74',
                 width: 3
             },
-            showlegend: false,
+            name: 'Normal',
             hoverinfo: 'none'
         });
     }
@@ -188,12 +245,12 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
                 color: '#EB656F',
                 width: 3
             },
-            showlegend: false,
+            name: 'High',
             hoverinfo: 'none'
         });
     }
 
-    // Add markers
+    // Add markers with custom hover template
     traces.push({
         x: dates,
         y: values,
@@ -210,8 +267,8 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
                 width: 1
             }
         },
-        showlegend: false,
-        hovertemplate: '%{x|%B %d, %Y}<br>%{y:.2f} ' + unit + '<extra></extra>',
+        name: biomarkerName,
+        hovertemplate: '%{x|%b %d, %Y}<br>%{y:.2f} ' + unit + '<extra></extra>',
         hoverlabel: {
             font: {
                 family: 'Poppins-Regular, sans-serif',
@@ -220,18 +277,38 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         }
     });
 
-     // Create a simpler test plot for debugging
-     const plotData = [{
-        x: chartData.map(d => d.date),
-        y: chartData.map(d => d.value),
+    // Reference range lines
+    traces.push({
+        x: [dates[0], dates[dates.length - 1]],
+        y: [minRef, minRef],
         type: 'scatter',
-        mode: 'lines+markers',
-        name: biomarkerName
-    }];
+        mode: 'lines',
+        line: {
+            color: '#AAA',
+            width: 1,
+            dash: 'dash'
+        },
+        name: 'Min',
+        hoverinfo: 'none'
+    });
+
+    traces.push({
+        x: [dates[0], dates[dates.length - 1]],
+        y: [maxRef, maxRef],
+        type: 'scatter',
+        mode: 'lines',
+        line: {
+            color: '#AAA',
+            width: 1,
+            dash: 'dash'
+        },
+        name: 'Max',
+        hoverinfo: 'none'
+    });
 
     const layout = {
         title: {
-            text: `${biomarkerName} Levels Over Time`,
+            text: `${biomarkerName} Levels`,
             font: {
                 family: 'Poppins-Regular, sans-serif',
                 size: 16,
@@ -242,49 +319,35 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             xanchor: 'center',
             yanchor: 'top'
         },
-        height: 400,
-        width: null,
+        height: 350,
         autosize: true,
-        margin: { l: 30, r: 30, t: 60, b: 40 },
-        responsive: true, // Add responsive behaviors
-        aspectratio: { x: 1, y: 1 }, // Ensure it maintains aspect ratio
-        frameMargins: 0, // Force frame settings
-        // Add this as a container style
-        style: {
-            width: '100%',
-            height: '100%'
-        },
+        margin: { l: 40, r: 30, t: 60, b: 40 },
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         hovermode: 'closest',
+        showlegend: false,
         xaxis: {
             showgrid: false,
             gridcolor: '#E5E5E5',
-            tickformat: '%B',
+            tickformat: '%b %y',
             zeroline: false,
             fixedrange: true,
             showline: true,
-            tickangle: 0,
             showspikes: true,
             spikemode: 'across',
-            spikesnap: 'data',
+            spikesnap: 'cursor',
             spikecolor: '#bbb',
-            spikedash: 'dot',
             spikethickness: 1,
-            hovermode: 'closest',
-            hoverdistance: 1,
             tickfont: {
                 family: 'Poppins-Regular, sans-serif',
                 size: 12,
                 color: '#000'
             },
             range: [
-                new Date(new Date(Math.min(...dates)).setMonth(new Date(Math.min(...dates)).getMonth() - 1.02)),
-                new Date(new Date(Math.max(...dates)).setMonth(new Date(Math.max(...dates)).getMonth() + 1.02))
-            ],
-            tickmode: 'array',
-            ticktext: dates.map(d => d.toLocaleString('en-US', { month: 'long' })),
-            tickvals: dates
+                // Add a little padding before and after the data points
+                new Date(Math.min(...dates) - 7 * 24 * 60 * 60 * 1000),
+                new Date(Math.max(...dates) + 7 * 24 * 60 * 60 * 1000)
+            ]
         },
         yaxis: {
             showgrid: true,
@@ -292,121 +355,293 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             fixedrange: true,
             showline: true,
             range: [
-                Math.floor(Math.min(...values) * 0.9),  // Round to whole numbers
-                Math.ceil(Math.max(...values) * 1.1)
+                // Add some padding to y-axis range
+                Math.min(Math.min(...values) * 0.9, minRef * 0.9),
+                Math.max(Math.max(...values) * 1.1, maxRef * 1.1)
             ],
-            tickformat: '.2f',  // Keep 2 decimal places
+            tickformat: '.1f',  // Keep 1 decimal place
             tickfont: {
-                family: 'Poppins-Regular',
+                family: 'Poppins-Regular, sans-serif',
                 size: 12,
                 color: '#000'
             },
-            side: 'left',
-            position: -0.15,
-            tickmode: 'array',
-            // ticktext: ['0.00', '1.00', '2.00', '3.00', '4.00', '5.00', '6.00', '7.00', '8.00', '9.00', '10.00', '11.00', '12.00', '13.00', '14.00', '15.00', '16.00', '17.00', '18.00'],
-            // tickvals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
             title: {
                 text: unit,
                 font: {
-                    family: 'Poppins-Regular',
+                    family: 'Poppins-Regular, sans-serif',
                     size: 12,
                     color: '#000'
                 },
-                standoff: 30
+                standoff: 10
+            }
+        },
+        annotations: [
+            {
+                x: dates[0],
+                y: minRef,
+                xref: 'x',
+                yref: 'y',
+                text: minRef.toFixed(1),
+                showarrow: false,
+                font: {
+                    family: 'Poppins-Regular, sans-serif',
+                    size: 10,
+                    color: '#777'
+                },
+                xanchor: 'right',
+                yanchor: 'bottom',
+                xshift: -5
             },
-            ticksuffix: '  ',
-            layer: 'below traces',
-            zeroline: false,
-            automargin: true
-        }
+            {
+                x: dates[0],
+                y: maxRef,
+                xref: 'x',
+                yref: 'y',
+                text: maxRef.toFixed(1),
+                showarrow: false,
+                font: {
+                    family: 'Poppins-Regular, sans-serif',
+                    size: 10,
+                    color: '#777'
+                },
+                xanchor: 'right',
+                yanchor: 'top',
+                xshift: -5
+            }
+        ]
     };
 
     const config = {
         displayModeBar: false,
         responsive: true,
-        modeBarButtonsToRemove: ['autoScale2d'] // Add specific responsive rules
+        scrollZoom: false,
+        staticPlot: false
     };
 
-    Plotly.newPlot(biomarkerElement.id, traces, layout, config, plotData).then(() => {
-        // Force a relayout to ensure proper sizing
-        Plotly.Plots.resize(biomarkerElement);
-        // Fix the y-axis unit label rotation
-        const fixYAxisRotation = () => {
-            // Wait a brief moment for Plotly to finish its rendering
-            setTimeout(() => {
-                const ytitleGroup = document.querySelector(`#${biomarkerElement.id} .g-ytitle`);
-                const ytitleText = document.querySelector(`#${biomarkerElement.id} .g-ytitle text`);
+    // Check if the element is visible (may impact chart rendering)
+    const isVisible = isElementInVisibleTab(biomarkerElement);
+    console.log(`Element ${biomarkerElement.id} visibility:`, isVisible);
+
+    try {
+        Plotly.newPlot(biomarkerElement.id, traces, layout, config)
+            .then(() => {
+                console.log(`Successfully plotted chart for ${biomarkerName}`);
                 
-                if (ytitleGroup && ytitleText) {
-                    ytitleGroup.setAttribute('transform', 'translate(5,205)');
-                    ytitleText.setAttribute('transform', 'rotate(0)');
-                    ytitleText.setAttribute('x', '0');
-                    ytitleText.setAttribute('y', '0');
-                    ytitleText.style.textAnchor = 'start';
+                // Fix the y-axis unit label rotation
+                const fixYAxisRotation = () => {
+                    setTimeout(() => {
+                        const ytitleGroup = document.querySelector(`#${biomarkerElement.id} .g-ytitle`);
+                        const ytitleText = document.querySelector(`#${biomarkerElement.id} .g-ytitle text`);
+                        
+                        if (ytitleGroup && ytitleText) {
+                            ytitleGroup.setAttribute('transform', 'translate(5,175)');
+                            ytitleText.setAttribute('transform', 'rotate(0)');
+                            ytitleText.setAttribute('x', '0');
+                            ytitleText.setAttribute('y', '0');
+                            ytitleText.style.textAnchor = 'start';
+                            ytitleText.style.transition = 'none';
+                            ytitleGroup.style.transition = 'none';
+                        }
+                    }, 100);
+                };
 
-                    // Add style to prevent transitions
-                    ytitleText.style.transition = 'none';
-                    ytitleGroup.style.transition = 'none';
+                fixYAxisRotation();
+
+                // Handle rotation fix on window resize
+                if (!biomarkerElement._resizeObserver) {
+                    const resizeObserver = new ResizeObserver(() => {
+                        fixYAxisRotation();
+                        Plotly.Plots.resize(biomarkerElement);
+                    });
+                    resizeObserver.observe(biomarkerElement);
+                    biomarkerElement._resizeObserver = resizeObserver;
                 }
-            }, 100);
+            })
+            .catch(error => {
+                console.error(`Error plotting chart for ${biomarkerName}:`, error);
+            });
+    } catch (error) {
+        console.error(`Exception creating chart for ${biomarkerName}:`, error);
+    }
+}
+
+// Helper to check if an element is in a visible tab
+function isElementInVisibleTab(element) {
+    if (!element) return false;
+    
+    const tabPane = element.closest('.w-tab-pane');
+    if (!tabPane) return true; // Not in a tab pane, assume visible
+    
+    return tabPane.classList.contains('w--tab-active');
+}
+
+// Debug function to dump biomarker data
+function logBiomarkerData() {
+    const files = window.__INITIAL_DATA__?.files || [];
+    const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
+    
+    console.log(`Found ${files.length} files and ${biomarkers.length} biomarkers`);
+    
+    if (files.length === 0 || biomarkers.length === 0) {
+        console.warn('Missing files or biomarkers in __INITIAL_DATA__');
+        console.log('__INITIAL_DATA__:', window.__INITIAL_DATA__);
+        return;
+    }
+    
+    // Log biomarker availability for each file
+    const biomarkerAvailability = {};
+    
+    biomarkers.forEach(biomarker => {
+        biomarkerAvailability[biomarker] = {
+            count: 0,
+            files: []
         };
-
-        fixYAxisRotation();
-
-        // Handle rotation fix on window resize
-        const resizeObserver = new ResizeObserver(() => {
-            fixYAxisRotation();
+        
+        files.forEach(file => {
+            const value = findLabValue(file, biomarker);
+            if (value) {
+                biomarkerAvailability[biomarker].count++;
+                biomarkerAvailability[biomarker].files.push({
+                    filename: file.originalName || file.filename,
+                    value: value.value,
+                    unit: value.unit
+                });
+            }
         });
+    });
+    
+    console.log('Biomarker availability:', biomarkerAvailability);
+    
+    // Log which biomarkers have chart elements
+    const biomarkerElements = {};
+    
+    biomarkers.forEach(biomarker => {
+        const standardizedName = biomarker.toLowerCase()
+            .replace(/[()]/g, '')
+            .replace(/\s+/g, '');
+            
+        const elementIds = [
+            `biomarker-trend-${standardizedName}`,
+            `biomarker-trend-${standardizedName}-freq`,
+            `biomarker-trend-${standardizedName}-all`
+        ];
+        
+        const found = elementIds.filter(id => document.getElementById(id) !== null);
+        
+        biomarkerElements[biomarker] = {
+            found: found.length > 0,
+            elements: found
+        };
+    });
+    
+    console.log('Biomarker chart elements:', biomarkerElements);
+}
 
-        resizeObserver.observe(biomarkerElement);
-
-        // Clean up
-        biomarkerElement._cleanupFuncs = biomarkerElement._cleanupFuncs || [];
-        biomarkerElement._cleanupFuncs.push(() => resizeObserver.disconnect());
-
-        window.addEventListener('resize', fixYAxisRotation);
+// Full chart initialization function
+function initializeBiomarkerCharts() {
+    console.log('Starting biomarker chart initialization');
+    
+    // Debug first
+    logBiomarkerData();
+    
+    const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
+    if (biomarkers.length === 0) {
+        console.warn('No biomarkers found in __INITIAL_DATA__');
+        return;
+    }
+    
+    // Try to find chart elements with various naming patterns
+    biomarkers.forEach(biomarker => {
+        // Create standardized name for DOM ID
+        const standardizedName = biomarker.toLowerCase()
+            .replace(/[\s()]/g, '')
+            .replace(/[-+]/g, '');  // Also remove hyphens and plus signs
+            
+        // Try several ID patterns that might exist
+        const patterns = [
+            `biomarker-trend-${standardizedName}`,
+            `biomarker-trend-${standardizedName}-freq`,
+            `biomarker-trend-${standardizedName}-all`,
+            // Try additional variations (remove special characters)
+            `biomarker-trend-${biomarker.toLowerCase().replace(/[^a-z0-9]/g, '')}`
+        ];
+        
+        // Keep track if we found any elements for this biomarker
+        let elementFound = false;
+        
+        patterns.forEach(pattern => {
+            const element = document.getElementById(pattern);
+            if (element) {
+                console.log(`Found chart element for ${biomarker} with ID: ${pattern}`);
+                createBiomarkerChart(element, biomarker);
+                elementFound = true;
+            }
+        });
+        
+        // If we didn't find any elements with standard patterns, try a more aggressive search
+        if (!elementFound) {
+            // Search for any element starting with "biomarker-trend-" that might contain our biomarker name
+            const allChartElements = document.querySelectorAll('[id^="biomarker-trend-"]');
+            for (const element of allChartElements) {
+                const elementId = element.id.toLowerCase();
+                
+                // See if the element ID contains the biomarker name or its simplified form
+                if (elementId.includes(standardizedName) || 
+                    elementId.includes(biomarker.toLowerCase().replace(/[^a-z0-9]/g, ''))) {
+                    console.log(`Found chart element for ${biomarker} with partial match ID: ${element.id}`);
+                    createBiomarkerChart(element, biomarker);
+                    elementFound = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!elementFound) {
+            console.warn(`No chart element found for biomarker: ${biomarker}`);
+        }
     });
 }
 
-// Initialize all biomarker charts
-document.addEventListener('DOMContentLoaded', function() {
-    const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
-    
-    // Your original working code
-    function initializeCharts() {
-        biomarkers.forEach(biomarker => {
-            const standardizedName = biomarker.toLowerCase()
-                .replace(/[()]/g, '')
-                .replace(/\s+/g, '');
-                
-            // Try both regular and frequency-specific IDs
-            const elementId = `biomarker-trend-${standardizedName}`;
-            const freqElementId = `biomarker-trend-${standardizedName}-freq`;
-            const allElementId = `biomarker-trend-${standardizedName}-all`;
-            
-            // Initialize charts for both IDs if they exist
-            [elementId, freqElementId, allElementId].forEach(id => {
-                const chartElement = document.getElementById(id);
-                if (chartElement) {
-                    try {
-                        createBiomarkerChart(chartElement, biomarker);
-                    } catch (error) {
-                        console.error(`Error creating chart for ${biomarker} (${id}):`, error);
-                    }
-                }
-            });
-        });
-    }
-
-    // Initial load
-    initializeCharts();
-
-    // Simple tab change handler
-    document.querySelectorAll('[data-w-tab]').forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Re-run the original initialization after a delay
-            setTimeout(initializeCharts, 250);
+// Ensure chart reinitialization when tabs change
+function setupTabChangeHandlers() {
+    // Add event listeners to all tab links
+    document.querySelectorAll('.w-tab-link').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Wait for tab change animation to finish
+            setTimeout(() => {
+                console.log('Tab changed, reinitializing charts...');
+                initializeBiomarkerCharts();
+            }, 250);
         });
     });
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing biomarker charts...');
+    
+    // Check if __INITIAL_DATA__ is available
+    if (!window.__INITIAL_DATA__) {
+        console.error('__INITIAL_DATA__ not found. Charts cannot be initialized.');
+        return;
+    }
+    
+    // Initialize charts
+    initializeBiomarkerCharts();
+    
+    // Set up tab change handlers
+    setupTabChangeHandlers();
+    
+    // Also reinitialize charts after a delay to catch any rendering issues
+    setTimeout(initializeBiomarkerCharts, 1000);
+});
+
+// Re-initialize on window resize for responsive behavior
+window.addEventListener('resize', function() {
+    // Use a debounce to prevent too many updates
+    if (this.resizeTimeout) clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(function() {
+        console.log('Window resized, reinitializing charts...');
+        initializeBiomarkerCharts();
+    }, 500);
 });

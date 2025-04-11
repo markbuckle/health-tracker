@@ -6253,7 +6253,7 @@ body[data-insights-hover="true"] #Insights {
 }
 
 .view-lab-link {
-  color: #4379ba;
+  color: #8e8f8f;
   text-decoration: none;
   font-weight: 500;
   padding: 0.25rem 0.5rem;
@@ -6261,7 +6261,7 @@ body[data-insights-hover="true"] #Insights {
 }
 
 .view-lab-link:hover {
-  background-color: #f0f7ff;
+  background-color: #dadada;
 }
 
 .no-recent-labs {
