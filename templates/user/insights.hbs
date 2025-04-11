@@ -111,8 +111,14 @@
             <!-- Tab Menu -->
             <div class="in-page-menu w-tab-menu">
               <a
-                data-w-tab="Scores"
+                data-w-tab="LabsSummary"
                 class="in-page-link w-inline-block w-tab-link w--current"
+              >
+                <div class="text-block">Labs</div>
+              </a>
+              <a
+                data-w-tab="Scores"
+                class="in-page-link w-inline-block w-tab-link"
               >
                 <div class="text-block">Scores</div>
               </a>
@@ -132,8 +138,156 @@
 
             <!-- Tab Content -->
             <div class="w-tab-content">
+              <!-- Labs Summary Tab -->
+              <div data-w-tab="LabsSummary" class="w-tab-pane w--tab-active">
+                <div class="wellness-summary-card">
+                  <!-- Hidden data element to store lab values -->
+                  <div 
+                    id="labSummaryData" 
+                    data-labs="{{json biomarkerSummary}}" 
+                    style="display: none">
+                  </div>
+
+                  <div class="labs-summary-header">
+                    <div class="labs-title-wrapper">
+                      <h2 class="insights-title">Labs Summary</h2>
+                      {{!-- <button class="info-button" aria-label="Show labs information">
+                        {{> svg/info}}
+                      {{!-- </button> --}} 
+                    </div>
+                  </div>
+
+                  <div class="lab-summary-container">
+                    <div class="lab-status-card">
+                      {{!-- <h3 class="lab-status-title">Labs Summary</h3> --}}
+                      
+                      <!-- Stats Container -->
+                      <div class="labs-stats-container">
+                        <!-- In Range -->
+                        <div class="lab-stat-box">
+                          <div class="lab-stat-number in-range" id="inRangeCount">
+                            <span class="count-number">{{biomarkerSummary.inRange}}</span>
+                          </div>
+                          <div class="lab-stat-label">In Range</div>
+                        </div>
+
+                        <!-- Improving -->
+                        <div class="lab-stat-box">
+                          <div class="lab-stat-number improving" id="improvingCount">
+                            <span class="count-number">{{biomarkerSummary.improving}}</span>
+                          </div>
+                          <div class="lab-stat-label">Improving</div>
+                        </div>
+
+                         <!-- Out of Range -->
+                        <div class="lab-stat-box">
+                          <div class="lab-stat-number out-of-range" id="outOfRangeCount">
+                            <span class="count-number">{{biomarkerSummary.outOfRange}}</span>
+                          </div>
+                          <div class="lab-stat-label">Out of Range</div>
+                        </div>
+
+                         <!-- Declining -->
+                        <div class="lab-stat-box">
+                          <div class="lab-stat-number declining" id="decliningCount">
+                            <span class="count-number">{{biomarkerSummary.declining}}</span>
+                          </div>
+                          <div class="lab-stat-label">Declining</div>
+                        </div>
+                      </div>
+
+                      <!-- Stats Chart -->
+                      <div class="lab-stats-chart">
+                        <div class="chart-container">
+                          <!-- In Range Bar -->
+                          <div class="chart-bar in-range" style="height: 180px; width: 22%;">
+                            {{!-- <span class="chart-value">{{biomarkerSummary.inRange}}</span> --}}
+                          </div>
+                          <!-- Improving Bar -->
+                          <div class="chart-bar improving" style="height: {{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px; width: 22%;">
+                            {{!-- <span class="chart-value">{{biomarkerSummary.improving}}</span> --}}
+                          </div>
+                          <!-- Out of Range Bar -->
+                          <div class="chart-bar out-of-range" style="height: {{calculateBarHeight biomarkerSummary.outOfRange biomarkerSummary.inRange}}px; width: 22%;">
+                            {{!-- <span class="chart-value">{{biomarkerSummary.outOfRange}}</span> --}}
+                          </div>
+                          <!-- Declining Bar (New) -->
+                          <div class="chart-bar declining" style="height: {{calculateBarHeight biomarkerSummary.declining biomarkerSummary.inRange}}px; width: 25%;">
+                            {{!-- <span class="chart-value">{{biomarkerSummary.declining}}</span> --}}
+                          </div>
+                        </div>
+                        <div class="chart-labels">
+                          <div class="chart-label">In Range</div>
+                          <div class="chart-label">Improving</div>
+                          <div class="chart-label">Out of Range</div>
+                          <div class="chart-label">Declining</div>
+                        </div>
+                      </div>
+
+                      <!-- Action button -->
+                      <a href="/reports" class="lab-summary-action-btn">
+                        View all <span class="arrow-icon">→</span>
+                      </a>
+                    </div>
+
+                    <!-- Recent Labs Section -->
+                    <div class="recent-labs-section">
+                      <h3 class="recent-labs-title">Recent Lab Results</h3>
+                      
+                      {{#if recentFiles}}
+                        <div class="recent-labs-list">
+                          {{#each recentFiles}}
+                            <div class="recent-lab-item">
+                              <div class="lab-file-name">{{this.originalName}}</div>
+                              <div class="lab-date">{{formatDate this.testDate}}</div>
+                              <div class="lab-stats">
+                                <span class="lab-stat in-range">{{countInRange this.labValues}} in range</span>
+                                <span class="lab-stat out-of-range">{{countOutOfRange this.labValues}} out of range</span>
+                              </div>
+                              <a href="/reports" class="view-lab-link">View</a>
+                            </div>
+                          {{/each}}
+                        </div>
+                      {{else}}
+                        <div class="no-recent-labs">
+                          <p>No lab results uploaded yet.</p>
+                          <a href="/upload" class="upload-labs-btn">Upload Labs</a>
+                        </div>
+                      {{/if}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Labs Info Modal -->
+              <div class="modal-wrapper labs-info-modal">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                  <div class="modal-header">
+                    <a class="modal-return-button w-inline-block w--current" aria-current="page">
+                      {{> svg/backArrow}}
+                    </a>
+                    <h1 class="modal-button">Labs Summary Information</h1>
+                  </div>
+
+                  <div class="modal-description">
+                    <p>This summary provides an overview of your lab biomarkers:</p>
+                    <ul>
+                      <li><strong>In Range:</strong> The number of biomarkers that fall within the normal reference range.</li>
+                      <li><strong>Out of Range:</strong> Biomarkers that are either higher or lower than the normal reference range.</li>
+                      <li><strong>Improving:</strong> Biomarkers that were previously out of range but are now trending toward the normal range based on your latest results.</li>
+                    </ul>
+                    <p>Regular monitoring of these values can help you track your health progress over time.</p>
+                  </div>
+
+                  <div class="modal-footer">
+                    <a href="/insights" aria-current="page" class="cancel-button cancel-space">Close</a>
+                  </div>
+                </div>
+              </div>
+
               <!-- Scores Tab -->
-              <div data-w-tab="Scores" class="w-tab-pane w--tab-active">
+              <div data-w-tab="Scores" class="w-tab-pane">
                 <div class="wellness-summary-card">
                   <!-- Hidden data element -->
                   <div
@@ -143,8 +297,8 @@
                     style="display: none"
                   ></div>
 
-                  <div class="wellness-header">
-                    <div class="wellness-title-wrapper">
+                  <div class="insights-header">
+                    <div class="insights-title-wrapper">
                       <h2 class="insights-title">Wellness Score Inputs</h2>
                       <button
                         class="info-button"
@@ -287,7 +441,7 @@
                 <div class="wellness-summary-card">
                   <div class="ask-wrapper">
                     <div class="ask-header">
-                      <h2 class="insights-title">Ask Reed</h2>
+                      <h2 class="ask-title">Ask Reed</h2>
                       <button
                         class="info-button"
                         aria-label="Show RAG information"
@@ -783,6 +937,159 @@
           modal
             .querySelector(".modal-return-button")
             .addEventListener("click", () => modal.remove());
+        }
+      });
+    </script>
+    <script>
+      // Labs Summary JavaScript
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check if we're on the insights page with the Labs Summary tab
+        const labSummaryTab = document.querySelector('[data-w-tab="LabsSummary"]');
+        if (!labSummaryTab) return;
+
+        // Add tab change listener to ensure stats update when tab is viewed
+        document.querySelectorAll('.in-page-link').forEach(tabLink => {
+          tabLink.addEventListener('click', function() {
+            if (this.getAttribute('data-w-tab') === 'LabsSummary') {
+              setTimeout(animateLabStats, 150);
+            }
+          });
+        });
+
+        // Get labs data from the hidden element
+        function getLabsData() {
+          const dataElement = document.getElementById('labSummaryData');
+          if (!dataElement) return { inRange: 0, outOfRange: 0, improving: 0 };
+          
+          try {
+            return JSON.parse(dataElement.getAttribute('data-labs'));
+          } catch (e) {
+            console.error('Error parsing labs data:', e);
+            return { inRange: 0, outOfRange: 0, improving: 0 };
+          }
+        }
+
+        // Animate stats with counting effect
+        function animateLabStats() {
+          const labsData = getLabsData();
+          
+          animateCounter('inRangeCount', labsData.inRange || 0);
+          animateCounter('outOfRangeCount', labsData.outOfRange || 0);
+          animateCounter('improvingCount', labsData.improving || 0);
+          
+          // Animate chart bars
+          animateChartBars(labsData);
+        }
+
+        // Counter animation function
+        function animateCounter(elementId, targetValue) {
+          const element = document.getElementById(elementId);
+          if (!element) return;
+          
+          const countDisplay = element.querySelector('.count-number');
+          if (!countDisplay) return;
+          
+          // Get current value
+          const startValue = parseInt(countDisplay.textContent) || 0;
+          const duration = 1000; // Animation duration in ms
+          const stepTime = 20; // ms per step
+          const steps = duration / stepTime;
+          const increment = (targetValue - startValue) / steps;
+          
+          let currentValue = startValue;
+          let currentStep = 0;
+          
+          const animation = setInterval(() => {
+            currentStep++;
+            currentValue += increment;
+            
+            if (currentStep >= steps) {
+              clearInterval(animation);
+              currentValue = targetValue;
+            }
+            
+            countDisplay.textContent = Math.round(currentValue);
+            
+            if (currentStep >= steps) {
+              // Add a slight bounce effect at the end
+              element.style.transform = 'scale(1.05)';
+              setTimeout(() => {
+                element.style.transform = 'scale(1)';
+              }, 100);
+            }
+          }, stepTime);
+        }
+
+        // Animate the chart bars
+        function animateChartBars(labsData) {
+          const chartBars = document.querySelectorAll('.chart-bar');
+          if (chartBars.length < 4) return; // Now expecting 4 bars
+          
+          // Get the max value for scaling
+          const maxValue = Math.max(
+            labsData.inRange || 0, 
+            labsData.outOfRange || 0, 
+            labsData.improving || 0,
+            labsData.declining || 0  // Include declining in max calculation
+          );
+          
+          // Base height of the tallest bar
+          const maxBarHeight = 180;
+          
+          // Calculate and set heights
+          if (maxValue > 0) {
+            // In Range (always set to max height as the reference)
+            let inRangeHeight = maxBarHeight;
+            
+            // Out of Range
+            let outOfRangeHeight = maxBarHeight * (labsData.outOfRange / maxValue);
+            
+            // Improving
+            let improvingHeight = maxBarHeight * (labsData.improving / maxValue);
+            
+            // Declining (new)
+            let decliningHeight = maxBarHeight * (labsData.declining / maxValue);
+            
+            // Ensure minimum height for visibility
+            outOfRangeHeight = Math.max(outOfRangeHeight, 30);
+            improvingHeight = Math.max(improvingHeight, 30);
+            decliningHeight = Math.max(decliningHeight, 30);
+            
+            // Apply heights with animation
+            setTimeout(() => {
+              chartBars[0].style.height = `${inRangeHeight}px`;
+              chartBars[0].querySelector('.chart-value').textContent = labsData.inRange;
+              
+              chartBars[1].style.height = `${outOfRangeHeight}px`;
+              chartBars[1].querySelector('.chart-value').textContent = labsData.outOfRange;
+              
+              chartBars[2].style.height = `${improvingHeight}px`;
+              chartBars[2].querySelector('.chart-value').textContent = labsData.improving;
+              
+              chartBars[3].style.height = `${decliningHeight}px`;
+              chartBars[3].querySelector('.chart-value').textContent = labsData.declining;
+            }, 300);
+          }
+        }
+
+        // Info button modal functionality
+        const labsInfoButton = labSummaryTab.querySelector('.info-button');
+        if (labsInfoButton) {
+          labsInfoButton.addEventListener('click', () => {
+            document.querySelector('.labs-info-modal').classList.add('active');
+          });
+        }
+
+        // Close modal handlers
+        document.querySelectorAll('.labs-info-modal .modal-background, .labs-info-modal .cancel-button, .labs-info-modal .modal-return-button').forEach(element => {
+          element.addEventListener('click', () => {
+            document.querySelector('.labs-info-modal').classList.remove('active');
+          });
+        });
+
+        // Run animation on initial load if the Labs Summary tab is active
+        if (labSummaryTab.classList.contains('w--tab-active')) {
+          setTimeout(animateLabStats, 300);
         }
       });
     </script>

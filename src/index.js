@@ -382,6 +382,83 @@ hbs.registerHelper("getMetricUrl", function (metricKey) {
   }
 });
 
+// Calculate bar height based on value relative to max value
+hbs.registerHelper("calculateBarHeight", function (value, maxValue) {
+  if (!value || !maxValue) return 40; // Minimum height for visibility
+  
+  const percentage = (value / maxValue);
+  // Set the maximum height to 180px (matching our CSS)
+  const height = Math.max(Math.round(180 * percentage), 40);
+  return height;
+});
+
+
+// Count biomarkers in range for a specific file
+hbs.registerHelper("countInRange", function (labValues) {
+  if (!labValues) return 0;
+  
+  let count = 0;
+  
+  // Handle both Map and regular object
+  const entries = labValues instanceof Map ? 
+    Array.from(labValues.entries()) : 
+    Object.entries(labValues);
+  
+  entries.forEach(([key, value]) => {
+    if (!value.referenceRange) return;
+    
+    // Extract min and max from reference range
+    const rangeParts = value.referenceRange.replace(/\s+/g, '').split('-');
+    if (rangeParts.length !== 2) return;
+    
+    const minValue = parseFloat(rangeParts[0]);
+    const maxValue = parseFloat(rangeParts[1]);
+    const biomarkerValue = parseFloat(value.value);
+    
+    if (isNaN(minValue) || isNaN(maxValue) || isNaN(biomarkerValue)) return;
+    
+    // Check if in range
+    if (biomarkerValue >= minValue && biomarkerValue <= maxValue) {
+      count++;
+    }
+  });
+  
+  return count;
+});
+
+// Count biomarkers out of range for a specific file
+hbs.registerHelper("countOutOfRange", function (labValues) {
+  if (!labValues) return 0;
+  
+  let count = 0;
+  
+  // Handle both Map and regular object
+  const entries = labValues instanceof Map ? 
+    Array.from(labValues.entries()) : 
+    Object.entries(labValues);
+  
+  entries.forEach(([key, value]) => {
+    if (!value.referenceRange) return;
+    
+    // Extract min and max from reference range
+    const rangeParts = value.referenceRange.replace(/\s+/g, '').split('-');
+    if (rangeParts.length !== 2) return;
+    
+    const minValue = parseFloat(rangeParts[0]);
+    const maxValue = parseFloat(rangeParts[1]);
+    const biomarkerValue = parseFloat(value.value);
+    
+    if (isNaN(minValue) || isNaN(maxValue) || isNaN(biomarkerValue)) return;
+    
+    // Check if out of range
+    if (biomarkerValue < minValue || biomarkerValue > maxValue) {
+      count++;
+    }
+  });
+  
+  return count;
+});
+
 // hbs.registerHelper('debug', function(optionalValue) {
 //     console.log('Context:', this);
 //     if (optionalValue) {
@@ -694,18 +771,184 @@ app.get("/insights", checkAuth, async (req, res) => {
     }
     // Add more recommendations based on your criteria
 
+    // Calculate biomarker statistics
+    const biomarkerSummary = calculateBiomarkerSummary(user.files);
+  
+    // Get recent files for labs summary tab
+    const recentFiles = getRecentFiles(user.files, 5);
+
     res.render("user/insights", {
       naming: req.user.uname,
       // this becomes {{json scores}} in insights.hbs
       scores: { inputs },
       totalScore,
       recommendations: generateRecommendations(inputs), // this becomes {{json recommendations}}
+      biomarkerSummary,
+      recentFiles
     });
   } catch (error) {
     console.error("Error generating insights:", error);
     res.status(500).send("Error loading insights page");
   }
 });
+
+// Helper function to calculate biomarker summary
+function calculateBiomarkerSummary(files) {
+  // Default values
+  let inRange = 0;
+  let outOfRange = 0;
+  let improving = 0;
+  let declining = 0;
+
+  if (!files || files.length === 0) {
+    return { inRange, outOfRange, improving, declining };
+  }
+
+  // Get files with lab values and sort by date (oldest first for trend analysis)
+  const filesWithLabValues = files
+    .filter(file => file.labValues && (file.labValues.size > 0 || Object.keys(file.labValues).length > 0))
+    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate));
+
+  if (filesWithLabValues.length === 0) {
+    return { inRange, outOfRange, improving, declining };
+  }
+
+  // Map to track all unique biomarkers across all tests
+  const biomarkerHistory = new Map();
+
+  // Process all files to build biomarker history
+  filesWithLabValues.forEach(file => {
+    const fileDate = new Date(file.testDate);
+    
+    // Handle both Map and Object formats
+    const entries = file.labValues instanceof Map ? 
+      Array.from(file.labValues.entries()) : 
+      Object.entries(file.labValues);
+    
+    entries.forEach(([key, value]) => {
+      if (!value || !value.value || !value.referenceRange) return;
+      
+      const bioValue = parseFloat(value.value);
+      if (isNaN(bioValue)) return;
+      
+      // Parse reference range
+      const rangeParts = value.referenceRange.replace(/\s+/g, '').split('-');
+      if (rangeParts.length !== 2) return;
+      
+      const minValue = parseFloat(rangeParts[0]);
+      const maxValue = parseFloat(rangeParts[1]);
+      
+      if (isNaN(minValue) || isNaN(maxValue)) return;
+      
+      // Create entry for this biomarker if it doesn't exist
+      if (!biomarkerHistory.has(key)) {
+        biomarkerHistory.set(key, {
+          minRange: minValue,
+          maxRange: maxValue,
+          readings: []
+        });
+      }
+      
+      // Add this reading
+      biomarkerHistory.get(key).readings.push({
+        value: bioValue,
+        date: fileDate
+      });
+    });
+  });
+  
+  // Analyze each biomarker
+  biomarkerHistory.forEach((data, key) => {
+    // Sort readings by date (newest first)
+    data.readings.sort((a, b) => b.date - a.date);
+    
+    // Get most recent reading
+    const latestReading = data.readings[0];
+    
+    // Check if in range
+    if (latestReading.value >= data.minRange && latestReading.value <= data.maxRange) {
+      inRange++;
+    } else {
+      outOfRange++;
+      
+      // Need at least 2 readings to determine trend
+      if (data.readings.length >= 2) {
+        // Get previous reading
+        const previousReading = data.readings[1];
+        
+        // Determine if getting better or worse
+        if (latestReading.value < data.minRange) {
+          // Below range - increasing is good
+          if (latestReading.value > previousReading.value) {
+            improving++;
+          } else if (latestReading.value < previousReading.value) {
+            declining++;
+          }
+        } else if (latestReading.value > data.maxRange) {
+          // Above range - decreasing is good
+          if (latestReading.value < previousReading.value) {
+            improving++;
+          } else if (latestReading.value > previousReading.value) {
+            declining++;
+          }
+        }
+      }
+    }
+    
+    // Also check for trends within the normal range (improving vs declining)
+    if (data.readings.length >= 2) {
+      const latestReading = data.readings[0];
+      const previousReading = data.readings[1];
+      
+      // If most recent is in range but previous was out of range, count as improving
+      if (latestReading.value >= data.minRange && latestReading.value <= data.maxRange) {
+        if (previousReading.value < data.minRange || previousReading.value > data.maxRange) {
+          improving++;
+        }
+      }
+      
+      // If trend continues in the right direction
+      if (data.readings.length >= 3) {
+        const trendDirection = latestReading.value - previousReading.value;
+        const earlierReading = data.readings[2];
+        const previousTrend = previousReading.value - earlierReading.value;
+        
+        // If consistent movement toward optimal range
+        if (Math.sign(trendDirection) === Math.sign(previousTrend)) {
+          // Moving in a consistent direction
+          const midpoint = (data.minRange + data.maxRange) / 2;
+          
+          // If moving toward midpoint of range
+          if ((latestReading.value < midpoint && trendDirection > 0) || 
+              (latestReading.value > midpoint && trendDirection < 0)) {
+            improving++;
+          } else {
+            // Moving away from midpoint
+            declining++;
+          }
+        }
+      }
+    }
+  });
+
+  return { inRange, outOfRange, improving, declining };
+}
+
+// Helper function to get most recent files
+function getRecentFiles(files, limit = 5) {
+  if (!files || files.length === 0) return [];
+
+  return files
+    .filter(file => file.labValues && Object.keys(file.labValues).length > 0)
+    .sort((a, b) => new Date(b.testDate) - new Date(a.testDate))
+    .slice(0, limit)
+    .map(file => ({
+      _id: file._id,
+      originalName: file.originalName,
+      testDate: file.testDate,
+      labValues: file.labValues
+    }));
+}
 
 // Helper function to generate recommendations based on incomplete inputs
 function generateRecommendations(inputs) {

@@ -5,6 +5,7 @@ function initializeHeaderScroll() {
   const header = document.getElementById('header');
   const headerContainer = document.getElementById('headerContainer');
   const logo = document.getElementById('logo');
+  const buttons = document.querySelectorAll('.btn-primary');
   
   // Check if elements exist to prevent errors
   if (!header || !headerContainer || !logo) {
@@ -12,22 +13,63 @@ function initializeHeaderScroll() {
       return;
   }
 
+  let lastScrollTop = 0; // Track last scroll position
+  let scrollTimer = null; // For debouncing
+
   function handleScroll() {
-      const scrollPosition = window.scrollY;
+    const scrollPosition = window.scrollY;
+    
+    // Clear any existing timers
+    if (scrollTimer) clearTimeout(scrollTimer);
+    
+    // Set a small timeout to make the transition smoother
+    scrollTimer = setTimeout(() => {
+      // Determine scroll direction
+      const scrollingDown = scrollPosition > lastScrollTop;
       
+      // Apply or remove classes based on scroll position and direction
       if (scrollPosition > 50) {
-          header.classList.add('header-scrolled');
-          headerContainer.classList.add('header-container-scrolled');
+        // Apply scrolled state
+        header.classList.add('header-scrolled');
+        headerContainer.classList.add('header-container-scrolled');
+        
+        // Add a slight delay when scrolling up for smoother transition
+        if (!scrollingDown) {
+          // Add class immediately
           logo.classList.add('logo-scrolled');
+        } else {
+          // Small delay when scrolling down
+          setTimeout(() => {
+            logo.classList.add('logo-scrolled');
+          }, 50);
+        }
       } else {
-          header.classList.remove('header-scrolled');
-          headerContainer.classList.remove('header-container-scrolled');
+        // Return to normal state
+        header.classList.remove('header-scrolled');
+        headerContainer.classList.remove('header-container-scrolled');
+        
+        // Add a slight delay when scrolling down for smoother transition
+        if (scrollingDown) {
+          // Add class immediately
           logo.classList.remove('logo-scrolled');
+        } else {
+          // Small delay when scrolling up
+          setTimeout(() => {
+            logo.classList.remove('logo-scrolled');
+          }, 50);
+        }
       }
+      
+      // Update last scroll position
+      lastScrollTop = scrollPosition;
+    }, 10); // Small timeout for smoother effect
   }
-  window.addEventListener('scroll', handleScroll);   // Add scroll event listener
   
-  handleScroll(); // Run once on initialization
+  // Use passive event listener for better performance
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // Run once on initialization to set the correct initial state
+  handleScroll();
 }
 
 // Initialize when DOM is loaded

@@ -152,8 +152,8 @@ body {
   --green-hover: #45a049;
   --blue-primary: #63b1f1;
   --blue-hover: #1e88e5;
-  --btn-primary-bg: #8add9a;
-  --btn-primary-hover: #6bcd7a;
+  --btn-primary-bg: #7fd182;
+  --btn-primary-hover: #60ad64;
 
   /* Shadows */
   --shadow-sm: 0 2px 4px;
@@ -193,8 +193,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.5rem, 2vw, 1rem); /* Responsive gap */
+  gap: clamp(0.5rem, 2vw, 0.75rem); /* Responsive gap */
   padding: clamp(0.5rem, 2vw, 1rem);
+}
+.register-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.25rem, 2vw, 0.4rem); /* Responsive gap */
+  padding: clamp(0.5rem, 2vw, 0.5rem);
 }
 
 /* Base Button Styles */
@@ -205,9 +212,10 @@ body {
   text-align: center;
   
   /* More reliable sizing */
-  padding: 0.5rem 1rem; /* Consistent padding */
+  padding: 0.5rem 0;
   width: auto; /* Let content determine width */
   min-width: 4.5rem; /* Minimum width for text */
+  max-width: 6rem;
   
   /* Keep rest of your styles */
   font-family: "Poppins-SemiBold", sans-serif;
@@ -218,6 +226,7 @@ body {
   transition: all 0.3s ease;
   color: white;
   user-select: none;
+  cursor: pointer;
 }
 
 /* Simplify header buttons to avoid conflicting styles */
@@ -293,6 +302,8 @@ body {
   font-size: var(--primary-font-size);
   text-shadow: 0 1px 1px #0003;
   max-width: clamp(15rem, 1vw, 20rem);
+  text-decoration: none;
+  margin-top: 3rem;
 }
 .btn-secondary {
   visibility: hidden;
@@ -352,7 +363,7 @@ body {
 
   .button-basics {
     font-size: 1rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     min-width: 100px;
     height: auto;
   }
@@ -1281,7 +1292,6 @@ img,
 .heading {
   color: #535151;
   font-family: "Poppins-Bold", sans-serif;
-  font-size: 30px;
   font-weight: 700;
   display: flex;
   justify-content: flex-start;
@@ -1302,7 +1312,7 @@ img,
   flex: 1;
 }
 .dashboard-img {
-  background-color: #e0ecee;
+  background-color: #b3d6ff;
 }
 .dashboard-content {
   margin-left: 10rem;
@@ -1408,16 +1418,22 @@ img,
 .register-form {
   margin-left: 2rem;
   margin-right: 2rem;
-  margin-top: 1rem;
+  margin-top: 0;
   margin-bottom: 0;
 }
+
 .heading {
-  font-size: clamp(28px, 5vw, 42px); /* Responsive font size */
+  font-size: clamp(28px, 5vw, 36px); /* Responsive font size */
   /* justify-content: center; */
   text-align: left;
   margin-top: 1rem;
   font-family: "Poppins-Bold", sans-serif;
   color: rgba(2, 2, 2, 0.76);
+}
+.signup-heading {
+ margin-top: 0.1rem;
+ margin-bottom: 0.1rem;
+ font-size: clamp(24px, 5vw, 30px); /* Responsive font size */
 }
 .subheading {
   font-size: clamp(16px, 4vw, 22px); /* Responsive font size */
@@ -1434,6 +1450,7 @@ img,
   font-family: "Poppins-Regular", sans-serif;
   color: rgba(0, 0, 0, 0.847);
 }
+
 .standard-text,
 .hyperlink-text,
 .form-label,
@@ -1443,16 +1460,25 @@ img,
 .standard-text {
   color: rgb(44, 44, 44);
   text-decoration: none;
+  margin-top: 0.5rem;
 }
 .hyperlink-text {
   color: rgb(108, 108, 108);
   text-decoration: underline;
   cursor: pointer;
+  font-size: 11px;
 }
 .form-label {
   color: #828895;
   font-weight: 500;
   margin-top: 0.25rem;
+  margin-bottom: 0.15rem;
+}
+.register-form-label {
+  color: #828895;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 0.1rem;
 }
 .back-link {
   color: #828895;
@@ -1474,7 +1500,7 @@ img,
   border-bottom: 1px solid #e4e7eb;
   margin-top: -0.25rem;
   margin-bottom: 0.25rem;
-  padding: 0.25rem 0;
+  padding: 0.35rem 0.25rem 0.1rem 0.25rem;
   font-size: clamp(14px, 3vw, 16px);
   font-family: "Poppins-Regular", sans-serif;
   display: block;
@@ -1607,7 +1633,8 @@ img,
   background-color: #ebf8ff;
 }
 .HIW-body {
-  background-color: var(--bg-color);
+  /* background-color: var(--bg-color); */
+  background-color: #cbe9d7dd;
   min-height: 100vh;
   margin: 0;
   padding: 0;
@@ -1625,17 +1652,20 @@ img,
   left: 0;
   right: 0;
   width: 100%;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .header-container {
   background-color: white;
   display: flex;
-  justify-content: space-between; /* Better layout control */
+  justify-content: space-between;
   align-items: center;
   height: var(--header-height-default);
   width: 100%;
   padding: 0 var(--header-padding);
   box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 .logo-block {
   display: flex;
@@ -1643,17 +1673,18 @@ img,
   margin-right: 2rem; /* Space after logo */
   height: var(--header-height-default);
   cursor: pointer;
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .logo-block img {
   height: auto;
   width: auto;
-  max-height: var(
-    --header-height-default
-  ); /* prevents from becoming too large */
+  max-height: calc(var(--header-height-default) - 1rem);
   margin-top: 0.2rem;
   margin-bottom: 0.2rem;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  /* transition: all 0.3s ease-in-out; */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, max-height;
 }
 .center-header {
   display: flex;
@@ -1662,22 +1693,56 @@ img,
   gap: 34px;
   flex: 1; /* Use flex instead of width */
 }
-.header-links {
+/* .header-links { */
   /* font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; */
-  font-family: "Poppins-Regular", sans-serif;
+  /* font-family: "Poppins-Regular", sans-serif;
   font-size: var(--header-font-size);
   font-weight: 570; /* Medium weight rather than SemiBold */
-  letter-spacing: -0.01em; /* Slight negative tracking for that modern look */
-  word-spacing: 0.08em;
+  /* letter-spacing: -0.01em; /* Slight negative tracking for that modern look */
+  /* word-spacing: 0.08em;
   text-decoration: none;
   color: rgba(40, 40, 40, 0.8); /* Slightly softer than pure black */
-  padding: 4px 8px;
+  /* padding: 4px 8px;
   transition: all 0.3s;
-  white-space: nowrap;
+  white-space: nowrap; */ 
+/* } */
+
+.header-links {
+  color: #627183;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: none;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .header-links:hover {
   color: #5cb15d; /* Using your green accent color instead of a shadow */
+}
+
+.header-links::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 50%;
+  background-color: var(--green-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+  text-decoration: none;
+}
+
+.header-links:hover::after {
+  width: 100%;
 }
 
 .authentication-block {
@@ -1697,8 +1762,10 @@ img,
   font-weight: 500;
   color: white;
   text-decoration: none;
-  transition: all 0.2s ease;
+  /* transition: all 0.2s ease; */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
   white-space: nowrap;
+  will-change: transform, padding, font-size, border-radius;
 }
 .login-button {
   background-color: var(--blue-primary);
@@ -1736,52 +1803,38 @@ img,
 }
 /* -- scrolled header states -- */
 
-.header-scrolled,
-.header-scrolled .logo-block,
+.header-scrolled {
+  height: var(--header-height-scrolled);
+}
+
 .header-container-scrolled {
   height: var(--header-height-scrolled);
-  transition: all 0.3s ease-in-out;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-scrolled .logo-block {
+  height: var(--header-height-scrolled);
+}
+
+.logo-scrolled {
+  max-height: calc(var(--header-height-scrolled) - 0.5rem) !important;
+  transform: scale(0.9);
 }
 
 .header-scrolled .header-links {
-  font-size: smaller;
-  transition: all 0.3s ease-in-out;
-}
-.header-scrolled .header-links:hover {
-  color: #5cb15d;
-}
-
-.header-scrolled .logo-block img {
-  height: var(--header-height-scrolled);
-  transition: all 0.3s ease-in-out;
+  font-size: 11px;
 }
 
 .header-container-scrolled .header-links {
   color: #4a4a4a;
-  transition: all 0.3s ease-in-out;
 }
 
-/* New button styles for scrolled state */
 .header-container-scrolled .auth-button {
   padding: 0.3rem 0.8rem;
   font-size: 0.8rem;
   border-radius: 5px;
-  transition: all 0.3s ease-in-out;
-}
-.header-container-scrolled .login-button,
-.header-container-scrolled .signup-button {
-  box-shadow: var(--shadow-sm) rgba(0, 0, 0, 0.1);
-}
-.header-container-scrolled .auth-button {
-  height: calc(var(--header-height-scrolled) - 0.5rem);
-}
-
-.header-container-scrolled .icon-link {
-  padding: 0.15rem;
-}
-
-.header-container-scrolled {
-  background-color: rgba(255, 255, 255, 0);
+  transform: scale(0.95);
 }
 /* ----- Header Media Queries ----- */
 @media screen and (max-width: 1200px) {
@@ -2051,8 +2104,8 @@ img,
 /* Phrase (personalized health tracker) simple fade in */
 .word-sequence.phrase {
   opacity: 0;
-  animation: slideFromLeft 0.8s ease-out forwards;
-  animation-delay: 3s;
+  animation: slideFromLeft 0.7s ease-out forwards;
+  animation-delay: 2.3s;
 }
 
 @keyframes slideFromBottom {
@@ -2078,7 +2131,7 @@ img,
   opacity: 0; /* Start hidden */
   transform: translateX(100px); /* Start 50px below final position */
   animation: slideFromRight 1s ease-out forwards;
-  animation-delay: 4.5s; /* 0.5s after the phrase (which is at 2.5s) */
+  animation-delay: 3.5s; /* 0.5s after the phrase (which is at 2.5s) */
 }
 
 @keyframes slideFromRight {
@@ -2094,10 +2147,9 @@ img,
 /* Button dissolve in animation */
 .btn-primary {
   opacity: 0; /* Start hidden */
-  filter: blur(10px);
   transform: scale(1.2); 
   animation: dissolveIn 1.5s ease-out forwards;
-  animation-delay: 5.5s; /* 1s after the image starts to appear */
+  animation-delay: 5s; /* 1s after the image starts to appear */
 }
 
 @keyframes dissolveIn {
@@ -2126,6 +2178,11 @@ img,
     filter: blur(0);
     transform: scale(1);
   }
+}
+.btn-primary-scrolled {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: all 0.3s ease-in-out;
 }
 .shield {
   position: absolute;
@@ -2172,14 +2229,15 @@ img,
   width: 100%;
 }
 .quote-background {
-  background-color: #e0ecee;
+  /* background-color: #e0ecee; */
+  background-color: #b3d6ff;
 }
 
 .quote-1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 6rem 0 1rem 0;
+  margin: 1rem 0 1rem 0;
   padding: 0 0.25rem;
   font-family: "Poppins-Bold", sans-serif;
   font-size: clamp(22px, 5vw, 26px);
@@ -2195,7 +2253,7 @@ img,
   justify-content: center;
   align-items: center;
   margin: 2rem 0 1rem 0;
-  padding: 8rem;
+  padding: 4rem;
   font-family: "Poppins-Regular", sans-serif;
   font-size: clamp(18px, 5vw, 22px);
   line-height: 1.8; /* Changed from fixed 72px for better scaling */
@@ -2203,6 +2261,7 @@ img,
   text-align: center;
   color: #000000;
   text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+  max-width: 70%;
 }
 .demo-page-img {
   border: 1px solid #999797;
@@ -2288,7 +2347,6 @@ img,
 .hero-title {
   text-align: center;
   font-size: 2rem;
-  margin-bottom: 3rem;
   font-weight: bold;
 }
 
@@ -2640,7 +2698,7 @@ img,
 }
 
 .content-section {
-  margin: 15% auto 5%;
+  margin: 7rem auto;
   width: 90%;
   max-width: 100%;
   padding: 0 20px;
@@ -2650,6 +2708,15 @@ img,
   color: #707070;
   text-align: center;
   font-size: clamp(32px, 5vw, 44px);
+  font-family: "Poppins-Bold", sans-serif;
+  font-weight: 600;
+  padding: 0;
+}
+
+.HIW-title {
+  color: #707070;
+  text-align: center;
+  font-size: clamp(28px, 5vw, 36px);
   font-family: "Poppins-Bold", sans-serif;
   font-weight: 600;
   padding: 0;
@@ -3769,7 +3836,7 @@ img,
   border-radius: 15px;
 }
 .username-heading {
-  margin: 1rem auto 1rem 1.5rem;
+  margin: 1rem auto 0.3rem 1.5rem;
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 24px;
 }
@@ -3828,7 +3895,6 @@ img,
 }
 .history-info {
   max-width: 33%;
-  margin-top: 0.25rem;
   margin-left: 1.5rem;
   margin-bottom: 1rem;
   padding: 5px 0 5px 0;
@@ -3974,7 +4040,7 @@ img,
   display: flex;
   justify-content: flex-start; /* Changed to flex-start to align logo to left */
   align-items: center;
-  height: 80px;
+  height: 70px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -4338,7 +4404,7 @@ label[for="customBloodType"] {
 }
 
 /* Overall score styling */
-.wellness-header {
+.insights-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -4346,19 +4412,27 @@ label[for="customBloodType"] {
   position: relative;
   margin-right: 11rem;
 }
-.wellness-title-wrapper {
+.insights-title-wrapper {
   display: flex;
   align-items: center;
   gap: 0.1rem;
   margin-top: 0.2rem;
 }
 .insights-title {
-  font-size: 1.2rem;
-  font-weight: 550;
+  font-size: 24px;
+  font-family: "Poppins-SemiBold", sans-serif;
   color: #333;
   margin: 0;
   align-content: center;
 }
+.ask-title {
+  font-size: 24px;
+  font-family: "Poppins-SemiBold", sans-serif;
+  color: #333;
+  margin: 0;
+  align-content: center;
+}
+
 .score-display {
   position: absolute;
   top: 0;
@@ -4501,7 +4575,7 @@ label[for="customBloodType"] {
 
 /* ------------- learning center styles ------------- */
 .learning-center {
-  margin-top: 100px;
+  margin-top: 2rem;
   margin-bottom: 50px;
   min-height: 70vh;
   padding-top: 2rem;
@@ -4513,16 +4587,84 @@ label[for="customBloodType"] {
   margin-bottom: 3rem;
 }
 
+/* .learning-title {
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: clamp(24px, 5vw, 34px);
+  color: var(--green-primary);
+  margin-bottom: 0.5rem;
+} */
+
 .learning-title {
   font-family: "Poppins-Bold", sans-serif;
   font-size: clamp(30px, 5vw, 42px);
-  color: var(--green-primary);
   margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+  background-image: linear-gradient(
+    90deg,
+    var(--green-primary) 0%,
+    var(--green-primary) 100%
+  );
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Create a separate element for the shine effect */
+.learning-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    var(--green-primary) 0%,
+    var(--green-primary) 45%,
+    #ffffff 50%,
+    var(--green-primary) 55%,
+    var(--green-primary) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shine-text-once 3s forwards;
+  animation-delay: 0s; /* Delay before the shine starts */
+}
+
+@keyframes shine-text-once {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* You might want to adjust these responsive styles if needed */
+@media screen and (max-width: 768px) {
+  .learning-title::before {
+    animation-duration: 3.5s; /* Slightly slower on mobile */
+  }
+}
+
+/* For users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .learning-title::before {
+    animation: none;
+  }
 }
 
 .learning-subtitle {
   font-family: "Poppins-Regular", sans-serif;
-  font-size: clamp(16px, 3vw, 20px);
+  font-size: clamp(14px, 3vw, 18px);
   color: #64748b;
   margin-top: 0.5rem;
 }
@@ -5478,11 +5620,12 @@ label[for="customBloodType"] {
 
 .get-started-btn {
   display: inline-block;
-  background-color: #5cb15d;
-  color: white;
+  background-color: #77c778;
+  color: #000;
   font-family: "Poppins-SemiBold", sans-serif;
   padding: 12px 28px;
   border-radius: 30px;
+  border: 0.25px solid #000;
   text-decoration: none;
   margin: 1rem;
   box-shadow: 0 4px 10px rgba(92, 177, 93, 0.3);
@@ -5493,6 +5636,8 @@ label[for="customBloodType"] {
   background-color: #46953f;
   box-shadow: 0 6px 15px rgba(92, 177, 93, 0.4);
   cursor: pointer;
+  color: #fff;
+  font-size: 1rem;
 }
 
 /* Feature overview */
@@ -5512,7 +5657,7 @@ label[for="customBloodType"] {
 }
 
 .feature-item:hover {
-  transform: translateY(-5px);
+  /* transform: translateY(-5px); */
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid var(--green-primary);
   cursor: pointer;
@@ -5865,4 +6010,331 @@ body[data-insights-hover="true"] #Insights {
   content: "+";
   margin-right: 5px;
   font-size: 18px;
+}
+
+/* ------------ Labs Summary Styles -----------  */
+.labs-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.labs-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.lab-summary-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lab-status-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 0.1px solid rgb(214, 213, 213);
+  padding: 1.5rem 10rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.lab-status-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.labs-stats-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 2rem;
+  /* margin: 1rem 3rem 1.5rem 3rem; */
+}
+
+.lab-stat-box {
+  flex: 1;
+  text-align: center;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lab-stat-number {
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.count-number {
+  transition: all 0.3s ease;
+}
+
+.lab-stat-label {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.lab-stats-chart {
+  margin: 1.5rem 0;
+}
+
+.chart-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  height: 180px;
+  gap: 2rem;
+  margin-bottom: 10px;
+}
+
+.chart-bar {
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 10px;
+  transition: height 1s ease;
+}
+
+.chart-bar.in-range {
+  background-color: #7db17f;
+}
+
+.chart-bar.improving {
+  background-color:  #7db17f;
+}
+.chart-bar.out-of-range {
+  background-color: #d76f6f;;
+}
+.chart-bar.declining {
+  background-color: #d76f6f;
+}
+.lab-stat-number.in-range {
+  color: #7db17f;
+}
+.lab-stat-number.improving {
+  color: #7db17f;
+}
+.lab-stat-number.out-of-range {
+  color: #d76f6f;
+}
+.out-of-range-text {
+  color: #d76f6f;
+}
+
+.improving-text {
+  color: #7db17f;
+}
+
+.lab-stat-number.declining {
+  color: #d76f6f;
+}
+.chart-value {
+  color: white;
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.chart-label {
+  flex: 1;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #666;
+}
+.chart-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.lab-summary-action-btn {
+  display: block;
+  text-align: center;
+  color: #60656a;
+  text-decoration: none;
+  font-family: "Poppins-SemiBold", sans-serif;
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.lab-summary-action-btn:hover {
+  background-color: #dcdddf;
+}
+
+.arrow-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.lab-summary-action-btn:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+/* Recent Labs Section */
+.recent-labs-section {
+  margin: 1rem 0;
+}
+
+.recent-labs-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.recent-labs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recent-lab-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 0.1px solid rgb(214, 213, 213);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lab-file-name {
+  flex: 2;
+  font-weight: 500;
+  color: #333;
+}
+
+.lab-date {
+  flex: 1;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.lab-stats {
+  flex: 2;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.lab-stat {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50px;
+}
+
+.lab-stat.in-range {
+  background-color: rgba(92, 177, 93, 0.1);
+  color: #5cb15d;
+}
+
+.lab-stat.out-of-range {
+  background-color: rgba(216, 124, 97, 0.1);
+  color: #d87c61;
+}
+
+.view-lab-link {
+  color: #4379ba;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.view-lab-link:hover {
+  background-color: #f0f7ff;
+}
+
+.no-recent-labs {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #666;
+}
+
+.upload-labs-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1.25rem;
+  background-color: #5cb15d;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-family: "Poppins-SemiBold", sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.upload-labs-btn:hover {
+  background-color: #46953f;
+}
+
+/* Labs Info Modal Styles */
+.labs-info-modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.labs-info-modal.active {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+}
+
+.zero-value {
+  position: absolute;
+  top: -25px;
+  font-size: 1.25rem;
+  font-family: "Poppins-Bold", sans-serif;
+}
+
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .labs-stats-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .lab-stat-box {
+    width: 100%;
+  }
+  
+  .lab-stat-number {
+    font-size: 2rem;
+  }
+  
+  .recent-lab-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .lab-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .view-lab-link {
+    align-self: flex-end;
+    margin-top: 0.5rem;
+  }
 }
