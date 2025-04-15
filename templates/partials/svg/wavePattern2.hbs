@@ -1,37 +1,31 @@
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 3261 300"
+<svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  viewBox="0 0 1600 190" 
   preserveAspectRatio="none"
   width="100%"
-  height="auto"
+  height="160px"
 >
-  <!-- Now with bottom blue waves, top light grey waves -->
-  <defs>
-    <linearGradient id="fadeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#e0ecee;stop-opacity:0.1" />
-      <stop offset="100%" style="stop-color:#e0ecee;stop-opacity:0" />
-    </linearGradient>
-  </defs>
-
-  <!-- Background fade to ensure smooth transition -->
-  <rect x="0" y="0" width="3261" height="70" fill="url(#fadeGradient)" />
+  <!-- Bottom solid blue section -->
+  <rect x="0" y="160" width="1600" height="40" fill="#b3d6ff" />
   
-  <!-- Bottom waves - blue layers - made taller -->
-  <path
-    fill="#b3d6ff"
-    fill-opacity="1"
-    d="M0 300 L3261 300 L3261 220 C2881 220 2774 180 2423 180 C2022 180 1847 230 1576 226 C1223 220 1043 140 888 170 C625 222 442 170 268 170 L0 170 Z"
+  <!-- First wave (bottom) -->
+  <path 
+    fill="#b3d6ff" 
+    fill-opacity="0.8"
+    d="M0,160 C250,190 350,130 550,160 C750,190 850,130 1050,160 C1250,190 1350,130 1550,160 L1600,160 L1600,200 L0,200 Z"
   />
   
-  <path
-    fill="#b3d6ff"
-    fill-opacity=".6"
-    d="M0 300 L3261 300 L3261 200 C2881 190 2774 160 2423 160 C2022 160 1847 197 1576 193 C1223 187 1043 120 888 150 C625 202 442 150 268 150 L0 150 Z"
+  <!-- Second wave (middle) -->
+  <path 
+    fill="#b3d6ff" 
+    fill-opacity="0.5"
+    d="M0,120 C150,150 250,90 400,120 C550,150 650,90 800,120 C950,150 1050,90 1200,120 C1350,150 1450,90 1600,120 L1600,200 L0,200 Z"
   />
   
-  <path
-    fill="#b3d6ff"
-    fill-opacity=".3"
-    d="M0 300 L3261 300 L3261 180 C2881 170 2774 140 2423 140 C2022 140 1847 167 1576 163 C1223 157 1043 100 888 130 C625 182 442 130 268 130 L0 130 Z"
+  <!-- Third wave (top) -->
+  <path 
+    fill="#b3d6ff" 
+    fill-opacity="0.3"
+    d="M0,80 C200,110 300,50 500,80 C700,110 800,50 1000,80 C1200,110 1300,50 1500,80 L1600,80 L1600,200 L0,200 Z"
   />
 </svg>

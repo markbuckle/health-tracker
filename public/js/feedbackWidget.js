@@ -1,4 +1,4 @@
-// feedback-widget.js - Add this to your public/js/ directory
+// Updated feedbackWidget.js
 document.addEventListener("DOMContentLoaded", function () {
   // Get elements
   const widget = document.getElementById("feedback-widget");
@@ -8,14 +8,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Toggle widget open/closed
   toggleBtn.addEventListener("click", function () {
+    // Just add/remove the open class - don't toggle closed class
+    // This prevents the width transition issue
     widget.classList.toggle("open");
-    widget.classList.toggle("closed");
   });
 
   // Close widget
   closeBtn.addEventListener("click", function () {
     widget.classList.remove("open");
-    widget.classList.add("closed");
   });
 
   // Handle form submission
@@ -97,7 +97,6 @@ document.addEventListener("DOMContentLoaded", function () {
       e.target !== toggleBtn
     ) {
       widget.classList.remove("open");
-      widget.classList.add("closed");
     }
   });
 });

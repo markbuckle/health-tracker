@@ -149,9 +149,12 @@ body {
   --bg-color: #cef3e2;
   --white: #fff;
   --green-primary: #5cb15d;
+  --green-secondary: #628d63ce;
   --green-hover: #45a049;
   --blue-primary: #63b1f1;
+  --blue-secondary: #7db7e7c0;
   --blue-hover: #1e88e5;
+  --grey-primary: #b8b9bacc;
   --btn-primary-bg: #7fd182;
   --btn-primary-hover: #60ad64;
 
@@ -1113,6 +1116,17 @@ body {
   margin-left: 1.5rem;
   margin-top: -0.15rem;
 }
+.no-biomarkers-message-all {
+  color: #777;
+  font-style: italic;
+  font-size: small;
+  background-color: white;
+  border: 0.25px solid rgb(184, 184, 184);
+  padding: 0.75rem 1rem;
+  border-top: 1px dashed #3333;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
 .inactive-category {
   opacity: 0.6;
 }
@@ -1633,13 +1647,20 @@ img,
   background-color: #ebf8ff;
 }
 .HIW-body {
-  /* background-color: var(--bg-color); */
-  background-color: #cbe9d7dd;
+  background-color: #dceee3;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
+}
+.hiw-subtitle {
+  margin: 1rem auto 0.5rem auto;
+  text-align: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: clamp(0.75rem, 2.5vw, 1rem);
+  color: #666;
+  max-width: 800px;
 }
 
 /* ----- headers  ----- */
@@ -2120,13 +2141,13 @@ img,
 }
 /* Initial state */
 .hero-title {
-  visibility: hidden; /* Hide initially */
+  visibility: hidden; 
 }
 /* Image animation - slide in from bottom */
 .mobile {
-  margin-top: 2rem;
+  margin-top: 3rem;
   margin-bottom: auto;
-  max-width: 40%;
+  max-width: 35%;
   height: auto;
   opacity: 0; /* Start hidden */
   transform: translateX(100px); /* Start 50px below final position */
@@ -2221,18 +2242,27 @@ img,
 .hero-title, .mobile, .btn-primary {
   visibility: hidden; /* Hide initially */
 }
-.quote-container {
+.quote-container-1 {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: var(--spacing-md) var(--spacing-sm);
   width: 100%;
 }
-.quote-background {
+.quote-container-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.quote-background-1 {
   /* background-color: #e0ecee; */
   background-color: #b3d6ff;
 }
-
+.quote-background-2 {
+  background-color: #e0ecee;
+  /* background-color: #b3d6ff; */
+}
 .quote-1 {
   display: flex;
   justify-content: center;
@@ -2252,8 +2282,7 @@ img,
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 2rem 0 1rem 0;
-  padding: 4rem;
+  margin-top: 4rem;
   font-family: "Poppins-Regular", sans-serif;
   font-size: clamp(18px, 5vw, 22px);
   line-height: 1.8; /* Changed from fixed 72px for better scaling */
@@ -2262,6 +2291,21 @@ img,
   color: #000000;
   text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
   max-width: 70%;
+}
+
+.quote-3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4rem;
+  padding: 0 0.5rem;
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: clamp(18px, 5vw, 25px);
+  line-height: 1.8; /* Changed from fixed 72px for better scaling */
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #000000;
+  text-shadow: 2px 2px 4px rgba(209, 209, 209, 0.8);
 }
 .demo-page-img {
   border: 1px solid #999797;
@@ -2360,17 +2404,17 @@ img,
 
 .use-case {
   position: relative;
-  width: 210px;
+  width: 10rem;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1rem;
   text-align: center;
   transition: transform 0.3s ease;
 }
-
+/* 
 .use-case:hover {
   transform: translateY(-10px);
-}
+} */
 
 .use-case::before {
   content: "";
@@ -2378,8 +2422,8 @@ img,
   top: -15px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   background: white;
   border-radius: 50%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -2393,8 +2437,8 @@ img,
   top: -15px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   background: #a3c1e7;
   border-radius: 50%;
   display: flex;
@@ -2411,14 +2455,14 @@ img,
 
 .use-case h3 {
   color: #333;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   margin: 1.5rem 0 0.5rem;
 }
 
 .use-case p {
   color: #666;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  font-size: 0.75rem;
+  line-height: 1.3;
 }
 
 .floating-dots {
@@ -2690,6 +2734,7 @@ img,
     display: none;
   }
 }
+
 /* ------ how-it-works ------- */
 :root {
   --card-radius: 16px;
@@ -2699,18 +2744,9 @@ img,
 
 .content-section {
   margin: 7rem auto;
-  width: 90%;
+  width: 70%;
   max-width: 100%;
   padding: 0 20px;
-}
-
-.section-title {
-  color: #707070;
-  text-align: center;
-  font-size: clamp(32px, 5vw, 44px);
-  font-family: "Poppins-Bold", sans-serif;
-  font-weight: 600;
-  padding: 0;
 }
 
 .HIW-title {
@@ -2720,144 +2756,146 @@ img,
   font-family: "Poppins-Bold", sans-serif;
   font-weight: 600;
   padding: 0;
+  margin-bottom: 1rem;
+}
+
+.hiw-subtitle {
+  text-align: center;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: clamp(16px, 2vw, 18px);
+  margin-bottom: 3rem;
 }
 
 /* Step cards */
 .steps-container {
   display: flex;
   flex-direction: column;
-  gap: 5vh;
+  gap: 3.5rem;
+  margin-top: 2rem;
+  position: relative;
 }
 
 .step-block {
-  min-height: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  padding: 2rem 0;
-}
-
-.step-card {
-  background-color: #fff;
-  border-radius: var(--card-radius);
-  padding: 5%;
   position: relative;
-  width: 50%;
-  height: 100%;
-}
-
-.step-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: var(--card-radius);
-  box-shadow: 7px 7px 20px var(--shadow-color);
-  z-index: -1;
+  display: flex;
+  padding-left: 5rem; /* Make space for the step number */
+  /* min-height: 160px; */
 }
 
 .step-number {
-  color: var(--primary-color);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-size: clamp(16px, 2vw, 18px);
-  font-weight: 700;
-  font-family: "Poppins", sans-serif;
-}
-
-.step-content {
-  margin-top: 24px;
-}
-
-.step-title {
-  color: var(--primary-color);
-  font-size: clamp(24px, 3vw, 30px);
-  font-weight: 500;
-  margin-bottom: 1rem;
-  font-family: "Poppins", sans-serif;
-}
-
-.step-description {
-  font-size: clamp(16px, 2vw, 20px);
-  font-weight: 400;
-  line-height: 1.4;
-  font-family: "Poppins", sans-serif;
-}
-
-.step-image {
-  width: 40%;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  color: white;
+  letter-spacing: 1px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: "Poppins-Bold", sans-serif;
+  background: linear-gradient(135deg, #4379ba, #63b1f1);
+  box-shadow: 0 4px 10px rgba(67, 121, 186, 0.3);
+  z-index: 2;
 }
 
-.step-image img {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
+.step-card {
+  flex: 1;
+  background-color: var(--grey-primary);
+  border-radius: var(--card-radius);
+  padding: 0.5rem;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.step-content {
+  text-align: left;
+}
+
+.step-title {
+  color: #4379ba;
+  font-size: clamp(20px, 3vw, 24px);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-family: "Poppins-SemiBold", sans-serif;
+}
+
+.step-description {
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 400;
+  line-height: 1.6;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
 }
 
 /* Tablet Styles */
 @media screen and (max-width: 1024px) {
   .content-section {
-    width: 95%;
-    margin: 10% auto 5%;
+    width: 85%;
+    margin: 5rem auto;
   }
-
+  
   .step-block {
-    gap: 1.5rem;
+    padding-left: 4rem;
+  }
+  
+  .step-number {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
   }
 }
 
 /* Mobile Styles */
 @media screen and (max-width: 768px) {
   .content-section {
-    width: 100%;
-    margin: 5% auto;
+    width: 90%;
+    margin: 4rem auto;
   }
 
   .step-block {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+    padding-left: 0;
+    padding-top: 3rem;
   }
 
+  .step-number {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
   .step-card {
-    width: 100%;
-    order: 2;
-  }
-
-  .step-image {
-    width: 80%;
-    order: 1;
-    margin: 0 auto;
-  }
-
-  /* Reverse order for step 3 on mobile */
-  .step-block:nth-child(3) .step-card {
-    order: 2;
-  }
-
-  .step-block:nth-child(3) .step-image {
-    order: 1;
+    padding: 1.5rem;
   }
 }
 
 /* Small Mobile Styles */
 @media screen and (max-width: 480px) {
   .content-section {
-    padding: 0 15px;
+    width: 95%;
+    padding: 0 10px;
   }
-
-  .step-image {
-    width: 90%;
+  
+  .step-number {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
   }
-
+  
   .step-card {
-    padding: 1.5rem;
-  }
-  .section-title {
-    padding-top: 5rem;
+    padding: 1.25rem;
   }
 }
 /* ------ Upload Page ----- */
@@ -3636,15 +3674,15 @@ img,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 1.4rem;
+  height: 1.4rem;
   border-radius: 65%;
   border: none;
   background-color: #33885182;
   color: white;
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 20px;
-  margin: 1rem;
+  margin: 1rem 0.5rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
   vertical-align: middle;
@@ -3835,6 +3873,9 @@ img,
   background-color: #fff;
   border-radius: 15px;
 }
+.basic-info-subheader {
+  margin-right: 0.5rem;
+}
 .username-heading {
   margin: 1rem auto 0.3rem 1.5rem;
   font-family: "Poppins-SemiBold", sans-serif;
@@ -3867,6 +3908,7 @@ img,
   margin-left: 1.5rem;
   font-size: 17px;
   font-family: "Poppins-Regular", sans-serif;
+  display: flex;
 }
 .edit-button-modal {
   color: #000;
@@ -4101,6 +4143,25 @@ img,
   gap: 10px;
 }
 
+.profile-info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 65%;
+  border: none;
+  background-color: #33885182;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 20px;
+  margin-left: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  vertical-align: middle;
+}
+
 /* ----- modal styles ------ */
 
 .modal-form {
@@ -4228,6 +4289,181 @@ img,
 label[for="customBloodType"] {
     display: none;
 } */
+
+/* Blood Type Info Button */
+.blood-type-info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background-color: #63b1f1;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 14px;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  vertical-align: middle;
+}
+
+.blood-type-info-button:hover {
+  background-color: #1e88e5;
+  transform: scale(1.05);
+}
+
+/* Blood Type Modal Styles */
+.blood-type-modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+  position: fixed;
+  inset: 0%;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+  display: none;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.blood-type-modal.active {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+}
+.blood-type-modal .modal-card {
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.blood-type-modal .modal-description {
+  font-size: 14px;
+  line-height: 1.5;
+  padding-right: 5px;
+}
+.blood-type-table-container {
+  overflow-x: auto;
+  margin: 15px 0;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.blood-type-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+.blood-type-table th, .blood-type-table td {
+  padding: 8px 10px;
+  border: 1px solid #e1e6f0;
+  text-align: left;
+}
+
+.blood-type-table th {
+  background-color: #f8f9fb;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.blood-type-table tr:nth-child(even) {
+  background-color: #f8f9fb;
+}
+
+.blood-type-table tr:hover {
+  background-color: #e1e6f0;
+}
+
+.blood-type-facts {
+  background-color: #f8f9fb;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+.blood-type-facts h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.blood-type-facts ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.blood-type-facts li {
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.source-link {
+  font-size: 11px;
+  margin-top: 15px;
+  text-align: right;
+  font-style: italic;
+}
+
+.source-link a {
+  color: #4379ba;
+  text-decoration: none;
+}
+
+.source-link a:hover {
+  text-decoration: underline;
+}
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .blood-type-modal .modal-card {
+    width: 95%;
+    padding: 15px;
+    margin: 0;
+  }
+  
+  .blood-type-table th, .blood-type-table td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .blood-type-facts {
+    padding: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .blood-type-modal .modal-card {
+    width: 98%;
+    padding: 10px;
+  }
+  
+  .blood-type-table th, .blood-type-table td {
+    padding: 5px 6px;
+    font-size: 11px;
+  }
+  
+  .blood-type-modal .modal-description {
+    font-size: 13px;
+  }
+  
+  .blood-type-facts h3 {
+    font-size: 14px;
+  }
+  
+  .blood-type-facts {
+    font-size: 12px;
+    padding: 8px;
+  }
+}
 
 /* ------- React components --------- */
 
@@ -4551,9 +4787,9 @@ label[for="customBloodType"] {
   padding: 0.5rem 1rem 0 0;
 }
 .ask-header {
-  margin-bottom: 1rem;
   display: flex;
-  padding-left: 5rem;
+  /* margin-bottom: 1rem; */
+  /* padding-left: 5rem; */
 }
 .circle-progress {
   transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
@@ -4761,6 +4997,26 @@ label[for="customBloodType"] {
   transform: translateY(-2px);
 }
 
+.podcast-title-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+.podcast-title-link:hover .podcast-title {
+  color: #46953f;  /* Same as your --green-primary color */
+}
+
+.podcast-image-container a {
+  display: block;
+  cursor: pointer;
+}
+
+.podcast-image-container a:hover img {
+  transform: scale(1.03);
+  transition: transform 0.3s ease;
+}
+
 .view-link {
   margin-left: auto;
 }
@@ -4773,10 +5029,20 @@ label[for="customBloodType"] {
 }
 
 .books-container {
-  min-height: 200px;
+  min-height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 1rem 0 5rem 0;
+}
+.books-card {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 12px;
+  border: 1.5px solid #459845;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .coming-soon-message {
@@ -4942,18 +5208,19 @@ label[for="customBloodType"] {
   border-radius: 12px;
   border: 1.5px solid var(--green-primary);
   overflow: hidden;
-  margin-bottom: 60px; /* Reduced to avoid overlap with toggle button */
+  margin-bottom: 5rem; /* Reduced to avoid overlap with toggle button */
   opacity: 0;
   visibility: hidden;
   transform: translateY(3px);
   transition: all 0.3s ease;
-  max-height: 90vh; /* Limit height to 90% of viewport height */
+  /* max-height: 90vh; */
   /* overflow-y: auto; Add scrolling for very small screens */
 }
 
 .feedback-widget.open .feedback-form-container {
   opacity: 1;
   visibility: visible;
+  margin-bottom: 3.5rem;
 }
 
 .feedback-header {
@@ -5028,7 +5295,7 @@ label[for="customBloodType"] {
 .form-group textarea {
   resize: vertical;
   min-height: 80px; /* Slightly smaller minimum height */
-  max-height: 100px; /* Set maximum height */
+  max-height: 140px; /* Set maximum height */
 }
 
 .feedback-submit {
@@ -5156,7 +5423,7 @@ label[for="customBloodType"] {
   /* At high zoom, the widget might act like it's on a small screen */
   .feedback-widget.open {
     max-height: 100vh;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     right: 10px;
   }
 
@@ -5206,7 +5473,7 @@ label[for="customBloodType"] {
   max-width: 90%;
   border-radius: 12px;
   overflow: hidden;
-  margin: 1rem 5rem;
+  margin: 0.25rem 5rem 1rem 5rem;
 }
 
 .chat-messages {
@@ -5438,18 +5705,20 @@ label[for="customBloodType"] {
   animation: fadeIn 0.5s ease;
 }
 
-.step-number {
-  display: inline-block;
-  background-color: #5cb15d;
+.welcome-step-number {
+  background-color: var(--grey-primary);
   color: white;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 2rem;
+  height: 2rem;
   text-align: center;
-  line-height: 36px;
-  margin-right: 12px;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-right: 1rem;
 }
 
 .step-content {
@@ -5580,14 +5849,15 @@ label[for="customBloodType"] {
 .progress-container {
   width: 100%;
   background-color: #f1f1f1;
+  border: 0.25px solid #e0e0e0;
   border-radius: 10px;
   margin: 1.5rem 0;
-  height: 8px;
+  height: 4px;
   overflow: hidden;
 }
 
 .progress-bar {
-  height: 8px;
+  height: 4px;
   background-color: #5cb15d;
   width: 0%;
   transition: width 0.6s ease;
@@ -5821,7 +6091,7 @@ body[data-insights-hover="true"] #Insights {
 
 .family-history-empty {
   padding: 20px;
-  text-align: center;
+  text-align: left;
   color: #6b7280;
   font-style: italic;
 }
@@ -5971,8 +6241,8 @@ body[data-insights-hover="true"] #Insights {
 }
 
 .section-empty {
-  padding: 30px;
-  text-align: center;
+  /* padding: 30px; */
+  text-align: left;
   color: #777;
   font-style: italic;
 }

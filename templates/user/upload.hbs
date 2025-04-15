@@ -833,6 +833,42 @@
           });
         });
       </script>
+      <script>
+        // Open the page on the Output tab
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for tab parameter in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            
+            // If tab parameter exists and matches one of our tabs
+            if (tabParam) {
+              // Find all tab links
+              const tabLinks = document.querySelectorAll('.in-page-link');
+              const tabPanes = document.querySelectorAll('.w-tab-pane');
+              
+              // Look for the tab that matches our parameter
+              tabLinks.forEach((link, index) => {
+                const tabName = link.getAttribute('data-w-tab');
+                
+                // If this is the tab we want to activate
+                if (tabName === tabParam) {
+                  // Remove active classes from all tabs
+                  tabLinks.forEach(l => {
+                    l.classList.remove('w--current');
+                  });
+                  
+                  tabPanes.forEach(p => {
+                    p.classList.remove('w--tab-active');
+                  });
+                  
+                  // Add active classes to the selected tab
+                  link.classList.add('w--current');
+                  tabPanes[index].classList.add('w--tab-active');
+                }
+              });
+            }
+          });
+      </script>
 </body>
 
 </html>

@@ -18,7 +18,7 @@ require("dotenv").config();
 // const processEmitter = new EventEmitter(); // for the processing files modal
 const WebSocket = require("ws");
 const { calculateRangePositions } = require("../public/js/rangeCalculations");
-const { biomarkerData, markerCategories } = require("./data/biomarkerData");
+const { biomarkerData, markerCategories } = require("./utils/biomarkerData");
 const { Resend } = require("resend"); // npm install resend
 const ragRoutes = require("./db/routes/ragRoutes");
 

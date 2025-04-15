@@ -4,10 +4,14 @@ const { createWorker } = require('tesseract.js');
 const pdf = require('pdf-parse');
 const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
 const { createCanvas, loadImage } = require('canvas');
+
+// Import patterns from labPatterns
 const { labPatterns, datePatterns, enhancedTestosteronePatterns, structuredTestPatterns } = require('./labPatterns');
 
+// Mozilla's PDF.js project - allows viewing PDFs directly in the browers w/o plugins
 pdfjsLib.GlobalWorkerOptions.workerSrc = path.join(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.js');
 
+// parsing - extracting and intrepretting
 function parseLabValues(text) {
     const results = {};
     const normalizedText = text.replace(/\s+/g, ' ').trim();

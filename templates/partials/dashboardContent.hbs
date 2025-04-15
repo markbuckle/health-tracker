@@ -179,9 +179,7 @@
                 </article>
                 {{/if}}
                 {{/each}}
-                {{#else}}
-                <div class="no-biomarkers-message">No lab results available</div>
-                {{/else}}
+                <div class="no-biomarkers-message-all" id="no-biomarkers-message-all">No lab results available</div>
               </div>
           </div>
 
@@ -579,3 +577,27 @@
     </div>
   </div>
 </section>
+<script>
+  // Wait for all content to load
+  window.addEventListener('load', function() {
+    // Get the All tab
+    const allTabs = document.querySelectorAll('[data-w-tab="All"]');
+    
+    allTabs.forEach(function(allTab) {
+      const biomarkerContainers = allTab.querySelectorAll('.biomarker-container');
+      const noDataMessage = allTab.querySelector('.no-biomarkers-message-all');
+      
+      if (noDataMessage) {
+        // Log for debugging
+        console.log('Found biomarker containers:', biomarkerContainers.length);
+        
+        // Hide the message if there are biomarkers
+        if (biomarkerContainers.length > 0) {
+          noDataMessage.style.display = 'none';
+        } else {
+          noDataMessage.style.display = 'block';
+        }
+      }
+    });
+  });
+</script>

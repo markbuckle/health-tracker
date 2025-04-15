@@ -12,44 +12,45 @@
     {{> header }}
     <main class="content-section">
         <h2 class="HIW-title">How it works</h2>
+        <div class="hiw-subtitle">Take control of your health data with our simple four-step process</div>
 
         <div class="steps-container">
             <!-- Step 1 -->
             <div class="step-block">
+                <div class="step-number">01</div>
                 <div class="step-card">
-                    <div class="step-number">01</div>
                     <div class="step-content">
                         <div class="step-title">Set up an account for free</div>
                         <p class="step-description">Hit the 'Sign Up' button to get started.</p>
                     </div>
                 </div>
-                <div class="step-image">
-                    <img src="images/Sign-up.svg" alt="Sign up illustration" loading="lazy">
-                </div>
+                {{!-- <div class="step-image">
+                    <img src="images/Sign-up.png" alt="Sign up illustration" loading="lazy">
+                </div> --}}
             </div>
 
             <!-- Step 2 -->
             <div class="step-block">
+                <div class="step-number">02</div>
                 <div class="step-card">
-                    <div class="step-number">02</div>
                     <div class="step-content">
                         <div class="step-title">Import your health data</div>
                         <p class="step-description">Upload your health information from labs, document scans and
                             wearable devices. You can enter as much additional data/information as you want.</p>
                     </div>
                 </div>
-                <div class="step-image">
+                {{!-- <div class="step-image">
                     <img src="images/Submit.svg" alt="Submit illustration" loading="lazy">
-                </div>
+                </div> --}}
             </div>
 
             <!-- Step 3 -->
             <div class="step-block">
-                <div class="step-image">
+                {{!-- <div class="step-image">
                     <img src="images/Votes.svg" alt="42 votes illustration" loading="lazy">
-                </div>
+                </div> --}}
+                <div class="step-number">03</div>
                 <div class="step-card">
-                    <div class="step-number">03</div>
                     <div class="step-content">
                         <div class="step-title">Use our dashboards and reports</div>
                         <p class="step-description">Our reports make complex health information easy to understand. We
@@ -60,23 +61,25 @@
 
             <!-- Step 4 -->
             <div class="step-block">
+                <div class="step-number">04</div>
                 <div class="step-card">
-                    <div class="step-number">04</div>
                     <div class="step-content">
                         <div class="step-title">Use our share feature (Optional)</div>
                         <p class="step-description">Share your profile or specific results with your doctor to discuss
                             issues and put together an action plan.</p>
                     </div>
                 </div>
-                <div class="step-image">
+                {{!-- <div class="step-image">
                     <img src="images/Submit.svg" alt="Submit illustration" loading="lazy">
-                </div>
+                </div> --}}
             </div>
         </div>
     </main>
-    <section id="wave-green">
-        <div class="white-strip2">
-            <img src="images/wave-green.svg" loading="lazy" alt="">
+    <section>
+        <div>
+            <div class="wave-pattern">
+                {{> svg/wavePattern6}}
+            </div>
         </div>
     </section>
     {{> footer}}

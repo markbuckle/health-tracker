@@ -86,19 +86,27 @@
                     </span>
                   </h1>
                 </div>
-                <div class="form-info-output"><strong>Age:</strong>
+                <div class="form-info-output"><div class="basic-info-subheader">Age:</div>
                   <span id="ageDisplay">
-                    {{#if profile.age}}{{profile.age}}{{else}}-{{/if}}
+                    {{#if profile.age}}{{profile.age}}{{else}}<div class="section-empty">Birthdate not added</div>{{/if}}
                   </span>
                 </div>
-                <div class="form-info-output"><strong>Blood Type:</strong>
+                <div class="form-info-output">
+                  <div class="basic-info-subheader">Blood Type:</div>
                   <span id="bloodTypeDisplay">
                     {{#ifEqual profile.bloodType "Other"}}
                       {{profile.customBloodType}}
                       {{else}}
-                        {{profile.bloodType}}
-                    {{/ifEqual}}
+                        {{#if profile.bloodType}}
+                          {{profile.bloodType}}
+                        {{else}}
+                          <div class="section-empty">Blood type not added</div>
+                        {{/if}}
+                      {{/ifEqual}}
                   </span>
+                  <button class="profile-info-button" aria-label="Show blood type information">
+                    {{> svg/info}}
+                  </button>
                 </div>
                 <br>
                 {{!-- <div class="form-info">Sex:<span id="sexDisplay">-</span></div> --}}
@@ -163,41 +171,40 @@
                   {{#if profile.monitoring.length}}
                     {{#each profile.monitoring}}
                       <div class="monitoring-entry entry-card">
-                        <div class="entry-row">
-                            <div class="entry-label">
-                              <span class="entry-label">Weight:</span>
-                              <span class="entry-value" id="weightDisplay">
-                                {{#if weight}}{{weight}}{{else}}-{{/if}}
-                              </span>
-                            </div>
-                            <div class="entry-label">
-                              <span class="entry-label">Blood Pressure:</span>
-                              <span class="entry-value" id="bloodPressure">
-                                {{#if bloodPressure}}{{bloodPressure}}{{else}}-{{/if}}
-                              </span>
-                            </div>
-                            <div class="entry-label"> 
-                              <span class="entry-label">Resting Heart Rate:</span>
-                                <span class="entry-value" id="restingHeartRate">
-                                {{#if restingHeartRate}}{{restingHeartRate}}{{else}}-{{/if}}
-                              </span>
-                            </div>
-                            <div class="entry-label">
-                              <span class="entry-label">Sleep:</span>
-                              <span class="entry-value" id="sleep">
-                                {{#if sleep}}{{sleep}}{{else}}-{{/if}}
-                              </span>
-                            </div>
-                            <div class="entry-label"><strong>Notes:</strong>
-                              <span class="entry-value" id="monitoringNotes">
-                                {{#if monitoringNotes}}{{monitoringNotes}}{{else}}-{{/if}}
-                              </span>
-                            </div>
-                            <div class="entry-actions">
-                              <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
-                              <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
-                            </div>
-                        </div>
+                          <div class="entry-row">
+                            <span class="entry-label">Weight:</span>
+                            <span class="entry-value" id="weightDisplay">
+                              {{#if weight}}{{weight}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row">
+                            <span class="entry-label">Blood Pressure:</span>
+                            <span class="entry-value" id="bloodPressure">
+                              {{#if bloodPressure}}{{bloodPressure}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row"> 
+                            <span class="entry-label">Resting Heart Rate:</span>
+                              <span class="entry-value" id="restingHeartRate">
+                              {{#if restingHeartRate}}{{restingHeartRate}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row">
+                            <span class="entry-label">Sleep:</span>
+                            <span class="entry-value" id="sleep">
+                              {{#if sleep}}{{sleep}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row">
+                            <span class="entry-label">Notes:</span>
+                            <span class="entry-value" id="monitoringNotes">
+                              {{#if monitoringNotes}}{{monitoringNotes}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-actions">
+                            <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                            <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
+                          </div>
                       </div>
                     {{/each}}
                   {{else}}
@@ -541,6 +548,84 @@
       <div class="w-form-fail">
         <div>Oops! Something went wrong while submitting the form.</div>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper blood-type-modal">
+    <div class="modal-background"></div>
+      <div class="modal-card">
+        <div class="modal-header">
+          <a class="modal-return-button w-inline-block w--current" aria-current="page">
+            {{> svg/backArrow}}
+          </a>
+          <h1 class="modal-button">Blood Type Information</h1>
+        </div>
+        
+        <div class="modal-description">
+          <p>Your blood type is essential medical information that can be critical in emergencies. Blood types determine compatibility for transfusions - receiving incompatible blood can cause severe, potentially fatal reactions.</p>
+          
+          <h3>Blood Type Compatibility Chart</h3>
+          <div class="blood-type-table-container">
+            <table class="blood-type-table">
+              <thead>
+                <tr>
+                  <th>Recipient Blood Type</th>
+                  <th>Compatible Donor Blood Types</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>A+</td>
+                  <td>A+, A-, O+, O-</td>
+                </tr>
+                <tr>
+                  <td>A-</td>
+                  <td>A-, O-</td>
+                </tr>
+                <tr>
+                  <td>B+</td>
+                  <td>B+, B-, O+, O-</td>
+                </tr>
+                <tr>
+                  <td>B-</td>
+                  <td>B-, O-</td>
+                </tr>
+                <tr>
+                  <td>AB+</td>
+                  <td>Compatible with all blood types</td>
+                </tr>
+                <tr>
+                  <td>AB-</td>
+                  <td>AB-, A-, B-, O-</td>
+                </tr>
+                <tr>
+                  <td>O+</td>
+                  <td>O+, O-</td>
+                </tr>
+                <tr>
+                  <td>O-</td>
+                  <td>O-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="blood-type-facts">
+            <h3>Key Facts:</h3>
+            <ul>
+              <li>O- is the universal donor (can donate to any blood type)</li>
+              <li>AB+ is the universal recipient (can receive from any blood type)</li>
+              <li>Blood type is inherited from your parents</li>
+              <li>Besides ABO types, the Rh factor (+ or -) is also important for compatibility</li>
+            </ul>
+          </div>
+          
+          <p class="source-link">Source: <a href="https://www.redcrossblood.org/donate-blood/blood-types.html" target="_blank">American Red Cross</a></p>
+        </div>
+
+        <div class="modal-footer">
+          <a href="/profile" aria-current="page" class="cancel-button cancel-space">Close</a>
+        </div>
     </div>
   </div>
 
@@ -1517,9 +1602,77 @@
         });
       });
 
-      // Initialize
+        // Initialize
       checkBloodType();
     });
+
+// Blood Type Modal Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Get references to the modal and button
+  const bloodTypeModal = document.querySelector('.blood-type-modal');
+  const bloodTypeInfoButton = document.querySelector('.profile-info-button');
+  
+  // Function to open the modal
+  function openBloodTypeModal() {
+    if (!bloodTypeModal) return;
+    
+    bloodTypeModal.style.display = 'flex';
+    setTimeout(() => {
+      bloodTypeModal.style.opacity = '1';
+      bloodTypeModal.style.visibility = 'visible';
+    }, 10);
+  }
+  
+  // Function to close the modal
+  function closeBloodTypeModal() {
+    if (!bloodTypeModal) return;
+    
+    bloodTypeModal.style.opacity = '0';
+    bloodTypeModal.style.visibility = 'hidden';
+    setTimeout(() => {
+      bloodTypeModal.style.display = 'none';
+    }, 300); // Allow time for the opacity transition
+  }
+  
+  // Add click event to the info button
+  if (bloodTypeInfoButton) {
+    bloodTypeInfoButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent event bubbling
+      openBloodTypeModal();
+    });
+  }
+  
+    // Add click events to close the modal
+    if (bloodTypeModal) {
+      // Close when clicking the background
+      const modalBackground = bloodTypeModal.querySelector('.modal-background');
+      if (modalBackground) {
+        modalBackground.addEventListener('click', function(e) {
+          e.preventDefault();
+          closeBloodTypeModal();
+        });
+      }
+      
+      // Close when clicking the return button
+      const returnButton = bloodTypeModal.querySelector('.modal-return-button');
+      if (returnButton) {
+        returnButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          closeBloodTypeModal();
+        });
+      }
+      
+      // Close when clicking the cancel button
+      const cancelButton = bloodTypeModal.querySelector('.cancel-button');
+      if (cancelButton) {
+        cancelButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          closeBloodTypeModal();
+        });
+      }
+    }
+  });
 
   </script>
 
