@@ -188,8 +188,7 @@ psql -h your_host -U your_username -d your_database
 ```
 
 Replace your_host, your_username, and your_database with your actual PostgreSQL
-host, username, and database name. You will be prompted to enter your password.
-3. Run the query.
+host, username, and database name. You will be prompted to enter your password. 3. Run the query.
 
 ```SQL
 SHOW ssl;
@@ -374,6 +373,37 @@ To install Plotly React:
 
 ```pwsh
 npm install plotly.js-dist react-plotly.js react
+```
+
+### Medical Database
+
+PostgreSQL database with pgvector for semantic search
+
+### Retrieval Augmented Generation (RAG) chatbot
+
+Start the local server with:
+
+```pwsh
+npm start
+```
+
+End the server with:
+
+```pwsh
+netstat -ano | findstr :3000
+Stop-Process -Id 12345 -Force
+```
+
+Implemented OpenAI embeddings for converting text to vector representations
+
+API Endpoints can be test with:
+
+```pwsh
+curl http://localhost:3000/api/rag/test
+```
+
+```pwsh
+curl -X POST http://localhost:3000/api/rag/ask -H "Content-Type: application/json" -d '{"query":"What is LDL cholesterol and why is it important?"}'
 ```
 
 ## Deployment

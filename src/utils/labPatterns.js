@@ -1,5 +1,27 @@
 // labPatterns.js - This file includes regex patterns to extract lab values from text
 
+// function createLabPattern(name, alternateNames, unit, displayUnit) {
+//     const namePattern = [name, ...alternateNames]
+//         .map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+//         .join('|');
+    
+//     return {
+//         regex: new RegExp(
+//             `(?:${namePattern})` +               // Main name or alternates
+//             '\\s*:?\\s*' +                       // Optional colon with flexible spacing
+//             '(?:[LEH]\\s*)?'+                    // Optional flags (Low/Elevated/High)
+//             '(\\d{1,6}\\.?\\d*)\\s*' +           // The value (capture group 1) - limit to 6 digits
+//             '(?:' +                              // Non-capturing group for units/ranges
+//                 '(?:\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)?\\s*' + // Optional reference range
+//                 unit +                           // Unit
+//             ')?',                                // Make the whole unit/range part optional
+//             'i'                                  // Case insensitive
+//         ),
+//         standardUnit: displayUnit || unit,
+//         alternateNames: alternateNames,
+//         fuzzyThreshold: 0.85                    // Levenshtein distance threshold
+//     };
+// }
 function createLabPattern(name, alternateNames, unit, displayUnit) {
     const namePattern = [name, ...alternateNames]
         .map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
@@ -10,9 +32,11 @@ function createLabPattern(name, alternateNames, unit, displayUnit) {
             `(?:${namePattern})` +               // Main name or alternates
             '\\s*:?\\s*' +                       // Optional colon with flexible spacing
             '(?:[LEH]\\s*)?'+                    // Optional flags (Low/Elevated/High)
-            '(\\d+\\.?\\d*)\\s*' +              // The value (capture group 1)
-            '(?:' +                              // Non-capturing group for units/ranges
-                '(?:\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)?\\s*' + // Optional reference range
+            '(\\d{1,6}\\.?\\d*)\\s*' +           // The value (capture group 1) - limit to 6 digits
+            '(?:' +                              // Start non-capturing group
+                '(?:(?:\\s+|)' +                 // Optional spacing
+                '(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*))?' + // Optional reference range (new capture group 2)
+                '\\s*' +                         // Optional spacing
                 unit +                           // Unit
             ')?',                                // Make the whole unit/range part optional
             'i'                                  // Case insensitive
@@ -786,17 +810,25 @@ const labPatterns = {
     )
 };
 
-const enhancedTestosteronePatterns = {
+const enhancedPatterns = {
     'Testosterone': {
-        regex: /Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
+        regex: /Testosterone(?:\s*\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*(?:nmol\/L|nmol\/l)/i,
+        // regex: /Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
         standardUnit: 'nmol/L',
-        precision: 2
+        precision: 2,
+        alternateNames: ['Total Testosterone'],
     },
     'Bioavailable Testosterone': {
         regex: /Bioavailable\s+Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
         standardUnit: 'nmol/L',
         precision: 2
-    }
+    },
+    'C-Reactive Protein': {
+        regex: /C-Reactive\s+Protein(?:[^:\n]*?:|)\s*(?:[LEH]\s*)?(\d+\.?\d*)\s*(?:mg\/L|mg\/l)/i,
+        standardUnit: 'mg/L',
+        alternateNames: ['CRP', 'C Reactive Protein', 'C REACTIVE PROTEIN'],
+        fuzzyThreshold: 0.85
+    },
 };
 
 const structuredTestPatterns = {
@@ -914,33 +946,43 @@ function findBestMatch(text, patterns) {
 const datePatterns = [
     {
         key: 'Collection Date',
-        regex: /Collection Date:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
+        regex: /Collection Date:?\s*(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{4}|\d{4}\/\d{2}\/\d{2}|\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})/i,
         priority: 1
+    },
+    {
+        key: 'Date',
+        regex: /Date:?\s*(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{4}|\d{4}\/\d{2}\/\d{2}|\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})/i,
+        priority: 2
+    },
+    {
+        key: 'Collection Date',
+        regex: /Collection Date:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
+        priority: 3
     },
     {
         key: 'Collected Date',
         regex: /Collected Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 2
+        priority: 4
     },
     {
         key: 'Generated On',
         regex: /Generated On:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 3
+        priority: 5
     },
     {
         key: 'Received Date',
         regex: /Received Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 4
+        priority: 6
     },
     {
         key: 'Updated On',
         regex: /Updated On:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 5
+        priority: 7
     },
     {
         key: 'Last Update Date',
         regex: /Last Update Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 6
+        priority: 8
     }
 ];
 
@@ -948,7 +990,7 @@ module.exports = {
     createStructuredLabPattern,
     labPatterns, 
     datePatterns,
-    enhancedTestosteronePatterns,
+    enhancedPatterns,
     structuredTestPatterns,
     findBestMatch,
     levenshteinDistance

@@ -1,3 +1,27 @@
+// labPatterns.js - This file includes regex patterns to extract lab values from text
+
+// function createLabPattern(name, alternateNames, unit, displayUnit) {
+//     const namePattern = [name, ...alternateNames]
+//         .map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+//         .join('|');
+    
+//     return {
+//         regex: new RegExp(
+//             `(?:${namePattern})` +               // Main name or alternates
+//             '\\s*:?\\s*' +                       // Optional colon with flexible spacing
+//             '(?:[LEH]\\s*)?'+                    // Optional flags (Low/Elevated/High)
+//             '(\\d{1,6}\\.?\\d*)\\s*' +           // The value (capture group 1) - limit to 6 digits
+//             '(?:' +                              // Non-capturing group for units/ranges
+//                 '(?:\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)?\\s*' + // Optional reference range
+//                 unit +                           // Unit
+//             ')?',                                // Make the whole unit/range part optional
+//             'i'                                  // Case insensitive
+//         ),
+//         standardUnit: displayUnit || unit,
+//         alternateNames: alternateNames,
+//         fuzzyThreshold: 0.85                    // Levenshtein distance threshold
+//     };
+// }
 function createLabPattern(name, alternateNames, unit, displayUnit) {
     const namePattern = [name, ...alternateNames]
         .map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
@@ -8,9 +32,11 @@ function createLabPattern(name, alternateNames, unit, displayUnit) {
             `(?:${namePattern})` +               // Main name or alternates
             '\\s*:?\\s*' +                       // Optional colon with flexible spacing
             '(?:[LEH]\\s*)?'+                    // Optional flags (Low/Elevated/High)
-            '(\\d+\\.?\\d*)\\s*' +              // The value (capture group 1)
-            '(?:' +                              // Non-capturing group for units/ranges
-                '(?:\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)?\\s*' + // Optional reference range
+            '(\\d{1,6}\\.?\\d*)\\s*' +           // The value (capture group 1) - limit to 6 digits
+            '(?:' +                              // Start non-capturing group
+                '(?:(?:\\s+|)' +                 // Optional spacing
+                '(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*))?' + // Optional reference range (new capture group 2)
+                '\\s*' +                         // Optional spacing
                 unit +                           // Unit
             ')?',                                // Make the whole unit/range part optional
             'i'                                  // Case insensitive
@@ -59,8 +85,8 @@ const labPatterns = {
     ),
     'Hct': createLabPattern('Hct',
         ['Hematocrit', 'HCT'],
-        '',
-        ''
+        '%',
+        '%'
     ),
     'MCV': createLabPattern('MCV',
         ['Mean Corpuscular Volume'],
@@ -207,82 +233,602 @@ const labPatterns = {
         'nmol\\/L',
         'nmol/L'
     ),
-    // 'Bioavailable Testosterone': createLabPattern('Bioavailable Testosterone',
-    //     ['Bio Testosterone', 'Bioavailable T'],
-    //     'nmol\\/L',
-    //     'nmol/L'
-    // ),
-    // 'SHBG': createLabPattern('(?:SHBG|Sex Hormone Binding Globulin)',
-    //     ['Sex Hormone Binding Protein'],
-    //     'nmol\\/L',
-    //     'nmol/L'
-    // ),
     'C-Peptide': createLabPattern('C-Peptide',
         ['C Peptide'],
         'pmol\\/L',
         'pmol/L'
     ),
-    'FSH': createLabPattern(
-        'FSH',
-        ['Follicle Stimulating Hormone', 'FaH', 'F.H'],
-        '(?:IU\\/L|IU\\/l|IUL|ILE|MAT)',
-        'IU/L'
+    
+    // Additional Cardiovascular Markers
+    'HDL-C': createLabPattern('HDL-C',
+        ['HDL', 'High Density Lipoprotein', 'High-Density Lipoprotein', 'HDL Cholesterol'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
     ),
-    'LH': createLabPattern(
-        'LH',
-        ['Luteinizing Hormone'],
-        '(?:IU\\/L|IU\\/l|IUL|FLL)',
-        'IU/L'
+    'LDL-C': createLabPattern('LDL-C',
+        ['LDL', 'Low Density Lipoprotein', 'Low-Density Lipoprotein', 'LDL Cholesterol'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
     ),
-    'Prolactin': createLabPattern(
-        'Prolactin',
-        ['Prolagtin', 'Prclactin'],
-        '(?:ug\\/L|ug\\/l|ugfl|ug/L)',
-        'ug/L'
+    'Triglycerides': createLabPattern('Triglycerides',
+        ['TG', 'Trigs'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
     ),
-    'PSA': createLabPattern(
-        'PSA Screening',
-        ['Prostate Specific Antigen', 'PSA', 'FSA Sereening', 'FSA Screening'],
-        '(?:ug\\/L|ug\\/l|ugfl|ul|d)',
-        'ug/L'
+    'Total Cholesterol': createLabPattern('Total Cholesterol',
+        ['TC', 'Cholesterol'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
     ),
-    'Vitamin D': createLabPattern(
-        'Vit D 25-hydroxy',
-        ['Vitamin D', '25-hydroxy Vitamin D', '25(OH)D', 'WitD 25kydroxy', 'VitD 25hydroxy U'],
-        '(?:nmol\\/L|nmol\\/l|nmolL|mrnokL)',
+    'VLDL-C': createLabPattern('VLDL-C',
+        ['VLDL', 'Very Low Density Lipoprotein', 'Very-Low-Density Lipoprotein'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
+    ),
+    'Non-HDL-C': createLabPattern('Non-HDL-C',
+        ['Non HDL', 'Non HDL Cholesterol'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
+    ),
+    'TC/HDL-C': createLabPattern('TC/HDL-C',
+        ['TC/HDL', 'Total Cholesterol/HDL', 'Cholesterol/HDL Ratio'],
+        '',
+        'ratio'
+    ),
+    'ApoA1': createLabPattern('ApoA1',
+        ['Apolipoprotein A1', 'Apo A1', 'Apo A-1'],
+        '(?:g\\/L|mg\\/dL)',
+        'g/L'
+    ),
+    'Apo-B': createLabPattern('Apo-B',
+        ['Apolipoprotein B', 'Apo B', 'ApoB'],
+        '(?:g\\/L|mg\\/dL)',
+        'g/L'
+    ),
+    'Lp(a)': createLabPattern('Lp\\(a\\)',
+        ['Lipoprotein a', 'Lipoprotein little a'],
+        '(?:nmol\\/L|mg\\/dL)',
         'nmol/L'
     ),
-    'Thyroperoxidase Antibody': createLabPattern(
-        'Thyroperoxidase Antibody',
-        ['THYROPEROXIDASE ANTIBODY', 'TPO Antibody', 'TPO Ab'],
-        'kIU\\/L',
-        'kIU/L'
+    'LDL Particle Number': createLabPattern('LDL Particle Number',
+        ['LDL-P', 'LDL Particles', 'LDL-P Total'],
+        '(?:nmol\\/L|mg\\/dL)',
+        'nmol/L'
     ),
-    // inflammation
-    'C Reactive Protein': createLabPattern(
-        'C Reactive Protein',
-        ['C REACTIVE PROTEIN', 'CRP', 'C-Reactive Protein', 'REACTIVE PROTEIN'],
-        'mg\\/L',
+    'LDL Particle Size': createLabPattern('LDL Particle Size',
+        ['LDL Size', 'LDL-S'],
+        '(?:nm)',
+        'nm'
+    ),
+    'HDL Particle Number': createLabPattern('HDL Particle Number',
+        ['HDL-P', 'HDL Particles', 'HDL-P Total'],
+        '(?:μmol\\/L|mg\\/dL)',
+        'μmol/L'
+    ),
+    'oxLDL': createLabPattern('oxLDL',
+        ['Oxidized LDL', 'Oxidised LDL'],
+        '(?:U\\/L|mg\\/dL)',
+        'U/L'
+    ),
+    'PCSK9': createLabPattern('PCSK9',
+        ['Proprotein Convertase Subtilisin/Kexin Type 9'],
+        '(?:ng\\/mL)',
+        'ng/mL'
+    ),
+    
+    // Additional Metabolic Markers
+    'Fasting Blood Glucose': createLabPattern('Fasting Blood Glucose',
+        ['FBG', 'Fasting Glucose', 'Glucose Fasting'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
+    ),
+    'Fasting Insulin': createLabPattern('Fasting Insulin',
+        ['Insulin, Fasting', 'Insulin Level'],
+        '(?:pmol\\/L|μIU\\/mL|uIU\\/mL)',
+        'pmol/L'
+    ),
+    'HOMA-IR': createLabPattern('HOMA-IR',
+        ['Homeostatic Model Assessment', 'HOMA Index', 'HOMA'],
+        '',
+        ''
+    ),
+    'Adiponectin': createLabPattern('Adiponectin',
+        ['ADPN'],
+        '(?:μg\\/mL|mg\\/L)',
+        'μg/mL'
+    ),
+    'Leptin': createLabPattern('Leptin',
+        [],
+        '(?:ng\\/mL)',
+        'ng/mL'
+    ),
+    'GGT/AST Ratio': createLabPattern('GGT/AST Ratio',
+        ['GGT:AST', 'GGT/AST'],
+        '',
+        'ratio'
+    ),
+    
+    // Additional Liver Markers
+    'AST': createLabPattern('AST',
+        ['Aspartate Aminotransferase', 'SGOT'],
+        'U\\/L',
+        'U/L'
+    ),
+    'GGT': createLabPattern('GGT',
+        ['Gamma-Glutamyl Transferase', 'Gamma-Glutamyl Transpeptidase', 'GGTP'],
+        'U\\/L',
+        'U/L'
+    ),
+    'ALP': createLabPattern('ALP',
+        ['Alkaline Phosphatase'],
+        'U\\/L',
+        'U/L'
+    ),
+    'Bilirubin': createLabPattern('Bilirubin',
+        ['Total Bilirubin', 'T. Bilirubin'],
+        '(?:μmol\\/L|mg\\/dL)',
+        'μmol/L'
+    ),
+    'Direct Bilirubin': createLabPattern('Direct Bilirubin',
+        ['Conjugated Bilirubin', 'DB'],
+        '(?:μmol\\/L|mg\\/dL)',
+        'μmol/L'
+    ),
+    'Indirect Bilirubin': createLabPattern('Indirect Bilirubin',
+        ['Unconjugated Bilirubin', 'IB'],
+        '(?:μmol\\/L|mg\\/dL)',
+        'μmol/L'
+    ),
+    'Albumin/Globulin Ratio': createLabPattern('Albumin/Globulin Ratio',
+        ['A/G Ratio', 'Albumin:Globulin Ratio'],
+        '',
+        'ratio'
+    ),
+    'Total Protein': createLabPattern('Total Protein',
+        ['TP'],
+        '(?:g\\/L|g\\/dL)',
+        'g/L'
+    ),
+    'Creatine Kinase': createLabPattern('Creatine Kinase',
+        ['CK', 'CPK'],
+        'U\\/L',
+        'U/L'
+    ),
+    
+    // Additional Kidney Markers
+    'BUN': createLabPattern('BUN',
+        ['Blood Urea Nitrogen', 'Urea Nitrogen'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
+    ),
+    'BUN/Creatinine Ratio': createLabPattern('BUN/Creatinine Ratio',
+        ['BUN:Creatinine', 'Urea:Creatinine Ratio'],
+        '',
+        'ratio'
+    ),
+    'Cystatin C': createLabPattern('Cystatin C',
+        ['Cys C'],
+        '(?:mg\\/L)',
         'mg/L'
+    ),
+    'Microalbumin': createLabPattern('Microalbumin',
+        ['Urine Albumin', 'Urinary Albumin'],
+        '(?:mg\\/L|mg\\/24h)',
+        'mg/L'
+    ),
+    'Uric Acid': createLabPattern('Uric Acid',
+        ['UA', 'Urate'],
+        '(?:μmol\\/L|mg\\/dL)',
+        'μmol/L'
+    ),
+    'Urine pH': createLabPattern('Urine pH',
+        ['U pH', 'pH, Urine'],
+        '',
+        ''
+    ),
+    
+    // Additional Pancreas Markers
+    'Amylase': createLabPattern('Amylase',
+        ['AMY'],
+        'U\\/L',
+        'U/L'
+    ),
+    'Lipase': createLabPattern('Lipase',
+        ['LPS'],
+        'U\\/L',
+        'U/L'
+    ),
+    
+    // Additional Hormone Markers
+    'Free Testosterone': createLabPattern('Free Testosterone',
+        ['Free T', 'FT'],
+        '(?:pmol\\/L|ng\\/dL)',
+        'pmol/L'
+    ),
+    'SHBG': createLabPattern('SHBG',
+        ['Sex Hormone Binding Globulin', 'Sex Hormone-Binding Globulin'],
+        '(?:nmol\\/L)',
+        'nmol/L'
+    ),
+    'DHEA-S': createLabPattern('DHEA-S',
+        ['Dehydroepiandrosterone Sulfate', 'DHEAS'],
+        '(?:μmol\\/L|μg\\/dL)',
+        'μmol/L'
+    ),
+    'Free T3': createLabPattern('Free T3',
+        ['FT3', 'T3, Free'],
+        '(?:pmol\\/L|pg\\/mL)',
+        'pmol/L'
+    ),
+    'Reverse T3': createLabPattern('Reverse T3',
+        ['rT3', 'T3, Reverse'],
+        '(?:pmol\\/L|ng\\/dL)',
+        'pmol/L'
+    ),
+    'Estradiol': createLabPattern('Estradiol',
+        ['E2', '17β-Estradiol'],
+        '(?:pmol\\/L|pg\\/mL)',
+        'pmol/L'
+    ),
+    'Prolactin': createLabPattern('Prolactin',
+        ['PRL'],
+        '(?:mIU\\/L|ng\\/mL)',
+        'mIU/L'
+    ),
+    'FSH': createLabPattern('FSH',
+        ['Follicle Stimulating Hormone', 'Follicle-Stimulating Hormone'],
+        '(?:IU\\/L|mIU\\/mL)',
+        'IU/L'
+    ),
+    'LH': createLabPattern('LH',
+        ['Luteinizing Hormone', 'Luteinising Hormone'],
+        '(?:IU\\/L|mIU\\/mL)',
+        'IU/L'
+    ),
+    'Progesterone': createLabPattern('Progesterone',
+        ['P4'],
+        '(?:nmol\\/L|ng\\/mL)',
+        'nmol/L'
+    ),
+    'Cortisol': createLabPattern('Cortisol',
+        ['Serum Cortisol', 'Plasma Cortisol'],
+        '(?:nmol\\/L|μg\\/dL)',
+        'nmol/L'
+    ),
+    'Growth Hormone': createLabPattern('Growth Hormone',
+        ['GH', 'Somatotropin'],
+        '(?:μg\\/L|ng\\/mL)',
+        'μg/L'
+    ),
+    'Insulin-like Growth Factor (IGF-1)': createLabPattern('Insulin-like Growth Factor',
+        ['IGF-1', 'IGF1', 'Somatomedin C'],
+        '(?:nmol\\/L|ng\\/mL)',
+        'nmol/L'
+    ),
+    'Parathyroid Hormone': createLabPattern('Parathyroid Hormone',
+        ['PTH', 'Parathormone'],
+        '(?:pmol\\/L|pg\\/mL)',
+        'pmol/L'
+    ),
+    
+    // Additional Immunity/Inflammation Markers
+    'hsCRP': createLabPattern('hsCRP',
+        ['High Sensitivity CRP', 'High-Sensitivity C-Reactive Protein', 'hs-CRP'],
+        '(?:mg\\/L)',
+        'mg/L'
+    ),
+    'Homocysteine': createLabPattern('Homocysteine',
+        ['Hcy'],
+        '(?:μmol\\/L|mg\\/L)',
+        'μmol/L'
+    ),
+    'IL-6': createLabPattern('IL-6',
+        ['Interleukin 6', 'Interleukin-6'],
+        '(?:pg\\/mL)',
+        'pg/mL'
+    ),
+    'TNF-alpha': createLabPattern('TNF-alpha',
+        ['TNF-α', 'Tumor Necrosis Factor Alpha', 'Tumour Necrosis Factor Alpha'],
+        '(?:pg\\/mL)',
+        'pg/mL'
+    ),
+    'Fibrinogen': createLabPattern('Fibrinogen',
+        ['Factor I'],
+        '(?:g\\/L|mg\\/dL)',
+        'g/L'
+    ),
+    'Complement C3': createLabPattern('Complement C3',
+        ['C3'],
+        '(?:g\\/L|mg\\/dL)',
+        'g/L'
+    ),
+    'Complement C4': createLabPattern('Complement C4',
+        ['C4'],
+        '(?:g\\/L|mg\\/dL)',
+        'g/L'
+    ),
+    'ESR': createLabPattern('ESR',
+        ['Erythrocyte Sedimentation Rate', 'Sed Rate'],
+        '(?:mm\\/hr|mm\\/h)',
+        'mm/hr'
+    ),
+    
+    // Additional Autoimmunity Markers
+    'Anti-TPO': createLabPattern('Anti-TPO',
+        ['TPO Antibodies', 'Thyroid Peroxidase Antibodies'],
+        '(?:IU\\/mL|kIU\\/L)',
+        'IU/mL'
+    ),
+    'Anti-TG': createLabPattern('Anti-TG',
+        ['TG Antibodies', 'Thyroglobulin Antibodies'],
+        '(?:IU\\/mL|kIU\\/L)',
+        'IU/mL'
+    ),
+    'ANA': createLabPattern('ANA',
+        ['Antinuclear Antibodies', 'Antinuclear Antibody'],
+        '(?:titer|ratio)',
+        'titer'
+    ),
+    'Rheumatoid Factor': createLabPattern('Rheumatoid Factor',
+        ['RF'],
+        '(?:IU\\/mL|kIU\\/L)',
+        'IU/mL'
+    ),
+    'Anti-CCP': createLabPattern('Anti-CCP',
+        ['Cyclic Citrullinated Peptide Antibodies', 'CCP Antibodies'],
+        '(?:U\\/mL)',
+        'U/mL'
+    ),
+    'ENA Panel': createLabPattern('ENA Panel',
+        ['Extractable Nuclear Antigen Panel', 'ENA'],
+        '',
+        'panel'
+    ),
+    
+    // Additional Blood Markers
+    'Hematocrit': createLabPattern('Hematocrit',
+        ['HCT', 'Crit', 'Packed Cell Volume', 'PCV'],
+        '%',
+        '%'
+    ),
+    'Reticulocyte Count': createLabPattern('Reticulocyte Count',
+        ['Retic Count', 'Reticulocytes'],
+        '(?:%|×10⁹\\/L)',
+        '%'
+    ),
+    'Haptoglobin': createLabPattern('Haptoglobin',
+        ['Hp'],
+        '(?:g\\/L|mg\\/dL)',
+        'g/L'
+    ),
+    
+    // Nutrients
+    'Vitamin D': createLabPattern('Vitamin D',
+        ['25-OH Vitamin D', '25-Hydroxyvitamin D', '25(OH)D'],
+        '(?:nmol\\/L|ng\\/mL)',
+        'nmol/L'
+    ),
+    'Vitamin B12': createLabPattern('Vitamin B12',
+        ['Cobalamin'],
+        '(?:pmol\\/L|pg\\/mL)',
+        'pmol/L'
+    ),
+    'Folate': createLabPattern('Folate',
+        ['Folic Acid', 'Vitamin B9'],
+        '(?:nmol\\/L|ng\\/mL)',
+        'nmol/L'
+    ),
+    'Vitamin B6': createLabPattern('Vitamin B6',
+        ['Pyridoxine'],
+        '(?:nmol\\/L|ng\\/mL)',
+        'nmol/L'
+    ),
+    'Vitamin C': createLabPattern('Vitamin C',
+        ['Ascorbic Acid'],
+        '(?:μmol\\/L|mg\\/dL)',
+        'μmol/L'
+    ),
+    'Vitamin E': createLabPattern('Vitamin E',
+        ['Alpha-Tocopherol'],
+        '(?:μmol\\/L|mg\\/dL)',
+        'μmol/L'
+    ),
+    'Vitamin K': createLabPattern('Vitamin K',
+        ['Phylloquinone'],
+        '(?:nmol\\/L|ng\\/mL)',
+        'nmol/L'
+    ),
+    'Vitamin A': createLabPattern('Vitamin A',
+        ['Retinol'],
+        '(?:μmol\\/L|μg\\/dL)',
+        'μmol/L'
+    ),
+    'Iron': createLabPattern('Iron',
+        ['Serum Iron', 'Fe'],
+        '(?:μmol\\/L|μg\\/dL)',
+        'μmol/L'
+    ),
+    'Ferritin': createLabPattern('Ferritin',
+        ['Serum Ferritin'],
+        '(?:μg\\/L|ng\\/mL)',
+        'μg/L'
+    ),
+    'TIBC': createLabPattern('TIBC',
+        ['Total Iron Binding Capacity'],
+        '(?:μmol\\/L|μg\\/dL)',
+        'μmol/L'
+    ),
+    'TSAT': createLabPattern('TSAT',
+        ['Transferrin Saturation', 'Iron Saturation'],
+        '%',
+        '%'
+    ),
+    'Zinc': createLabPattern('Zinc',
+        ['Zn'],
+        '(?:μmol\\/L|μg\\/dL)',
+        'μmol/L'
+    ),
+    'Selenium': createLabPattern('Selenium',
+        ['Se'],
+        '(?:μmol\\/L|μg\\/L)',
+        'μmol/L'
+    ),
+    'CoEnzyme Q10': createLabPattern('CoEnzyme Q10',
+        ['CoQ10', 'Ubiquinone'],
+        '(?:μmol\\/L|mg\\/L)',
+        'μmol/L'
+    ),
+    'Copper': createLabPattern('Copper',
+        ['Cu'],
+        '(?:μmol\\/L|μg\\/dL)',
+        'μmol/L'
+    ),
+    'Iodine': createLabPattern('Iodine',
+        ['I'],
+        '(?:μg\\/L|nmol\\/L)',
+        'μg/L'
+    ),
+    'Omega-3 Index': createLabPattern('Omega-3 Index',
+        ['Omega 3 Index', 'EPA+DHA'],
+        '%',
+        '%'
+    ),
+    
+    // Additional Electrolytes
+    'Chloride': createLabPattern('Chloride',
+        ['Cl', 'Cl-'],
+        '(?:mmol\\/L|mEq\\/L)',
+        'mmol/L'
+    ),
+    'Bicarbonate': createLabPattern('Bicarbonate',
+        ['HCO3', 'CO2', 'Carbon Dioxide'],
+        '(?:mmol\\/L|mEq\\/L)',
+        'mmol/L'
+    ),
+    'Phosphate': createLabPattern('Phosphate',
+        ['PO4', 'Inorganic Phosphate'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
+    ),
+    'Magnesium': createLabPattern('Magnesium',
+        ['Mg', 'Mg2+'],
+        '(?:mmol\\/L|mg\\/dL)',
+        'mmol/L'
+    ),
+    
+    // Bone Health
+    'Alkaline Phosphatase (Bone-Specific)': createLabPattern('Alkaline Phosphatase Bone-Specific',
+        ['Bone ALP', 'BALP', 'Bone-Specific ALP'],
+        '(?:U\\/L|μg\\/L)',
+        'U/L'
+    ),
+    'Osteocalcin': createLabPattern('Osteocalcin',
+        ['OC', 'BGP', 'Bone Gla Protein'],
+        '(?:μg\\/L|ng\\/mL)',
+        'μg/L'
+    ),
+    'N-telopeptide': createLabPattern('N-telopeptide',
+        ['NTx', 'N-terminal Telopeptide'],
+        '(?:nmol\\/L|ng\\/mL)',
+        'nmol/L'
+    ),
+    
+    // Cancer Markers
+    'PSA': createLabPattern('PSA',
+        ['Prostate Specific Antigen', 'Prostate-Specific Antigen'],
+        '(?:μg\\/L|ng\\/mL)',
+        'μg/L'
+    ),
+    'CEA': createLabPattern('CEA',
+        ['Carcinoembryonic Antigen'],
+        '(?:μg\\/L|ng\\/mL)',
+        'μg/L'
+    ),
+    'CA-125': createLabPattern('CA-125',
+        ['Cancer Antigen 125', 'CA 125'],
+        '(?:U\\/mL|kU\\/L)',
+        'U/mL'
+    ),
+    'AFP': createLabPattern('AFP',
+        ['Alpha-Fetoprotein', 'Alpha Fetoprotein'],
+        '(?:μg\\/L|ng\\/mL)',
+        'μg/L'
+    ),
+    'CA 19-9': createLabPattern('CA 19-9',
+        ['Cancer Antigen 19-9', 'CA19-9'],
+        '(?:U\\/mL|kU\\/L)',
+        'U/mL'
+    ),
+    
+    // Gut Health Markers
+    'Calprotectin': createLabPattern('Calprotectin',
+        ['Fecal Calprotectin'],
+        '(?:μg\\/g)',
+        'μg/g'
+    ),
+    'Zonulin': createLabPattern('Zonulin',
+        ['Serum Zonulin'],
+        '(?:ng\\/mL)',
+        'ng/mL'
+    ),
+    'Secretory IgA': createLabPattern('Secretory IgA',
+        ['SIgA', 'S-IgA'],
+        '(?:mg\\/dL|g\\/L)',
+        'mg/dL'
+    ),
+    'Short Chain Fatty Acids': createLabPattern('Short Chain Fatty Acids',
+        ['SCFA', 'SCFAs'],
+        '(?:μmol\\/g|mmol\\/kg)',
+        'μmol/g'
+    ),
+    
+    // Heavy Metals
+    'Lead': createLabPattern('Lead',
+        ['Pb'],
+        '(?:μg\\/dL|μmol\\/L)',
+        'μg/dL'
+    ),
+    'Mercury': createLabPattern('Mercury',
+        ['Hg'],
+        '(?:μg\\/L|nmol\\/L)',
+        'μg/L'
+    ),
+    'Arsenic': createLabPattern('Arsenic',
+        ['As'],
+        '(?:μg\\/L|nmol\\/L)',
+        'μg/L'
+    ),
+    'Cadmium': createLabPattern('Cadmium',
+        ['Cd'],
+        '(?:μg\\/L|nmol\\/L)',
+        'μg/L'
+    ),
+    'Aluminum': createLabPattern('Aluminum',
+        ['Al'],
+        '(?:μg\\/L|nmol\\/L)',
+        'μg/L'
     )
 };
 
-const enhancedTestosteronePatterns = {
+const enhancedPatterns = {
     'Testosterone': {
-        regex: /Testosterone\s*(?:\(Final\))?\s*(\d+\.\d+)(?:\s+\d+\.\d+\s*[-–]\s*\d+\.\d+)?\s*nmol\/L/i,
+        regex: /Testosterone(?:\s*\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*(?:nmol\/L|nmol\/l)/i,
+        // regex: /Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
         standardUnit: 'nmol/L',
-        precision: 2
+        precision: 2,
+        alternateNames: ['Total Testosterone'],
     },
-    // 'Testosterone': {
-    //     regex: /Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
-    //     standardUnit: 'nmol/L',
-    //     precision: 2
-    // },
     'Bioavailable Testosterone': {
         regex: /Bioavailable\s+Testosterone\s*(?:\(Final\))?\s*[^\n]*?\s*([\d.]+)\s*nmol\/L/i,
         standardUnit: 'nmol/L',
         precision: 2
-    }
+    },
+    'C-Reactive Protein': {
+        regex: /C-Reactive\s+Protein(?:[^:\n]*?:|)\s*(?:[LEH]\s*)?(\d+\.?\d*)\s*(?:mg\/L|mg\/l)/i,
+        standardUnit: 'mg/L',
+        alternateNames: ['CRP', 'C Reactive Protein', 'C REACTIVE PROTEIN'],
+        fuzzyThreshold: 0.85
+    },
 };
 
 const structuredTestPatterns = {
@@ -316,15 +862,42 @@ const structuredTestPatterns = {
         precision: 1,
         referencePattern: /REFERENCE\s*([\d.-]+)/i
     },
-    'PSA': {
-        regex: /FSA\s+Sereening\s+(?:\(?\w+\)?)?\s+(\d+\.\d+)/i,
-        standardUnit: 'ug/L',
-        precision: 2
+    // Additional structured test patterns for common biomarkers
+    'LH': {
+        regex: /LH[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:[IU]U\/L)/i,
+        standardUnit: 'IU/L',
+        precision: 1,
+        referencePattern: /REFERENCE\s*([\d.-]+)/i
     },
-    'VitaminD': {
-        regex: /[A-Za-z]+D\s+\d+[a-z]+\s+[A-Za-z]\s+(\d+)\s+[a-z]+L/i,
+    'Estradiol': {
+        regex: /ESTRADIOL[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:pmol\/L|pg\/mL)/i,
+        standardUnit: 'pmol/L',
+        precision: 1,
+        referencePattern: /REFERENCE\s*([\d.-]+)/i
+    },
+    'Progesterone': {
+        regex: /PROGESTERONE[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:nmol\/L|ng\/mL)/i,
         standardUnit: 'nmol/L',
-        precision: 0
+        precision: 1,
+        referencePattern: /REFERENCE\s*([\d.-]+)/i
+    },
+    'Vitamin D, 25-Hydroxy': {
+        regex: /(?:VITAMIN D|25-HYDROXY VITAMIN D)[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:nmol\/L|ng\/mL)/i,
+        standardUnit: 'nmol/L',
+        precision: 1,
+        referencePattern: /REFERENCE\s*([\d.-]+)/i
+    },
+    'Hemoglobin A1c': {
+        regex: /(?:HBA1C|HEMOGLOBIN A1C|GLYCATED HEMOGLOBIN)[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:%|mmol\/mol)/i,
+        standardUnit: '%',
+        precision: 1,
+        referencePattern: /REFERENCE\s*([\d.-]+)/i
+    },
+    'Ferritin': {
+        regex: /FERRITIN[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:μg\/L|ng\/mL)/i,
+        standardUnit: 'μg/L',
+        precision: 1,
+        referencePattern: /REFERENCE\s*([\d.-]+)/i
     }
 };
 
@@ -373,39 +946,52 @@ function findBestMatch(text, patterns) {
 const datePatterns = [
     {
         key: 'Collection Date',
-        regex: /Collection Date:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
+        regex: /Collection Date:?\s*(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{4}|\d{4}\/\d{2}\/\d{2}|\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})/i,
         priority: 1
+    },
+    {
+        key: 'Date',
+        regex: /Date:?\s*(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{4}|\d{4}\/\d{2}\/\d{2}|\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})/i,
+        priority: 2
+    },
+    {
+        key: 'Collection Date',
+        regex: /Collection Date:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
+        priority: 3
     },
     {
         key: 'Collected Date',
         regex: /Collected Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 2
+        priority: 4
     },
     {
         key: 'Generated On',
         regex: /Generated On:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 3
+        priority: 5
     },
     {
         key: 'Received Date',
         regex: /Received Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 4
+        priority: 6
     },
     {
         key: 'Updated On',
         regex: /Updated On:?\s*(\d{4}-[A-Za-z]{3}-\d{2}|\d{2}-[A-Za-z]{3}-\d{4})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 5
+        priority: 7
     },
     {
         key: 'Last Update Date',
         regex: /Last Update Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})\s*(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)?/i,
-        priority: 6
+        priority: 8
     }
 ];
 
 module.exports = { 
+    createStructuredLabPattern,
     labPatterns, 
     datePatterns,
-    enhancedTestosteronePatterns,
+    enhancedPatterns,
     structuredTestPatterns,
+    findBestMatch,
+    levenshteinDistance
 };

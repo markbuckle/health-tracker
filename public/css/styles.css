@@ -3194,6 +3194,8 @@ img,
 }
 
 .lab-result-card {
+  position: relative; 
+  overflow: hidden; 
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
@@ -3207,7 +3209,10 @@ img,
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  z-index: 2;
+  z-index: 4;
+  position: relative; 
+  padding: 5px 0;     
+  cursor: pointer;   
 }
 .lab-result-header-left {
   flex: 1;
@@ -3233,6 +3238,9 @@ img,
   opacity: 0;
   transition: height 0.3s ease-out, opacity 0.3s ease-out;
   z-index: 0;
+  overflow: hidden; 
+  position: relative; 
+  z-index: 2; 
 }
 
 .lab-value {
@@ -3253,6 +3261,8 @@ img,
   position: relative;
   transform: rotate(0deg); /* Initial state */
   transition: transform 0.3s ease;
+  z-index: 4;
+
 }
 .dropdown-indicator::before {
   content: "";
@@ -3265,6 +3275,7 @@ img,
   transition: transform 0.3s ease;
   top: 4px;
   left: -1.5rem;
+  z-index: 4;
 }
 .lab-result-card.expanded .dropdown-indicator::before {
   transform: rotate(225deg);
