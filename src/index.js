@@ -1411,7 +1411,8 @@ const upload = multer({
   },
 });
 
-const { extractFromPDF, extractFromFile, extractFromImage } = require("./parsers/PyTesseract/labParser");
+// This import will automatically use whichever OCR implementation is configured
+const { extractFromPDF } = require('./parsers');
 
 app.post(
   "/upload-files",
@@ -1443,10 +1444,13 @@ app.post(
         const file = req.files[fileIndex];
         try {
           // Extract lab values and date based on file type
-          const extension = path.extname(file.path).toLowerCase();
-          const extractedData = ['.jpg', '.jpeg', '.png'].includes(extension) 
-            ? await extractFromImage(file.path)
-            : await extractFromPDF(file.path);
+          // const extension = path.extname(file.path).toLowerCase();
+          // const extractedData = ['.jpg', '.jpeg', '.png'].includes(extension) 
+          //   ? await extractFromImage(file.path)
+          //   : await extractFromPDF(file.path);
+
+          // New unified parser can handle both PDFs and images
+          const extractedData = await extractFromPDF(file.path);
 
           console.log("Extracted data:", {
             numLabValues: Object.keys(extractedData).length,

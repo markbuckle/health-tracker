@@ -1,0 +1,15 @@
+# Core dependencies
+python-doctr>=0.6.0
+fastapi>=0.95.0
+uvicorn>=0.21.1
+python-multipart>=0.0.6
+pydantic>=1.10.7
+
+# Document handling
+pdf2image>=1.16.3
+pillow>=9.5.0
+numpy>=1.24.2
+opencv-python>=4.7.0.72
+
+# PyTorch (base installation)
+torch>=2.0.0
