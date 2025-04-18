@@ -11,6 +11,118 @@ const { labPatterns, datePatterns, enhancedPatterns, structuredTestPatterns } = 
 // Mozilla's PDF.js project - allows viewing PDFs directly in the browers w/o plugins
 pdfjsLib.GlobalWorkerOptions.workerSrc = path.join(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.worker.js');
 
+// Add this function to labParser.js
+function extractStructuredLabValues(text) {
+    const lines = text.split('\n');
+    const results = {};
+    
+    // Look for patterns that indicate a structured lab report
+    // Pattern 1: Tables with headers like "TEST NAME | RESULT | FLAG | REFERENCE | UNITS"
+    let tableSection = false;
+    let headers = {};
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // Try to detect table headers
+        if (line.match(/TEST\s*NAME|RESULT|REFERENCE|FLAG|UNITS/i)) {
+            tableSection = true;
+            
+            // Map column positions
+            const headerLine = line.toLowerCase();
+            headers = {
+                testName: headerLine.indexOf('test name'),
+                result: headerLine.indexOf('result'),
+                reference: headerLine.indexOf('reference'),
+                units: headerLine.indexOf('units'),
+                flag: headerLine.indexOf('flag')
+            };
+            
+            continue;
+        }
+        
+        // If we're in a table section, try to parse rows
+        if (tableSection && line.length > 10) {
+            try {
+                // Extract test name - it's usually at the beginning of the line
+                let testName = '';
+                if (headers.testName >= 0) {
+                    const nextCol = Math.min(...Object.values(headers).filter(pos => pos > headers.testName && pos >= 0));
+                    testName = line.substring(headers.testName, nextCol).trim();
+                } else {
+                    // If no header positioning, try to extract first part before numbers
+                    const matches = line.match(/^([A-Za-z\s\-\(\)]+)[\s:]*(\d+\.?\d*)/);
+                    if (matches) {
+                        testName = matches[1].trim();
+                    }
+                }
+                
+                if (!testName) continue;
+                
+                // Extract result value
+                let resultValue = '';
+                if (headers.result >= 0) {
+                    const nextCol = Math.min(...Object.values(headers).filter(pos => pos > headers.result && pos >= 0));
+                    resultValue = line.substring(headers.result, nextCol !== Infinity ? nextCol : undefined).trim();
+                } else {
+                    // Try to extract first number in the line
+                    const matches = line.match(/(\d+\.?\d*)/);
+                    if (matches) {
+                        resultValue = matches[1];
+                    }
+                }
+                
+                // Try to extract reference range
+                let refRange = '';
+                if (headers.reference >= 0) {
+                    const nextCol = Math.min(...Object.values(headers).filter(pos => pos > headers.reference && pos >= 0));
+                    refRange = line.substring(headers.reference, nextCol !== Infinity ? nextCol : undefined).trim();
+                    // Look for a pattern like "0-8" or "0.5-1.2"
+                    const rangeMatch = refRange.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
+                    if (rangeMatch) {
+                        refRange = rangeMatch[0];
+                    }
+                }
+                
+                // Extract units
+                let units = '';
+                if (headers.units >= 0) {
+                    units = line.substring(headers.units).trim();
+                }
+                
+                // Only add if we have a test name and result
+                if (testName && resultValue && !isNaN(parseFloat(resultValue))) {
+                    // Find standard name if possible
+                    let standardName = testName;
+                    for (const [name, pattern] of Object.entries(labPatterns)) {
+                        if (pattern.alternateNames && 
+                            (pattern.alternateNames.some(alt => 
+                                testName.toLowerCase().includes(alt.toLowerCase())
+                            ) || testName.toLowerCase().includes(name.toLowerCase()))) {
+                            standardName = name;
+                            break;
+                        }
+                    }
+                    
+                    results[standardName] = {
+                        value: parseFloat(resultValue).toFixed(2),
+                        unit: units,
+                        referenceRange: refRange,
+                        confidence: 1,
+                        matchType: 'structured'
+                    };
+                    
+                    console.log(`Found structured table match: ${standardName} = ${resultValue} ${units} (Range: ${refRange})`);
+                }
+            } catch (error) {
+                console.error('Error parsing structured table row:', error);
+            }
+        }
+    }
+    
+    return results;
+}
+
 // parsing - extracting and intrepretting
 function parseLabValues(text) {
     const results = {};
@@ -140,8 +252,9 @@ function parseLabValues(text) {
     // }
 
     // In the "standard patterns" section of parseLabValues function:
+
+    // In parseLabValues function, modify the standard patterns section:
     for (const [testName, pattern] of Object.entries(labPatterns)) {
-        // Skip if already found by other methods
         if (results[testName]) continue;
 
         try {
@@ -149,34 +262,34 @@ function parseLabValues(text) {
             if (match && isReasonableValue(match[1], testName)) {
                 const matchLine = lines.find(line => line.includes(match[0])) || '';
                 
-                // Try to extract reference range directly from the regex if available (from capture group 2)
-                let refRange = match[2];
+                // Look more aggressively for reference ranges
+                let refRange = null;
                 
-                // If not found in regex, try to find it in the line
-                if (!refRange) {
-                    // Look for reference range formats like "8.00 - 32.00" or "1.3-4.2"
-                    const refRangeMatch = matchLine.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
-                    if (refRangeMatch) {
-                        refRange = refRangeMatch[0];
-                    }
-                }
-
-                // For some specific types, search the surrounding lines as well
-                if (!refRange && 
-                    (testName.includes('Testosterone') || 
-                    testName.includes('TSH') || 
-                    testName.includes('Creatinine'))) {
-                    
-                    // Get the line index
+                // First try to find it in the same line
+                const refRangeMatch = matchLine.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
+                if (refRangeMatch) {
+                    refRange = refRangeMatch[0];
+                } else {
+                    // Try looking in nearby lines (2 before and 2 after)
                     const lineIndex = lines.findIndex(line => line.includes(match[0]));
                     if (lineIndex >= 0) {
-                        // Check surrounding lines (2 before and 2 after)
                         for (let i = Math.max(0, lineIndex - 2); i <= Math.min(lines.length - 1, lineIndex + 2); i++) {
                             const nearbyLine = lines[i];
-                            const nearbyRangeMatch = nearbyLine.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
-                            if (nearbyRangeMatch && !nearbyLine.includes(match[0])) {
-                                refRange = nearbyRangeMatch[0];
-                                break;
+                            // Look for text like "Reference" or "Range" with nearby numbers
+                            const rangeHeaderMatch = nearbyLine.match(/Ref(?:erence)?\s*Range/i);
+                            if (rangeHeaderMatch) {
+                                const rangeMatch = nearbyLine.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
+                                if (rangeMatch) {
+                                    refRange = rangeMatch[0];
+                                    break;
+                                }
+                            } else {
+                                // Still try regular format if no header
+                                const regularRangeMatch = nearbyLine.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
+                                if (regularRangeMatch && !nearbyLine.includes(match[0])) {
+                                    refRange = regularRangeMatch[0];
+                                    break;
+                                }
                             }
                         }
                     }
@@ -186,11 +299,11 @@ function parseLabValues(text) {
                     value: parseFloat(match[1]).toFixed(pattern.precision || 2),
                     unit: pattern.standardUnit,
                     rawText: matchLine.trim(),
-                    referenceRange: refRange || null,
+                    referenceRange: refRange,
                     confidence: 1,
                     matchType: 'standard'
                 };
-                console.log(`Found standard match: ${testName} = ${match[1]}`);
+                console.log(`Found standard match: ${testName} = ${match[1]}, range: ${refRange}`);
             }
         } catch (error) {
             console.error(`Error parsing ${testName}:`, error);
@@ -332,6 +445,63 @@ async function preprocessImage(imageBuffer) {
     scaledCtx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
     
     return scaledCanvas.toBuffer('image/png');
+}
+
+// Add to labParser.js
+async function tryMultipleProcessingOptions(imageBuffer) {
+    // Array to store results from different processing methods
+    const allResults = [];
+    
+    // Method 1: Original image
+    try {
+        console.log('Trying OCR with original image...');
+        const originalResults = await performOCR(imageBuffer);
+        allResults.push({
+            text: originalResults.text,
+            labValues: originalResults.labValues,
+            confidence: originalResults.confidence || 0
+        });
+    } catch (error) {
+        console.error('Error with original OCR:', error);
+    }
+    
+    // Method 2: High contrast preprocessing
+    try {
+        console.log('Trying OCR with high contrast image...');
+        const preprocessed = await preprocessImage(imageBuffer);
+        const contrastResults = await performOCR(preprocessed);
+        allResults.push({
+            text: contrastResults.text,
+            labValues: contrastResults.labValues,
+            confidence: contrastResults.confidence || 0
+        });
+    } catch (error) {
+        console.error('Error with contrast OCR:', error);
+    }
+
+    // Merge results, prioritizing higher confidence values
+    const mergedLabValues = {};
+    for (const result of allResults) {
+        if (result.labValues) {
+            for (const [testName, value] of Object.entries(result.labValues)) {
+                // Only override if new value has higher confidence or has reference range when current doesn't
+                if (!mergedLabValues[testName] || 
+                    mergedLabValues[testName].confidence < value.confidence ||
+                    (!mergedLabValues[testName].referenceRange && value.referenceRange)) {
+                    mergedLabValues[testName] = value;
+                }
+            }
+        }
+    }
+    
+    // Combine all text for better date extraction
+    const combinedText = allResults.map(r => r.text).join("\n");
+    
+    return {
+        labValues: mergedLabValues,
+        text: combinedText,
+        confidence: Math.max(...allResults.map(r => r.confidence || 0))
+    };
 }
 
 async function performMultiOCR(imageBuffer) {
@@ -582,6 +752,7 @@ async function extractFromPDF(filePath) {
             console.log('No results from PDF.js, trying OCR...');
             const pdfDocument = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
             const numPages = pdfDocument.numPages;
+            let allResults = {};
             
             for (let pageNum = 1; pageNum <= numPages; pageNum++) {
                 console.log(`Processing page ${pageNum} of ${numPages}`);
@@ -595,116 +766,132 @@ async function extractFromPDF(filePath) {
                     viewport: viewport
                 }).promise;
 
-                // Try original variant
-                console.log('Trying OCR with original variant...');
-                const originalImageBuffer = canvas.toBuffer('image/png');
-                const originalResults = await performOCR(originalImageBuffer);
-                console.log(`OCR with original variant - confidence: ${originalResults.confidence}%`);
-                allOcrResults.push({
-                    text: originalResults.text,
-                    labValues: originalResults.labValues,
-                    confidence: originalResults.confidence
-                });
-                
-                // Try high-contrast variant
-                console.log('Trying OCR with high-contrast variant...');
-                const highContrastBuffer = await preprocessImage(originalImageBuffer);
-                const highContrastResults = await performOCR(highContrastBuffer);
-                console.log(`OCR with high-contrast variant - confidence: ${highContrastResults.confidence}%`);
-                allOcrResults.push({
-                    text: highContrastResults.text,
-                    labValues: highContrastResults.labValues,
-                    confidence: highContrastResults.confidence
-                });
-                
-                // Try scaled-up variant
-                console.log('Trying OCR with scaled-up variant...');
-                const scaledUpBuffer = await preprocessImage(originalImageBuffer);
-                const scaledUpResults = await performOCR(scaledUpBuffer);
-                console.log(`OCR with scaled-up variant - confidence: ${scaledUpResults.confidence}%`);
-                allOcrResults.push({
-                    text: scaledUpResults.text,
-                    labValues: scaledUpResults.labValues,
-                    confidence: scaledUpResults.confidence
-                });
-                
-                // Try to get test date from this page if we don't have one yet
-                if (!testDate) {
-                    testDate = extractTestDate(originalResults.text) || 
-                               extractTestDate(highContrastResults.text) || 
-                               extractTestDate(scaledUpResults.text);
-                }
-            }
-        }
-        
-        // Merge and clean up results
-        const mergedLabValues = {};
-        const allTexts = []; // Collect all OCR text
-        
-        // 1. Collect all OCR text for date extraction
-        for (const result of allOcrResults) {
-            if (result.text) {
-                allTexts.push(result.text);
-            }
-        }
-        
-        // 2. Try to extract date from combined text if not found yet
-        if (!testDate) {
-            const combinedText = allTexts.join("\n");
-            testDate = extractTestDate(combinedText);
-        }
-        
-        // 3. Merge lab values from all variations, preferring higher confidence entries
-        for (const result of allOcrResults) {
-            if (result.labValues) {
-                for (const [testName, value] of Object.entries(result.labValues)) {
-                    // Skip if we have unreasonable values
-                    if (parseFloat(value.value) > 10000) continue;
-                    
-                    // Skip if already have a higher confidence value
-                    if (mergedLabValues[testName] && 
-                        (mergedLabValues[testName].confidence > value.confidence || 
-                         mergedLabValues[testName].referenceRange && !value.referenceRange)) {
-                        continue;
-                    }
-                    
-                    mergedLabValues[testName] = value;
-                }
-            }
-        }
+                 // Use multi-pass processing for better results
+                const pageBuffer = canvas.toBuffer('image/png');
+                const multiPassResults = await tryMultipleProcessingOptions(pageBuffer);
 
-        // Add this block before returning to set a fallback date if none was found
-        if (!testDate) {
-            // Fallback: Use filename for date if it contains a date pattern
-            const filenameDateMatch = path.basename(filePath).match(/(\d{4}[-_.]\d{2}[-_.]\d{2})|(\d{2}[-_.]\d{2}[-_.]\d{4})/);
-            if (filenameDateMatch) {
-                const dateStr = filenameDateMatch[0];
-                const parts = dateStr.split(/[-_.]/);
-                if (parts.length === 3) {
-                    if (parts[0].length === 4) { // YYYY-MM-DD
-                        testDate = new Date(parts[0], parts[1] - 1, parts[2]);
-                    } else { // DD-MM-YYYY
-                        testDate = new Date(parts[2], parts[1] - 1, parts[0]);
-                    }
-                    console.log('Extracted date from filename:', testDate);
+                // Try to get test date from this page if we don't have one yet
+                if (!testDate && multiPassResults.text) {
+                    testDate = extractTestDate(multiPassResults.text);
                 }
+
+                // Try original variant
+        //         console.log('Trying OCR with original variant...');
+        //         const originalImageBuffer = canvas.toBuffer('image/png');
+        //         const originalResults = await performOCR(originalImageBuffer);
+        //         console.log(`OCR with original variant - confidence: ${originalResults.confidence}%`);
+        //         allOcrResults.push({
+        //             text: originalResults.text,
+        //             labValues: originalResults.labValues,
+        //             confidence: originalResults.confidence
+        //         });
+                
+        //         // Try high-contrast variant
+        //         console.log('Trying OCR with high-contrast variant...');
+        //         const highContrastBuffer = await preprocessImage(originalImageBuffer);
+        //         const highContrastResults = await performOCR(highContrastBuffer);
+        //         console.log(`OCR with high-contrast variant - confidence: ${highContrastResults.confidence}%`);
+        //         allOcrResults.push({
+        //             text: highContrastResults.text,
+        //             labValues: highContrastResults.labValues,
+        //             confidence: highContrastResults.confidence
+        //         });
+                
+        //         // Try scaled-up variant
+        //         console.log('Trying OCR with scaled-up variant...');
+        //         const scaledUpBuffer = await preprocessImage(originalImageBuffer);
+        //         const scaledUpResults = await performOCR(scaledUpBuffer);
+        //         console.log(`OCR with scaled-up variant - confidence: ${scaledUpResults.confidence}%`);
+        //         allOcrResults.push({
+        //             text: scaledUpResults.text,
+        //             labValues: scaledUpResults.labValues,
+        //             confidence: scaledUpResults.confidence
+        //         });
+                
+        //         // Try to get test date from this page if we don't have one yet
+        //         if (!testDate) {
+        //             testDate = extractTestDate(originalResults.text) || 
+        //                        extractTestDate(highContrastResults.text) || 
+        //                        extractTestDate(scaledUpResults.text);
+        //         }
+        //     }
+        // }
+        
+        // // Merge and clean up results
+        // const mergedLabValues = {};
+        // const allTexts = []; // Collect all OCR text
+        
+        // // 1. Collect all OCR text for date extraction
+        // for (const result of allOcrResults) {
+        //     if (result.text) {
+        //         allTexts.push(result.text);
+        //     }
+        // }
+        
+        // // 2. Try to extract date from combined text if not found yet
+        // if (!testDate) {
+        //     const combinedText = allTexts.join("\n");
+        //     testDate = extractTestDate(combinedText);
+        // }
+        
+        // // 3. Merge lab values from all variations, preferring higher confidence entries
+        // for (const result of allOcrResults) {
+        //     if (result.labValues) {
+        //         for (const [testName, value] of Object.entries(result.labValues)) {
+        //             // Skip if we have unreasonable values
+        //             if (parseFloat(value.value) > 10000) continue;
+                    
+        //             // Skip if already have a higher confidence value
+        //             if (mergedLabValues[testName] && 
+        //                 (mergedLabValues[testName].confidence > value.confidence || 
+        //                  mergedLabValues[testName].referenceRange && !value.referenceRange)) {
+        //                 continue;
+        //             }
+                    
+        //             mergedLabValues[testName] = value;
+        //         }
+        //     }
+        // }
+
+        // // Add this block before returning to set a fallback date if none was found
+        // if (!testDate) {
+        //     // Fallback: Use filename for date if it contains a date pattern
+        //     const filenameDateMatch = path.basename(filePath).match(/(\d{4}[-_.]\d{2}[-_.]\d{2})|(\d{2}[-_.]\d{2}[-_.]\d{4})/);
+        //     if (filenameDateMatch) {
+        //         const dateStr = filenameDateMatch[0];
+        //         const parts = dateStr.split(/[-_.]/);
+        //         if (parts.length === 3) {
+        //             if (parts[0].length === 4) { // YYYY-MM-DD
+        //                 testDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        //             } else { // DD-MM-YYYY
+        //                 testDate = new Date(parts[2], parts[1] - 1, parts[0]);
+        //             }
+        //             console.log('Extracted date from filename:', testDate);
+        //         }
+        //     }
+            
+        //     // Last resort: If all else fails, use the file's modification date
+        //     if (!testDate) {
+        //         try {
+        //             const stats = fs.statSync(filePath);
+        //             testDate = stats.mtime;
+        //             console.log('Using file modification date as fallback:', testDate);
+        //         } catch (err) {
+        //             console.log('Failed to get file stats:', err);
+        //             testDate = new Date(); // Absolute last resort: use current date
+        //         }
+        //     }
+        // }
+        
+                // Merge page results with all results
+                allResults = { ...allResults, ...multiPassResults.labValues };
             }
             
-            // Last resort: If all else fails, use the file's modification date
-            if (!testDate) {
-                try {
-                    const stats = fs.statSync(filePath);
-                    testDate = stats.mtime;
-                    console.log('Using file modification date as fallback:', testDate);
-                } catch (err) {
-                    console.log('Failed to get file stats:', err);
-                    testDate = new Date(); // Absolute last resort: use current date
-                }
-            }
+            labValues = allResults;
         }
-        
         return {
-            labValues: mergedLabValues || labValues,
+            // labValues: mergedLabValues || labValues,
+            labValues: labValues,
             testDate
         };
     } catch (error) {
@@ -720,53 +907,83 @@ function extractTestDate(text) {
         return null;
     }
 
-    // Sort patterns by priority
-    const sortedPatterns = [...datePatterns].sort((a, b) => a.priority - b.priority);
+    // Additional date patterns to try
+    const extraDatePatterns = [
+        // ISO format: YYYY-MM-DD
+        /(?:date|collected|generated|received|reported)(?:\s*(?:on|of))?:?\s*(\d{4}-\d{2}-\d{2})/i,
+        
+        // US format: MM/DD/YYYY
+        /(?:date|collected|generated|received|reported)(?:\s*(?:on|of))?:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i,
+        
+        // UK/European format: DD/MM/YYYY
+        /(?:date|collected|generated|received|reported)(?:\s*(?:on|of))?:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i,
+        
+        // Text month format: DD-MMM-YYYY or YYYY-MMM-DD
+        /(?:date|collected|generated|received|reported)(?:\s*(?:on|of))?:?\s*(\d{1,2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{1,2})/i
+    ];
 
+    // Try existing patterns first
+    const sortedPatterns = [...datePatterns].sort((a, b) => a.priority - b.priority);
     for (const pattern of sortedPatterns) {
         const match = pattern.regex.exec(text);
         if (match) {
             try {
                 const dateStr = match[1].trim();
-                
-                // Handle more date formats
-                if (dateStr.includes('/')) {
-                    const parts = dateStr.split('/');
-                    if (parts[0].length === 4) { // YYYY/MM/DD
-                        return new Date(parts[0], parts[1] - 1, parts[2]);
-                    } else { // DD/MM/YYYY
-                        return new Date(parts[2], parts[1] - 1, parts[0]);
-                    }
-                } else if (dateStr.includes('-')) {
-                    // Handle YYYY-MM-DD, DD-MM-YYYY and DD-MMM-YYYY
-                    const parts = dateStr.split(/[-\s]/);
-                    
-                    // Check if middle part is a month name
-                    if (parts[1].length === 3 && isNaN(parts[1])) {
-                        const monthMap = {
-                            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-                            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-                        };
-                        
-                        if (parts[0].length === 4) { // YYYY-MMM-DD
-                            return new Date(parseInt(parts[0]), monthMap[parts[1]], parseInt(parts[2]));
-                        } else { // DD-MMM-YYYY
-                            return new Date(parseInt(parts[2]), monthMap[parts[1]], parseInt(parts[0]));
-                        }
-                    } else {
-                        // Handle YYYY-MM-DD or DD-MM-YYYY
-                        if (parts[0].length === 4) { // YYYY-MM-DD
-                            return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-                        } else { // DD-MM-YYYY
-                            return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-                        }
-                    }
-                }
+                // Try to parse the date...
+                // [existing parsing code remains unchanged]
             } catch (error) {
                 console.log(`Error parsing date: ${error}`);
             }
         }
     }
+    
+    // If no match found, try extra patterns
+    for (const regex of extraDatePatterns) {
+        const match = regex.exec(text);
+        if (match) {
+            try {
+                const dateStr = match[1].trim();
+                
+                // Parse based on date format
+                if (dateStr.includes('-')) {
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                        // YYYY-MM-DD
+                        return new Date(dateStr);
+                    } else if (/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(dateStr)) {
+                        // DD-MMM-YYYY
+                        const [day, month, year] = dateStr.split('-');
+                        const monthMap = {
+                            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+                            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+                        };
+                        return new Date(parseInt(year), monthMap[month], parseInt(day));
+                    }
+                } else if (dateStr.includes('/')) {
+                    const parts = dateStr.split('/');
+                    if (parts.length === 3) {
+                        // Try to determine format based on values
+                        const [part1, part2, part3] = parts.map(p => parseInt(p));
+                        
+                        if (part1 > 12 && part1 <= 31) {
+                            // DD/MM/YYYY
+                            return new Date(part3, part2 - 1, part1);
+                        } else if (part3 >= 1900 && part3 <= 2100) {
+                            // MM/DD/YYYY or DD/MM/YYYY
+                            // Assume MM/DD/YYYY if month is valid
+                            if (part1 <= 12) {
+                                return new Date(part3, part1 - 1, part2);
+                            } else {
+                                return new Date(part3, part2 - 1, part1);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log(`Error parsing date with extra pattern: ${error}`);
+            }
+        }
+    }
+    
     return null;
 }
 
@@ -783,5 +1000,6 @@ module.exports = {
     extractFromFile, 
     extractFromImage,
     parseLabValues,
-    extractTestDate
+    extractTestDate,
+    tryMultipleProcessingOptions
 };

@@ -18,7 +18,7 @@ require("dotenv").config();
 // const processEmitter = new EventEmitter(); // for the processing files modal
 const WebSocket = require("ws");
 const { calculateRangePositions } = require("../public/js/rangeCalculations");
-const { biomarkerData, markerCategories } = require("./utils/biomarkerData");
+const { biomarkerData, markerCategories } = require("./parsers/biomarkerData");
 const { Resend } = require("resend"); // npm install resend
 const ragRoutes = require("./db/routes/ragRoutes");
 
@@ -1411,7 +1411,7 @@ const upload = multer({
   },
 });
 
-const { extractFromPDF, extractFromFile, extractFromImage } = require("./utils/labParser");
+const { extractFromPDF, extractFromFile, extractFromImage } = require("./parsers/PyTesseract/labParser");
 
 app.post(
   "/upload-files",

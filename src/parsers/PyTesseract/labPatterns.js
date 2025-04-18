@@ -829,6 +829,36 @@ const enhancedPatterns = {
         alternateNames: ['CRP', 'C Reactive Protein', 'C REACTIVE PROTEIN'],
         fuzzyThreshold: 0.85
     },
+    'HDL-C': {
+        regex: /HDL[-\s](?:C|Cholesterol)(?:[^:\n]*?:|)\s*(?:[LEH]\s*)?(\d+\.?\d*)\s*(?:mmol\/L|mg\/dL)/i,
+        standardUnit: 'mmol/L',
+        precision: 2,
+        alternateNames: ['HDL', 'High Density Lipoprotein', 'HDL Cholesterol']
+    },
+    'LDL-C': {
+        regex: /LDL[-\s](?:C|Cholesterol)(?:[^:\n]*?:|)\s*(?:[LEH]\s*)?(\d+\.?\d*)\s*(?:mmol\/L|mg\/dL)/i,
+        standardUnit: 'mmol/L',
+        precision: 2,
+        alternateNames: ['LDL', 'Low Density Lipoprotein', 'LDL Cholesterol']
+    },
+    'HbA1c': {
+        regex: /(?:HbA1c|Hemoglobin\s+A1c|A1c)(?:[^:\n]*?:|)\s*(?:[LEH]\s*)?(\d+\.?\d*)\s*\%/i,
+        standardUnit: '%',
+        precision: 1,
+        alternateNames: ['Glycated Hemoglobin', 'Hemoglobin A1C']
+    },
+    'TSH': {
+        regex: /TSH(?:[^:\n]*?:|)\s*(?:[LEH]\s*)?(\d+\.?\d*)\s*(?:mIU\/L|μIU\/mL)/i,
+        standardUnit: 'mIU/L',
+        precision: 2,
+        alternateNames: ['Thyroid Stimulating Hormone', 'Thyrotropin']
+    },
+    'Creatinine': {
+        regex: /Creatinine(?:[^:\n]*?:|)\s*(?:[LEH]\s*)?(\d+\.?\d*)\s*(?:umol\/L|μmol\/L|mg\/dL)/i,
+        standardUnit: 'μmol/L',
+        precision: 0,
+        alternateNames: ['Creat', 'Serum Creatinine']
+    }
 };
 
 const structuredTestPatterns = {
