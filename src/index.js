@@ -204,19 +204,39 @@ hbs.registerHelper("formatDateString", function (dateString) {
 //     return result;
 // });
 
+// hbs.registerHelper("parseReferenceRange", function (range) {
+//   if (!range) {
+//     return null;
+//   }
+//   // Remove all spaces and handle both hyphen types
+//   const cleanRange = range.toString().replace(/\s+/g, "").replace("–", "-");
+//   const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
+
+//   const result = {
+//     min: parseFloat(matches[1]),
+//     max: parseFloat(matches[2]),
+//   };
+//   return result;
+// });
+
 hbs.registerHelper("parseReferenceRange", function (range) {
   if (!range) {
     return null;
   }
+
   // Remove all spaces and handle both hyphen types
   const cleanRange = range.toString().replace(/\s+/g, "").replace("–", "-");
   const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
 
-  const result = {
+  // Ensure matches exist before accessing indices
+  if (!matches) {
+    return null; // Or return a default object { min: null, max: null }
+  }
+
+  return {
     min: parseFloat(matches[1]),
     max: parseFloat(matches[2]),
   };
-  return result;
 });
 
 // bar chart marker position

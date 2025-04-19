@@ -85,90 +85,172 @@ async def status():
         "message": "DocTR service is running" if predictor is not None else "DocTR failed to initialize"
     }
 
-def process_pdf(file_content: bytes) -> tuple:
-    """
-    Process PDF file using DocTR
-    
-    Args:
-        file_content: PDF file content as bytes
-        
-    Returns:
-        tuple: (extracted text, confidence score, word details, number of pages)
-    """
-    # Save the content to a temporary file
-    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as temp_file:
-        temp_file.write(file_content)
-        temp_path = temp_file.name
-    
+def process_pdf(file_content):
+    """Process a PDF file with DocTR."""
     try:
-        # Load document using DocTR's DocumentFile
+        # Save the file content to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp:
+            temp.write(file_content)
+            temp_path = temp.name
+        
+        logger.info(f"Created temporary file at {temp_path}")
+        
+        # Process with DocTR
+        logger.info("Loading document with DocumentFile.from_pdf")
         doc = DocumentFile.from_pdf(temp_path)
+        logger.info(f"Document loaded: {type(doc)} with {len(doc)} page(s)")
         
-        # Process with OCR
+        logger.info("Running OCR prediction")
         result = predictor(doc)
+        logger.info(f"Prediction result type: {type(result)}")
         
-        # Extract text and confidence
-        full_text = result.export()["text"]
-        confidence = float(np.mean([page.score for page in result.pages]))
+        # Debug the result structure
+        exported = result.export()
+        logger.info(f"Export result type: {type(exported)}")
+        logger.info(f"Export result keys: {list(exported.keys()) if isinstance(exported, dict) else 'Not a dict'}")
         
-        # Get detailed word information
+        # Try different approaches to get the text
+        if isinstance(exported, dict) and 'text' in exported:
+            full_text = exported['text']
+        elif hasattr(result, 'text'):
+            full_text = result.text
+        elif hasattr(result, 'get_text'):
+            full_text = result.get_text()
+        else:
+            # If we can't get text directly, reconstruct it from pages/blocks/lines/words
+            full_text = ""
+            for page in result.pages:
+                page_text = ""
+                for block in page.blocks:
+                    for line in block.lines:
+                        line_text = " ".join([word.value for word in line.words])
+                        page_text += line_text + " "
+                full_text += page_text.strip() + "\n\n"
+        
+        logger.info(f"Extracted text length: {len(full_text)}")
+        
+        # Calculate average confidence and word details
         word_details = []
+        total_confidence = 0
+        word_count = 0
+        
         for page_idx, page in enumerate(result.pages):
-            for block in page.blocks:
-                for line in block.lines:
-                    for word in line.words:
-                        word_details.append({
-                            "text": word.value,
-                            "confidence": float(word.confidence),
-                            "bbox": word.geometry,
-                            "page": page_idx
-                        })
+            for block_idx, block in enumerate(page.blocks):
+                for line_idx, line in enumerate(block.lines):
+                    for word_idx, word in enumerate(line.words):
+                        try:
+                            word_detail = {
+                                "text": word.value,
+                                "confidence": float(word.confidence),
+                                "box": [
+                                    [float(word.geometry[0][0]), float(word.geometry[0][1])],
+                                    [float(word.geometry[1][0]), float(word.geometry[1][1])]
+                                ],
+                                "page": page_idx
+                            }
+                            word_details.append(word_detail)
+                            total_confidence += word.confidence
+                            word_count += 1
+                        except Exception as e:
+                            logger.error(f"Error processing word: {str(e)}")
+        
+        confidence = total_confidence / word_count if word_count > 0 else 0
+        logger.info(f"Processed {word_count} words with average confidence {confidence:.2f}")
+        
+        # Clean up
+        os.unlink(temp_path)
+        logger.info(f"Temporary file {temp_path} removed")
         
         return full_text, confidence, word_details, len(result.pages)
     
-    finally:
-        # Clean up temporary file
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+    except Exception as e:
+        logger.error(f"Error in process_pdf: {str(e)}")
+        logger.exception("Detailed traceback:")
+        raise
 
-def process_image(file_content: bytes) -> tuple:
-    """
-    Process image file using DocTR
-    
-    Args:
-        file_content: Image file content as bytes
+def process_image(file_content):
+    """Process an image file with DocTR."""
+    try:
+        # Save the file content to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp:
+            temp.write(file_content)
+            temp_path = temp.name
         
-    Returns:
-        tuple: (extracted text, confidence score, word details)
-    """
-    # Convert bytes to image
-    image = Image.open(io.BytesIO(file_content))
+        logger.info(f"Created temporary file at {temp_path}")
+        
+        # Process with DocTR
+        logger.info("Loading document with DocumentFile.from_images")
+        doc = DocumentFile.from_images(temp_path)
+        logger.info(f"Document loaded: {type(doc)} with {len(doc)} page(s)")
+        
+        logger.info("Running OCR prediction")
+        result = predictor(doc)
+        logger.info(f"Prediction result type: {type(result)}")
+        
+        # Debug the result structure
+        exported = result.export()
+        logger.info(f"Export result type: {type(exported)}")
+        logger.info(f"Export result keys: {list(exported.keys()) if isinstance(exported, dict) else 'Not a dict'}")
+        
+        # Try different approaches to get the text
+        if isinstance(exported, dict) and 'text' in exported:
+            full_text = exported['text']
+        elif hasattr(result, 'text'):
+            full_text = result.text
+        elif hasattr(result, 'get_text'):
+            full_text = result.get_text()
+        else:
+            # If we can't get text directly, reconstruct it from pages/blocks/lines/words
+            full_text = ""
+            for page in result.pages:
+                page_text = ""
+                for block in page.blocks:
+                    for line in block.lines:
+                        line_text = " ".join([word.value for word in line.words])
+                        page_text += line_text + " "
+                full_text += page_text.strip() + "\n\n"
+        
+        logger.info(f"Extracted text length: {len(full_text)}")
+        
+        # Calculate average confidence and word details
+        word_details = []
+        total_confidence = 0
+        word_count = 0
+        
+        for page_idx, page in enumerate(result.pages):
+            for block_idx, block in enumerate(page.blocks):
+                for line_idx, line in enumerate(block.lines):
+                    for word_idx, word in enumerate(line.words):
+                        try:
+                            word_detail = {
+                                "text": word.value,
+                                "confidence": float(word.confidence),
+                                "box": [
+                                    [float(word.geometry[0][0]), float(word.geometry[0][1])],
+                                    [float(word.geometry[1][0]), float(word.geometry[1][1])]
+                                ],
+                                "page": page_idx
+                            }
+                            word_details.append(word_detail)
+                            total_confidence += word.confidence
+                            word_count += 1
+                        except Exception as e:
+                            logger.error(f"Error processing word: {str(e)}")
+        
+        confidence = total_confidence / word_count if word_count > 0 else 0
+        logger.info(f"Processed {word_count} words with average confidence {confidence:.2f}")
+        
+        # Clean up
+        os.unlink(temp_path)
+        logger.info(f"Temporary file {temp_path} removed")
+        
+        return full_text, confidence, word_details, len(result.pages)
     
-    # Load document
-    doc = DocumentFile.from_images(np.array(image))
+    except Exception as e:
+        logger.error(f"Error in process_image: {str(e)}")
+        logger.exception("Detailed traceback:")
+        raise
     
-    # Process with OCR
-    result = predictor(doc)
-    
-    # Extract text and confidence
-    full_text = result.export()["text"]
-    confidence = float(np.mean([page.score for page in result.pages]))
-    
-    # Get detailed word information
-    word_details = []
-    for page_idx, page in enumerate(result.pages):
-        for block in page.blocks:
-            for line in block.lines:
-                for word in line.words:
-                    word_details.append({
-                        "text": word.value,
-                        "confidence": float(word.confidence),
-                        "bbox": word.geometry,
-                        "page": page_idx
-                    })
-    
-    return full_text, confidence, word_details, 1
-
 @app.post("/process_document", response_model=OCRResponse)
 async def process_document(file: UploadFile = File(...)):
     """

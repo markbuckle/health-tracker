@@ -5,231 +5,36 @@ const fs = require('fs');
 const path = require('path');
 const { labPatterns, datePatterns, enhancedPatterns, structuredTestPatterns } = require('../labPatterns');
 
+/**
+ * DocTR-based lab document parser
+ * This module uses DocTR's deep learning models for better OCR performance
+ * compared to traditional OCR solutions like Tesseract
+ */
+
 // Configuration
 const DOCTR_API_URL = process.env.DOCTR_API_URL || 'http://localhost:8000/process_document';
-
-// Debugging Flag
 const DEBUG = process.env.DEBUG_OCR === 'true';
 
-// ===== PREPROCESSING FUNCTIONS =====
-
-// Normalize test names to handle variations
-const labTestNormalization = {
-  'C REACTIVE PROTEIN': ['CRP', 'C-REACTIVE PROTEIN', 'C REACTIVE PROTEIN;HIGH SENS.'],
-  'THYROPEROXIDASE ANTIBODY': ['TPO', 'TPO ANTIBODY', 'ANTI-TPO'],
-  'TSH': ['THYROID STIMULATING HORMONE', 'THYROTROPIN'],
-  // Add more mappings based on your common lab tests
-};
-
-function normalizeTestName(testName) {
-  for (const [standard, variants] of Object.entries(labTestNormalization)) {
-    if (variants.some(v => testName.toUpperCase().includes(v))) {
-      return standard;
-    }
-  }
-  return testName;
-}
-
-// ===== EXTRACTION FUNCTIONS =====
-
-// Extract from structured table format
-function extractStructuredLabData(text) {
-    const results = {};
-    const lines = text.split('\n');
-    
-    // Find the header line with column names
-    const headerIndex = lines.findIndex(line => 
-        line.includes('TEST NAME') && 
-        line.includes('RESULT') && 
-        line.includes('REFERENCE') && 
-        line.includes('UNITS')
-    );
-    
-    if (headerIndex === -1) return results;
-    
-    // Process data rows that follow the header
-    for (let i = headerIndex + 1; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line || line.startsWith('Performing Site') || line.startsWith('Order Status')) break;
-        
-        // Split by multiple spaces to preserve TEST NAMES that may contain single spaces
-        const parts = line.split(/\s{2,}/);
-        if (parts.length >= 4) {
-            const testName = normalizeTestName(parts[0].trim());
-            const result = parts[1].trim();
-            // Extract reference range
-            const reference = extractReferenceRange(line, lines.slice(i+1, i+5));
-            const units = parts[parts.length - 1].trim();
-            
-            if (testName && result) {
-                results[testName] = {
-                    value: isNaN(parseFloat(result)) ? result : parseFloat(result),
-                    unit: units,
-                    referenceRange: reference,
-                    rawText: line,
-                    confidence: 0.98,
-                    matchType: 'structured_table'
-                };
-            }
-        }
-    }
-    
-    return results;
-}
-
-// Extract reference ranges with intelligent context
-function extractReferenceRange(line, nextLines = []) {
-  // Try direct extraction from the same line
-  const rangeMatch = line.match(/\b(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)\b/);
-  if (rangeMatch) return `${rangeMatch[1]}-${rangeMatch[2]}`;
-  
-  // Look for reference values in a specific column position
-  const parts = line.split(/\s{2,}/);
-  if (parts.length >= 4) {
-    const referenceCol = parts[3]?.trim();
-    if (referenceCol?.match(/\d/)) return referenceCol;
-  }
-  
-  // Check next few lines for possible reference information
-  for (const nextLine of nextLines) {
-    if (nextLine.includes('REFERENCE') || nextLine.toLowerCase().includes('range')) {
-      const nextRangeMatch = nextLine.match(/\b(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)\b/);
-      if (nextRangeMatch) return `${nextRangeMatch[1]}-${nextRangeMatch[2]}`;
-    }
-  }
-  
-  return null;
-}
-
-// Parse lab report by sections
-function parseLabSections(text) {
-  const results = {};
-  const lines = text.split('\n');
-  
-  // Identify section headers (all caps, standalone)
-  const sectionHeaders = lines
-    .map((line, index) => ({ line, index }))
-    .filter(({ line }) => 
-      line.trim().length > 0 && 
-      line === line.toUpperCase() && 
-      !line.includes('TEST NAME') &&
-      !line.includes('NOTES:')
-    );
-  
-  // Process each section
-  for (let i = 0; i < sectionHeaders.length; i++) {
-    const { line: header, index: headerIndex } = sectionHeaders[i];
-    const nextHeaderIndex = i < sectionHeaders.length - 1 
-      ? sectionHeaders[i + 1].index 
-      : lines.length;
-    
-    // Extract section text
-    const sectionLines = lines.slice(headerIndex, nextHeaderIndex);
-    const sectionText = sectionLines.join('\n');
-    
-    // Find test results within this section
-    const resultLine = sectionLines.find(line => line.includes('RESULT'));
-    if (resultLine) {
-      const resultLineIndex = sectionLines.indexOf(resultLine);
-      if (resultLineIndex >= 0 && resultLineIndex + 1 < sectionLines.length) {
-        const valueLine = sectionLines[resultLineIndex + 1];
-        const parts = valueLine.split(/\s{2,}/);
-        
-        if (parts.length >= 2) {
-          const testName = normalizeTestName(header.trim());
-          const result = parts[0].trim();
-          const reference = extractReferenceRange(valueLine, sectionLines.slice(resultLineIndex+1));
-          
-          // Try to identify units
-          const unitsMatch = sectionText.match(/UNITS[\s:]*([A-Za-z\/]+)/i);
-          const units = unitsMatch ? unitsMatch[1] : '';
-          
-          if (testName && result) {
-            results[testName] = {
-              value: isNaN(parseFloat(result)) ? result : parseFloat(result),
-              unit: units,
-              referenceRange: reference,
-              rawText: valueLine,
-              confidence: 0.9,
-              matchType: 'section_based'
-            };
-          }
-        }
-      }
-    }
-  }
-  
-  return results;
-}
-
-// Post-process results to clean up and normalize
-function postProcessResults(results) {
-    // Fix common units issues and normalize values
-    for (const [testName, data] of Object.entries(results)) {
-        // Fix units based on test name
-        if (testName.includes('TSH') && (!data.unit || data.unit === 'KIUL')) {
-            data.unit = 'mIU/L';
-        } else if (testName.includes('PROTEIN') && (!data.unit || data.unit === 'mg/L')) {
-            data.unit = 'mg/L';
-        }
-        
-        // Clean up reference ranges
-        if (data.referenceRange) {
-            // If range has non-numeric characters (like "0-8"), clean it up
-            const rangeMatch = data.referenceRange.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
-            if (rangeMatch) {
-                data.referenceRange = `${rangeMatch[1]}-${rangeMatch[2]}`;
-            }
-        }
-        
-        // Fix known measurement issues (example: values less than detection limit)
-        if (data.value && typeof data.value === 'string') {
-            if (data.value.startsWith('<')) {
-                // For values like "< 3.0", store as the detection limit with a flag
-                data.value = parseFloat(data.value.replace('<', ''));
-                data.belowDetectionLimit = true;
-            } else if (data.value.startsWith('>')) {
-                // For values like "> 5.0", store as the detection limit with a flag
-                data.value = parseFloat(data.value.replace('>', ''));
-                data.aboveDetectionLimit = true;
-            }
-        }
-    }
-    
-    return results;
-}
-
-// ===== MAIN PARSING FUNCTION =====
-
+/**
+ * Parse lab values from OCR text
+ * @param {string} text - The OCR processed text
+ * @returns {Object} Extracted lab values
+ */
 function parseLabValues(text) {
     const results = {};
+    const DEBUG = process.env.DEBUG === 'true';
 
     // Ensure text is not null or undefined
     if (!text) {
         console.log("No text provided to parseLabValues");
-        return results;
+        return results;  // Return empty results instead of trying to process undefined
     }
 
     const normalizedText = text.replace(/\s+/g, ' ').trim();
+    // Split text into lines - this was missing
     const lines = text.split('\n');
     
-    // APPROACH 1: Try extracting from structured tables (best for your lab report format)
-    const structuredResults = extractStructuredLabData(text);
-    if (Object.keys(structuredResults).length > 0) {
-        if (DEBUG) console.log(`Found ${Object.keys(structuredResults).length} results using structured table extraction`);
-        Object.assign(results, structuredResults);
-    }
-    
-    // APPROACH 2: Try section-based extraction
-    if (Object.keys(results).length === 0) {
-        const sectionResults = parseLabSections(text);
-        if (Object.keys(sectionResults).length > 0) {
-            if (DEBUG) console.log(`Found ${Object.keys(sectionResults).length} results using section-based extraction`);
-            Object.assign(results, sectionResults);
-        }
-    }
-    
-    // APPROACH 3: Try standard structured format
+    // First try structured format (TEST NAME RESULT format)
     for (const line of lines) {
         if (line.includes('TEST NAME') && line.includes('RESULT') && line.includes('UNITS')) {
             const nextLine = lines[lines.indexOf(line) + 1];
@@ -254,13 +59,11 @@ function parseLabValues(text) {
             }
         }
     }
-    
-    // APPROACH 4: Enhanced testosterone patterns
+
+    // Make sure these objects exist before using Object.entries
     if (enhancedPatterns) {
+        // Try enhanced testosterone patterns
         for (const [testName, pattern] of Object.entries(enhancedPatterns)) {
-            // Skip if already found
-            if (results[testName]) continue;
-            
             try {
                 const match = pattern.regex.exec(normalizedText);
                 if (match) {
@@ -282,7 +85,7 @@ function parseLabValues(text) {
         }
     }
 
-    // APPROACH 5: Structured test patterns
+    // Make sure these objects exist before using Object.entries
     if (structuredTestPatterns) {
         // Try structured test patterns
         for (const [testName, pattern] of Object.entries(structuredTestPatterns)) {
@@ -307,8 +110,8 @@ function parseLabValues(text) {
             }
         }
     }
-    
-    // APPROACH 6: Standard patterns as fallback
+
+    // Make sure labPatterns exists before using Object.entries
     if (labPatterns) {
         // Try standard patterns for remaining values
         for (const [testName, pattern] of Object.entries(labPatterns)) {
@@ -337,10 +140,23 @@ function parseLabValues(text) {
         }
     }
 
-    // Apply post-processing to clean up all results
-    return postProcessResults(results);
-}
+    // Only apply fuzzy matching if the function exists
+    if (typeof applyFuzzyMatching === 'function') {
+        // Apply fuzzy matching for potential missed values
+        applyFuzzyMatching(normalizedText, lines, results);
+    }
 
+    // Log final results if in debug mode
+    if (DEBUG) {
+        console.log('DocTR parsed results:', {
+            totalValues: Object.keys(results).length,
+            foundTests: Object.keys(results),
+            details: results
+        });
+    }
+
+    return results;
+}
 
 /**
  * Apply fuzzy matching for lab names that might have slight variations
@@ -581,16 +397,9 @@ function interpretConfidence(confidence) {
     return 'low';
 }
 
-// ===== EXPORT FUNCTIONS =====
-
 module.exports = {
     extractFromPDF,
     parseLabValues,
-    normalizeTestName,
-    extractStructuredLabData,
-    parseLabSections,
-    extractReferenceRange,
-    postProcessResults,
-    interpretConfidence,
-    extractTestDate
+    extractTestDate,
+    interpretConfidence
 };

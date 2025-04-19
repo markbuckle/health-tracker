@@ -13,3 +13,4 @@ opencv-python>=4.7.0.72
 
 # PyTorch (base installation)
 torch>=2.0.0
+torchvision>=0.15.0
