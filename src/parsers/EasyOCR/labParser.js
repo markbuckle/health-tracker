@@ -1,337 +1,640 @@
-// EasyOCR parser - improved text extraction and pattern matching
+// EasyOCR implementation for lab document processing
+// This parser uses EasyOCR for better text recognition in medical lab documents
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { spawn } = require('child_process');
 const { labPatterns, datePatterns, enhancedPatterns, structuredTestPatterns } = require('../labPatterns');
 
-// Configuration
+// Configuration for debug mode
 const DEBUG = process.env.DEBUG_OCR === 'true';
 
 /**
- * Parse lab values from OCR text with improved matching logic for EasyOCR output
- * @param {string} text - The OCR processed text
- * @returns {Object} Extracted lab values
+ * Extract data from PDF using EasyOCR
+ * @param {string} filePath - Path to the PDF file
+ * @returns {Promise<Object>} Extracted lab values and test date
+ */
+async function extractFromPDF(filePath) {
+    try {
+        console.log(`Processing file: ${filePath}`);
+        
+        // Determine file extension
+        const fileExt = path.extname(filePath).toLowerCase();
+        const isImage = ['.jpg', '.jpeg', '.png', '.tiff', '.bmp'].includes(fileExt);
+        const isPDF = fileExt === '.pdf';
+        
+        if (!isImage && !isPDF) {
+            throw new Error(`Unsupported file format: ${fileExt}. Please upload a PDF or image file.`);
+        }
+        
+        // Run EasyOCR via Python
+        const extractedText = await runEasyOCR(filePath, isImage);
+        
+        // Save text to file for debugging if needed
+        if (DEBUG) {
+            const debugOutputPath = path.join(path.dirname(filePath), 'debug_ocr_output.txt');
+            fs.writeFileSync(debugOutputPath, extractedText);
+            console.log(`Saved full OCR text to ${debugOutputPath} for debugging`);
+        }
+        
+        console.log('Starting to parse lab values from text');
+        console.log(`Sample text: ${extractedText.substring(0, 100)}...`);
+        console.log(`Line count: ${extractedText.split('\n').length}`);
+        
+        // Extract lab values and test date
+        const labValues = parseLabValues(extractedText);
+        const testDate = extractTestDate(extractedText);
+        
+        return {
+            labValues,
+            testDate
+        };
+    } catch (error) {
+        console.error('Error extracting from file with EasyOCR:', error);
+        throw error;
+    }
+}
+
+/**
+ * Run EasyOCR on a file via Python subprocess
+ * @param {string} filePath - Path to the file
+ * @param {boolean} isImage - Whether the file is an image
+ * @returns {Promise<string>} Extracted text
+ */
+async function runEasyOCR(filePath, isImage) {
+    return new Promise((resolve, reject) => {
+        // Create a temporary Python script to avoid command line issues
+        const tempScriptPath = path.join(path.dirname(filePath), 'run_easyocr.py');
+        
+        // Prepare Python script content
+        const pythonScript = `
+import sys
+import os
+import easyocr
+import traceback
+
+# Function to process image files
+def process_image(image_path):
+    try:
+        # Initialize the EasyOCR reader for English
+        print("Initializing EasyOCR reader...")
+        reader = easyocr.Reader(['en'])
+        
+        # Run OCR on the image
+        print(f"Processing file: {image_path}")
+        results = reader.readtext(image_path, detail=0)
+        
+        # Join all text blocks with newlines
+        text = '\\n'.join(results)
+        
+        print(f"EasyOCR extracted {len(text)} characters of text")
+        print(f"Sample extracted text: {text[:100]}...")
+        
+        return text
+    except Exception as e:
+        error_msg = f"Error processing image: {str(e)}\\n{traceback.format_exc()}"
+        print(error_msg)
+        return error_msg
+
+# Function to process PDF files
+def process_pdf(pdf_path):
+    try:
+        import fitz  # PyMuPDF
+        import tempfile
+        from PIL import Image
+        
+        # Open the PDF
+        print(f"Processing file: {pdf_path}")
+        pdf_document = fitz.open(pdf_path)
+        
+        all_text = []
+        
+        # Initialize EasyOCR reader just once
+        print("Initializing EasyOCR reader...")
+        reader = easyocr.Reader(['en'])
+        
+        # Process each page
+        for page_num in range(pdf_document.page_count):
+            page = pdf_document[page_num]
+            
+            # Get a pixmap (image) of the page
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # 2x scaling for better OCR
+            
+            # Save to a temporary image file
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_img:
+                temp_img_path = temp_img.name
+                pix.save(temp_img_path)
+            
+            # OCR the page image
+            page_results = reader.readtext(temp_img_path, detail=0)
+            page_text = '\\n'.join(page_results)
+            all_text.append(page_text)
+            
+            # Clean up temporary image
+            os.unlink(temp_img_path)
+            
+        # Combine all page texts
+        full_text = '\\n\\n'.join(all_text)
+        
+        print(f"EasyOCR extracted {len(full_text)} characters of text")
+        print(f"Sample extracted text: {full_text[:100]}...")
+        
+        return full_text
+    except ImportError:
+        # Fall back to using pdf2image if PyMuPDF is not available
+        try:
+            from pdf2image import convert_from_path
+            import tempfile
+            
+            all_text = []
+            
+            # Convert PDF to images
+            images = convert_from_path(pdf_path, dpi=200)
+            
+            # Initialize EasyOCR reader
+            print("Initializing EasyOCR reader...")
+            reader = easyocr.Reader(['en'])
+            
+            # Process each page image
+            for i, image in enumerate(images):
+                # Save to a temporary file
+                with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_img:
+                    temp_img_path = temp_img.name
+                    image.save(temp_img_path, 'PNG')
+                
+                # OCR the page image
+                page_results = reader.readtext(temp_img_path, detail=0)
+                page_text = '\\n'.join(page_results)
+                all_text.append(page_text)
+                
+                # Clean up temporary image
+                os.unlink(temp_img_path)
+            
+            # Combine all page texts
+            full_text = '\\n\\n'.join(all_text)
+            
+            print(f"EasyOCR extracted {len(full_text)} characters of text")
+            print(f"Sample extracted text: {full_text[:100]}...")
+            
+            return full_text
+        except Exception as e:
+            error_msg = f"Error processing PDF: {str(e)}\\n{traceback.format_exc()}"
+            print(error_msg)
+            return error_msg
+    except Exception as e:
+        error_msg = f"Error processing PDF: {str(e)}\\n{traceback.format_exc()}"
+        print(error_msg)
+        return error_msg
+
+# Main execution
+try:
+    file_path = "${filePath.replace(/\\/g, '\\\\')}"
+    is_image = ${isImage}
+    
+    if is_image:
+        result = process_image(file_path)
+    else:
+        result = process_pdf(file_path)
+    
+    # Print result to stdout for Node.js to capture
+    print(result)
+except Exception as e:
+    print(f"Python execution error: {str(e)}\\n{traceback.format_exc()}")
+    sys.exit(1)
+`;
+        
+        // Debug: Log the script content to see what's being generated
+        console.log('\n--- START OF PYTHON SCRIPT ---');
+        console.log(`Python script with is_image = ${isImage ? 'True' : 'False'}`);
+        console.log('--- END OF PYTHON SCRIPT ---\n');
+        
+        // Fix boolean values for Python
+        let processedScript = pythonScript.replace(
+            /is_image = \${isImage}/g, 
+            `is_image = ${isImage ? 'True' : 'False'}`
+        );
+        
+        // Write temporary Python script with fixed boolean values
+        fs.writeFileSync(tempScriptPath, processedScript);
+        console.log(`Created temporary Python script at ${tempScriptPath}`);
+        
+        // Double-check the script content
+        const scriptContent = fs.readFileSync(tempScriptPath, 'utf8');
+        if (scriptContent.includes('is_image = false') || scriptContent.includes('is_image = true')) {
+            console.error('WARNING: Python script contains JavaScript booleans instead of Python booleans!');
+            console.log('Attempting to fix the script before running...');
+            
+            // Direct replacement to fix the script
+            const fixedScript = scriptContent
+                .replace(/is_image = false/g, 'is_image = False')
+                .replace(/is_image = true/g, 'is_image = True');
+            
+            fs.writeFileSync(tempScriptPath, fixedScript);
+            console.log('Script fixed with direct replacement.');
+        }
+        
+        // Check which Python executable to use
+        const pythonCommands = ['python', 'python3', 'py'];
+        let pythonCommand = null;
+        
+        // Try to find a working Python command
+        for (const cmd of pythonCommands) {
+            try {
+                const result = require('child_process').spawnSync(cmd, ['-c', 'print("Python works")']);
+                if (result.status === 0) {
+                    pythonCommand = cmd;
+                    console.log(`Found working Python command: ${cmd}`);
+                    break;
+                }
+            } catch (err) {
+                console.log(`Command ${cmd} not available: ${err.message}`);
+            }
+        }
+        
+        if (!pythonCommand) {
+            return reject(new Error('No working Python command found. Please make sure Python is installed and in your PATH.'));
+        }
+        
+        // Check if required Python packages are installed
+        try {
+            const checkPackages = require('child_process').spawnSync(pythonCommand, ['-c', 'import easyocr; print("EasyOCR is available")']);
+            if (checkPackages.status !== 0) {
+                console.error(`Error checking for EasyOCR: ${checkPackages.stderr?.toString()}`);
+                return reject(new Error('EasyOCR is not properly installed. Please run: pip install easyocr'));
+            }
+        } catch (err) {
+            console.error(`Error checking Python packages: ${err.message}`);
+        }
+        
+        console.log(`Executing Python script at ${tempScriptPath} using ${pythonCommand}...`);
+        
+        // Execute the Python script with additional debug output
+        const pythonProcess = spawn(pythonCommand, [tempScriptPath]);
+        
+        let textOutput = '';
+        let errorOutput = '';
+        
+        // Capture standard output
+        pythonProcess.stdout.on('data', (data) => {
+            const chunk = data.toString();
+            textOutput += chunk;
+            console.log(`Python output: ${chunk}`);
+        });
+        
+        // Capture error output
+        pythonProcess.stderr.on('data', (data) => {
+            const chunk = data.toString();
+            errorOutput += chunk;
+            console.error(`Python error: ${chunk}`);
+        });
+        
+        // Handle process completion
+        pythonProcess.on('close', (code) => {
+            console.log(`Python process exited with code ${code}`);
+            
+            // Clean up temporary script
+            try {
+                fs.unlinkSync(tempScriptPath);
+                console.log(`Removed temporary script ${tempScriptPath}`);
+            } catch (err) {
+                console.error(`Error removing temporary script: ${err.message}`);
+            }
+            
+            if (code !== 0) {
+                console.error(`Python execution failed with code ${code}`);
+                console.error(`Error output: ${errorOutput || 'No error output'}`);
+                
+                // Provide more helpful error message based on common issues
+                let errorMsg = 'Python execution failed';
+                if (errorOutput.includes('No module named')) {
+                    errorMsg += `: Missing Python module. Please run: pip install -r ${path.join(path.dirname(__dirname), 'EasyOCR', 'requirements.txt')}`;
+                } else if (errorOutput.includes('poppler')) {
+                    errorMsg += `: Poppler not found. Please install Poppler and add it to your PATH.`;
+                } else if (errorOutput) {
+                    errorMsg += `: ${errorOutput.split('\n')[0]}`;
+                }
+                
+                reject(new Error(errorMsg));
+                return;
+            }
+            
+            // Extract the actual OCR result from the output
+            console.log(`Successfully received ${textOutput.length} characters of OCR text`);
+            resolve(textOutput);
+        });
+        
+        // Handle process errors (like failure to spawn)
+        pythonProcess.on('error', (err) => {
+            console.error(`Failed to start Python process: ${err.message}`);
+            reject(new Error(`Failed to start Python process: ${err.message}`));
+        });
+    });
+}
+
+/**
+ * Parse lab values from the OCR text
+ * @param {string} text - OCR extracted text
+ * @returns {Object} Parsed lab values
  */
 function parseLabValues(text) {
     const results = {};
     
-    // Ensure text is not null or undefined
-    if (!text) {
-        console.log("No text provided to parseLabValues");
+    if (!text || typeof text !== 'string') {
+        console.error('Invalid text provided to parseLabValues');
         return results;
     }
-
-    // Clean and normalize the text
-    // EasyOCR may introduce different spacing or line breaks than other OCR engines
-    const normalizedText = text
-        .replace(/\s+/g, ' ')  // Replace multiple spaces with a single space
-        .replace(/([a-zA-Z])(\d)/g, '$1 $2')  // Add space between letters and numbers if missing
-        .replace(/(\d)([a-zA-Z])/g, '$1 $2')  // Add space between numbers and letters if missing
-        .trim();
     
-    // Split text into lines for context-aware searching
-    const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
+    const normalizedText = text.replace(/\s+/g, ' ').trim();
+    const lines = text.split('\n');
     
-    if (DEBUG) console.log("Starting to parse lab values from text");
-    if (DEBUG) console.log("Sample text:", normalizedText.substring(0, 200) + "...");
-    if (DEBUG) console.log("Line count:", lines.length);
+    // Try enhanced testosterone patterns first
+    for (const [testName, pattern] of Object.entries(enhancedPatterns)) {
+        try {
+            const match = pattern.regex.exec(normalizedText);
+            if (match) {
+                const value = parseFloat(match[1]);
+                if (!isNaN(value) && value > 0 && value < 10000) { // Sanity check
+                    console.log(`Found enhanced match for ${testName}: ${value}`);
+                    
+                    // Try to find reference range
+                    const refRangeMatch = normalizedText.match(
+                        new RegExp(`${testName}.*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`)
+                    );
+                    
+                    results[testName] = {
+                        value: value.toFixed(pattern.precision || 2),
+                        unit: pattern.standardUnit,
+                        rawText: match[0].trim(),
+                        referenceRange: refRangeMatch ? refRangeMatch[1] : null,
+                        confidence: 0.95,
+                        matchType: 'enhanced'
+                    };
+                }
+            }
+        } catch (error) {
+            console.error(`Error parsing ${testName}:`, error);
+        }
+    }
     
-    // First try structured format patterns
-    if (text.includes('TEST') && text.includes('RESULT')) {
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            if (line.includes('TEST') && line.includes('RESULT')) {
-                // Look for structured data in the next few lines
-                for (let j = i + 1; j < Math.min(i + 15, lines.length); j++) {
-                    const dataLine = lines[j];
-                    // Simple pattern for test: value format
-                    const structuredMatch = dataLine.match(/([A-Za-z\s\-\(\)]+)\s*:?\s*(\d+\.?\d*)\s*([a-zA-Z%\/]+)?/);
-                    if (structuredMatch) {
-                        const testName = structuredMatch[1].trim();
-                        const value = structuredMatch[2];
-                        const unit = structuredMatch[3] || '';
-                        
-                        // Find reference range nearby
-                        let refRange = null;
-                        for (let k = j; k < Math.min(j + 3, lines.length); k++) {
-                            const rangeMatch = lines[k].match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
-                            if (rangeMatch) {
-                                refRange = rangeMatch[0];
-                                break;
-                            }
-                        }
-                        
-                        // Look for a matching biomarker pattern
-                        const biomarkerMatch = findBiomarkerMatch(testName);
-                        if (biomarkerMatch) {
-                            if (DEBUG) console.log(`Found structured match for ${biomarkerMatch}: ${value} ${unit}`);
-                            
-                            results[biomarkerMatch] = {
-                                value: parseFloat(value).toFixed(2),
-                                unit: unit || labPatterns[biomarkerMatch]?.standardUnit || '',
-                                rawText: dataLine.trim(),
-                                referenceRange: refRange,
-                                confidence: 0.9,
-                                matchType: 'structured'
-                            };
+    // Try structured test patterns
+    for (const [testName, pattern] of Object.entries(structuredTestPatterns)) {
+        if (results[testName]) continue; // Skip if already found
+        
+        try {
+            const match = pattern.regex.exec(normalizedText);
+            if (match) {
+                const value = parseFloat(match[1]);
+                if (!isNaN(value) && value > 0 && value < 10000) { // Sanity check
+                    console.log(`Found structured match for ${testName}: ${value}`);
+                    
+                    // Try to find reference range
+                    let refRange = null;
+                    if (pattern.referencePattern) {
+                        const refMatch = pattern.referencePattern.exec(normalizedText);
+                        if (refMatch) {
+                            refRange = refMatch[1];
                         }
                     }
+                    
+                    results[testName] = {
+                        value: value.toFixed(pattern.precision || 2),
+                        unit: pattern.standardUnit,
+                        rawText: match[0].trim(),
+                        referenceRange: refRange,
+                        confidence: 0.9,
+                        matchType: 'structured'
+                    };
                 }
-                break;
             }
+        } catch (error) {
+            console.error(`Error parsing structured test ${testName}:`, error);
         }
     }
     
-    // Try enhanced patterns that are more likely to find values
-    for (const [testName, pattern] of Object.entries(enhancedPatterns || {})) {
-        // Skip if already found by structured format
-        if (results[testName]) continue;
+    // Try standard patterns
+    for (const [testName, pattern] of Object.entries(labPatterns)) {
+        if (results[testName]) continue; // Skip if already found
         
         try {
             const match = pattern.regex.exec(normalizedText);
             if (match) {
-                if (DEBUG) console.log(`Found enhanced match for ${testName}: ${match[1]}`);
-                
-                // Look for reference range in the same line or nearby
-                const matchContext = findContextAroundMatch(text, match[0]);
-                const refRangeMatch = matchContext.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
-                
-                results[testName] = {
-                    value: parseFloat(match[1]).toFixed(pattern.precision || 2),
-                    unit: pattern.standardUnit,
-                    rawText: matchContext.trim(),
-                    referenceRange: refRangeMatch ? refRangeMatch[0] : null,
-                    confidence: 0.95,
-                    matchType: 'enhanced'
-                };
-            }
-        } catch (error) {
-            console.error(`Error parsing ${testName} with enhanced patterns:`, error);
-        }
-    }
-    
-    // Try looser matching for standard patterns
-    for (const [testName, pattern] of Object.entries(labPatterns)) {
-        // Skip if already found by other methods
-        if (results[testName]) continue;
-        
-        try {
-            // Create a more relaxed pattern with optional spaces
-            const patternStr = pattern.regex.toString()
-                .replace(/^\/(.*?)\/[gi]*$/, '$1')  // Remove regex delimiters and flags
-                .replace(/\s+/g, '\\s*');           // Replace spaces with optional spaces
-                
-            const relaxedPattern = new RegExp(patternStr, 'i');
-            const match = relaxedPattern.exec(normalizedText);
-            
-            if (match) {
-                if (DEBUG) console.log(`Found relaxed match for ${testName}: ${match[1]}`);
-                
-                // Find the context around this match
-                const matchContext = findContextAroundMatch(text, match[0]);
-                const refRangeMatch = matchContext.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
-                
-                results[testName] = {
-                    value: parseFloat(match[1]).toFixed(2),
-                    unit: pattern.standardUnit,
-                    rawText: matchContext,
-                    referenceRange: refRangeMatch ? refRangeMatch[0] : null,
-                    confidence: 0.85,
-                    matchType: 'relaxed'
-                };
-            }
-        } catch (error) {
-            console.error(`Error parsing ${testName} with relaxed pattern:`, error);
-        }
-    }
-    
-    // Try standard patterns from labPatterns.js as a fallback
-    for (const [testName, pattern] of Object.entries(labPatterns)) {
-        // Skip if already found by other methods
-        if (results[testName]) continue;
-        
-        try {
-            const match = pattern.regex.exec(normalizedText);
-            if (match) {
-                if (DEBUG) console.log(`Found standard match for ${testName}: ${match[1]}`);
-                
-                // Look for reference range
-                let refRange = null;
-                const matchLine = lines.find(line => line.includes(match[1])) || '';
-                const refRangeMatch = matchLine.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
-                
-                if (refRangeMatch) {
-                    refRange = refRangeMatch[0];
-                }
-                
-                results[testName] = {
-                    value: parseFloat(match[1]).toFixed(2),
-                    unit: pattern.standardUnit,
-                    rawText: matchLine.trim(),
-                    referenceRange: refRange,
-                    confidence: 0.9,
-                    matchType: 'standard'
-                };
-            }
-        } catch (error) {
-            console.error(`Error parsing ${testName} with standard pattern:`, error);
-        }
-    }
-    
-    // Fuzzy search through the text for common biomarker names and nearby numbers
-    if (Object.keys(results).length === 0) {
-        const commonBiomarkers = {
-            'Testosterone': /(?:Testosterone|Test\.)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'HDL-C': /(?:HDL|HDL-C|HDL Cholesterol)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'LDL-C': /(?:LDL|LDL-C|LDL Cholesterol)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'Total Cholesterol': /(?:Total Cholesterol|Cholesterol, Total)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'Triglycerides': /(?:Triglycerides|TG)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'Glucose': /(?:Glucose|GLU)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'HbA1c': /(?:HbA1c|A1c|Hemoglobin A1c)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'TSH': /(?:TSH|Thyroid Stimulating Hormone)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'Free T4': /(?:Free T4|T4, Free|FT4)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'ALT': /(?:ALT|SGPT|Alanine Aminotransferase)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-            'AST': /(?:AST|SGOT|Aspartate Aminotransferase)\s*(?:[^\d]*?)\s*(\d+\.?\d*)/i,
-        };
-        
-        for (const [biomarker, pattern] of Object.entries(commonBiomarkers)) {
-            const match = pattern.exec(normalizedText);
-            if (match && !isNaN(parseFloat(match[1]))) {
-                if (DEBUG) console.log(`Found fuzzy match for ${biomarker}: ${match[1]}`);
-                
                 const value = parseFloat(match[1]);
-                // Skip unreasonable values
-                if (value > 10000) continue;
-                
-                const standardUnit = biomarker in labPatterns ? labPatterns[biomarker].standardUnit : '';
-                
-                results[biomarker] = {
-                    value: value.toFixed(2),
-                    unit: standardUnit,
-                    rawText: match[0],
-                    referenceRange: null,
-                    confidence: 0.8,
-                    matchType: 'fuzzy'
-                };
+                if (!isNaN(value) && value > 0 && value < 10000) { // Sanity check
+                    console.log(`Found standard match for ${testName}: ${value}`);
+                    
+                    // Look for reference range in the same line
+                    const matchLine = lines.find(line => line.includes(match[0])) || '';
+                    const refRangeMatch = matchLine.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
+                    
+                    results[testName] = {
+                        value: value.toFixed(pattern.precision || 2),
+                        unit: pattern.standardUnit,
+                        rawText: matchLine.trim(),
+                        referenceRange: refRangeMatch ? refRangeMatch[0] : null,
+                        confidence: 0.85,
+                        matchType: 'standard'
+                    };
+                }
             }
+        } catch (error) {
+            console.error(`Error parsing ${testName}:`, error);
         }
     }
     
-    // Try to find reference ranges for values that don't have them
-    for (const [biomarker, data] of Object.entries(results)) {
-        if (!data.referenceRange) {
-            const rangePattern = new RegExp(
-                `${biomarker}[^\\n]*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`, 'i'
-            );
-            const rangeMatch = normalizedText.match(rangePattern);
-            if (rangeMatch) {
-                results[biomarker].referenceRange = rangeMatch[1];
+    // Try fuzzy matching for potential missed values
+    const wordMap = createWordMap(text);
+    for (const [testName, pattern] of Object.entries(labPatterns)) {
+        if (results[testName]) continue; // Skip if already found
+        
+        try {
+            // Try both the main name and alternate names
+            const allNames = [testName, ...(pattern.alternateNames || [])];
+            
+            for (const name of allNames) {
+                const bestMatch = findBestFuzzyMatch(name, wordMap);
+                if (bestMatch) {
+                    const value = parseFloat(bestMatch.value);
+                    if (!isNaN(value) && value > 0 && value < 10000) { // Sanity check
+                        console.log(`Found fuzzy match for ${testName}: ${value}`);
+                        
+                        results[testName] = {
+                            value: value.toFixed(pattern.precision || 2),
+                            unit: pattern.standardUnit,
+                            rawText: bestMatch.context,
+                            referenceRange: bestMatch.range,
+                            confidence: 0.7,
+                            matchType: 'fuzzy'
+                        };
+                        break; // Found a match, no need to try other alternate names
+                    }
+                }
             }
+        } catch (error) {
+            console.error(`Error with fuzzy matching for ${testName}:`, error);
         }
     }
-
-    if (DEBUG) {
-        console.log('EasyOCR parsed results:', {
-            totalValues: Object.keys(results).length,
-            foundTests: Object.keys(results)
-        });
-    }
-
+    
+    // Log summary of results
+    console.log('EasyOCR parsed results:', {
+        totalValues: Object.keys(results).length,
+        foundTests: Object.keys(results)
+    });
+    
     return results;
 }
 
 /**
- * Find biomarker match based on approximate name matching
- * @param {string} testName - The test name to match
- * @returns {string|null} - The matched biomarker name or null
+ * Create a map of words for fuzzy matching
+ * @param {string} text - The OCR text
+ * @returns {Object} Word map with words as keys
  */
-function findBiomarkerMatch(testName) {
-    if (!testName) return null;
+function createWordMap(text) {
+    const words = {};
+    const lines = text.split('\n');
     
-    // Normalize the test name
-    const normalizedTestName = testName.toLowerCase().trim();
-    
-    // Direct matching (case-insensitive)
-    for (const [biomarker, pattern] of Object.entries(labPatterns)) {
-        if (biomarker.toLowerCase() === normalizedTestName) {
-            return biomarker;
-        }
+    lines.forEach(line => {
+        // Split line into tokens
+        const tokens = line.split(/\s+/);
         
-        // Check alternate names
-        if (pattern.alternateNames) {
-            for (const altName of pattern.alternateNames) {
-                if (altName.toLowerCase() === normalizedTestName) {
-                    return biomarker;
+        tokens.forEach((token, index) => {
+            // Look for number patterns near words
+            if (/^[A-Za-z]+$/.test(token) && token.length >= 2) {
+                // Look ahead for numbers in the next few tokens
+                for (let i = 1; i <= 3 && index + i < tokens.length; i++) {
+                    const nextToken = tokens[index + i];
+                    // Check if token is a number
+                    if (/^\d+\.?\d*$/.test(nextToken)) {
+                        // Store the word with its context and value
+                        words[token.toLowerCase()] = {
+                            word: token,
+                            value: nextToken,
+                            context: line,
+                            range: findReferenceRange(line)
+                        };
+                        break; // Found a value, no need to look further
+                    }
                 }
             }
-        }
-    }
+        });
+    });
     
-    // Fuzzy matching - look for biomarker names that are substrings
-    for (const [biomarker, pattern] of Object.entries(labPatterns)) {
-        if (normalizedTestName.includes(biomarker.toLowerCase())) {
-            return biomarker;
-        }
-        
-        // Check if any alternate name is included
-        if (pattern.alternateNames) {
-            for (const altName of pattern.alternateNames) {
-                if (normalizedTestName.includes(altName.toLowerCase())) {
-                    return biomarker;
-                }
-                
-                // Check if test name is included in the alternate name
-                // (e.g., "TSH" would match "Thyroid Stimulating Hormone (TSH)")
-                if (altName.toLowerCase().includes(normalizedTestName)) {
-                    return biomarker;
-                }
-            }
-        }
-    }
-    
-    // No match found
-    return null;
+    return words;
 }
 
 /**
- * Find the context around a match in the text
- * @param {string} text - The full text
- * @param {string} match - The matched substring
- * @returns {string} - The context around the match
+ * Find reference range pattern in text
+ * @param {string} text - Text to search for reference range
+ * @returns {string|null} - Reference range or null
  */
-function findContextAroundMatch(text, match) {
-    const index = text.indexOf(match);
-    if (index === -1) return match;
+function findReferenceRange(text) {
+    const rangePattern = /(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/;
+    const match = text.match(rangePattern);
+    return match ? match[0] : null;
+}
+
+/**
+ * Find best fuzzy match for a lab name
+ * @param {string} labName - Lab name to match
+ * @param {Object} wordMap - Word map to search
+ * @returns {Object|null} - Best match info or null
+ */
+function findBestFuzzyMatch(labName, wordMap) {
+    const normalizedLabName = labName.toLowerCase();
+    let bestMatch = null;
+    let bestScore = Infinity;
     
-    // Get up to 50 characters before and after the match
-    const start = Math.max(0, index - 50);
-    const end = Math.min(text.length, index + match.length + 50);
-    
-    // Find line breaks to get the whole line(s)
-    let contextStart = start;
-    while (contextStart > 0 && text[contextStart - 1] !== '\n') {
-        contextStart--;
+    // Check for exact matches first
+    if (wordMap[normalizedLabName]) {
+        return wordMap[normalizedLabName];
     }
     
-    let contextEnd = end;
-    while (contextEnd < text.length && text[contextEnd] !== '\n') {
-        contextEnd++;
+    // Try fuzzy matching
+    for (const [word, info] of Object.entries(wordMap)) {
+        const distance = levenshteinDistance(normalizedLabName, word);
+        const score = distance / Math.max(normalizedLabName.length, word.length);
+        
+        // Consider a match if the normalized score is less than 0.3 (70% similar)
+        if (score < 0.3 && score < bestScore) {
+            bestScore = score;
+            bestMatch = info;
+        }
     }
     
-    return text.substring(contextStart, contextEnd);
+    return bestMatch;
+}
+
+/**
+ * Calculate Levenshtein distance between two strings
+ * @param {string} a - First string
+ * @param {string} b - Second string
+ * @returns {number} - Levenshtein distance
+ */
+function levenshteinDistance(a, b) {
+    if (!a || !b) return Infinity;
+    
+    const matrix = Array(b.length + 1).fill().map(() => Array(a.length + 1).fill(0));
+    
+    for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+    for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+    
+    for (let j = 1; j <= b.length; j++) {
+        for (let i = 1; i <= a.length; i++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            matrix[j][i] = Math.min(
+                matrix[j - 1][i] + 1,
+                matrix[j][i - 1] + 1,
+                matrix[j - 1][i - 1] + cost
+            );
+        }
+    }
+    
+    return matrix[b.length][a.length];
 }
 
 /**
  * Extract test date from OCR text
- * @param {string} text - The OCR text
- * @returns {Date|null} The extracted date or null
+ * @param {string} text - OCR text
+ * @returns {Date|null} - Extracted date or null
  */
 function extractTestDate(text) {
     if (!text || typeof text !== 'string') {
         console.log('Invalid text provided to extractTestDate');
         return null;
     }
+
+    // Various date patterns to try
+    const datePatterns = [
+        // Pattern: "Collection Date: YYYY-MM-DD"
+        {
+            regex: /Collection\s+Date:?\s*(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{4}|\d{4}\/\d{2}\/\d{2})/i,
+            priority: 1
+        },
+        // Pattern: "Date: YYYY-MM-DD"
+        {
+            regex: /Date:?\s*(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{4}|\d{4}\/\d{2}\/\d{2})/i,
+            priority: 2
+        },
+        // Pattern: "Collection Date: DD-MMM-YYYY"
+        {
+            regex: /Collection\s+Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})/i,
+            priority: 3
+        },
+        // Pattern: "Collected Date: DD-MMM-YYYY"
+        {
+            regex: /Collected\s+Date:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})/i,
+            priority: 4
+        },
+        // Pattern: "Generated On: DD-MMM-YYYY"
+        {
+            regex: /Generated\s+On:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})/i,
+            priority: 5
+        },
+        // Pattern: "Received: DD-MMM-YYYY"
+        {
+            regex: /Received:?\s*(\d{2}-[A-Za-z]{3}-\d{4}|\d{4}-[A-Za-z]{3}-\d{2})/i,
+            priority: 6
+        }
+    ];
 
     // Sort patterns by priority
     const sortedPatterns = [...datePatterns].sort((a, b) => a.priority - b.priority);
@@ -342,87 +645,57 @@ function extractTestDate(text) {
             try {
                 const dateStr = match[1].trim();
                 
-                // Try various date formats
-                // Format: YYYY-MM-DD or YYYY/MM/DD
-                if (/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}$/.test(dateStr)) {
-                    return new Date(dateStr);
-                }
-                
-                // Format: DD-MMM-YYYY or DD/MMM/YYYY
-                const monthNameMatch = dateStr.match(/(\d{1,2})[-\/\s]([A-Za-z]{3})[-\/\s](\d{4})/);
-                if (monthNameMatch) {
-                    const day = parseInt(monthNameMatch[1]);
-                    const monthStr = monthNameMatch[2];
-                    const year = parseInt(monthNameMatch[3]);
+                // Handle different date formats
+                if (dateStr.includes('-')) {
+                    // Format: YYYY-MM-DD or DD-MM-YYYY or DD-MMM-YYYY
+                    const parts = dateStr.split('-');
                     
-                    const monthMap = {
-                        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-                        'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-                    };
+                    if (parts.length === 3) {
+                        // Check if first part is year (YYYY-MM-DD)
+                        if (parts[0].length === 4) {
+                            return new Date(parts[0], parts[1] - 1, parts[2]);
+                        }
+                        // Check if it's DD-MMM-YYYY format
+                        else if (parts[1].length === 3 && isNaN(parseInt(parts[1]))) {
+                            const monthMap = {
+                                'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
+                                'jul': 6, 'aug': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dec': 11
+                            };
+                            const month = monthMap[parts[1].toLowerCase()];
+                            if (month !== undefined) {
+                                return new Date(parts[2], month, parts[0]);
+                            }
+                        }
+                        // Assume DD-MM-YYYY
+                        else {
+                            return new Date(parts[2], parts[1] - 1, parts[0]);
+                        }
+                    }
+                } 
+                else if (dateStr.includes('/')) {
+                    // Format: MM/DD/YYYY or DD/MM/YYYY
+                    const parts = dateStr.split('/');
                     
-                    const month = monthMap[monthStr];
-                    if (month !== undefined) {
-                        return new Date(year, month, day);
+                    if (parts.length === 3) {
+                        // Check if third part is year (MM/DD/YYYY or DD/MM/YYYY)
+                        if (parts[2].length === 4) {
+                            // Try to determine if MM/DD or DD/MM based on numbers
+                            const num1 = parseInt(parts[0]);
+                            const num2 = parseInt(parts[1]);
+                            
+                            if (num1 > 12 && num2 <= 12) {
+                                // First number > 12, so it must be DD/MM/YYYY
+                                return new Date(parts[2], parts[1] - 1, parts[0]);
+                            } else {
+                                // Otherwise assume MM/DD/YYYY (US format)
+                                return new Date(parts[2], parts[0] - 1, parts[1]);
+                            }
+                        }
                     }
                 }
-                
-                // Format: MM/DD/YYYY or DD/MM/YYYY
-                const slashMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-                if (slashMatch) {
-                    // In US format - assuming MM/DD/YYYY
-                    const month = parseInt(slashMatch[1]) - 1;
-                    const day = parseInt(slashMatch[2]);
-                    const year = parseInt(slashMatch[3]);
-                    
-                    return new Date(year, month, day);
-                }
-                
-                // If all else fails, try direct Date parsing
-                const parsedDate = new Date(dateStr);
-                if (!isNaN(parsedDate.getTime())) {
-                    return parsedDate;
-                }
-                
             } catch (error) {
                 console.log(`Error parsing date: ${error}`);
             }
-        }
-    }
-    
-    // Try more generic date patterns if the standard ones fail
-    const datePatterns = [
-        /(\d{1,2}[-\/]\d{1,2}[-\/]\d{4})/,  // DD/MM/YYYY or MM/DD/YYYY
-        /(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})/,  // YYYY/MM/DD
-        /([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})/,  // Month DD, YYYY
-        /(\d{1,2}\s+[A-Za-z]{3,9},?\s+\d{4})/,  // DD Month YYYY
-    ];
-    
-    for (const pattern of datePatterns) {
-        const match = text.match(pattern);
-        if (match) {
-            try {
-                const dateStr = match[1];
-                const parsedDate = new Date(dateStr);
-                if (!isNaN(parsedDate.getTime())) {
-                    return parsedDate;
-                }
-            } catch (error) {
-                // Ignore parsing errors and try next pattern
-            }
-        }
-    }
-    
-    // Look for text like "Test Date: September 16, 2018"
-    const textDateMatch = text.match(/(?:Test|Collection|Report|Sample)\s+Date:?\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})/i);
-    if (textDateMatch) {
-        try {
-            const dateStr = textDateMatch[1];
-            const parsedDate = new Date(dateStr);
-            if (!isNaN(parsedDate.getTime())) {
-                return parsedDate;
-            }
-        } catch (error) {
-            // Ignore parsing errors
         }
     }
     
@@ -430,215 +703,9 @@ function extractTestDate(text) {
 }
 
 /**
- * Main function to extract lab data from a file using EasyOCR via Python script
- * @param {string} filePath - Path to the file (PDF or image)
- * @returns {Promise<Object>} Extracted lab values and test date
- */
-async function extractFromPDF(filePath) {
-    try {
-        // Create a temporary Python script to run EasyOCR
-        const scriptPath = path.join(__dirname, 'run_easyocr.py');
-        const scriptContent = `
-import sys
-import os
-import json
-import traceback
-
-# Disable progress bar to avoid encoding issues
-os.environ["EASYOCR_DISABLE_PROGRESS"] = "1"
-
-try:
-    # Try importing the required libraries
-    import easyocr
-    from PIL import Image
-    
-    # Function to handle PDFs
-    def process_pdf(file_path):
-        try:
-            from pdf2image import convert_from_path
-            # Convert PDF to images
-            images = convert_from_path(file_path, dpi=300)
-            all_text = ""
-            
-            # Process each page
-            for i, img in enumerate(images):
-                # Save temporarily
-                img_path = os.path.join(os.path.dirname(file_path), f"temp_page_{i}.jpg")
-                img.save(img_path)
-                
-                print(f"Processing page {i+1} of {len(images)}", file=sys.stderr)
-                
-                # Process with EasyOCR
-                detection_result = reader.readtext(img_path)
-                
-                # Sort text by vertical position (top to bottom, left to right)
-                detection_result.sort(key=lambda x: (x[0][0][1], x[0][0][0]))
-                
-                # Group text into lines based on vertical position
-                lines = []
-                current_line = []
-                current_y = None
-                
-                for box, text, conf in detection_result:
-                    y_pos = (box[0][1] + box[2][1]) / 2  # Average Y position
-                    
-                    if current_y is None:
-                        current_y = y_pos
-                        
-                    # If this text is significantly below the current line, start a new line
-                    if abs(y_pos - current_y) > 20:  # Adjust threshold as needed
-                        if current_line:
-                            lines.append(' '.join(current_line))
-                            current_line = []
-                        current_y = y_pos
-                    
-                    current_line.append(text)
-                
-                # Add the last line
-                if current_line:
-                    lines.append(' '.join(current_line))
-                
-                # Join lines with newlines
-                page_text = '\\n'.join(lines)
-                all_text += f"\\n--- PAGE {i+1} ---\\n{page_text}\\n"
-                
-                # Clean up
-                try:
-                    os.remove(img_path)
-                except:
-                    pass
-                    
-            return all_text
-        except Exception as e:
-            return f"Error processing PDF: {str(e)}\\n{traceback.format_exc()}"
-    
-    # Initialize EasyOCR with silent download
-    print("Initializing EasyOCR reader...", file=sys.stderr)
-    reader = easyocr.Reader(['en'], verbose=False, download_enabled=True)
-    
-    # Get file path from command line argument
-    file_path = sys.argv[1]
-    print(f"Processing file: {file_path}", file=sys.stderr)
-    
-    # Determine file type and process accordingly
-    if file_path.lower().endswith('.pdf'):
-        text = process_pdf(file_path)
-    else:
-        # Process single image
-        detection_result = reader.readtext(file_path)
-        
-        # Sort text by position
-        detection_result.sort(key=lambda x: (x[0][0][1], x[0][0][0]))
-        
-        # Group text into lines
-        lines = []
-        current_line = []
-        current_y = None
-        
-        for box, text, conf in detection_result:
-            y_pos = (box[0][1] + box[2][1]) / 2
-            
-            if current_y is None:
-                current_y = y_pos
-                
-            if abs(y_pos - current_y) > 20:
-                if current_line:
-                    lines.append(' '.join(current_line))
-                    current_line = []
-                current_y = y_pos
-            
-            current_line.append(text)
-        
-        if current_line:
-            lines.append(' '.join(current_line))
-        
-        text = '\\n'.join(lines)
-    
-    # Output the extracted text as JSON
-    output = {
-        "text": text,
-        "confidence": 0.9  # Simple confidence value
-    }
-    
-    print(json.dumps(output))
-    
-except Exception as e:
-    # Handle any errors
-    error_output = {
-        "error": str(e),
-        "traceback": traceback.format_exc()
-    }
-    print(json.dumps(error_output), file=sys.stderr)
-    sys.exit(1)
-        `;
-
-        // Write the script to file
-        fs.writeFileSync(scriptPath, scriptContent);
-        
-        if (DEBUG) console.log(`Created temporary Python script at ${scriptPath}`);
-        
-        // Execute the Python script with proper error handling
-        if (DEBUG) console.log(`Processing file: ${filePath}`);
-        
-        try {
-            const output = execSync(`python "${scriptPath}" "${filePath}"`, {
-                encoding: 'utf-8',
-                maxBuffer: 10 * 1024 * 1024, // 10 MB buffer for large outputs
-                windowsHide: true
-            });
-            
-            // Parse the JSON output
-            const result = JSON.parse(output);
-            const { text, confidence } = result;
-            
-            if (DEBUG) console.log(`EasyOCR extracted ${text.length} characters of text`);
-            if (DEBUG) console.log(`Sample extracted text: ${text.substring(0, 200)}...`);
-            
-            // Save full text to a debug file if in debug mode
-            if (DEBUG) {
-                const debugFilePath = path.join(path.dirname(filePath), 'debug_ocr_output.txt');
-                fs.writeFileSync(debugFilePath, text);
-                console.log(`Saved full OCR text to ${debugFilePath} for debugging`);
-            }
-            
-            // Parse lab values and test date
-            const labValues = parseLabValues(text);
-            const testDate = extractTestDate(text);
-            
-            // Clean up the temporary script
-            try {
-                fs.unlinkSync(scriptPath);
-            } catch (err) {
-                console.log(`Warning: Failed to delete temporary script: ${err.message}`);
-            }
-            
-            return {
-                labValues,
-                testDate
-            };
-        } catch (execError) {
-            console.error('Python execution error:', execError.message);
-            console.error('Error output:', execError.stderr);
-            
-            // Try to parse error JSON if available
-            try {
-                const errorJson = JSON.parse(execError.stderr);
-                throw new Error(`EasyOCR error: ${errorJson.error}\n${errorJson.traceback}`);
-            } catch (jsonError) {
-                // If not JSON, throw the original error
-                throw new Error(`Python execution failed: ${execError.message}`);
-            }
-        }
-    } catch (error) {
-        console.error('Error extracting from file with EasyOCR:', error);
-        throw error;
-    }
-}
-
-/**
  * Interpret OCR confidence level
- * @param {number} confidence - The OCR confidence value (0-1)
- * @returns {string} The confidence level description
+ * @param {number} confidence - Confidence score (0-1)
+ * @returns {string} - Confidence level description
  */
 function interpretConfidence(confidence) {
     if (confidence >= 0.9) return 'high';
@@ -646,6 +713,7 @@ function interpretConfidence(confidence) {
     return 'low';
 }
 
+// Export required functions for the parser
 module.exports = {
     extractFromPDF,
     parseLabValues,
