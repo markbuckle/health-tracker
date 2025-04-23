@@ -1675,6 +1675,69 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   </script>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // File Upload Handler
+        const processButton = document.getElementById('processFiles');
+        
+        if (processButton) {
+          processButton.addEventListener('click', async () => {
+            // Your existing code here...
+            
+            // Add this part to properly hide the loading overlay when done
+            const waitForComplete = (maxWaitTime = 300000) => {
+              return new Promise((resolve) => {
+                // WebSocket for real-time updates
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const ws = new WebSocket(`${protocol}//${window.location.host}`);
+                
+                ws.onmessage = function(event) {
+                  const message = event.data;
+                  
+                  // If the message indicates completion or contains 'Files saved successfully'
+                  if (message.includes('Files saved successfully') || message.includes('completed')) {
+                    console.log('Processing complete, closing WebSocket');
+                    ws.close();
+                    resolve();
+                  }
+                };
+                
+                // Set a maximum wait time in case we miss the completion message
+                setTimeout(() => {
+                  console.log('Maximum wait time reached, closing WebSocket');
+                  ws.close();
+                  resolve();
+                }, maxWaitTime);
+              });
+            };
+            
+            try {
+              // Your existing form submission code...
+              
+              // After form submission completes, wait for the socket to signal completion
+              await waitForComplete();
+              
+              // Hide the loading overlay
+              const loadingOverlay = document.getElementById('loadingOverlay');
+              if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+              }
+              
+              // Reload the page or update UI as needed
+              window.location.reload();
+            } catch (error) {
+              console.error('Error:', error);
+              
+              // Hide the loading overlay even on error
+              const loadingOverlay = document.getElementById('loadingOverlay');
+              if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+              }
+            }
+          });
+        }
+      });
+  </script>
 
 </body>
 
