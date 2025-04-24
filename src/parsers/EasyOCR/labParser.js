@@ -18,6 +18,9 @@ async function extractFromPDF(filePath) {
         // Get file extension
         const fileExt = path.extname(filePath).toLowerCase();
         
+        // Log the file type we're processing
+        console.log(`Processing ${fileExt} file with EasyOCR...`);
+        
         // Run Python script to extract text with EasyOCR
         const text = await runEasyOCR(filePath);
         
@@ -34,6 +37,32 @@ async function extractFromPDF(filePath) {
             } catch (err) {
                 console.log("File stats error, using current date:", err);
                 testDate = new Date(); // Current date as a last resort
+            }
+        }
+        
+        // If PDF file has no lab values but has extractable text, try harder to find values
+        if (fileExt === '.pdf' && Object.keys(labValues).length === 0 && text.length > 100) {
+            console.log("No lab values found in initial parse, trying alternative parsing...");
+            
+            // Try different parsing techniques for PDFs with structured tables
+            if (text.includes("TEST") && text.includes("RESULT") || 
+                text.includes("Name") && text.includes("Value") || 
+                text.includes("Parameter") && text.includes("Result")) {
+                
+                // Look for structured tables with test names and values
+                const lines = text.split('\n');
+                for (const line of lines) {
+                    const parts = line.split(/\s+/);
+                    if (parts.length >= 2) {
+                        const possibleTestName = parts[0];
+                        const possibleValue = parts.find(p => /^\d+\.?\d*$/.test(p));
+                        
+                        if (possibleTestName && possibleValue) {
+                            console.log(`Found possible test: ${possibleTestName} = ${possibleValue}`);
+                            // You could add this to labValues, though you may want to map it to standard names
+                        }
+                    }
+                }
             }
         }
         
@@ -58,16 +87,9 @@ async function extractFromPDF(filePath) {
  */
 function runEasyOCR(filePath) {
     return new Promise((resolve, reject) => {
-        // Check if we should limit processing to specific pages
-        const maxPages = process.env.EASYOCR_MAX_PAGES || '';
-        const env = maxPages ? { EASYOCR_MAX_PAGES: maxPages } : {};
-        
         const command = `python ${EASYOCR_SCRIPT} "${filePath}"`;
         
-        exec(command, { 
-            maxBuffer: 20 * 1024 * 1024, // Increased buffer size for large documents
-            env: { ...process.env, ...env }
-        }, (error, stdout, stderr) => {
+        exec(command, { maxBuffer: 10 * 1024 * 1024 }, (error, stdout, stderr) => {
             if (error) {
                 console.error(`EasyOCR error: ${error.message}`);
                 console.error(`stderr: ${stderr}`);
@@ -75,33 +97,11 @@ function runEasyOCR(filePath) {
                 return;
             }
             
-            // Extract any detected dates from stderr
-            const dates = [];
             if (stderr) {
                 console.warn(`EasyOCR warnings: ${stderr}`);
-                
-                // Look for detected dates output by the Python script
-                const dateMatches = stderr.match(/Found date: ([^\n]+)/g);
-                if (dateMatches) {
-                    dateMatches.forEach(match => {
-                        const date = match.replace('Found date: ', '');
-                        dates.push(date.trim());
-                    });
-                }
-                
-                // Check for DETECTED_DATES line
-                const datesLine = stderr.match(/DETECTED_DATES: ([^\n]+)/);
-                if (datesLine && datesLine[1]) {
-                    datesLine[1].split(',').forEach(date => {
-                        dates.push(date.trim());
-                    });
-                }
             }
             
-            resolve({
-                text: stdout.trim(),
-                dates: dates
-            });
+            resolve(stdout.trim());
         });
     });
 }
