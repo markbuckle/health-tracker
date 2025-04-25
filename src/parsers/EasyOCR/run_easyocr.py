@@ -24,7 +24,7 @@ try:
     import cv2
     import numpy as np
     from pdf2image import convert_from_path
-    
+
     # Initialize EasyOCR reader
     reader = easyocr.Reader(['en'], gpu=False)  # Set gpu=True if you have a GPU
     
@@ -86,8 +86,22 @@ try:
         full_text = ' '.join([entry[1] for entry in result_orig])
         full_text += ' ' + ' '.join([entry[1] for entry in result_enhanced])
     
+    # Look for reference ranges and format them consistently
+    # Use a safer approach with finditer instead of sub
+    modified_text = full_text
+    
+    # First pattern: Reference Range format
+    for match in re.finditer(r'((?:Ref|Reference)\s*Range[^0-9]*?)(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)', full_text):
+        range_value = f"{match.group(2)}-{match.group(3)}"
+        modified_text = modified_text.replace(match.group(0), f"Reference Range: {range_value}")
+    
+    # Second pattern: Range with units
+    for match in re.finditer(r'(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)\s*(?:mmol/L|nmol/L|pmol/L|ug/L|µg/L)', full_text):
+        range_value = f"{match.group(1)}-{match.group(2)}"
+        modified_text = modified_text.replace(match.group(0), f"Reference Range: {range_value}")
+    
     # Print extracted text (will be captured by Node.js)
-    print(full_text)
+    print(modified_text)
     
 except Exception as e:
     print(f"Error processing file: {str(e)}", file=sys.stderr)

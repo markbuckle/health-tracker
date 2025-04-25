@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { labPatterns, datePatterns } = require('../labPatterns');
+const { biomarkerData } = require('../biomarkerData');
 
 // Configuration
 const EASYOCR_SCRIPT = path.join(__dirname, 'run_easyocr.py');
@@ -127,15 +128,49 @@ function parseLabValues(text) {
                 console.log(`Found match: ${testName} = ${match[1]}`);
                 
                 // Try to find reference range
-                const refRangeMatch = normalizedText.match(new RegExp(`${testName}.*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`));
+                // Add this more aggressive reference range pattern
+                let refRangeMatch = normalizedText.match(new RegExp(`${testName}[^0-9]*?(?:range|ref)[^0-9]*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`, 'i')) || 
+                    normalizedText.match(new RegExp(`${testName}.*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`, 'i'));
+
+                // Look in a window of lines around the matched line for reference range
+                const matchLineIndex = lines.findIndex(line => line.includes(match[0]));
+                if (matchLineIndex !== -1) {
+                for (let i = Math.max(0, matchLineIndex - 2); i <= Math.min(lines.length - 1, matchLineIndex + 2); i++) {
+                    const nearbyLine = lines[i];
+                    if (nearbyLine.includes('Range') && nearbyLine.match(/\d+\.?\d*\s*[-–]\s*\d+\.?\d*/)) {
+                    // const nearbyMatch = nearbyLine.match(/(\d+\.?\d*\s*[-–]\s*\d+\.?\d*)/);
+                    // if (nearbyMatch) refRangeMatch = nearbyMatch;
+                    const referenceRangePattern = new RegExp(`Ref(?:\\s*Range|erence\\s*Range)?[^0-9]*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`, 'i');
+                    const fullDocRangeMatch = normalizedText.match(referenceRangePattern);
+                    if (fullDocRangeMatch) {
+                    refRangeMatch = fullDocRangeMatch;
+                    }
+                    // For known biomarkers, use the range from biomarkerData if available
+                    if (labPatterns[testName]?.referenceRange) {
+                        refRangeMatch = [null, labPatterns[testName].referenceRange];
+                    }
+                    break;
+                    }
+                }
+                }
                 
+                const unit = match[2] || pattern.standardUnit || '';
                 results[testName] = {
                     value: parseFloat(match[1]),
-                    unit: pattern.standardUnit,
+                    unit: unit,
                     rawText: match[0].trim(),
-                    referenceRange: refRangeMatch ? refRangeMatch[1] : null,
-                    confidence: 0.8
+                    referenceRange: refRangeMatch ? refRangeMatch[1] : 
+                        (biomarkerData && biomarkerData[testName] ? biomarkerData[testName].referenceRange : null),
+                    confidence: 0.8,
+                    matchType: 'enhanced'
                 };
+                // results[testName] = {
+                //     value: parseFloat(match[1]),
+                //     unit: pattern.standardUnit,
+                //     rawText: match[0].trim(),
+                //     referenceRange: refRangeMatch ? refRangeMatch[1] : null,
+                //     confidence: 0.8
+                // };
             }
         } catch (error) {
             console.error(`Error parsing ${testName}:`, error);

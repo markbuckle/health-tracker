@@ -501,9 +501,7 @@
             } catch (error) {
               alert('Error processing files: ' + error.message);
             } finally {
-              if (!response?.ok) {
                 hideLoading();
-              }
             }
           });
 
