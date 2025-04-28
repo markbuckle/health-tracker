@@ -58,6 +58,30 @@ if (process.env.NODE_ENV === "development") {
 // Then create server with app
 const server = require("http").createServer(app);
 
+// test the mongoDB connection
+// mongoose.connection.once('open', async () => {
+//   try {
+//     // Get database name
+//     const dbName = mongoose.connection.db.databaseName;
+//     console.log(`Connected to database: ${dbName}`);
+    
+//     // Get collection names
+//     const collections = await mongoose.connection.db.listCollections().toArray();
+//     console.log('Collections in database:', collections.map(c => c.name));
+    
+//     // Count users
+//     const userCount = await registerCollection.countDocuments();
+//     console.log(`Found ${userCount} users in database`);
+    
+//     // List all usernames
+//     const allUsers = await registerCollection.find({}, {uname: 1, _id: 0}).lean();
+//     console.log('All usernames:', allUsers.map(u => u.uname));
+    
+//   } catch (err) {
+//     console.error("Error checking database:", err);
+//   }
+// });
+
 // Then create WebSocket server
 const wss = new WebSocket.Server({ server });
 

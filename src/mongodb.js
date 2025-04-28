@@ -252,6 +252,7 @@ registerSchema.methods.calculateAge = function () {
 // const registerCollection = mongoose.model("users", registerSchema);
 const registerCollection = mongoose.model("User", registerSchema);
 
+
 const feedbackSchema = new mongoose.Schema({
   name: {
     type: String,
