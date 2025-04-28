@@ -21,7 +21,7 @@ const { calculateRangePositions } = require("../public/js/rangeCalculations");
 const { biomarkerData, markerCategories } = require("./parsers/biomarkerData");
 const { Resend } = require("resend"); // npm install resend
 const ragRoutes = require("./db/routes/ragRoutes");
-// const { extractFromPDF } = require('./parsers/PaddleOCR/labParser');
+const { extractFromPDF } = require('./parsers/PaddleOCR/labParser');
 
 // express app setup
 const app = express();
@@ -1030,28 +1030,13 @@ app.post("/register", async (req, res) => {
 
 // Login logic
 app.post("/login", (req, res, next) => {
-  console.log("Login attempt received for username:", req.body.uname);
-  
-  passport.authenticate("local", (err, user, info) => {
-    console.log("Passport auth result:", { err, user: user ? 'exists' : 'null', info });
-    
-    if (err) { 
-      console.error("Login error:", err);
-      return next(err); 
-    }
-    if (!user) { 
-      console.log("User not found or incorrect password");
-      return res.redirect('/login'); 
-    }
-    
-    req.logIn(user, function(err) {
-      if (err) { 
-        console.error("Session login error:", err);
-        return next(err); 
-      }
-      console.log("Login successful for user:", user.uname);
-      return res.redirect('/welcome');
-    });
+  console.log("Login attempt received for username:", req.body.uname); // Debug log
+
+  passport.authenticate("local", {
+    successRedirect: "/welcome",
+    // successRedirect: "/profile",
+    failureRedirect: "/login",
+    failureFlash: false,
   })(req, res, next);
 });
 
@@ -1505,8 +1490,7 @@ app.post(
               ? new Date(extractedData.testDate)
               : null,
             labValues: extractedData.labValues || {},
-            extractionMethod: "paddleocr",
-            // extractionMethod: "tesseract",
+            extractionMethod: "tesseract",
             processingErrors: [],
           };
 
