@@ -74,10 +74,24 @@ async function extractFromPDF(filePath) {
     const labValues = parseLabValues(text);
     let testDate = extractTestDate(text, filePath);
     
-    // Ensure we have a valid date
+    // Try to extract date from filename if normal extraction failed
     if (!testDate || testDate.toString() === 'Invalid Date') {
-      console.log('Could not extract valid date, using current date as fallback');
-      testDate = new Date(); // Use current date as fallback
+      const filename = path.basename(filePath);
+      console.log("Trying to extract date from filename:", filename);
+      
+      // Check for date format in the filename (09.16.2018)
+      const dateMatch = filename.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+      if (dateMatch) {
+        const [_, month, day, year] = dateMatch;
+        testDate = new Date(year, parseInt(month) - 1, parseInt(day));
+        console.log(`Extracted date from filename: ${month}/${day}/${year}`);
+      }
+      
+      // If still no valid date, use current date
+      if (!testDate || testDate.toString() === 'Invalid Date') {
+        console.log('Could not extract valid date, using current date as fallback');
+        testDate = new Date();
+      }
     }
     
     // Clean up temp file

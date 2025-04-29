@@ -446,7 +446,7 @@ const labPatterns = {
         'pmol/L'
     ),
     'SHBG': createLabPattern('SHBG',
-        ['Sex Hormone Binding Globulin', 'Sex Hormone-Binding Globulin'],
+        ['Sex Hormone Binding Globulin', 'Sex Hormone-Binding Globulin', 'Binding Globulin'],
         '(?:nmol\\/L)',
         'nmol/L'
     ),
@@ -862,10 +862,11 @@ const enhancedPatterns = {
 };
 
 const structuredTestPatterns = {
-    'Sex Hormone Binding Globulin': {
+    'SHBG': {
         regex: /SEX\s+HORMONE\s+BINDING\s+GLOBULIN[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:nmol\/L)/i,
         standardUnit: 'nmol/L',
         precision: 1,
+        alternateNames: ['Sex Hormone Binding Globulin'],
         referencePattern: /REFERENCE\s*([\d.-]+)/i
     },
     'Testosterone Bioavailable': {
