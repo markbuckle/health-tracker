@@ -72,7 +72,7 @@ async function extractFromPDF(filePath) {
     
     // Parse lab values and test date
     const labValues = parseLabValues(text);
-    let testDate = extractTestDate(text, filePath);
+    let testDate = extractTestDate(text);
     
     // Ensure we have a valid date
     if (!testDate || testDate.toString() === 'Invalid Date') {
@@ -129,7 +129,7 @@ async function extractFromImage(filePath) {
     
     // Parse lab values and test date
     const labValues = parseLabValues(text);
-    let testDate = extractTestDate(text, filePath);
+    let testDate = extractTestDate(text);
     
     // Clean up temp file
     try {
@@ -258,7 +258,7 @@ function parseLabValues(text) {
  * @param {string} text - OCR text
  * @returns {Date|null} Extracted test date
  */
-function extractTestDate(text, filePath) {
+function extractTestDate(text) {
   if (!text || typeof text !== 'string') {
     return null;
   }
@@ -307,33 +307,21 @@ function extractTestDate(text, filePath) {
 
   // Try to extract date from filename if provided
   if (filePath) {
-    const fileNameMatch = path.basename(filePath).match(/(\d{2})\.(\d{2})\.(\d{4})/);
-    // const fileNameMatch = path.basename(filePath).match(/(\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2})/);
+    const fileNameMatch = path.basename(filePath).match(/(\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2})/);
     if (fileNameMatch) {
-      const [_, month, day, year] = fileNameMatch;
-      console.log(`Extracted date from filename: ${month}/${day}/${year}`);
-      return new Date(year, parseInt(month) - 1, day);
-    }
-    
-    // For date formats like "2018-Sept-14" or similar text-month formats
-    const textMonthMatch = path.basename(filePath).match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*[\s-]+(\d{1,2})[\s-,]+(\d{4})/i);
-    if (textMonthMatch) {
-      const monthMap = {
-        'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
-        'jul': 6, 'aug': 7, 'sep': 8, 'sept': 8, 'oct': 9, 'nov': 10, 'dec': 11
-      };
-      
-      const monthText = textMonthMatch[1].toLowerCase();
-      const day = parseInt(textMonthMatch[2]);
-      const year = parseInt(textMonthMatch[3]);
-      
-      const month = monthMap[monthText] || 0;
-      console.log(`Extracted text-based date: ${month+1}/${day}/${year}`);
-      return new Date(year, month, day);
+      const dateStr = fileNameMatch[1];
+      if (dateStr.includes('.')) {
+        // Format MM.DD.YYYY
+        const [month, day, year] = dateStr.split('.');
+        return new Date(year, month - 1, day);
+      } else if (dateStr.includes('-')) {
+        // Format YYYY-MM-DD
+        const [year, month, day] = dateStr.split('-');
+        return new Date(year, month - 1, day);
+      }
     }
   }
   
-  // Return null if no date found
   return null;
 }
 
