@@ -858,16 +858,22 @@ const enhancedPatterns = {
         standardUnit: 'μmol/L',
         precision: 0,
         alternateNames: ['Creat', 'Serum Creatinine']
-    }
+    },
+    'SHBG': {
+        regex: /Sex Hormone Binding Globulin\s*(?:[HLN]\s*)?([\d.]+)\s*(?:[\s\S]*?)((?:\d+\.?\d*\s*[-–]\s*\d+\.?\d*))\s*nmol\/L/i,
+        standardUnit: 'nmol/L',
+        precision: 1,
+        alternateNames: ['Sex Hormone Binding Globulin'],
+        referencePattern: /([\d.]+\s*[-–]\s*[\d.]+)/i
+    },
 };
 
 const structuredTestPatterns = {
     'SHBG': {
-        regex: /SEX\s+HORMONE\s+BINDING\s+GLOBULIN[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:nmol\/L)/i,
+        regex: /Sex\s+Hormone\s+Binding\s+Globulin(?:\s*\(?Final\)?)?\s*(?:[HLN]\s*)?([\d.]+)[\s\S]*?(?:nmol\/L)/i,
         standardUnit: 'nmol/L',
         precision: 1,
-        alternateNames: ['Sex Hormone Binding Globulin'],
-        referencePattern: /REFERENCE\s*([\d.-]+)/i
+        referencePattern: /(?:13\.5\s*[-–]\s*71\.0|(?:\d+\.\d+)\s*[-–]\s*(?:\d+\.\d+))/i
     },
     'Testosterone Bioavailable': {
         regex: /TESTOSTERONE\s+BIOAVAILABLE[\s\S]*?RESULT\s*([\d.]+)[\s\S]*?(?:nmol\/L)/i,

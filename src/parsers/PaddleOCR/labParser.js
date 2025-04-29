@@ -277,6 +277,29 @@ function extractTestDate(text, filePath) {
     return null;
   }
 
+  // Add direct search for Collection Date in the OCR text
+  // This is the most important change - look for the date format shown in your PDF
+  console.log("Searching for Collection Date pattern in text");
+  const collectionDatePattern = /Collection Date:?\s*(\d{4}-[A-Za-z]{3}-\d{1,2})/i;
+  const collectionMatch = text.match(collectionDatePattern);
+  if (collectionMatch) {
+    try {
+      const dateStr = collectionMatch[1];
+      console.log("Found collection date string:", dateStr);
+      const [year, month, day] = dateStr.split('-');
+      const monthMap = {
+        'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
+        'jul': 6, 'aug': 7, 'sep': 8, 'sept': 8, 'oct': 9, 'nov': 10, 'dec': 11
+      };
+      const monthIndex = monthMap[month.toLowerCase()];
+      const date = new Date(parseInt(year), monthIndex, parseInt(day));
+      console.log(`Found collection date: ${year}-${month}-${day}`);
+      return date;
+    } catch (error) {
+      console.log(`Error parsing collection date: ${error}`);
+    }
+  }
+
   // Sort date patterns by priority
   const sortedPatterns = [...datePatterns].sort((a, b) => a.priority - b.priority);
 
@@ -330,20 +353,23 @@ function extractTestDate(text, filePath) {
     }
     
     // For date formats like "2018-Sept-14" or similar text-month formats
-    const textMonthMatch = path.basename(filePath).match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*[\s-]+(\d{1,2})[\s-,]+(\d{4})/i);
-    if (textMonthMatch) {
-      const monthMap = {
-        'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
-        'jul': 6, 'aug': 7, 'sep': 8, 'sept': 8, 'oct': 9, 'nov': 10, 'dec': 11
-      };
-      
-      const monthText = textMonthMatch[1].toLowerCase();
-      const day = parseInt(textMonthMatch[2]);
-      const year = parseInt(textMonthMatch[3]);
-      
-      const month = monthMap[monthText] || 0;
-      console.log(`Extracted text-based date: ${month+1}/${day}/${year}`);
-      return new Date(year, month, day);
+    const collectionDatePattern = /Collection Date:\s*(\d{4}-[A-Za-z]{3}-\d{1,2})/i;
+    const match = text.match(collectionDatePattern);
+    if (match) {
+      try {
+        const dateStr = match[1];
+        const [year, month, day] = dateStr.split('-');
+        const monthMap = {
+          'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
+          'jul': 6, 'aug': 7, 'sep': 8, 'sept': 8, 'oct': 9, 'nov': 10, 'dec': 11
+        };
+        const monthIndex = monthMap[month.toLowerCase()];
+        const date = new Date(parseInt(year), monthIndex, parseInt(day));
+        console.log(`Found collection date: ${year}-${month}-${day}`);
+        return date;
+      } catch (error) {
+        console.log(`Error parsing collection date: ${error}`);
+      }
     }
   }
   
