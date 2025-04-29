@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { labPatterns, datePatterns } = require('../labPatterns');
+const { parseStructuredLabReport, extractStructuredDate } = require('./imageParser');
 
 /**
  * Detect document type based on file extension
@@ -155,6 +156,11 @@ async function extractFromImage(filePath) {
     // debug code:
     console.log("Found lab values:", Object.keys(labValues).length, "values");
     console.log("Lab values:", labValues);
+
+    // Make sure we have a valid date by checking if it's Invalid Date
+    if (!testDate || testDate.toString() === 'Invalid Date' || isNaN(testDate.getTime())) {
+      testDate = new Date(); // Use current date as fallback
+    }
     
     return {
       labValues,
@@ -163,8 +169,8 @@ async function extractFromImage(filePath) {
   } catch (error) {
     console.error(`Error extracting from image: ${error}`);
     return {
-      labValues: {},
-      testDate: null
+      labValues,
+      testDate
     };
   }
 }
@@ -207,6 +213,16 @@ function runPaddleOCR(filePath) {
  * @returns {Object} Extracted lab values
  */
 function parseLabValues(text) {
+  // First try the structured lab report parser for medical lab reports with tables
+  const structuredResults = parseStructuredLabReport(text);
+  
+  // If we found structured results, use those
+  if (Object.keys(structuredResults).length > 0) {
+    console.log("Found structured lab report with tables, using specialized parser");
+    return structuredResults;
+  }
+  
+  // Otherwise, fall back to the original pattern matching approach
   const results = {};
   
   // Return empty results if no text
@@ -223,44 +239,40 @@ function parseLabValues(text) {
       if (match) {
         console.log(`Found match: ${testName} = ${match[1]}`);
         
-        // Try to find reference range
+        // Try multiple ways to find reference range
+        let refRange = null;
+        
+        // Method 1: Look for pattern directly after the test name
         const refRangeMatch = normalizedText.match(new RegExp(`${testName}.*?(\\d+\\.?\\d*\\s*[-–]\\s*\\d+\\.?\\d*)`));
+        if (refRangeMatch) {
+          refRange = refRangeMatch[1];
+        }
+        
+        // Method 2: Look for reference range pattern in the same line as the value
+        if (!refRange) {
+          const contextMatch = match.input.match(/(\d+\.?\d*\s*[-–]\s*\d+\.?\d*)/g);
+          if (contextMatch && contextMatch.length > 0) {
+            // Get the first range that appears after the value
+            const valuePos = match.input.indexOf(match[1]);
+            for (const range of contextMatch) {
+              if (match.input.indexOf(range) > valuePos) {
+                refRange = range;
+                break;
+              }
+            }
+          }
+        }
         
         results[testName] = {
           value: parseFloat(match[1]),
           unit: pattern.standardUnit,
           rawText: match[0].trim(),
-          referenceRange: refRangeMatch ? refRangeMatch[1] : null,
+          referenceRange: refRange,
           confidence: 0.8
         };
       }
     } catch (error) {
       console.error(`Error parsing ${testName}:`, error);
-    }
-  }
-  
-  // Try to find structured format (TEST NAME RESULT format)
-  for (const line of lines) {
-    if (line.includes('TEST NAME') && line.includes('RESULT') && line.includes('UNITS')) {
-      const nextLine = lines[lines.indexOf(line) + 1];
-      if (nextLine) {
-        const parts = nextLine.split(/\s+/);
-        const testName = parts[0];
-        const value = parts.find(p => /^[\d.]+$/.test(p));
-        const refRange = parts.find(p => /^\d+\.?\d*[-–]\d+\.?\d*$/.test(p));
-        const unit = parts[parts.length - 1];
-
-        if (testName && value) {
-          console.log(`Found structured format match: ${testName} = ${value} ${unit}`);
-          results[testName] = {
-            value: parseFloat(value),
-            unit: unit,
-            rawText: nextLine.trim(),
-            referenceRange: refRange,
-            confidence: 0.9
-          };
-        }
-      }
     }
   }
   
@@ -272,92 +284,29 @@ function parseLabValues(text) {
  * @param {string} text - OCR text
  * @returns {Date|null} Extracted test date
  */
+// And modify your extractTestDate function to also try the structured date extraction
 function extractTestDate(text, filePath) {
   if (!text || typeof text !== 'string') {
-    return null;
+    console.log('Invalid text provided to extractTestDate');
+    return new Date(); // Return current date for invalid input
   }
 
-  // Add direct search for Collection Date in the OCR text
-  // This is the most important change - look for the date format shown in your PDF
-  console.log("Searching for Collection Date pattern in text");
-  const collectionDatePattern = /Collection Date:?\s*(\d{4}-[A-Za-z]{3}-\d{1,2})/i;
-  const collectionMatch = text.match(collectionDatePattern);
-  if (collectionMatch) {
-    try {
-      const dateStr = collectionMatch[1];
-      console.log("Found collection date string:", dateStr);
-      const [year, month, day] = dateStr.split('-');
-      const monthMap = {
-        'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
-        'jul': 6, 'aug': 7, 'sep': 8, 'sept': 8, 'oct': 9, 'nov': 10, 'dec': 11
-      };
-      const monthIndex = monthMap[month.toLowerCase()];
-      const date = new Date(parseInt(year), monthIndex, parseInt(day));
-      console.log(`Found collection date: ${year}-${month}-${day}`);
-      return date;
-    } catch (error) {
-      console.log(`Error parsing collection date: ${error}`);
+  try {
+    // First try the structured lab report date extraction
+    const structuredDate = extractStructuredDate(text);
+    if (structuredDate) {
+      console.log("Found date using structured format parser");
+      return structuredDate;
     }
-  }
-
-  // Sort date patterns by priority
-  const sortedPatterns = [...datePatterns].sort((a, b) => a.priority - b.priority);
-
-  for (const pattern of sortedPatterns) {
-    const match = pattern.regex.exec(text);
-    if (match) {
+  
+    // Add direct search for Collection Date in the OCR text
+    console.log("Searching for Collection Date pattern in text");
+    const collectionDatePattern = /Collection Date:?\s*(\d{4}-[A-Za-z]{3}-\d{1,2})/i;
+    const collectionMatch = text.match(collectionDatePattern);
+    if (collectionMatch) {
       try {
-        const dateStr = match[1].trim();
-        
-        // Handle various date formats
-        if (dateStr.includes('-')) {
-          // Try to parse YYYY-MM-DD or DD-MM-YYYY
-          const parts = dateStr.split('-');
-          if (parts.length === 3) {
-            if (parts[0].length === 4) {
-              // YYYY-MM-DD
-              return new Date(parts[0], parts[1] - 1, parts[2]);
-            } else {
-              // DD-MM-YYYY
-              return new Date(parts[2], parts[1] - 1, parts[0]);
-            }
-          }
-        } else if (dateStr.includes('/')) {
-          // Try to parse MM/DD/YYYY or DD/MM/YYYY
-          const parts = dateStr.split('/');
-          if (parts.length === 3) {
-            // Assume MM/DD/YYYY format in the US
-            return new Date(parts[2], parts[0] - 1, parts[1]);
-          }
-        }
-        
-        // Fall back to just trying to parse the date string directly
-        const fallbackDate = new Date(dateStr);
-        if (!isNaN(fallbackDate.getTime())) {
-          return fallbackDate;
-        }
-      } catch (error) {
-        console.log(`Error parsing date: ${error}`);
-      }
-    }
-  }
-
-  // Try to extract date from filename if provided
-  if (filePath) {
-    const fileNameMatch = path.basename(filePath).match(/(\d{2})\.(\d{2})\.(\d{4})/);
-    // const fileNameMatch = path.basename(filePath).match(/(\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2})/);
-    if (fileNameMatch) {
-      const [_, month, day, year] = fileNameMatch;
-      console.log(`Extracted date from filename: ${month}/${day}/${year}`);
-      return new Date(year, parseInt(month) - 1, day);
-    }
-    
-    // For date formats like "2018-Sept-14" or similar text-month formats
-    const collectionDatePattern = /Collection Date:\s*(\d{4}-[A-Za-z]{3}-\d{1,2})/i;
-    const match = text.match(collectionDatePattern);
-    if (match) {
-      try {
-        const dateStr = match[1];
+        const dateStr = collectionMatch[1];
+        console.log("Found collection date string:", dateStr);
         const [year, month, day] = dateStr.split('-');
         const monthMap = {
           'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
@@ -371,10 +320,67 @@ function extractTestDate(text, filePath) {
         console.log(`Error parsing collection date: ${error}`);
       }
     }
+
+    // Continue with your existing code...
+    // Sort date patterns by priority
+    const sortedPatterns = [...datePatterns].sort((a, b) => a.priority - b.priority);
+
+    for (const pattern of sortedPatterns) {
+      const match = pattern.regex.exec(text);
+      if (match) {
+        try {
+          const dateStr = match[1].trim();
+          
+          // Handle various date formats
+          if (dateStr.includes('-')) {
+            // Try to parse YYYY-MM-DD or DD-MM-YYYY
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+              if (parts[0].length === 4) {
+                // YYYY-MM-DD
+                return new Date(parts[0], parts[1] - 1, parts[2]);
+              } else {
+                // DD-MM-YYYY
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+              }
+            }
+          } else if (dateStr.includes('/')) {
+            // Try to parse MM/DD/YYYY or DD/MM/YYYY
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+              // Assume MM/DD/YYYY format in the US
+              return new Date(parts[2], parts[0] - 1, parts[1]);
+            }
+          }
+          
+          // Fall back to just trying to parse the date string directly
+          const fallbackDate = new Date(dateStr);
+          if (!isNaN(fallbackDate.getTime())) {
+            return fallbackDate;
+          }
+        } catch (error) {
+          console.log(`Error parsing date: ${error}`);
+        }
+      }
+    }
+
+    // Try to extract date from filename if provided
+    if (filePath) {
+      const fileNameMatch = path.basename(filePath).match(/(\d{2})\.(\d{2})\.(\d{4})/);
+      if (fileNameMatch) {
+        const [_, month, day, year] = fileNameMatch;
+        console.log(`Extracted date from filename: ${month}/${day}/${year}`);
+        return new Date(year, parseInt(month) - 1, day);
+      }
+    }
+    
+    // If no date found, return current date
+    console.log('No valid date found, using current date');
+    return new Date();
+  } catch (error) {
+    console.log(`Error in extractTestDate: ${error}`);
+    return new Date();
   }
-  
-  // Return null if no date found
-  return null;
 }
 
 /**
@@ -393,7 +399,7 @@ async function extractFromPDFWrapper(filePath) {
     console.error(`Unsupported file type: ${path.extname(filePath)}`);
     return {
       labValues: {},
-      testDate: null
+      testDate: new Date()
     };
   }
 }
