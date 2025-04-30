@@ -2939,9 +2939,10 @@ img,
 
 .file-list-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
-  gap: 2.0rem;
-  padding: 0.3rem 1.5rem; 
+  /* Update this line to match the file-list-row definition */
+  grid-template-columns: 1.9fr 1fr 1fr 25px 40px;
+  gap: 1rem;
+  padding: 0.3rem 1.5rem;
   background-color: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
   margin: 0.25rem 1rem 0.25rem 1rem;
@@ -2952,7 +2953,7 @@ img,
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  margin-left: 1rem;
+  justify-content: center;
 }
 
 .file-list-title {
@@ -2970,14 +2971,67 @@ img,
 }
 
 .file-list-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  /* This should match the header definition above */
+  grid-template-columns: 2fr 1fr 1fr 40px 40px;
+  gap: 1rem;
   padding: 0.25rem 1rem;
   border-bottom: 1px solid #e2e8f0;
+  align-items: center;
 }
+
+.checkbox-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bulk-actions {
+  display: flex;
+  justify-content: flex-end; /* Align content to the right */
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 1rem;
+}
+
+.delete-selected-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-selected-btn:hover {
+  background-color: #dc2626;
+}
+
+.delete-selected-btn:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.file-checkbox, .select-all-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.file-checkbox-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .file-content {
-  flex: 1;
+  grid-column: 1 / 4; /* Span across the first three columns */
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
 }
 .file-list-row:last-child {
   border-bottom: none;
@@ -2989,8 +3043,9 @@ img,
 
 .file-list-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 1rem;
+  /* Update this to match the structure of the columns */
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
   text-decoration: none;
   color: inherit;
 }
@@ -4235,7 +4290,7 @@ img,
   transition: all 0.3s ease-in-out;
   z-index: 1000;
   padding: 15px;
-  border-radius: 20px;
+  border-radius: 15px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   pointer-events: auto;
   /* overflow-y: auto; /* Allow scrolling if content is long */
@@ -4487,23 +4542,22 @@ label[for="customBloodType"] {
 
 .search-wrapper {
   margin-left: auto;
-  padding: 0 10px;
 }
 
 .search-container {
   display: flex;
   align-items: center;
   background-color: white;
-  border-radius: 50px;
-  width: 40px;
-  height: 40px;
+  border-radius: 40px;
+  width: 35px;
+  height: 35px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
 .search-container.expanded {
-  width: 250px;
+  width: 230px;
 }
 
 .search-icon,

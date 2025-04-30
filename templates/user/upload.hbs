@@ -147,24 +147,24 @@
                     <div class="file-list-title">Name</div>
                     <div class="file-list-title">Test/Collection Date</div>
                     <div class="file-list-title">Uploaded</div>
+                    <div class="file-list-title checkbox-header">
+                      <input type="checkbox" id="selectAllFiles" class="select-all-checkbox" aria-label="Select all files">
+                    </div>
                     <div class="file-list-title">Actions</div>
                   </div>
                   <div class="uploaded-documents-list">
                     {{#if user.files}}
                     {{#each user.files}}
                     <div class="file-list-row">
-                      <div class="file-content">
-                        <a href="/uploads/{{this.filename}}" class="file-list-item" target="_blank">
-                          <div class="file-name">{{this.originalName}}</div>
-                          <div class="file-date">{{formatDate this.testDate}}</div>
-                          <div class="file-uploaded">{{formatDate this.uploadDate}}</div>
-                        </a>
+                      <div class="file-name">{{this.originalName}}</div>
+                      <div class="file-date">{{formatDate this.testDate}}</div>
+                      <div class="file-uploaded">{{formatDate this.uploadDate}}</div>
+                      <div class="file-checkbox-container">
+                        <input type="checkbox" class="file-checkbox" data-file-id="{{this._id}}" aria-label="Select file">
                       </div>
                       <div class="file-actions">
-                        <button class="edit-file-btn"
-                          onclick="console.log('Button clicked'); showFileDetailsEdit('{{this._id}}','{{this.originalName}}','{{formatDateString this.uploadDate}}','{{formatDateString this.testDate}}')">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                        <button class="edit-file-btn" onclick="showFileDetailsEdit('{{this._id}}','{{this.originalName}}','{{formatDateString this.uploadDate}}','{{formatDateString this.testDate}}')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                           </svg>
@@ -179,6 +179,11 @@
                     <div class="no-files-message">No documents uploaded yet</div>
                     {{/if}}
                   </div>
+                  {{#if user.files}}
+                  <div class="bulk-actions">
+                    <button id="deleteSelectedFiles" class="delete-selected-btn" disabled>Delete Selected Files</button>
+                  </div>
+                  {{/if}}
                 </div>
               </div>
             </div>
@@ -866,6 +871,80 @@
               });
             }
           });
+      </script>
+      <script> // select all files checkboxes
+        document.addEventListener('DOMContentLoaded', function() {
+          // Select elements
+          const selectAllCheckbox = document.getElementById('selectAllFiles');
+          const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+          const deleteSelectedBtn = document.getElementById('deleteSelectedFiles');
+          
+          if (selectAllCheckbox) {
+            // Toggle all checkboxes
+            selectAllCheckbox.addEventListener('change', function() {
+              const isChecked = this.checked;
+              fileCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+              });
+              
+              updateDeleteButtonState();
+            });
+          }
+          
+          // Update select all checkbox when individual checkboxes change
+          fileCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+              updateSelectAllCheckbox();
+              updateDeleteButtonState();
+            });
+          });
+          
+          // Delete selected files
+          if (deleteSelectedBtn) {
+            deleteSelectedBtn.addEventListener('click', async function() {
+              if (!confirm('Are you sure you want to delete the selected files?')) return;
+              
+              const selectedFileIds = Array.from(document.querySelectorAll('.file-checkbox:checked'))
+                .map(checkbox => checkbox.dataset.fileId);
+              
+              if (selectedFileIds.length === 0) return;
+              
+              try {
+                const response = await fetch('/delete-selected-files', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ fileIds: selectedFileIds })
+                });
+                
+                if (response.ok) {
+                  window.location.reload();
+                } else {
+                  throw new Error('Failed to delete files');
+                }
+              } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete files: ' + error.message);
+              }
+            });
+          }
+          
+          function updateSelectAllCheckbox() {
+            if (!selectAllCheckbox) return;
+            
+            const totalCheckboxes = fileCheckboxes.length;
+            const checkedCheckboxes = document.querySelectorAll('.file-checkbox:checked').length;
+            
+            selectAllCheckbox.checked = totalCheckboxes > 0 && checkedCheckboxes === totalCheckboxes;
+            selectAllCheckbox.indeterminate = checkedCheckboxes > 0 && checkedCheckboxes < totalCheckboxes;
+          }
+          
+          function updateDeleteButtonState() {
+            if (!deleteSelectedBtn) return;
+            
+            const anyChecked = document.querySelectorAll('.file-checkbox:checked').length > 0;
+            deleteSelectedBtn.disabled = !anyChecked;
+          }
+        });
       </script>
 </body>
 

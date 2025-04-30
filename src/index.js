@@ -1585,6 +1585,45 @@ app.post(
   }
 );
 
+// Add this route to src/index.js
+app.post("/delete-selected-files", checkAuth, async (req, res) => {
+  try {
+    const { fileIds } = req.body;
+    
+    if (!fileIds || !Array.isArray(fileIds) || fileIds.length === 0) {
+      return res.status(400).json({ success: false, message: "No file IDs provided" });
+    }
+    
+    const user = await registerCollection.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    
+    // Get the files to delete their physical files
+    const filesToDelete = user.files.filter(file => fileIds.includes(file._id.toString()));
+    
+    // Delete physical files
+    filesToDelete.forEach(file => {
+      const filePath = path.join(__dirname, "../public/uploads", file.filename);
+      fs.unlink(filePath, (err) => {
+        if (err && err.code !== "ENOENT") {
+          console.error(`Error deleting file ${file.filename}:`, err);
+        }
+      });
+    });
+    
+    // Remove files from user's files array
+    user.files = user.files.filter(file => !fileIds.includes(file._id.toString()));
+    
+    await user.save();
+    
+    res.json({ success: true, message: `${fileIds.length} files deleted successfully` });
+  } catch (error) {
+    console.error("Error deleting files:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Error handler for multer errors
 app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError) {
