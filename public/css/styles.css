@@ -2057,7 +2057,7 @@ img,
 /* Group 1 Animation */
 .word-sequence.group1 {
   opacity: 0;
-  animation: slideFromLeft 0.8s ease-out forwards;
+  animation: slideFromLeft 1.0s ease-out forwards;
 }
 @keyframes slideFromLeft {
   0% {
@@ -2080,8 +2080,8 @@ img,
 /* Group 2 Animation */
 .word-sequence.group2 {
   opacity: 0;
-  animation: slideFromRight 0.7s ease-out forwards;
-  animation-delay: 1.3s; /* Start after group1 finishes */
+  animation: slideFromRight 1.0s ease-out forwards;
+  animation-delay: 0.75s; /* Start after group1 finishes */
 }
 
 @keyframes slideFromRight {
@@ -2127,8 +2127,8 @@ img,
 /* Phrase (personalized health tracker) simple fade in */
 .word-sequence.phrase {
   opacity: 0;
-  animation: slideFromLeft 0.7s ease-out forwards;
-  animation-delay: 2.3s;
+  animation: slideFromLeft 1.1s ease-out forwards;
+  animation-delay: 1.4s;
 }
 
 @keyframes slideFromBottom {
@@ -2153,8 +2153,8 @@ img,
   height: auto;
   opacity: 0; /* Start hidden */
   transform: translateX(100px); /* Start 50px below final position */
-  animation: slideFromRight 1s ease-out forwards;
-  animation-delay: 3.5s; /* 0.5s after the phrase (which is at 2.5s) */
+  animation: slideFromRight 1.5s ease-out forwards;
+  animation-delay: 2.65s; /* 0.5s after the phrase (which is at 2.5s) */
 }
 
 @keyframes slideFromRight {
@@ -2172,7 +2172,7 @@ img,
   opacity: 0; /* Start hidden */
   transform: scale(1.2); 
   animation: dissolveIn 1.5s ease-out forwards;
-  animation-delay: 5s; /* 1s after the image starts to appear */
+  animation-delay: 2.65s; /* 1s after the image starts to appear */
 }
 
 @keyframes dissolveIn {
@@ -4879,6 +4879,20 @@ label[for="customBloodType"] {
   margin-right: 0.75rem;
 }
 
+.no-data-message {
+  text-align: center;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.no-data-message p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
 /* ------------- learning center styles ------------- */
 .learning-center {
   margin-top: 2rem;
@@ -6449,7 +6463,71 @@ body[data-insights-hover="true"] #Insights {
   padding-top: 10px;
   transition: height 1s ease;
 }
+.chart-bar.zero-value {
+  height: 10px !important; /* Shorter height for zero bars */
+  background-color: #e0e0e0 !important; /* Gray color for zero bars */
+  opacity: 0.7;
+}
+/* Regular state styles (when not zero) */
+.chart-bar.in-range:not(.zero-value) {
+  background-color: #85bb83; /* Green color */
+}
 
+.chart-bar.improving:not(.zero-value) {
+  background-color: #9be29b; /* Light green color */
+}
+
+.chart-bar.out-of-range:not(.zero-value) {
+  background-color: #f0a7a7; /* Red color */
+}
+
+.chart-bar.declining:not(.zero-value) {
+  background-color: #ffb7b7; /* Light red color */
+}
+
+/* Add a subtle animation for zero value bars */
+@keyframes pulseZero {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.5; }
+}
+.zero-value-text {
+  font-style: italic;
+  color: #777;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+.chart-bar.zero-value {
+  animation: pulseZero 2s infinite ease-in-out;
+}
+
+.empty-state .chart-bar {
+  height: 10px !important; /* Shorter height for empty state */
+  background-color: #e0e0e0 !important; /* Gray color for empty state */
+  opacity: 0.7;
+}
+@keyframes pulseEmpty {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.5; }
+}
+.empty-state .chart-bar {
+  animation: pulseEmpty 2s infinite ease-in-out;
+}
+
+.empty-state-text {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-top: 10px;
+  font-style: italic;
+  display: none; /* Hidden by default */
+}
+.empty-state .empty-state-text {
+  display: block; /* Show when in empty state */
+}
 .chart-bar.in-range {
   background-color: #7db17f;
 }
@@ -6563,8 +6641,9 @@ body[data-insights-hover="true"] #Insights {
 }
 
 .lab-file-name {
-  flex: 2;
+  flex: 2.5;
   font-weight: 500;
+  font-size: 14px;
   color: #333;
 }
 
@@ -6618,8 +6697,8 @@ body[data-insights-hover="true"] #Insights {
   display: inline-block;
   margin-top: 1rem;
   padding: 0.5rem 1.25rem;
-  background-color: #7db17f;
-  color: white;
+  background-color: #d7d7d7ca;
+  color: #909090;
   text-decoration: none;
   border-radius: 4px;
   font-family: "Poppins-SemiBold", sans-serif;
@@ -6627,7 +6706,8 @@ body[data-insights-hover="true"] #Insights {
 }
 
 .upload-labs-btn:hover {
-  background-color: #5e855f;
+  background-color: #949494ca;
+  color: white;
 }
 
 /* Labs Info Modal Styles */

@@ -978,6 +978,35 @@ function calculateBiomarkerSummary(files, biomarkers) {
   };
 }
 
+// Helper to check if all biomarker summary values are zero
+hbs.registerHelper("allZero", function (summary) {
+  if (!summary) return true;
+  
+  // Handle both object and primitive types safely
+  const inRange = typeof summary.inRange === 'number' ? summary.inRange : 0;
+  const improving = typeof summary.improving === 'number' ? summary.improving : 0;
+  const outOfRange = typeof summary.outOfRange === 'number' ? summary.outOfRange : 0;
+  const declining = typeof summary.declining === 'number' ? summary.declining : 0;
+  
+  return (inRange === 0 && improving === 0 && outOfRange === 0 && declining === 0);
+});
+
+hbs.registerHelper("isZero", function (value) {
+  // Convert value to number if possible
+  const numValue = parseFloat(value);
+  
+  // Return true if the value is:
+  // - Exactly 0
+  // - null or undefined
+  // - Results in NaN when parsed
+  // - Effectively 0 (very small number that rounds to 0)
+  return value === 0 || 
+         value === null || 
+         value === undefined || 
+         isNaN(numValue) || 
+         Math.abs(numValue) < 0.001;
+});
+
 // Helper function to get most recent files
 function getRecentFiles(files, limit = 5) {
   if (!files || files.length === 0) return [];
