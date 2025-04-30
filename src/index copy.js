@@ -783,7 +783,7 @@ app.get("/insights", checkAuth, async (req, res) => {
 
     // Calculate all inputs in one object
     const inputs = {
-      bloodType: user.profile.bloodType && user.profile.bloodType.length > 0,
+      bloodType: user.profile.bloodType.length > 0,
       familyHistory: user.profile.familyHistory.length > 0,
       bloodPressure: user.profile.monitoring.some((m) => m.bloodPressure),
       heartRate: user.profile.monitoring.some((m) => m.restingHeartRate),

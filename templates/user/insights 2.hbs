@@ -158,6 +158,7 @@
                   </div>
 
                   <div class="lab-summary-container">
+                    {{#if biomarkerSummary}}
                     <div class="lab-status-card">
                       {{!-- <h3 class="lab-status-title">Labs Summary</h3> --}}
                       
@@ -200,19 +201,19 @@
                       <div class="lab-stats-chart">
                         <div class="chart-container">
                           <!-- In Range Bar -->
-                          <div class="chart-bar in-range" style="height: {{calculateBarHeight biomarkerSummary.inRange}}px; width: 22%;">
+                          <div class="chart-bar in-range" style="height: 180px; width: 22%;">
                             {{!-- <span class="chart-value">{{biomarkerSummary.inRange}}</span> --}}
                           </div>
                           <!-- Improving Bar -->
-                          <div class="chart-bar improving" style="height: {{calculateBarHeight biomarkerSummary.improving}}px; width: 22%;">
+                          <div class="chart-bar improving" style="height: {{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px; width: 22%;">
                             {{!-- <span class="chart-value">{{biomarkerSummary.improving}}</span> --}}
                           </div>
                           <!-- Out of Range Bar -->
-                          <div class="chart-bar out-of-range" style="height: {{calculateBarHeight biomarkerSummary.outOfRange}}px; width: 22%;">
+                          <div class="chart-bar out-of-range" style="height: {{calculateBarHeight biomarkerSummary.outOfRange biomarkerSummary.inRange}}px; width: 22%;">
                             {{!-- <span class="chart-value">{{biomarkerSummary.outOfRange}}</span> --}}
                           </div>
                           <!-- Declining Bar (New) -->
-                          <div class="chart-bar declining" style="height: {{calculateBarHeight biomarkerSummary.declining}}px; width: 22%;">
+                          <div class="chart-bar declining" style="height: {{calculateBarHeight biomarkerSummary.declining biomarkerSummary.inRange}}px; width: 25%;">
                             {{!-- <span class="chart-value">{{biomarkerSummary.declining}}</span> --}}
                           </div>
                         </div>
@@ -229,7 +230,12 @@
                         View all <span class="arrow-icon">→</span>
                       </a>
                     </div>
-
+                    {{else}}
+                    <div class="no-data-message">
+                      <p>No lab data available yet. Upload lab results to see your health metrics.</p>
+                      <a href="/upload" class="lab-summary-action-btn">Upload Labs</a>
+                    </div>
+                    {{/if}}
                     <!-- Recent Labs Section -->
                     <div class="recent-labs-section">
                       <h3 class="recent-labs-title">Recent Lab Results</h3>
