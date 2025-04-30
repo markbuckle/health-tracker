@@ -6463,71 +6463,7 @@ body[data-insights-hover="true"] #Insights {
   padding-top: 10px;
   transition: height 1s ease;
 }
-.chart-bar.zero-value {
-  height: 10px !important; /* Shorter height for zero bars */
-  background-color: #e0e0e0 !important; /* Gray color for zero bars */
-  opacity: 0.7;
-}
-/* Regular state styles (when not zero) */
-.chart-bar.in-range:not(.zero-value) {
-  background-color: #85bb83; /* Green color */
-}
 
-.chart-bar.improving:not(.zero-value) {
-  background-color: #9be29b; /* Light green color */
-}
-
-.chart-bar.out-of-range:not(.zero-value) {
-  background-color: #f0a7a7; /* Red color */
-}
-
-.chart-bar.declining:not(.zero-value) {
-  background-color: #ffb7b7; /* Light red color */
-}
-
-/* Add a subtle animation for zero value bars */
-@keyframes pulseZero {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.7; }
-  100% { opacity: 0.5; }
-}
-.zero-value-text {
-  font-style: italic;
-  color: #777;
-  font-size: 13px;
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: 15px;
-}
-.chart-bar.zero-value {
-  animation: pulseZero 2s infinite ease-in-out;
-}
-
-.empty-state .chart-bar {
-  height: 10px !important; /* Shorter height for empty state */
-  background-color: #e0e0e0 !important; /* Gray color for empty state */
-  opacity: 0.7;
-}
-@keyframes pulseEmpty {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.7; }
-  100% { opacity: 0.5; }
-}
-.empty-state .chart-bar {
-  animation: pulseEmpty 2s infinite ease-in-out;
-}
-
-.empty-state-text {
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-  margin-top: 10px;
-  font-style: italic;
-  display: none; /* Hidden by default */
-}
-.empty-state .empty-state-text {
-  display: block; /* Show when in empty state */
-}
 .chart-bar.in-range {
   background-color: #7db17f;
 }
@@ -6541,6 +6477,7 @@ body[data-insights-hover="true"] #Insights {
 .chart-bar.declining {
   background-color: #d76f6f;
 }
+
 .lab-stat-number.in-range {
   color: #7db17f;
 }
@@ -6641,9 +6578,8 @@ body[data-insights-hover="true"] #Insights {
 }
 
 .lab-file-name {
-  flex: 2.5;
+  flex: 2;
   font-weight: 500;
-  font-size: 14px;
   color: #333;
 }
 

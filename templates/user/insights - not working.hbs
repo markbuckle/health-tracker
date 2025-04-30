@@ -158,7 +158,6 @@
                   </div>
 
                   <div class="lab-summary-container">
-                    {{#if biomarkerSummary}}
                     <div class="lab-status-card">
                       {{!-- <h3 class="lab-status-title">Labs Summary</h3> --}}
                       
@@ -197,24 +196,23 @@
                         </div>
                       </div>
 
-                      <!-- Stats Chart -->
                       <div class="lab-stats-chart">
                         <div class="chart-container">
                           <!-- In Range Bar -->
-                          <div class="chart-bar in-range" style="height: 180px; width: 22%;">
-                            {{!-- <span class="chart-value">{{biomarkerSummary.inRange}}</span> --}}
+                          <div class="chart-bar in-range {{#if (isZero biomarkerSummary.inRange)}}zero-value{{/if}}" 
+                              style="height: {{#if (isZero biomarkerSummary.inRange)}}60px{{else}}180px{{/if}}; width: 22%;">
                           </div>
                           <!-- Improving Bar -->
-                          <div class="chart-bar improving" style="height: {{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px; width: 22%;">
-                            {{!-- <span class="chart-value">{{biomarkerSummary.improving}}</span> --}}
+                          <div class="chart-bar improving {{#if (isZero biomarkerSummary.improving)}}zero-value{{/if}}" 
+                              style="height: {{#if (isZero biomarkerSummary.improving)}}60px{{else}}{{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
                           </div>
                           <!-- Out of Range Bar -->
-                          <div class="chart-bar out-of-range" style="height: {{calculateBarHeight biomarkerSummary.outOfRange biomarkerSummary.inRange}}px; width: 22%;">
-                            {{!-- <span class="chart-value">{{biomarkerSummary.outOfRange}}</span> --}}
+                          <div class="chart-bar out-of-range {{#if (isZero biomarkerSummary.outOfRange)}}zero-value{{/if}}" 
+                              style="height: {{#if (isZero biomarkerSummary.outOfRange)}}60px{{else}}{{calculateBarHeight biomarkerSummary.outOfRange biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
                           </div>
-                          <!-- Declining Bar (New) -->
-                          <div class="chart-bar declining" style="height: {{calculateBarHeight biomarkerSummary.declining biomarkerSummary.inRange}}px; width: 25%;">
-                            {{!-- <span class="chart-value">{{biomarkerSummary.declining}}</span> --}}
+                          <!-- Declining Bar -->
+                          <div class="chart-bar declining {{#if (isZero biomarkerSummary.declining)}}zero-value{{/if}}" 
+                              style="height: {{#if (isZero biomarkerSummary.declining)}}60px{{else}}{{calculateBarHeight biomarkerSummary.declining biomarkerSummary.inRange}}px{{/if}}; width: 25%;">
                           </div>
                         </div>
                         <div class="chart-labels">
@@ -223,19 +221,46 @@
                           <div class="chart-label">Out of Range</div>
                           <div class="chart-label">Declining</div>
                         </div>
+                        
+                        {{#if (allZero biomarkerSummary)}}
+                        <div class="empty-state-text">Upload lab results to see your biomarker data</div>
+                        {{/if}}
                       </div>
+
+                      <!-- Stats Chart -->
+                      {{!-- <div class="lab-stats-chart"> --}}
+                        {{!-- <div class="chart-container"> --}}
+                          <!-- In Range Bar -->
+                          {{!-- <div class="chart-bar in-range" style="height: {{calculateBarHeight biomarkerSummary.inRange}}px; width: 22%;"> --}}
+                            {{!-- <span class="chart-value">{{biomarkerSummary.inRange}}</span> --}}
+                          {{!-- </div> --}}
+                          <!-- Improving Bar -->
+                          {{!-- <div class="chart-bar improving" style="height: {{calculateBarHeight biomarkerSummary.improving}}px; width: 22%;"> --}}
+                            {{!-- <span class="chart-value">{{biomarkerSummary.improving}}</span> --}}
+                          {{!-- </div> --}}
+                          <!-- Out of Range Bar -->
+                          {{!-- <div class="chart-bar out-of-range" style="height: {{calculateBarHeight biomarkerSummary.outOfRange}}px; width: 22%;"> --}}
+                            {{!-- <span class="chart-value">{{biomarkerSummary.outOfRange}}</span> --}}
+                          {{!-- </div> --}}
+                          <!-- Declining Bar (New) -->
+                          {{!-- <div class="chart-bar declining" style="height: {{calculateBarHeight biomarkerSummary.declining}}px; width: 22%;"> --}}
+                            {{!-- <span class="chart-value">{{biomarkerSummary.declining}}</span> --}}
+                          {{!-- </div> --}}
+                        {{!-- </div> --}}
+                        {{!-- <div class="chart-labels">
+                          <div class="chart-label">In Range</div>
+                          <div class="chart-label">Improving</div>
+                          <div class="chart-label">Out of Range</div>
+                          <div class="chart-label">Declining</div>
+                        </div>
+                      </div> --}}
 
                       <!-- Action button -->
                       <a href="/reports" class="lab-summary-action-btn">
                         View all <span class="arrow-icon">→</span>
                       </a>
                     </div>
-                    {{else}}
-                    <div class="no-data-message">
-                      <p>No lab data available yet. Upload lab results to see your health metrics.</p>
-                      <a href="/upload" class="lab-summary-action-btn">Upload Labs</a>
-                    </div>
-                    {{/if}}
+
                     <!-- Recent Labs Section -->
                     <div class="recent-labs-section">
                       <h3 class="recent-labs-title">Recent Lab Results</h3>
@@ -245,7 +270,7 @@
                           {{#each recentFiles}}
                             <div class="recent-lab-item">
                               <div class="lab-file-name">{{this.originalName}}</div>
-                              <div class="lab-date">{{formatDate this.testDate}}</div>
+                              {{!-- <div class="lab-date">{{formatDate this.testDate}}</div> --}}
                               <div class="lab-stats">
                                 <span class="lab-stat in-range">{{countInRange this.labValues}} in range</span>
                                 <span class="lab-stat out-of-range">{{countOutOfRange this.labValues}} out of range</span>
@@ -946,8 +971,83 @@
         }
       });
     </script>
-    <script>
-      // Labs Summary JavaScript
+    <script> // Zero labs uploaded script
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check for empty state (all values are zero)
+        function checkForEmptyState() {
+          const biomarkerSummary = getBiomarkerSummary();
+          const isEmpty = biomarkerSummary.inRange === 0 && 
+                          biomarkerSummary.improving === 0 && 
+                          biomarkerSummary.outOfRange === 0 && 
+                          biomarkerSummary.declining === 0;
+          
+          // Apply or remove empty state class based on the check
+          const chartContainer = document.querySelector('.lab-stats-chart');
+          if (chartContainer) {
+            if (isEmpty) {
+              chartContainer.classList.add('empty-state');
+            } else {
+              chartContainer.classList.remove('empty-state');
+            }
+          }
+          
+          return isEmpty;
+        }
+        
+        // Get biomarker summary data from the hidden element
+        function getBiomarkerSummary() {
+          const dataElement = document.getElementById('labSummaryData');
+          if (!dataElement) {
+            return { inRange: 0, outOfRange: 0, improving: 0, declining: 0 };
+          }
+          
+          try {
+            return JSON.parse(dataElement.getAttribute('data-labs')) || 
+                  { inRange: 0, outOfRange: 0, improving: 0, declining: 0 };
+          } catch (e) {
+            console.error('Error parsing biomarker data:', e);
+            return { inRange: 0, outOfRange: 0, improving: 0, declining: 0 };
+          }
+        }
+        
+        // Update chart based on data
+        function updateChartDisplay() {
+          const isEmpty = checkForEmptyState();
+          const chartContainer = document.querySelector('.chart-container');
+          
+          if (!chartContainer) return;
+          
+          // If empty, make sure we have the empty state message
+          if (isEmpty && !document.querySelector('.empty-state-text')) {
+            const emptyText = document.createElement('div');
+            emptyText.className = 'empty-state-text';
+            emptyText.textContent = 'Upload lab results to see your biomarker data';
+            chartContainer.insertAdjacentElement('afterend', emptyText);
+          }
+          
+          // Set chart bar heights for empty state
+          if (isEmpty) {
+            const chartBars = document.querySelectorAll('.chart-bar');
+            chartBars.forEach(bar => {
+              bar.style.height = '20px';
+            });
+          }
+        }
+        
+        // Run the check when the page loads
+        updateChartDisplay();
+        
+        // You might want to run this again if the tab changes
+        document.querySelectorAll('.in-page-link').forEach(tab => {
+          tab.addEventListener('click', function() {
+            if (this.getAttribute('data-w-tab') === 'LabsSummary') {
+              setTimeout(updateChartDisplay, 100);
+            }
+          });
+        });
+      });
+    </script>
+    <script> // Labs Summary JavaScript
       document.addEventListener('DOMContentLoaded', function() {
         // Check if we're on the insights page with the Labs Summary tab
         const labSummaryTab = document.querySelector('[data-w-tab="LabsSummary"]');
@@ -1031,51 +1131,39 @@
           const chartBars = document.querySelectorAll('.chart-bar');
           if (chartBars.length < 4) return; // Now expecting 4 bars
           
-          // Get the max value for scaling
-          const maxValue = Math.max(
-            labsData.inRange || 0, 
-            labsData.outOfRange || 0, 
-            labsData.improving || 0,
-            labsData.declining || 0  // Include declining in max calculation
-          );
+           // Apply zero-value class to bars with zero values
+          if (labsData.inRange === 0) chartBars[0].classList.add('zero-value');
+          else chartBars[0].classList.remove('zero-value');
+          
+          if (labsData.improving === 0) chartBars[1].classList.add('zero-value');
+          else chartBars[1].classList.remove('zero-value');
+          
+          if (labsData.outOfRange === 0) chartBars[2].classList.add('zero-value');
+          else chartBars[2].classList.remove('zero-value');
+          
+          if (labsData.declining === 0) chartBars[3].classList.add('zero-value');
+          else chartBars[3].classList.remove('zero-value');
           
           // Base height of the tallest bar
           const maxBarHeight = 180;
           
-          // Calculate and set heights
-          if (maxValue > 0) {
+            // Set heights based on values or set to 60px for zero values
+          setTimeout(() => {
             // In Range (always set to max height as the reference)
-            let inRangeHeight = maxBarHeight;
-            
-            // Out of Range
-            let outOfRangeHeight = maxBarHeight * (labsData.outOfRange / maxValue);
+            chartBars[0].style.height = labsData.inRange === 0 ? '10px' : `${maxBarHeight}px`;
             
             // Improving
-            let improvingHeight = maxBarHeight * (labsData.improving / maxValue);
+            chartBars[1].style.height = labsData.improving === 0 ? '10px' : 
+              `${Math.max(Math.round(maxBarHeight * (labsData.improving / (labsData.inRange || 1))), 40)}px`;
             
-            // Declining (new)
-            let decliningHeight = maxBarHeight * (labsData.declining / maxValue);
+            // Out of Range
+            chartBars[2].style.height = labsData.outOfRange === 0 ? '10px' : 
+              `${Math.max(Math.round(maxBarHeight * (labsData.outOfRange / (labsData.inRange || 1))), 40)}px`;
             
-            // Ensure minimum height for visibility
-            outOfRangeHeight = Math.max(outOfRangeHeight, 30);
-            improvingHeight = Math.max(improvingHeight, 30);
-            decliningHeight = Math.max(decliningHeight, 30);
-            
-            // Apply heights with animation
-            setTimeout(() => {
-              chartBars[0].style.height = `${inRangeHeight}px`;
-              chartBars[0].querySelector('.chart-value').textContent = labsData.inRange;
-              
-              chartBars[1].style.height = `${outOfRangeHeight}px`;
-              chartBars[1].querySelector('.chart-value').textContent = labsData.outOfRange;
-              
-              chartBars[2].style.height = `${improvingHeight}px`;
-              chartBars[2].querySelector('.chart-value').textContent = labsData.improving;
-              
-              chartBars[3].style.height = `${decliningHeight}px`;
-              chartBars[3].querySelector('.chart-value').textContent = labsData.declining;
-            }, 300);
-          }
+            // Declining
+            chartBars[3].style.height = labsData.declining === 0 ? '10px' : 
+              `${Math.max(Math.round(maxBarHeight * (labsData.declining / (labsData.inRange || 1))), 40)}px`;
+          }, 300);
         }
 
         // Info button modal functionality
@@ -1099,5 +1187,6 @@
         }
       });
     </script>
+
   </body>
 </html>

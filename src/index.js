@@ -992,19 +992,8 @@ hbs.registerHelper("allZero", function (summary) {
 });
 
 hbs.registerHelper("isZero", function (value) {
-  // Convert value to number if possible
-  const numValue = parseFloat(value);
-  
-  // Return true if the value is:
-  // - Exactly 0
-  // - null or undefined
-  // - Results in NaN when parsed
-  // - Effectively 0 (very small number that rounds to 0)
-  return value === 0 || 
-         value === null || 
-         value === undefined || 
-         isNaN(numValue) || 
-         Math.abs(numValue) < 0.001;
+  // Simple zero check that works with strings, numbers, null, etc.
+  return !value || value === 0 || value === "0";
 });
 
 // Helper function to get most recent files
