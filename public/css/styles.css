@@ -3415,16 +3415,6 @@ img,
   align-items: center;
 }
 
-.loader-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  max-width: 90%;
-  width: 300px;
-}
-
 .loader-spinner {
   width: 40px;
   height: 40px;
@@ -3695,9 +3685,11 @@ img,
 .loader-container {
   background: white;
   padding: 2rem;
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
+  max-width: 90%;
+  width: 300px;
 }
 
 .loader-spinner {
@@ -6465,17 +6457,17 @@ body[data-insights-hover="true"] #Insights {
 }
 
 .chart-bar.in-range {
-  background-color: #7db17f;
+  background-color: #dbdbdb;
 }
 
 .chart-bar.improving {
-  background-color:  #7db17f;
+  background-color:  #dbdbdb;
 }
 .chart-bar.out-of-range {
-  background-color: #d76f6f;;
+  background-color: #dbdbdb;
 }
 .chart-bar.declining {
-  background-color: #d76f6f;
+  background-color: #dbdbdb;
 }
 
 .lab-stat-number.in-range {
@@ -6486,6 +6478,25 @@ body[data-insights-hover="true"] #Insights {
 }
 .lab-stat-number.out-of-range {
   color: #d76f6f;
+}
+.lab-stat-number.declining {
+  color: #d76f6f;
+}
+/* Colors for non-empty bars - directly target height styles */
+.chart-bar.in-range:not([style*="height: 10px"]) {
+  background-color: #7db17f !important; /* Green */
+}
+
+.chart-bar.improving:not([style*="height: 10px"]) {
+  background-color: #9ed3a0 !important; /* Light green */
+}
+
+.chart-bar.out-of-range:not([style*="height: 10px"]) {
+  background-color: #d76f6f !important; /* Red */
+}
+
+.chart-bar.declining:not([style*="height: 10px"]) {
+  background-color: #e98b8b !important; /* Light red */
 }
 .out-of-range-text {
   color: #d76f6f;
@@ -6502,7 +6513,11 @@ body[data-insights-hover="true"] #Insights {
   color: white;
   font-family: "Poppins-Bold", sans-serif;
   font-size: 1.25rem;
-  padding-bottom: 0.5rem;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .chart-labels {
@@ -6523,7 +6538,33 @@ body[data-insights-hover="true"] #Insights {
   align-items: center;
   position: relative;
 }
-
+.empty-state .chart-bar {
+  animation: pulseEmpty 2s infinite ease-in-out;
+}
+@keyframes countBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.count-number.animated {
+  animation: countBounce 0.5s ease-out;
+}
+.empty-state-text {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-top: 10px;
+  font-style: italic;
+  display: none; /* Hidden by default */
+}
+.empty-state .empty-state-text {
+  display: block; /* Show when in empty state */
+}
+@keyframes pulseEmpty {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.5; }
+}
 .lab-summary-action-btn {
   display: block;
   text-align: center;

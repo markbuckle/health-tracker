@@ -429,11 +429,11 @@ hbs.registerHelper("getMetricUrl", function (metricKey) {
 
 // Calculate bar height based on value relative to max value
 hbs.registerHelper("calculateBarHeight", function (value, maxValue) {
-  if (!value || !maxValue) return 40; // Minimum height for visibility
+  if (!value || !maxValue) return 10; // Minimum height for visibility
   
   const percentage = (value / maxValue);
   // Set the maximum height to 180px (matching our CSS)
-  const height = Math.max(Math.round(180 * percentage), 40);
+  const height = Math.max(Math.round(180 * percentage), 10);
   return height;
 });
 
@@ -955,9 +955,13 @@ function calculateBiomarkerSummary(files, biomarkers) {
         improvingCount++;
       }
       // Otherwise, it's either out of range or declining
-      else if (newest.value < oldest.value) {
+      else if (newest.value < oldest.value && oldest.value < oldest.minRef) {
         decliningCount++;
-      } else {
+      }
+      else if (newest.value > oldest.value && oldest.value > oldest.maxRef) {
+        decliningCount++;
+      }
+      else {
         // Count as out of range (already counted)
       }
     }
