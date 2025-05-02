@@ -10,6 +10,7 @@
 </head>
 
 <body class="user-body">
+
   <div id="loadingOverlay" class="loader-overlay">
     <div class="loader-container">
       <div class="loader-spinner"></div>
@@ -19,6 +20,7 @@
       <div class="loader-subtext">This may take a few minutes depending on your file size</div>
     </div>
   </div>
+
   {{> mobileHeader}}
 
   <div class="sidebar">
@@ -806,7 +808,7 @@
           document.getElementById('biomarkerEditModal').style.display = 'none';
         });
       </script>
-      <script> // Other
+      <script> // Miscellaneous
         // Make toggleLabValues available globally
         window.toggleLabValues = function (header) {
           const card = header.closest('.lab-result-card');
@@ -836,8 +838,7 @@
           });
         });
       </script>
-      <script>
-        // Open the page on the Output tab
+      <script> // Open the page on the Output tab
         document.addEventListener('DOMContentLoaded', function() {
             // Check for tab parameter in the URL
             const urlParams = new URLSearchParams(window.location.search);
@@ -872,7 +873,7 @@
             }
           });
       </script>
-      <script> // select all files checkboxes
+      <script> // Select all files checkboxes
         document.addEventListener('DOMContentLoaded', function() {
           // Select elements
           const selectAllCheckbox = document.getElementById('selectAllFiles');
@@ -946,6 +947,7 @@
           }
         });
       </script>
+
 </body>
 
 </html>

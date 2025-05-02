@@ -633,8 +633,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- Your edit button script should come after jQuery -->
   <script src="js/main.js" type="text/javascript"></script>
-  <script>
-    // modals
+  <script> // modals
     document.addEventListener('DOMContentLoaded', function() {
       // Check if there's a stored active tab
       const storedTab = sessionStorage.getItem('activeTab');
@@ -1675,9 +1674,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   </script>
-  <script>
+  <script> // file upload handler
       document.addEventListener('DOMContentLoaded', function() {
-        // File Upload Handler
         const processButton = document.getElementById('processFiles');
         
         if (processButton) {

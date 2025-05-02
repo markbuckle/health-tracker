@@ -108,8 +108,7 @@
     <script src="js/rangeCalculations.js"></script>
     <script src="js/charts.js"></script>
     <script src="js/main.js" type="text/javascript"></script>
-    <script>
-      // dropdown script
+    {{!-- <script> // dropdown script
       document.addEventListener("DOMContentLoaded", () => {
         // Get all dropdown toggle elements
         const dropdownToggles = document.querySelectorAll(
@@ -148,8 +147,7 @@
         });
       });
     </script>
-    <script>
-      // dropdown spinner
+    <script> // dropdown spinner
       document.addEventListener("DOMContentLoaded", () => {
         const biomarkerContainers = document.querySelectorAll(
           ".biomarker-container"
@@ -181,8 +179,81 @@
           }
         });
       });
+    </script> --}}
+    <script> // new biomarker dropdown
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all biomarker containers
+        const biomarkerContainers = document.querySelectorAll('.biomarker-container');
+
+        biomarkerContainers.forEach((container) => {
+          // Get all the necessary elements
+          const tableTop = container.querySelector(".biomarker-table-top");
+          const biomarkerBottom = container.querySelector(".biomarker-bottom");
+          const stripe1 = container.querySelector(".stripe-1");
+          const stripe2 = container.querySelector(".stripe-2");
+          
+          // Get the elements that should NOT trigger collapse when clicked
+          const textbox = container.querySelector(".biomarker-textbox");
+          const chart = container.querySelector(".column.w-col.w-col-6");
+          
+          // Function to toggle stripes and expand/collapse
+          const toggleDropdown = (event) => {
+            // Stop propagation if the event was already handled
+            if (event.defaultPrevented) return;
+            
+            // Toggle the spin classes for the stripes
+            if (stripe1 && stripe2) {
+              stripe1.classList.toggle("spin");
+              stripe2.classList.toggle("spin");
+            }
+            
+            // Toggle expanded state of container
+            container.classList.toggle("expanded");
+            
+            // Toggle visibility of bottom content if needed
+            if (biomarkerBottom) {
+              biomarkerBottom.classList.toggle("visible");
+            }
+            
+            // Mark event as handled
+            event.preventDefault();
+          };
+          
+          // Handler for clicks on elements we want to ignore
+          const preventToggle = (event) => {
+            // Stop the event from bubbling up to container
+            event.stopPropagation();
+          };
+          
+          // Add click handler to the table top section
+          if (tableTop) {
+            tableTop.addEventListener("click", toggleDropdown);
+          }
+          
+          // Add click handler to the biomarker bottom, except for specific elements
+          if (biomarkerBottom) {
+            biomarkerBottom.addEventListener("click", toggleDropdown);
+            
+            // Prevent toggle when clicking on the textbox or chart
+            if (textbox) {
+              textbox.addEventListener("click", preventToggle);
+            }
+            
+            if (chart) {
+              chart.addEventListener("click", preventToggle);
+            }
+          }
+          
+          // Also prevent toggle from any links, buttons or interactive elements
+          const interactiveElements = container.querySelectorAll('a, button, input, select, .edit-entry-button, .delete-entry-button');
+          interactiveElements.forEach(element => {
+            element.addEventListener('click', preventToggle);
+          });
+        });
+      });
     </script>
-    <script>
+
+    <script> // Initialize data
       window.__INITIAL_DATA__ = {
         files: {{json files}},
         biomarkers: {{json biomarkers}},
