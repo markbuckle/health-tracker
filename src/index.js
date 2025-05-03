@@ -429,11 +429,11 @@ hbs.registerHelper("getMetricUrl", function (metricKey) {
 
 // Calculate bar height based on value relative to max value
 hbs.registerHelper("calculateBarHeight", function (value, maxValue) {
-  if (!value || !maxValue) return 10; // Minimum height for visibility
+  if (!value || !maxValue) return 40; // Minimum height for visibility
   
   const percentage = (value / maxValue);
   // Set the maximum height to 180px (matching our CSS)
-  const height = Math.max(Math.round(180 * percentage), 10);
+  const height = Math.max(Math.round(180 * percentage), 40);
   return height;
 });
 
@@ -774,106 +774,77 @@ app.get("/reports", checkAuth, async (req, res) => {
 app.get("/insights", checkAuth, async (req, res) => {
   try {
     const user = await registerCollection.findById(req.user._id);
-    if (!user) {
-      return res.status(404).send("User not found");
-    }
 
     // Define biomarkers from your existing biomarkerData
     const biomarkers = Object.keys(biomarkerData);
 
-    // Calculate biomarker summary with defensive coding
-    let biomarkerSummary = {
-      inRange: 0,
-      outOfRange: 0,
-      improving: 0,
-      declining: 0
-    };
-    
-    try {
-      biomarkerSummary = calculateBiomarkerSummary(user.files || [], biomarkers);
-    } catch (error) {
-      console.error("Error calculating biomarker summary:", error);
-    }
+    // Now this will work
+    const biomarkerSummary = calculateBiomarkerSummary(user.files, biomarkers);
 
-    // Calculate inputs with proper null checks
+    // Calculate all inputs in one object
     const inputs = {
-      bloodType: user.profile && user.profile.bloodType ? true : false,
-      familyHistory: user.profile && user.profile.familyHistory && user.profile.familyHistory.length > 0,
-      bloodPressure: user.profile && user.profile.monitoring && user.profile.monitoring.some(m => m && m.bloodPressure),
-      heartRate: user.profile && user.profile.monitoring && user.profile.monitoring.some(m => m && m.restingHeartRate),
-      sleep: user.profile && user.profile.monitoring && user.profile.monitoring.some(m => m && m.sleep),
-      lifestyle: user.profile && user.profile.lifestyle && user.profile.lifestyle.length > 0,
-      labTrends: user.files && user.files.length > 0,
-      bloodwork: user.files && user.files.length > 0,
-      biomarkers: user.files && user.files.some(f => f && f.labValues && Object.keys(f.labValues).length > 0),
-      physical: user.files && user.files.some(f => 
-        f && f.testDate && new Date(f.testDate) > new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
-      )
+      bloodType: user.profile && user.profile.bloodType ? !!user.profile.bloodType.length : false,
+      // bloodType: user.profile.bloodType.length > 0,
+      familyHistory: user.profile.familyHistory.length > 0,
+      bloodPressure: user.profile.monitoring.some((m) => m.bloodPressure),
+      heartRate: user.profile.monitoring.some((m) => m.restingHeartRate),
+      sleep: user.profile.monitoring.some((m) => m.sleep),
+      lifestyle: user.profile.lifestyle.length > 0,
+      labTrends: user.files.length > 0,
+      bloodwork: user.files.length > 0,
+      biomarkers: user.files.some(
+        (f) => f.labValues && Object.keys(f.labValues).length > 0
+      ),
+      physical: user.files.some(
+        (f) =>
+          f.testDate &&
+          new Date(f.testDate) >
+            new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+      ),
     };
+
+    // const inputs = {
+    //   bloodType: user.profile && user.profile.bloodType ? !!user.profile.bloodType.length : false,
+    //   familyHistory: user.profile && user.profile.familyHistory ? user.profile.familyHistory.length > 0 : false,
+    //   bloodPressure: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.bloodPressure) : false,
+    //   heartRate: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.restingHeartRate) : false,
+    //   sleep: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.sleep) : false,
+    //   lifestyle: user.profile && user.profile.lifestyle ? user.profile.lifestyle.length > 0 : false,
+    //   labTrends: user.files && user.files.length > 0,
+    //   bloodwork: user.files && user.files.length > 0,
+    //   biomarkers: user.files ? user.files.some(f => f && f.labValues && Object.keys(f.labValues).length > 0) : false,
+    //   physical: user.files ? user.files.some(f => f && f.testDate && new Date(f.testDate) > new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)) : false,
+    // };
 
     // Calculate completion percentage
     const totalInputs = Object.keys(inputs).length;
     const completedInputs = Object.values(inputs).filter(Boolean).length;
-    const completionPercentage = Math.round((completedInputs / totalInputs) * 100);
+    const completionPercentage = Math.round(
+      (completedInputs / totalInputs) * 100
+    );
 
-    // Create recommendations without recursion
-    const createRecommendations = (inputs) => {
-      const recommendations = [];
-      
-      if (!inputs.physical) {
-        recommendations.push("Schedule your annual physical examination");
-      }
-      if (!inputs.bloodPressure) {
-        recommendations.push("Start tracking your blood pressure regularly");
-      }
-      if (!inputs.bloodType) {
-        recommendations.push("Add your blood type to your profile");
-      }
-      if (!inputs.sleep) {
-        recommendations.push("Track your sleep patterns");
-      }
-      if (!inputs.lifestyle) {
-        recommendations.push("Add information about your lifestyle habits");
-      }
-      
-      return recommendations;
-    };
+    // Update the total score in the category header
+    const totalScore = completionPercentage;
 
-    // Get recent files
-    const getRecentFiles = (files, limit = 5) => {
-      if (!files || !Array.isArray(files) || files.length === 0) return [];
-      
-      return files
-        .filter(file => file && file.labValues && Object.keys(file.labValues).length > 0)
-        .sort((a, b) => {
-          // Safely handle dates
-          const dateA = a.testDate ? new Date(a.testDate) : new Date(0);
-          const dateB = b.testDate ? new Date(b.testDate) : new Date(0);
-          return dateB - dateA;
-        })
-        .slice(0, limit)
-        .map(file => ({
-          _id: file._id,
-          originalName: file.originalName || file.filename || "Unnamed File",
-          testDate: file.testDate || new Date(),
-          labValues: file.labValues || {}
-        }));
-    };
-    
+    // Get recommendations based on missing data
+    const recommendations = [];
+    if (!inputs.physical) {
+      recommendations.push("Schedule your annual physical examination");
+    }
+    if (!inputs.bloodPressure) {
+      recommendations.push("Start tracking your blood pressure regularly");
+    }
+    // Add more recommendations based on your criteria
+  
+    // Get recent files for labs summary tab
     const recentFiles = getRecentFiles(user.files, 5);
-    const recommendations = createRecommendations(inputs);
-
-    console.log("Rendering insights with:", {
-      scoreData: { inputs },
-      totalScore: completionPercentage,
-      recommendationsCount: recommendations.length
-    });
 
     res.render("user/insights", {
       naming: req.user.uname,
+      // this becomes {{json scores}} in insights.hbs
       scores: { inputs },
-      totalScore: completionPercentage,
-      recommendations: recommendations,
+      totalScore,
+      recommendations: generateRecommendations(inputs), // this becomes {{json recommendations}}
       biomarkerSummary,
       recentFiles
     });
@@ -998,13 +969,9 @@ function calculateBiomarkerSummary(files, biomarkers) {
         improvingCount++;
       }
       // Otherwise, it's either out of range or declining
-      else if (newest.value < oldest.value && oldest.value < oldest.minRef) {
+      else if (newest.value < oldest.value) {
         decliningCount++;
-      }
-      else if (newest.value > oldest.value && oldest.value > oldest.maxRef) {
-        decliningCount++;
-      }
-      else {
+      } else {
         // Count as out of range (already counted)
       }
     }
@@ -1025,7 +992,6 @@ function calculateBiomarkerSummary(files, biomarkers) {
   };
 }
 
-// Helper to check if all biomarker summary values are zero
 hbs.registerHelper("allZero", function (summary) {
   if (!summary) return true;
   
@@ -1036,11 +1002,6 @@ hbs.registerHelper("allZero", function (summary) {
   const declining = typeof summary.declining === 'number' ? summary.declining : 0;
   
   return (inRange === 0 && improving === 0 && outOfRange === 0 && declining === 0);
-});
-
-hbs.registerHelper("isZero", function (value) {
-  // Simple zero check that works with strings, numbers, null, etc.
-  return !value || value === 0 || value === "0";
 });
 
 // Helper function to get most recent files
@@ -1059,99 +1020,29 @@ function getRecentFiles(files, limit = 5) {
     }));
 }
 
-// Helper function to generate recommendations
-function createRecommendations(inputs) {
+// Helper function to generate recommendations based on incomplete inputs
+function generateRecommendations(inputs) {
   const recommendations = [];
-  
-  if (inputs.bloodType === false) {
-    recommendations.push("Add your blood type to your profile");
+  for (const [key, completed] of Object.entries(inputs)) {
+    if (!completed) {
+      switch (key) {
+        case "physical":
+          recommendations.push("Schedule your annual physical examination");
+          break;
+        case "bloodPressure":
+          recommendations.push("Start tracking your blood pressure");
+          break;
+        case "weight":
+          recommendations.push("Begin regular weight monitoring");
+          break;
+        // Add cases for other inputs
+      }
+    }
   }
-  if (inputs.familyHistory === false) {
-    recommendations.push("Add family history information");
-  }
-  if (inputs.bloodPressure === false) {
-    recommendations.push("Start tracking your blood pressure regularly");
-  }
-  if (inputs.physical === false) {
-    recommendations.push("Schedule your annual physical examination");
-  }
-  
   return recommendations;
 }
 
-// Helper function to generate recommendations based on incomplete inputs
-// function createRecommendations(inputs) {
-//   if (!inputs) return [];
-  
-//   const recommendations = [];
-//   for (const [key, completed] of Object.entries(inputs)) {
-//     if (!completed) {
-//       switch (key) {
-//         case "physical":
-//           recommendations.push("Schedule your annual physical examination");
-//           break;
-//         case "bloodPressure":
-//           recommendations.push("Start tracking your blood pressure");
-//           break;
-//         case "weight":
-//           recommendations.push("Begin regular weight monitoring");
-//           break;
-//         // Add cases for other inputs
-//       }
-//     }
-//   }
-//   return recommendations;
-// }
-
-// Helper function to generate recommendations based on incomplete inputs
-// function generateRecommendations(inputs) {
-//   if (!inputs) return [];
-
-//   console.log("Scores data:", { inputs });
-//   console.log("Recommendations:", generateRecommendations(inputs));
-  
-//   const recommendations = [];
-//   for (const [key, completed] of Object.entries(inputs)) {
-//     if (!completed) {
-//       switch (key) {
-//         case "physical":
-//           recommendations.push("Schedule your annual physical examination");
-//           break;
-//         case "bloodPressure":
-//           recommendations.push("Start tracking your blood pressure");
-//           break;
-//         // Add cases for other inputs
-//       }
-//     }
-//   }
-//   return recommendations;
-// }
-
-// Helper function to generate recommendations based on incomplete inputs
-// function generateRecommendations(inputs) {
-//   const recommendations = [];
-//   for (const [key, completed] of Object.entries(inputs)) {
-//     if (!completed) {
-//       switch (key) {
-//         case "physical":
-//           recommendations.push("Schedule your annual physical examination");
-//           break;
-//         case "bloodPressure":
-//           recommendations.push("Start tracking your blood pressure");
-//           break;
-//         case "weight":
-//           recommendations.push("Begin regular weight monitoring");
-//           break;
-//         // Add cases for other inputs
-//       }
-//     }
-//   }
-//   return recommendations;
-// }
-
-
 // Authentication logic
-
 app.post("/register", async (req, res) => {
   const data = {
     fname: req.body.fname,
