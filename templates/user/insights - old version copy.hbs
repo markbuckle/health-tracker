@@ -204,8 +204,11 @@
                           <div class="chart-bar in-range" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}180px{{/if}}; width: 22%;">
                           </div>
                           <!-- Improving Bar -->
-                          <div class="chart-bar improving" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
-                          </div>
+                           <div class="chart-bar improving" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
+                              {{#unless (allZero biomarkerSummary)}}
+                                <span class="chart-value">{{biomarkerSummary.improving}}</span>
+                              {{/unless}}
+                            </div>
                           <!-- Out of Range Bar -->
                           <div class="chart-bar out-of-range" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.outOfRange biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
                           </div>
@@ -615,8 +618,7 @@
     ></script>
     <script src="js/main.js" type="text/javascript"></script>
     <script src="js/wellnessScore.js" type="text/javascript"></script>
-    <script>
-      // modals
+    <script> // modals
 
       // Info button modal
       document.querySelector(".info-button").addEventListener("click", () => {
@@ -655,8 +657,7 @@
         });
       });
     </script>
-    <script>
-      // wellness chart animations
+    <script> // wellness chart animations
       // Add this to your existing wellness chart animations script
       function updateScoreCircle(score) {
         const circle = document.getElementById("scoreCircle");
@@ -698,8 +699,7 @@
         updateScoreCircle(score);
       });
     </script>
-    <script>
-      // metric dropdown
+    <script>  // metric dropdown
       document.addEventListener("DOMContentLoaded", function () {
         // Get all metric items
         const metricItems = document.querySelectorAll(".metric-item");
@@ -749,9 +749,7 @@
         });
       });
     </script>
-    <script>
-      // RAG Chat functionality
-      // Add this to your existing script section or create a new one
+    <script> // RAG Chat functionality
       document.addEventListener("DOMContentLoaded", function () {
         const chatMessages = document.getElementById("chat-messages");
         const chatInput = document.getElementById("chat-input");
@@ -946,8 +944,7 @@
         }
       });
     </script>
-    <script>
-      // Labs Summary JavaScript
+    <script> // Labs Summary JavaScript
       document.addEventListener('DOMContentLoaded', function() {
         // Check if we're on the insights page with the Labs Summary tab
         const labSummaryTab = document.querySelector('[data-w-tab="LabsSummary"]');
