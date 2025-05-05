@@ -1162,240 +1162,29 @@
 
     <script> // Defensive script to prevent JavaScript errors
       document.addEventListener('DOMContentLoaded', function() {
-          // Safe score circle update function
-          function safeUpdateScoreCircle() {
-              try {
-                  const circle = document.getElementById('scoreCircle');
-                  if (!circle) {
-                      console.warn('Score circle element not found');
-                      return;
-                  }
-                  
-                  // Get score safely
-                  let score = 0;
-                  const scoreNumberEl = document.querySelector('.score-number');
-                  if (scoreNumberEl && scoreNumberEl.textContent) {
-                      score = parseInt(scoreNumberEl.textContent) || 0;
-                  }
-                  
-                  // Calculate circle properties
-                  const radius = 26;
-                  const circumference = 2 * Math.PI * radius;
-                  const offset = ((100 - score) / 100) * circumference;
-                  
-                  // Apply styles
-                  circle.style.strokeDasharray = `${circumference} ${circumference}`;
-                  circle.style.strokeDashoffset = offset;
-                  
-                  // Set color based on score
-                  let color = '#ff6b6b'; // default red
-                  if (score >= 75) {
-                      color = '#71b871'; // green
-                  } else if (score >= 50) {
-                      color = '#ffd700'; // yellow
-                  }
-                  
-                  circle.style.stroke = color;
-              } catch (e) {
-                  console.warn('Error updating score circle:', e);
-              }
-          }
-          
-          // Safe modal handlers
-          function setupModalHandlers() {
-              try {
-                  // Info button
-                  const infoButton = document.querySelector('.info-button');
-                  if (infoButton) {
-                      infoButton.addEventListener('click', function() {
-                          const modal = document.querySelector('.modal-wrapper-1');
-                          if (modal) modal.classList.add('active');
-                      });
-                  }
-                  
-                  // Close buttons
-                  document.querySelectorAll('.modal-background, .modal-return-button, .cancel-button').forEach(function(el) {
-                      if (el) {
-                          el.addEventListener('click', function() {
-                              document.querySelectorAll('.modal-wrapper-1, .modal-wrapper-6').forEach(function(modal) {
-                                  if (modal) modal.classList.remove('active');
-                              });
-                          });
-                      }
-                  });
-              } catch (e) {
-                  console.warn('Error setting up modal handlers:', e);
-              }
-          }
-          
-          // Safe metric dropdown handlers
-          function setupMetricDropdowns() {
-              try {
-                  const metricItems = document.querySelectorAll('.metric-item');
-                  if (!metricItems || metricItems.length === 0) {
-                      console.warn('No metric items found');
-                      return;
-                  }
-                  
-                  metricItems.forEach(function(item) {
-                      if (item) {
-                          item.addEventListener('click', function() {
-                              try {
-                                  // Toggle active class
-                                  this.classList.toggle('active');
-                                  
-                                  // Get dropdown
-                                  const dropdown = this.nextElementSibling;
-                                  if (!dropdown || !dropdown.classList.contains('metric-dropdown')) {
-                                      return;
-                                  }
-                                  
-                                  // Toggle visibility
-                                  if (this.classList.contains('active')) {
-                                      dropdown.style.maxHeight = dropdown.scrollHeight + 'px';
-                                      dropdown.style.opacity = '1';
-                                  } else {
-                                      dropdown.style.maxHeight = '0';
-                                      dropdown.style.opacity = '0';
-                                  }
-                                  
-                                  // Close others
-                                  metricItems.forEach(function(otherItem) {
-                                      if (otherItem !== item && otherItem.classList.contains('active')) {
-                                          otherItem.classList.remove('active');
-                                          const otherDropdown = otherItem.nextElementSibling;
-                                          if (otherDropdown && otherDropdown.classList.contains('metric-dropdown')) {
-                                              otherDropdown.style.maxHeight = '0';
-                                              otherDropdown.style.opacity = '0';
-                                          }
-                                      }
-                                  });
-                              } catch (e) {
-                                  console.warn('Error handling metric item click:', e);
-                              }
-                          });
-                      }
-                  });
-              } catch (e) {
-                  console.warn('Error setting up metric dropdowns:', e);
-              }
-          }
-          
-          // Chat functionality for the Ask tab
-          function setupChatFunctionality() {
-              try {
-                  const chatMessages = document.getElementById('chat-messages');
-                  const chatInput = document.getElementById('chat-input');
-                  const chatSubmit = document.getElementById('chat-submit');
-                  
-                  if (!chatMessages || !chatInput || !chatSubmit) {
-                      console.warn('Chat elements not found');
-                      return;
-                  }
-                  
-                  // Auto-resize textarea
-                  chatInput.addEventListener('input', function() {
-                      this.style.height = 'auto';
-                      this.style.height = this.scrollHeight + 'px';
-                  });
-                  
-                  // Submit on Enter
-                  chatInput.addEventListener('keydown', function(e) {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          submitMessage();
-                      }
-                  });
-                  
-                  // Submit button
-                  chatSubmit.addEventListener('click', submitMessage);
-                  
-                  function submitMessage() {
-                      try {
-                          const message = chatInput.value.trim();
-                          if (!message) return;
-                          
-                          // Add user message
-                          addMessage(message, 'user');
-                          
-                          // Clear input
-                          chatInput.value = '';
-                          chatInput.style.height = 'auto';
-                          
-                          // Show typing indicator
-                          addTypingIndicator();
-                          
-                          // Fake response for now (replace with actual API call)
-                          setTimeout(function() {
-                              removeTypingIndicator();
-                              addMessage('I understand you want to know about ' + message + '. Unfortunately, I don\'t have enough information to answer right now.', 'assistant');
-                          }, 1000);
-                      } catch (e) {
-                          console.warn('Error submitting message:', e);
-                      }
-                  }
-                  
-                  function addMessage(message, sender) {
-                      try {
-                          const messageDiv = document.createElement('div');
-                          messageDiv.className = `chat-message ${sender}-message`;
-                          
-                          const messageContent = document.createElement('div');
-                          messageContent.className = 'message-content';
-                          messageContent.innerHTML = `<p>${message}</p>`;
-                          
-                          messageDiv.appendChild(messageContent);
-                          chatMessages.appendChild(messageDiv);
-                          
-                          // Scroll to bottom
-                          chatMessages.scrollTop = chatMessages.scrollHeight;
-                      } catch (e) {
-                          console.warn('Error adding message:', e);
-                      }
-                  }
-                  
-                  function addTypingIndicator() {
-                      try {
-                          const typingDiv = document.createElement('div');
-                          typingDiv.className = 'chat-message assistant-message typing';
-                          typingDiv.innerHTML = `
-                              <div class="typing-indicator">
-                                  <span></span>
-                                  <span></span>
-                                  <span></span>
-                              </div>
-                          `;
-                          chatMessages.appendChild(typingDiv);
-                          chatMessages.scrollTop = chatMessages.scrollHeight;
-                      } catch (e) {
-                          console.warn('Error adding typing indicator:', e);
-                      }
-                  }
-                  
-                  function removeTypingIndicator() {
-                      try {
-                          const typingIndicator = document.querySelector('.typing');
-                          if (typingIndicator) {
-                              typingIndicator.remove();
-                          }
-                      } catch (e) {
-                          console.warn('Error removing typing indicator:', e);
-                      }
-                  }
-              } catch (e) {
-                  console.warn('Error setting up chat functionality:', e);
-              }
-          }
-          
-          // Run all initializations
+        // Safe initialization of elements
+        const wellnessData = document.getElementById('wellnessData');
+        if (!wellnessData) {
+          console.warn('Wellness data element not found. Skipping initialization.');
+        }
+        
+        // Check for score circle elements before trying to update them
+        const scoreCircle = document.getElementById('scoreCircle');
+        if (scoreCircle) {
           try {
-              safeUpdateScoreCircle();
-              setupModalHandlers();
-              setupMetricDropdowns();
-              setupChatFunctionality();
+            // Get score safely
+            const scoreElement = document.querySelector('.score-number');
+            const score = scoreElement ? parseInt(scoreElement.textContent || '0') : 0;
+            
+            // Update circle
+            const circumference = 2 * Math.PI * 26;
+            const offset = ((100 - score) / 100) * circumference;
+            scoreCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+            scoreCircle.style.strokeDashoffset = offset;
           } catch (e) {
-              console.error('Error during initialization:', e);
+            console.warn('Error updating score circle:', e);
           }
+        }
       });
     </script>
   </body>

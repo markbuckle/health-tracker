@@ -781,27 +781,42 @@ app.get("/insights", checkAuth, async (req, res) => {
     // Now this will work
     const biomarkerSummary = calculateBiomarkerSummary(user.files, biomarkers);
 
-    // Calculate all inputs in one object
+    // Calculate all inputs in one object with null checks
     const inputs = {
-      bloodType: user.profile && user.profile.bloodType ? !!user.profile.bloodType.length : false,
-      // bloodType: user.profile.bloodType.length > 0,
-      familyHistory: user.profile.familyHistory.length > 0,
-      bloodPressure: user.profile.monitoring.some((m) => m.bloodPressure),
-      heartRate: user.profile.monitoring.some((m) => m.restingHeartRate),
-      sleep: user.profile.monitoring.some((m) => m.sleep),
-      lifestyle: user.profile.lifestyle.length > 0,
-      labTrends: user.files.length > 0,
-      bloodwork: user.files.length > 0,
-      biomarkers: user.files.some(
-        (f) => f.labValues && Object.keys(f.labValues).length > 0
-      ),
-      physical: user.files.some(
-        (f) =>
-          f.testDate &&
-          new Date(f.testDate) >
-            new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
-      ),
+      bloodType: user.profile && user.profile.bloodType ? true : false,
+      // bloodType: user.profile && user.profile.bloodType ? !!user.profile.bloodType.length : false,
+      familyHistory: user.profile && user.profile.familyHistory ? user.profile.familyHistory.length > 0 : false,
+      bloodPressure: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.bloodPressure) : false,
+      heartRate: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.restingHeartRate) : false,
+      sleep: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.sleep) : false,
+      lifestyle: user.profile && user.profile.lifestyle ? user.profile.lifestyle.length > 0 : false,
+      labTrends: user.files && user.files.length > 0,
+      bloodwork: user.files && user.files.length > 0,
+      biomarkers: user.files ? user.files.some(f => f && f.labValues && Object.keys(f.labValues).length > 0) : false,
+      physical: user.files ? user.files.some(f => f && f.testDate && new Date(f.testDate) > new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)) : false,
     };
+
+    // Calculate all inputs in one object
+    // const inputs = {
+    //   bloodType: user.profile && user.profile.bloodType ? !!user.profile.bloodType.length : false,
+    //   // bloodType: user.profile.bloodType.length > 0,
+    //   familyHistory: user.profile.familyHistory.length > 0,
+    //   bloodPressure: user.profile.monitoring.some((m) => m.bloodPressure),
+    //   heartRate: user.profile.monitoring.some((m) => m.restingHeartRate),
+    //   sleep: user.profile.monitoring.some((m) => m.sleep),
+    //   lifestyle: user.profile.lifestyle.length > 0,
+    //   labTrends: user.files.length > 0,
+    //   bloodwork: user.files.length > 0,
+    //   biomarkers: user.files.some(
+    //     (f) => f.labValues && Object.keys(f.labValues).length > 0
+    //   ),
+    //   physical: user.files.some(
+    //     (f) =>
+    //       f.testDate &&
+    //       new Date(f.testDate) >
+    //         new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+    //   ),
+    // };
 
     // const inputs = {
     //   bloodType: user.profile && user.profile.bloodType ? !!user.profile.bloodType.length : false,
