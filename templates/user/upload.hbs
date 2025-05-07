@@ -158,7 +158,9 @@
                     {{#if user.files}}
                     {{#each user.files}}
                     <div class="file-list-row">
-                      <div class="file-name">{{this.originalName}}</div>
+                      <div class="file-name">
+                        <a href="/uploads/{{this.filename}}" target="_blank">{{this.originalName}}</a>
+                      </div>
                       <div class="file-date">{{formatDate this.testDate}}</div>
                       <div class="file-uploaded">{{formatDate this.uploadDate}}</div>
                       <div class="file-checkbox-container">
