@@ -72,6 +72,23 @@ function findLabValue(file, name) {
     return null;
 }
 
+function getUniqueYears(dates) {
+    const uniqueYears = new Set();
+    const yearTickValues = [];
+    
+    dates.forEach(date => {
+        const year = date.getFullYear();
+        if (!uniqueYears.has(year)) {
+            uniqueYears.add(year);
+            // Create a date for July 1st of that year (middle of the year)
+            // This positions the year label in the middle of the year's range
+            yearTickValues.push(new Date(year, 6, 1));
+        }
+    });
+    
+    return yearTickValues;
+}
+
 // Function for creating biomarker trend charts
 function createBiomarkerChart(biomarkerElement, biomarkerName) {
     if (!biomarkerElement) {
@@ -323,14 +340,13 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             type: 'date',
             showgrid: false,
             zeroline: false,
-            tickformat: '%b %Y',
+            tickformat: '%b', // Show only abbreviated month
             tickfont: {
                 family: 'Arial, sans-serif',
                 size: 12,
                 color: '#666'
             },
             range: [
-                // Add padding before and after
                 new Date(Math.min(...dates) - 30 * 24 * 60 * 60 * 1000),
                 new Date(Math.max(...dates) + 30 * 24 * 60 * 60 * 1000)
             ],
@@ -338,7 +354,34 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             spikethickness: 1,
             spikedash: 'dot',
             spikecolor: '#999',
-            spikemode: 'across'
+            spikemode: 'across',
+            // Add these properties to fix duplicate months
+            tickmode: 'array',
+            tickvals: Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 1)))),
+        },
+        // Adjust the secondary axis configuration
+        xaxis2: {
+            type: 'date',
+            tickformat: '%Y',
+            showgrid: false,
+            zeroline: false,
+            showline: false,
+            overlaying: 'x',
+            side: 'bottom',
+            position: 0.1, // Increase spacing between month and year
+            anchor: 'free',
+            tickfont: {
+                family: 'Arial, sans-serif',
+                size: 12,
+                color: '#888'
+            },
+            range: [
+                new Date(Math.min(...dates) - 30 * 24 * 60 * 60 * 1000),
+                new Date(Math.max(...dates) + 30 * 24 * 60 * 60 * 1000)
+            ],
+            tickmode: 'array',
+            tickvals: getUniqueYears(dates),
+            showticklabels: true
         },
         yaxis: {
             showgrid: true,
