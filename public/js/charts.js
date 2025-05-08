@@ -73,18 +73,35 @@ function findLabValue(file, name) {
 }
 
 function getUniqueYears(dates) {
-    const uniqueYears = new Set();
-    const yearTickValues = [];
+    // Guard against empty arrays
+    if (!dates || dates.length === 0) {
+        return [];
+    }
+    
+    const years = {};
     
     dates.forEach(date => {
         const year = date.getFullYear();
-        if (!uniqueYears.has(year)) {
-            uniqueYears.add(year);
-            yearTickValues.push(new Date(year, 6, 1));
+        if (!years[year]) {
+            // Find midpoint of all dates in this year
+            const datesInYear = dates.filter(d => d.getFullYear() === year);
+            
+            // Make sure we convert any potential date strings to Date objects
+            const timestamps = datesInYear.map(d => d instanceof Date ? d.getTime() : new Date(d).getTime());
+            const earliestTimestamp = Math.min(...timestamps);
+            const latestTimestamp = Math.max(...timestamps);
+            
+            // Use the middle of the year's data range for better centering
+            const midpoint = new Date((earliestTimestamp + latestTimestamp) / 2);
+            
+            // Store the midpoint date
+            years[year] = midpoint;
+            
+            console.log(`Year ${year} midpoint: ${midpoint.toISOString()}`);
         }
     });
     
-    return yearTickValues;
+    return Object.values(years);
 }
 
 // Function for creating biomarker trend charts
@@ -128,6 +145,9 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     const dates = chartData.map(d => d.date);
     const values = chartData.map(d => d.value);
     const unit = chartData[0]?.unit || '';
+
+    const yearTicks = getUniqueYears(dates);
+    console.log('Year tick values:', yearTicks);
 
     // Get reference ranges from the first data point
     const referenceRange = chartData[0]?.referenceRange || '';
@@ -225,7 +245,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     // Only add reference annotations if they don't exactly match an axis tick
     if (!isExactMatch(minRef, yAxisTicks)) {
     annotations.push({
-        x: -0.0455,
+        x: 0,
         xref: 'paper',
         y: minRef,
         yref: 'y',
@@ -233,17 +253,18 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         showarrow: false,
         font: {
         family: 'Arial, sans-serif',
-        size: 10.5,
+        size: 10,
         color: '#777',
         weight: 'bold'
         },
-        align: 'right'
+        align: 'right',
+        xanchor: 'right'
     });
     }
 
     if (!isExactMatch(maxRef, yAxisTicks)) {
     annotations.push({
-        x: -0.05,
+        x: 0,
         xref: 'paper',
         y: maxRef,
         yref: 'y',
@@ -251,11 +272,12 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         showarrow: false,
         font: {
         family: 'Arial, sans-serif',
-        size: 10.5,
+        size: 10,
         color: '#777',
         weight: 'bold'
         },
-        align: 'right'
+        align: 'right',
+        xanchor: 'right'
     });
     }
 
@@ -274,6 +296,33 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     },
     align: 'left'
     });
+
+    const yearCenters = {};
+    dates.forEach(date => {
+        const year = date.getFullYear();
+        if (!yearCenters[year]) {
+            const datesInYear = dates.filter(d => d.getFullYear() === year);
+            const minDate = new Date(Math.min(...datesInYear.map(d => d.getTime())));
+            const maxDate = new Date(Math.max(...datesInYear.map(d => d.getTime())));
+            yearCenters[year] = new Date((minDate.getTime() + maxDate.getTime()) / 2);
+        }
+    });
+
+    // Create year annotations
+    const yearAnnotations = Object.entries(yearCenters).map(([year, centerDate]) => ({
+        x: centerDate,
+        y: -0.18, // Position below x-axis
+        xref: 'x',
+        yref: 'paper',
+        text: year,
+        showarrow: false,
+        font: {
+            family: 'Arial, sans-serif',
+            size: 12,
+            color: '#888'
+        },
+        textangle: 0
+    }));
 
     // Layout with adjusted reference range markers
     const layout = {
@@ -308,18 +357,73 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
                 color: '#666'
             },
             range: [
-                new Date(Math.min(...dates) - 30 * 24 * 60 * 60 * 1000),
-                new Date(Math.max(...dates) + 30 * 24 * 60 * 60 * 1000)
+                // Expand range to show at least 5 months
+                new Date(Math.min(...dates) - 60 * 24 * 60 * 60 * 1000),  // 60 days before earliest date
+                new Date(Math.max(...dates) + 60 * 24 * 60 * 60 * 1000)   // 60 days after latest date
             ],
             showspikes: true,
             spikethickness: 1,
             spikedash: 'dot',
             spikecolor: '#999',
             spikemode: 'across',
-            // Use unique month ticks to avoid duplicates
+            // Ensure we show multiple months if they exist
             tickmode: 'array',
-            tickvals: Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 1))))
+            tickvals: (function() {
+                // If we have few data points, create 5 month ticks centered around data
+                if (dates.length <= 3) {
+                    const centerDate = dates.length === 0 ? new Date() : 
+                                       new Date((Math.min(...dates.map(d => d.getTime())) + 
+                                                Math.max(...dates.map(d => d.getTime()))) / 2);
+                    
+                    // Create array of 5 months centered on data
+                    return [-2, -1, 0, 1, 2].map(monthOffset => {
+                        const date = new Date(centerDate);
+                        date.setMonth(date.getMonth() + monthOffset);
+                        return new Date(date.getFullYear(), date.getMonth(), 15);
+                    });
+                } else {
+                    // If we have more data points, use those with a bit of padding
+                    const uniqueMonths = Array.from(new Set(dates.map(d => 
+                        new Date(d.getFullYear(), d.getMonth(), 15).getTime()
+                    ))).map(timestamp => new Date(timestamp));
+                    
+                    // Sort dates chronologically
+                    uniqueMonths.sort((a, b) => a - b);
+                    
+                    // If we have less than 5 unique months, add months on either side
+                    if (uniqueMonths.length < 5) {
+                        const padding = Math.ceil((5 - uniqueMonths.length) / 2);
+                        
+                        // Add months before
+                        for (let i = 1; i <= padding; i++) {
+                            const firstDate = new Date(uniqueMonths[0]);
+                            firstDate.setMonth(firstDate.getMonth() - i);
+                            uniqueMonths.unshift(firstDate);
+                        }
+                        
+                        // Add months after
+                        for (let i = 1; i <= padding; i++) {
+                            const lastDate = new Date(uniqueMonths[uniqueMonths.length - 1]);
+                            lastDate.setMonth(lastDate.getMonth() + i);
+                            uniqueMonths.push(lastDate);
+                        }
+                    }
+                    
+                    return uniqueMonths;
+                }
+            })(),
+            // tickvals: dates.length <= 1 
+            //     ? [
+            //         // If only one date, show 3 months centered on the date
+            //         new Date(dates[0].getFullYear(), dates[0].getMonth() - 1, 15),
+            //         new Date(dates[0].getFullYear(), dates[0].getMonth(), 15),
+            //         new Date(dates[0].getFullYear(), dates[0].getMonth() + 1, 15)
+            //     ] 
+            //     : Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 15)))),
+            // tickvals: Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 15)))),
+            showticklabels: true
         },
+        // Find the center point for each year
         yaxis: {
             showgrid: true,
             gridcolor: '#e5e5e5',
@@ -334,7 +438,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             },
             title: null
         },
-        annotations: annotations
+        annotations: [...annotations, ...yearAnnotations],
     };
 
     // Add reference range lines
@@ -370,26 +474,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             }
         }
     );
-    layout.xaxis2 = {
-        type: 'date',
-        tickformat: '%Y', // Show only year
-        showgrid: false,
-        zeroline: false,
-        showline: false,
-        overlaying: 'x',
-        side: 'bottom',
-        position: 0.1, // Position below the month ticks
-        anchor: 'free',
-        tickfont: {
-            family: 'Arial, sans-serif',
-            size: 12,
-            color: '#888'
-        },
-        range: layout.xaxis.range,
-        tickmode: 'array',
-        tickvals: getUniqueYears(dates),
-        showticklabels: true
-    };
 
     const config = {
         displayModeBar: false,
@@ -398,20 +482,8 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         staticPlot: false
     };
 
-    // Create dummy trace for the second x-axis
-    const dummyTrace = {
-        x: getUniqueYears(dates),
-        y: Array(getUniqueYears(dates).length).fill(yMin * 0.9), // Below visible area
-        type: 'scatter',
-        mode: 'markers',
-        marker: { opacity: 0 },
-        showlegend: false,
-        xaxis: 'x2',
-        yaxis: 'y'
-    };
-
     try {
-        Plotly.newPlot(biomarkerElement.id, [trace, dummyTrace], layout, config)
+        Plotly.newPlot(biomarkerElement.id, [trace], layout, config)
             .then(() => {
                 console.log(`Successfully plotted chart for ${biomarkerName}`);
                 
