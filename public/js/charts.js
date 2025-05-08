@@ -1,5 +1,9 @@
 // Enhanced biomarker trend charts function
 
+function isExactMatch(value, tickValues, epsilon = 0.00001) {
+    return tickValues.some(tick => Math.abs(tick - value) < epsilon);
+}
+
 // Helper to checks if any reference range value is effectively the same as any auto-generated y-axis value, with a tiny margin of error to handle floating point precision issues
 function isValueInArray(value, array, epsilon = 0.00001) {
     return array.some(item => Math.abs(item - value) < epsilon);
@@ -145,18 +149,18 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     // const maxRefTooClose = isValueInArray(maxRef, yAxisValues);
 
     // Calculate reasonable y-axis tick values based on the range
-    const range = yMax - yMin;
-    const tickInterval = calculateTickInterval(range);
-    const firstTick = Math.floor(yMin / tickInterval) * tickInterval;
-    const yAxisTicks = [];
+    // const range = yMax - yMin;
+    // const tickInterval = calculateTickInterval(range);
+    // const firstTick = Math.floor(yMin / tickInterval) * tickInterval;
+    // const yAxisTicks = [];
 
-    for (let tick = firstTick; tick <= yMax; tick += tickInterval) {
-        yAxisTicks.push(tick);
-    }
+    // for (let tick = firstTick; tick <= yMax; tick += tickInterval) {
+    //     yAxisTicks.push(tick);
+    // }
 
-    // Check if reference range values exactly match any standard y-axis ticks
-    const minRefTooClose = yAxisTicks.some(tick => Math.abs(tick - minRef) < 0.0001);
-    const maxRefTooClose = yAxisTicks.some(tick => Math.abs(tick - maxRef) < 0.0001);
+    // // Check if reference range values exactly match any standard y-axis ticks
+    // const minRefTooClose = yAxisTicks.some(tick => Math.abs(tick - minRef) < 0.0001);
+    // const maxRefTooClose = yAxisTicks.some(tick => Math.abs(tick - maxRef) < 0.0001);
 
     // Calculate reasonable y-axis tick values based on the range
     // const range = yMax - yMin;
@@ -229,59 +233,68 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
 
     // Create annotations array for reference range labels
     const annotations = [];
-    
-    // Only add min reference annotation if it's not too close to a y-axis tick
-    if (!minRefTooClose) {
-        annotations.push({
-            x: -0.0455, // Adjusted position
-            xref: 'paper',
-            y: minRef,
-            yref: 'y',
-            text: minRef.toFixed(1),
-            showarrow: false,
-            font: {
-                family: 'Arial, sans-serif',
-                size: 10.5,
-                color: '#777',
-                weight: 'bold'
-            },
-            align: 'right'
-        });
+
+    // Calculate the automatic y-axis ticks that Plotly will generate
+    const yAxisTicks = [];
+    const tickStep = calculateTickInterval(yMax - yMin);
+    for (let tick = Math.floor(yMin / tickStep) * tickStep; tick <= yMax; tick += tickStep) {
+    yAxisTicks.push(parseFloat(tick.toFixed(6)));
     }
-    
-    // Only add max reference annotation if it's not too close to a y-axis tick
-    if (!maxRefTooClose) {
-        annotations.push({
-            x: -0.05, // Adjusted position
-            xref: 'paper',
-            y: maxRef,
-            yref: 'y',
-            text: maxRef.toFixed(1),
-            showarrow: false,
-            font: {
-                family: 'Arial, sans-serif',
-                size: 10.5,
-                color: '#777',
-                weight: 'bold'
-            },
-            align: 'right'
-        });
-    }
-    
-    // Add unit label annotation
+
+    console.log('Y-axis ticks:', yAxisTicks);
+    console.log('Reference ranges:', minRef, maxRef);
+
+    // Only add reference annotations if they don't exactly match an axis tick
+    if (!isExactMatch(minRef, yAxisTicks)) {
     annotations.push({
-        x: -0.08, // Position to the left of the y-axis
-        y: 1.14, 
+        x: -0.0455,
         xref: 'paper',
-        yref: 'paper',
-        text: unit,
+        y: minRef,
+        yref: 'y',
+        text: minRef.toFixed(1),
         showarrow: false,
         font: {
-            family: 'Arial, sans-serif',
-            size: 14,
-            color: '#666'
+        family: 'Arial, sans-serif',
+        size: 10.5,
+        color: '#777',
+        weight: 'bold'
         },
-        align: 'left'
+        align: 'right'
+    });
+    }
+
+    if (!isExactMatch(maxRef, yAxisTicks)) {
+    annotations.push({
+        x: -0.05,
+        xref: 'paper',
+        y: maxRef,
+        yref: 'y',
+        text: maxRef.toFixed(1),
+        showarrow: false,
+        font: {
+        family: 'Arial, sans-serif',
+        size: 10.5,
+        color: '#777',
+        weight: 'bold'
+        },
+        align: 'right'
+    });
+    }
+
+    // Add unit label annotation
+    annotations.push({
+    x: -0.08,
+    y: 1.14, 
+    xref: 'paper',
+    yref: 'paper',
+    text: unit,
+    showarrow: false,
+    font: {
+        family: 'Arial, sans-serif',
+        size: 14,
+        color: '#666'
+    },
+    align: 'left'
     });
 
     // Layout with adjusted reference range markers
