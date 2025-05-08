@@ -80,8 +80,6 @@ function getUniqueYears(dates) {
         const year = date.getFullYear();
         if (!uniqueYears.has(year)) {
             uniqueYears.add(year);
-            // Create a date for July 1st of that year (middle of the year)
-            // This positions the year label in the middle of the year's range
             yearTickValues.push(new Date(year, 6, 1));
         }
     });
@@ -340,7 +338,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             type: 'date',
             showgrid: false,
             zeroline: false,
-            tickformat: '%b', // Show only abbreviated month
+            tickformat: '%b', // Only month abbreviation
             tickfont: {
                 family: 'Arial, sans-serif',
                 size: 12,
@@ -355,33 +353,9 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             spikedash: 'dot',
             spikecolor: '#999',
             spikemode: 'across',
-            // Add these properties to fix duplicate months
+            // Use unique month ticks
             tickmode: 'array',
-            tickvals: Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 1)))),
-        },
-        // Adjust the secondary axis configuration
-        xaxis2: {
-            type: 'date',
-            tickformat: '%Y',
-            showgrid: false,
-            zeroline: false,
-            showline: false,
-            overlaying: 'x',
-            side: 'bottom',
-            position: 0.1, // Increase spacing between month and year
-            anchor: 'free',
-            tickfont: {
-                family: 'Arial, sans-serif',
-                size: 12,
-                color: '#888'
-            },
-            range: [
-                new Date(Math.min(...dates) - 30 * 24 * 60 * 60 * 1000),
-                new Date(Math.max(...dates) + 30 * 24 * 60 * 60 * 1000)
-            ],
-            tickmode: 'array',
-            tickvals: getUniqueYears(dates),
-            showticklabels: true
+            tickvals: Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 1))))
         },
         yaxis: {
             showgrid: true,
@@ -433,6 +407,26 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             }
         }
     );
+    layout.xaxis2 = {
+        type: 'date',
+        tickformat: '%Y',
+        showgrid: false,
+        zeroline: false,
+        showline: false,
+        overlaying: 'x',
+        side: 'bottom',
+        position: 0.1,
+        anchor: 'free',
+        tickfont: {
+            family: 'Arial, sans-serif',
+            size: 12,
+            color: '#888'
+        },
+        range: layout.xaxis.range,
+        tickmode: 'array',
+        tickvals: getUniqueYears(dates),
+        showticklabels: true
+    };
 
     const config = {
         displayModeBar: false,
@@ -442,7 +436,19 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     };
 
     try {
-        Plotly.newPlot(biomarkerElement.id, [trace], layout, config)
+        // Create the dummy trace
+        const dummyTrace = {
+            x: getUniqueYears(dates),
+            y: Array(getUniqueYears(dates).length).fill(yMin * 0.9), // Well below the visible area
+            type: 'scatter',
+            mode: 'markers',
+            marker: { opacity: 0 },
+            showlegend: false,
+            xaxis: 'x2',
+            yaxis: 'y'
+        };
+
+        Plotly.newPlot(biomarkerElement.id, [trace, dummyTrace], layout, config)
             .then(() => {
                 console.log(`Successfully plotted chart for ${biomarkerName}`);
                 
