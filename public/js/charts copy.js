@@ -63,7 +63,7 @@ function findLabValue(file, name) {
     return null;
 }
 
-// Improved function for creating biomarker trend charts
+// Function for creating biomarker trend charts
 function createBiomarkerChart(biomarkerElement, biomarkerName) {
     if (!biomarkerElement) {
         console.warn(`Element for biomarker ${biomarkerName} not found`);
@@ -78,8 +78,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         return;
     }
     
-    console.log(`Found ${files.length} files to check for biomarker ${biomarkerName}`);
-
     // Transform and sort the data
     const chartData = files
         .filter(file => {
@@ -103,16 +101,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         return;
     }
     
-    console.log(`Found ${chartData.length} data points for biomarker: ${biomarkerName}`);
-    
-    // Log some debug information about the data
-    console.log(`Chart data for ${biomarkerName}:`, chartData.map(d => ({
-        date: d.date.toISOString().split('T')[0],
-        value: d.value,
-        unit: d.unit,
-        range: d.referenceRange
-    })));
-
     const dates = chartData.map(d => d.date);
     const values = chartData.map(d => d.value);
     const unit = chartData[0]?.unit || '';
@@ -129,287 +117,214 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         const padding = 0.1; // 10% padding
         minRef = Math.min(...values) * (1 - padding);
         maxRef = Math.max(...values) * (1 + padding);
-        console.warn(`Invalid reference range for ${biomarkerName}, using min/max with padding: ${minRef}-${maxRef}`);
     }
 
     // Ensure we have valid numbers
     if (isNaN(minRef) || isNaN(maxRef)) {
-        console.warn(`Invalid reference range for ${biomarkerName}, using min/max of data`);
-        const padding = 0.1; // 10% padding
+        const padding = 0.1;
         minRef = Math.min(...values) * (1 - padding);
         maxRef = Math.max(...values) * (1 + padding);
     }
-
-    // Create arrays for each range
-    const lowRange = { x: [], y: [] };
-    const normalRange = { x: [], y: [] };
-    const highRange = { x: [], y: [] };
-
-    // Helper function to categorize values
-    function categorizeValue(value) {
-        if (value < minRef) return 'low';
-        if (value > maxRef) return 'high';
-        return 'normal';
-    }
-
-    // Process each data point and create connecting points for lines
-    for (let i = 0; i < values.length; i++) {
-        const currentValue = values[i];
-        const currentDate = dates[i];
-        const currentCategory = categorizeValue(currentValue);
-        
-        if (i > 0) {
-            const prevValue = values[i-1];
-            const prevDate = dates[i-1];
-            const prevCategory = categorizeValue(prevValue);
-            
-            // If categories are different, calculate intersection point
-            if (prevCategory !== currentCategory) {
-                const referenceValue = (currentCategory === 'low' || prevCategory === 'low') ? minRef : maxRef;
-                const t = (referenceValue - prevValue) / (currentValue - prevValue);
-                const intersectionDate = new Date(prevDate.getTime() + t * (currentDate.getTime() - prevDate.getTime()));
-
-                // Add intersection point to both relevant ranges
-                if (prevCategory === 'low' || currentCategory === 'low') {
-                    lowRange.x.push(intersectionDate);
-                    lowRange.y.push(referenceValue);
-                    normalRange.x.push(intersectionDate);
-                    normalRange.y.push(referenceValue);
-                }
-                if (prevCategory === 'high' || currentCategory === 'high') {
-                    highRange.x.push(intersectionDate);
-                    highRange.y.push(referenceValue);
-                    normalRange.x.push(intersectionDate);
-                    normalRange.y.push(referenceValue);
-                }
-            }
+    
+    // Calculate y-axis range with padding
+    const yMin = Math.min(minRef * 0.9, Math.min(...values) * 0.9);
+    const yMax = Math.max(maxRef * 1.1, Math.max(...values) * 1.1);
+    
+    // Create pink background for reference range zones
+    const rangeShapes = [
+        // Lower out-of-range area (pink background)
+        {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: yMin,
+            x1: 1,
+            y1: minRef,
+            fillcolor: 'rgba(255, 200, 200, 0.3)',
+            line: { width: 0 }
+        },
+        // Upper out-of-range area (pink background)
+        {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: maxRef,
+            x1: 1,
+            y1: yMax,
+            fillcolor: 'rgba(255, 200, 200, 0.3)',
+            line: { width: 0 }
         }
+    ];
 
-        // Add point to appropriate range
-        switch (currentCategory) {
-            case 'low':
-                lowRange.x.push(currentDate);
-                lowRange.y.push(currentValue);
-                break;
-            case 'normal':
-                normalRange.x.push(currentDate);
-                normalRange.y.push(currentValue);
-                break;
-            case 'high':
-                highRange.x.push(currentDate);
-                highRange.y.push(currentValue);
-                break;
-        }
-    }
-
-    // Create traces for each range
-    const traces = [];
-
-    if (lowRange.x.length > 0) {
-        traces.push({
-            x: lowRange.x,
-            y: lowRange.y,
-            type: 'scatter',
-            mode: 'lines',
-            line: {
-                color: '#EB656F',
-                width: 3
-            },
-            name: 'Low',
-            hoverinfo: 'none'
-        });
-    }
-
-    if (normalRange.x.length > 0) {
-        traces.push({
-            x: normalRange.x,
-            y: normalRange.y,
-            type: 'scatter',
-            mode: 'lines',
-            line: {
-                color: '#95DA74',
-                width: 3
-            },
-            name: 'Normal',
-            hoverinfo: 'none'
-        });
-    }
-
-    if (highRange.x.length > 0) {
-        traces.push({
-            x: highRange.x,
-            y: highRange.y,
-            type: 'scatter',
-            mode: 'lines',
-            line: {
-                color: '#EB656F',
-                width: 3
-            },
-            name: 'High',
-            hoverinfo: 'none'
-        });
-    }
-
-    // Add markers with custom hover template
-    traces.push({
+    // Create trace for data points
+    const trace = {
         x: dates,
         y: values,
         type: 'scatter',
-        mode: 'markers',
+        mode: 'lines+markers',
+        line: {
+            color: '#1f77b4',
+            width: 2
+        },
         marker: {
             size: 8,
-            color: values.map(v => {
-                if (v < minRef || v > maxRef) return '#EB656F';
-                return '#95DA74';
-            }),
+            color: '#1f77b4',
             line: {
-                color: '#000',
+                color: 'white',
                 width: 1
             }
         },
-        name: biomarkerName,
-        hovertemplate: '%{x|%b %d, %Y}<br>%{y:.2f} ' + unit + '<extra></extra>',
+        hovertemplate: '%{x|%b %d, %Y}<br>%{y:.1f} ' + unit + '<extra></extra>', // Removed extra /L
         hoverlabel: {
-            font: {
-                family: 'Poppins-Regular, sans-serif',
-                color: 'white'
-            }
+            bgcolor: '#2c8cdc',
+            bordercolor: '#2c8cdc',
+            font: { color: 'white', size: 12 },
+            align: 'left'
         }
-    });
+    };
 
-    // Reference range lines
-    traces.push({
-        x: [dates[0], dates[dates.length - 1]],
-        y: [minRef, minRef],
-        type: 'scatter',
-        mode: 'lines',
-        line: {
-            color: '#AAA',
-            width: 1,
-            dash: 'dash'
-        },
-        name: 'Min',
-        hoverinfo: 'none'
-    });
-
-    traces.push({
-        x: [dates[0], dates[dates.length - 1]],
-        y: [maxRef, maxRef],
-        type: 'scatter',
-        mode: 'lines',
-        line: {
-            color: '#AAA',
-            width: 1,
-            dash: 'dash'
-        },
-        name: 'Max',
-        hoverinfo: 'none'
-    });
-
+    // Layout with adjusted reference range markers
     const layout = {
         title: {
-            text: `${biomarkerName} Levels`,
+            text: biomarkerName,
             font: {
-                family: 'Poppins-Regular, sans-serif',
-                size: 16,
-                color: '#000'
+                family: 'Arial, sans-serif',
+                size: 18,
+                color: '#333'
             },
-            y: 0.95,
-            x: 0.5,
-            xanchor: 'center',
-            yanchor: 'top'
+            x: 0.01,
+            xanchor: 'left'
         },
         height: 350,
         autosize: true,
-        margin: { l: 40, r: 30, t: 60, b: 40 },
+        margin: { l: 50, r: 30, t: 80, b: 60 },
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        hovermode: 'closest',
+        shapes: rangeShapes,
         showlegend: false,
+        hoverdistance: 100,
+        hovermode: 'x unified',
+        spikedistance: -1,
         xaxis: {
+            type: 'date',
             showgrid: false,
-            gridcolor: '#E5E5E5',
-            tickformat: '%b %y',
             zeroline: false,
-            fixedrange: true,
-            showline: true,
-            showspikes: true,
-            spikemode: 'across',
-            spikesnap: 'cursor',
-            spikecolor: '#bbb',
-            spikethickness: 1,
+            tickformat: '%b %Y',
             tickfont: {
-                family: 'Poppins-Regular, sans-serif',
+                family: 'Arial, sans-serif',
                 size: 12,
-                color: '#000'
+                color: '#666'
             },
             range: [
-                // Add a little padding before and after the data points
-                new Date(Math.min(...dates) - 7 * 24 * 60 * 60 * 1000),
-                new Date(Math.max(...dates) + 7 * 24 * 60 * 60 * 1000)
-            ]
+                // Add padding before and after
+                new Date(Math.min(...dates) - 30 * 24 * 60 * 60 * 1000),
+                new Date(Math.max(...dates) + 30 * 24 * 60 * 60 * 1000)
+            ],
+            showspikes: true,
+            spikethickness: 1,
+            spikedash: 'dot',
+            spikecolor: '#999',
+            spikemode: 'across'
         },
         yaxis: {
             showgrid: true,
-            gridcolor: '#E5E5E5',
+            gridcolor: '#e5e5e5',
+            zeroline: false,
             fixedrange: true,
-            showline: true,
-            range: [
-                // Add some padding to y-axis range
-                Math.min(Math.min(...values) * 0.9, minRef * 0.9),
-                Math.max(Math.max(...values) * 1.1, maxRef * 1.1)
-            ],
-            tickformat: '.1f',  // Keep 1 decimal place
+            range: [yMin, yMax],
+            tickformat: '.1f',
             tickfont: {
-                family: 'Poppins-Regular, sans-serif',
+                family: 'Arial, sans-serif',
                 size: 12,
-                color: '#000'
+                color: '#666'
             },
-            title: {
-                text: unit,
-                font: {
-                    family: 'Poppins-Regular, sans-serif',
-                    size: 12,
-                    color: '#000'
-                },
-                standoff: 10
-            }
+            title: null
         },
         annotations: [
+            // Reference range labels (min and max) with improved positioning
             {
-                x: dates[0],
+                x: -0.0455, // Closer to the reference line
+                xref: 'paper',
                 y: minRef,
-                xref: 'x',
                 yref: 'y',
                 text: minRef.toFixed(1),
                 showarrow: false,
                 font: {
-                    family: 'Poppins-Regular, sans-serif',
-                    size: 10,
-                    color: '#777'
+                    family: 'Arial, sans-serif',
+                    size: 10.5, // Smaller font
+                    color: '#777',
+                    weight: 'bold' // Bold text
                 },
-                xanchor: 'right',
-                yanchor: 'bottom',
-                xshift: -5
+                align: 'right'
             },
             {
-                x: dates[0],
+                x: -0.05, // Closer to the reference line
+                xref: 'paper',
                 y: maxRef,
-                xref: 'x',
                 yref: 'y',
                 text: maxRef.toFixed(1),
                 showarrow: false,
                 font: {
-                    family: 'Poppins-Regular, sans-serif',
-                    size: 10,
-                    color: '#777'
+                    family: 'Arial, sans-serif',
+                    size: 10.5, // Smaller font
+                    color: '#777',
+                    weight: 'bold' // Bold text
                 },
-                xanchor: 'right',
-                yanchor: 'top',
-                xshift: -5
+                align: 'right'
+            },
+            // Unit label - moved further to the left
+            {
+                x: -0.08, // Position to the left of the y-axis
+                y: 1.14, 
+                xref: 'paper',
+                yref: 'paper',
+                text: unit, // Removed the extra /L
+                showarrow: false,
+                font: {
+                    family: 'Arial, sans-serif',
+                    size: 14,
+                    color: '#666'
+                },
+                align: 'left'
             }
         ]
     };
+
+    // Add reference range lines
+    layout.shapes.push(
+        // Min reference line
+        {
+            type: 'line',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: minRef,
+            x1: 1,
+            y1: minRef,
+            line: {
+                color: '#ddd',
+                width: 1,
+                dash: 'dash'
+            }
+        },
+        // Max reference line
+        {
+            type: 'line',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: maxRef,
+            x1: 1,
+            y1: maxRef,
+            line: {
+                color: '#ddd',
+                width: 1,
+                dash: 'dash'
+            }
+        }
+    );
 
     const config = {
         displayModeBar: false,
@@ -418,50 +333,94 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         staticPlot: false
     };
 
-    // Check if the element is visible (may impact chart rendering)
-    const isVisible = isElementInVisibleTab(biomarkerElement);
-    console.log(`Element ${biomarkerElement.id} visibility:`, isVisible);
-
     try {
-        Plotly.newPlot(biomarkerElement.id, traces, layout, config)
+        Plotly.newPlot(biomarkerElement.id, [trace], layout, config)
             .then(() => {
                 console.log(`Successfully plotted chart for ${biomarkerName}`);
                 
-                // Fix the y-axis unit label rotation
-                const fixYAxisRotation = () => {
-                    setTimeout(() => {
-                        const ytitleGroup = document.querySelector(`#${biomarkerElement.id} .g-ytitle`);
-                        const ytitleText = document.querySelector(`#${biomarkerElement.id} .g-ytitle text`);
-                        
-                        if (ytitleGroup && ytitleText) {
-                            ytitleGroup.setAttribute('transform', 'translate(5,175)');
-                            ytitleText.setAttribute('transform', 'rotate(0)');
-                            ytitleText.setAttribute('x', '0');
-                            ytitleText.setAttribute('y', '0');
-                            ytitleText.style.textAnchor = 'start';
-                            ytitleText.style.transition = 'none';
-                            ytitleGroup.style.transition = 'none';
+                // Add event listeners to hide any x-axis annotation at the bottom
+                const plotArea = document.getElementById(biomarkerElement.id);
+                
+                // Create a mutation observer to watch for hover elements
+                const observer = new MutationObserver((mutations) => {
+                    // Check for any annotations that appear
+                    const annotations = document.querySelectorAll(`#${biomarkerElement.id} .annotation`);
+                    const hoverLabels = document.querySelectorAll(`#${biomarkerElement.id} .hovertext`);
+                    
+                    // Hide any x-axis annotations at the bottom
+                    annotations.forEach(ann => {
+                        const rect = ann.getBoundingClientRect();
+                        const plotRect = plotArea.getBoundingClientRect();
+                        if (rect.bottom > plotRect.bottom - 60) {
+                            ann.style.display = 'none';
                         }
-                    }, 100);
-                };
-
-                fixYAxisRotation();
-
-                // Handle rotation fix on window resize
-                if (!biomarkerElement._resizeObserver) {
-                    const resizeObserver = new ResizeObserver(() => {
-                        fixYAxisRotation();
-                        Plotly.Plots.resize(biomarkerElement);
                     });
-                    resizeObserver.observe(biomarkerElement);
-                    biomarkerElement._resizeObserver = resizeObserver;
-                }
+                    
+                    // Ensure hover label stays visible
+                    hoverLabels.forEach(label => {
+                        label.style.backgroundColor = '#2c8cdc';
+                        label.style.color = 'white';
+                        label.style.border = '1px solid #2c8cdc';
+                    });
+                });
+                
+                // Start observing
+                observer.observe(plotArea, {
+                    childList: true,
+                    subtree: true
+                });
+
+                // Apply additional styling to reference labels
+                setTimeout(() => {
+                    // Apply bold style to reference numbers
+                    document.querySelectorAll(`#${biomarkerElement.id} .annotation`).forEach(annotation => {
+                        const yPos = annotation.style.top;
+                        // Check if this annotation is for a reference value
+                        if ((parseFloat(yPos) > (valueToY(minRef) - 5) && parseFloat(yPos) < (valueToY(minRef) + 5)) ||
+                            (parseFloat(yPos) > (valueToY(maxRef) - 5) && parseFloat(yPos) < (valueToY(maxRef) + 5))) {
+                            const textElement = annotation.querySelector('text');
+                            if (textElement) {
+                                textElement.style.fontWeight = 'bold';
+                            }
+                        }
+                    });
+
+                    // Helper function to convert a value to y position
+                    function valueToY(value) {
+                        const yRange = layout.yaxis.range;
+                        const plotHeight = plotArea.clientHeight - layout.margin.t - layout.margin.b;
+                        const percentage = (value - yRange[0]) / (yRange[1] - yRange[0]);
+                        return layout.margin.t + (1 - percentage) * plotHeight;
+                    }
+                }, 100);
             })
             .catch(error => {
                 console.error(`Error plotting chart for ${biomarkerName}:`, error);
             });
     } catch (error) {
         console.error(`Exception creating chart for ${biomarkerName}:`, error);
+    }
+}
+
+function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays > 365) {
+        return `over a year ago`;
+    } else if (diffDays > 30) {
+        const months = Math.floor(diffDays / 30);
+        return `${months} month${months > 1 ? 's' : ''} ago`;
+    } else if (diffDays > 7) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+    } else if (diffDays > 1) {
+        return `${diffDays} days ago`;
+    } else if (diffDays === 1) {
+        return 'yesterday';
+    } else {
+        return 'today';
     }
 }
 
