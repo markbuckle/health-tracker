@@ -113,6 +113,13 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     
     console.log(`Creating chart for biomarker: ${biomarkerName} in element:`, biomarkerElement.id);
     
+    // Check if element is actually visible (has dimensions)
+    const rect = biomarkerElement.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+        console.warn(`Skipping chart creation for ${biomarkerName} - element has zero dimensions`);
+        return;
+    }
+    
     const files = window.__INITIAL_DATA__?.files || [];
     if (files.length === 0) {
         console.warn('No files found in __INITIAL_DATA__');
@@ -145,9 +152,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     const dates = chartData.map(d => d.date);
     const values = chartData.map(d => d.value);
     const unit = chartData[0]?.unit || '';
-
-    const yearTicks = getUniqueYears(dates);
-    console.log('Year tick values:', yearTicks);
 
     // Get reference ranges from the first data point
     const referenceRange = chartData[0]?.referenceRange || '';
@@ -229,74 +233,84 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         }
     };
 
-    // Create annotations array for reference range labels
-    const annotations = [];
-
+    // Important: Determine available width for better responsiveness
+    const containerWidth = rect.width || 400; // Fallback to 400 if we can't determine width
+    const containerHeight = rect.height || 350; // Fallback to 350 if we can't determine height
+    
+    // Adjust margins based on container size
+    const margins = {
+        l: containerWidth < 300 ? 40 : 50,  // Smaller left margin for narrow containers
+        r: 30,
+        t: 80,
+        b: 60
+    };
+    
     // Calculate the automatic y-axis ticks that Plotly will generate
     const yAxisTicks = [];
     const tickStep = calculateTickInterval(yMax - yMin);
     for (let tick = Math.floor(yMin / tickStep) * tickStep; tick <= yMax; tick += tickStep) {
-    yAxisTicks.push(parseFloat(tick.toFixed(6)));
+        yAxisTicks.push(parseFloat(tick.toFixed(6)));
     }
-
-    console.log('Y-axis ticks:', yAxisTicks);
-    console.log('Reference ranges:', minRef, maxRef);
+    
+    // Create annotations array for reference range labels
+    const annotations = [];
 
     // Only add reference annotations if they don't exactly match an axis tick
-    if (!isExactMatch(minRef, yAxisTicks)) {
-    annotations.push({
-        x: 0,
-        xref: 'paper',
-        y: minRef,
-        yref: 'y',
-        text: minRef.toFixed(1),
-        showarrow: false,
-        font: {
-        family: 'Arial, sans-serif',
-        size: 10,
-        color: '#777',
-        weight: 'bold'
-        },
-        align: 'right',
-        xanchor: 'right'
-    });
+    if (!isValueInArray(minRef, yAxisTicks)) {
+        annotations.push({
+            x: 0,
+            xref: 'paper',
+            y: minRef,
+            yref: 'y',
+            text: minRef.toFixed(1),
+            showarrow: false,
+            font: {
+                family: 'Arial, sans-serif',
+                size: 10,
+                color: '#777',
+                weight: 'bold'
+            },
+            align: 'right',
+            xanchor: 'right'
+        });
     }
 
-    if (!isExactMatch(maxRef, yAxisTicks)) {
-    annotations.push({
-        x: 0,
-        xref: 'paper',
-        y: maxRef,
-        yref: 'y',
-        text: maxRef.toFixed(1),
-        showarrow: false,
-        font: {
-        family: 'Arial, sans-serif',
-        size: 10,
-        color: '#777',
-        weight: 'bold'
-        },
-        align: 'right',
-        xanchor: 'right'
-    });
+    if (!isValueInArray(maxRef, yAxisTicks)) {
+        annotations.push({
+            x: 0,
+            xref: 'paper',
+            y: maxRef,
+            yref: 'y',
+            text: maxRef.toFixed(1),
+            showarrow: false,
+            font: {
+                family: 'Arial, sans-serif',
+                size: 10,
+                color: '#777',
+                weight: 'bold'
+            },
+            align: 'right',
+            xanchor: 'right'
+        });
     }
 
-    // Add unit label annotation
+    // Always add unit label annotation
     annotations.push({
-    x: -0.08,
-    y: 1.14, 
-    xref: 'paper',
-    yref: 'paper',
-    text: unit,
-    showarrow: false,
-    font: {
-        family: 'Arial, sans-serif',
-        size: 14,
-        color: '#666'
-    },
-    align: 'left'
+        x: containerWidth < 300 ? -0.12 : -0.08,  // Adjust position for smaller containers
+        y: 1.14, 
+        xref: 'paper',
+        yref: 'paper',
+        text: unit,
+        showarrow: false,
+        font: {
+            family: 'Arial, sans-serif',
+            size: containerWidth < 300 ? 12 : 14,  // Smaller font for narrow containers
+            color: '#666'
+        },
+        align: 'left'
     });
 
+    // Find the center point for each year
     const yearCenters = {};
     dates.forEach(date => {
         const year = date.getFullYear();
@@ -318,7 +332,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         showarrow: false,
         font: {
             family: 'Arial, sans-serif',
-            size: 12,
+            size: containerWidth < 300 ? 10 : 12,  // Smaller font for narrow containers
             color: '#888'
         },
         textangle: 0
@@ -336,9 +350,10 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             x: 0.01,
             xanchor: 'left'
         },
-        height: 350,
+        height: containerHeight,
+        width: containerWidth,
         autosize: true,
-        margin: { l: 50, r: 30, t: 80, b: 60 },
+        margin: margins,
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         shapes: rangeShapes,
@@ -353,7 +368,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             tickformat: '%b', // Only show month abbreviation
             tickfont: {
                 family: 'Arial, sans-serif',
-                size: 12,
+                size: containerWidth < 300 ? 10 : 12,  // Smaller font for narrow containers
                 color: '#666'
             },
             range: [
@@ -412,18 +427,8 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
                     return uniqueMonths;
                 }
             })(),
-            // tickvals: dates.length <= 1 
-            //     ? [
-            //         // If only one date, show 3 months centered on the date
-            //         new Date(dates[0].getFullYear(), dates[0].getMonth() - 1, 15),
-            //         new Date(dates[0].getFullYear(), dates[0].getMonth(), 15),
-            //         new Date(dates[0].getFullYear(), dates[0].getMonth() + 1, 15)
-            //     ] 
-            //     : Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 15)))),
-            // tickvals: Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 15)))),
             showticklabels: true
         },
-        // Find the center point for each year
         yaxis: {
             showgrid: true,
             gridcolor: '#e5e5e5',
@@ -433,7 +438,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             tickformat: '.1f',
             tickfont: {
                 family: 'Arial, sans-serif',
-                size: 12,
+                size: containerWidth < 300 ? 10 : 12,  // Smaller font for narrow containers
                 color: '#666'
             },
             title: null
@@ -483,41 +488,18 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     };
 
     try {
+        // Clear any existing plot first
+        Plotly.purge(biomarkerElement.id);
+        
+        // Create new plot
         Plotly.newPlot(biomarkerElement.id, [trace], layout, config)
             .then(() => {
                 console.log(`Successfully plotted chart for ${biomarkerName}`);
                 
-                // Add event listeners to hide any x-axis annotation at the bottom
-                const plotArea = document.getElementById(biomarkerElement.id);
-                
-                // Create a mutation observer to watch for hover elements
-                const observer = new MutationObserver((mutations) => {
-                    // Check for any annotations that appear
-                    const annotations = document.querySelectorAll(`#${biomarkerElement.id} .annotation`);
-                    const hoverLabels = document.querySelectorAll(`#${biomarkerElement.id} .hovertext`);
-                    
-                    // Hide any x-axis annotations at the bottom
-                    annotations.forEach(ann => {
-                        const rect = ann.getBoundingClientRect();
-                        const plotRect = plotArea.getBoundingClientRect();
-                        if (rect.bottom > plotRect.bottom - 60) {
-                            ann.style.display = 'none';
-                        }
-                    });
-                    
-                    // Ensure hover label stays visible
-                    hoverLabels.forEach(label => {
-                        label.style.backgroundColor = '#2c8cdc';
-                        label.style.color = 'white';
-                        label.style.border = '1px solid #2c8cdc';
-                    });
-                });
-                
-                // Start observing
-                observer.observe(plotArea, {
-                    childList: true,
-                    subtree: true
-                });
+                // Force a small resize after a delay to ensure proper rendering
+                setTimeout(() => {
+                    Plotly.Plots.resize(document.getElementById(biomarkerElement.id));
+                }, 100);
             })
             .catch(error => {
                 console.error(`Error plotting chart for ${biomarkerName}:`, error);
@@ -648,11 +630,71 @@ function logBiomarkerData() {
 }
 
 // Full chart initialization function
+// function initializeBiomarkerCharts() {
+//     console.log('Starting biomarker chart initialization');
+    
+//     // Debug first
+//     logBiomarkerData();
+    
+//     const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
+//     if (biomarkers.length === 0) {
+//         console.warn('No biomarkers found in __INITIAL_DATA__');
+//         return;
+//     }
+    
+//     // Try to find chart elements with various naming patterns
+//     biomarkers.forEach(biomarker => {
+//         // Create standardized name for DOM ID
+//         const standardizedName = biomarker.toLowerCase()
+//             .replace(/[\s()]/g, '')
+//             .replace(/[-+]/g, '');  // Also remove hyphens and plus signs
+            
+//         // Try several ID patterns that might exist
+//         const patterns = [
+//             `biomarker-trend-${standardizedName}`,
+//             `biomarker-trend-${standardizedName}-freq`,
+//             `biomarker-trend-${standardizedName}-all`,
+//             // Try additional variations (remove special characters)
+//             `biomarker-trend-${biomarker.toLowerCase().replace(/[^a-z0-9]/g, '')}`
+//         ];
+        
+//         // Keep track if we found any elements for this biomarker
+//         let elementFound = false;
+        
+//         patterns.forEach(pattern => {
+//             const element = document.getElementById(pattern);
+//             if (element) {
+//                 console.log(`Found chart element for ${biomarker} with ID: ${pattern}`);
+//                 createBiomarkerChart(element, biomarker);
+//                 elementFound = true;
+//             }
+//         });
+        
+//         // If we didn't find any elements with standard patterns, try a more aggressive search
+//         if (!elementFound) {
+//             // Search for any element starting with "biomarker-trend-" that might contain our biomarker name
+//             const allChartElements = document.querySelectorAll('[id^="biomarker-trend-"]');
+//             for (const element of allChartElements) {
+//                 const elementId = element.id.toLowerCase();
+                
+//                 // See if the element ID contains the biomarker name or its simplified form
+//                 if (elementId.includes(standardizedName) || 
+//                     elementId.includes(biomarker.toLowerCase().replace(/[^a-z0-9]/g, ''))) {
+//                     console.log(`Found chart element for ${biomarker} with partial match ID: ${element.id}`);
+//                     createBiomarkerChart(element, biomarker);
+//                     elementFound = true;
+//                     break;
+//                 }
+//             }
+//         }
+        
+//         if (!elementFound) {
+//             console.warn(`No chart element found for biomarker: ${biomarker}`);
+//         }
+//     });
+// }
 function initializeBiomarkerCharts() {
     console.log('Starting biomarker chart initialization');
-    
-    // Debug first
-    logBiomarkerData();
     
     const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
     if (biomarkers.length === 0) {
@@ -660,87 +702,200 @@ function initializeBiomarkerCharts() {
         return;
     }
     
-    // Try to find chart elements with various naming patterns
-    biomarkers.forEach(biomarker => {
-        // Create standardized name for DOM ID
-        const standardizedName = biomarker.toLowerCase()
-            .replace(/[\s()]/g, '')
-            .replace(/[-+]/g, '');  // Also remove hyphens and plus signs
-            
-        // Try several ID patterns that might exist
-        const patterns = [
-            `biomarker-trend-${standardizedName}`,
-            `biomarker-trend-${standardizedName}-freq`,
-            `biomarker-trend-${standardizedName}-all`,
-            // Try additional variations (remove special characters)
-            `biomarker-trend-${biomarker.toLowerCase().replace(/[^a-z0-9]/g, '')}`
-        ];
+    // Get current active tab
+    const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+    if (!activeTab) {
+        console.warn('No active tab found');
+        return;
+    }
+    
+    console.log('Initializing charts in active tab:', activeTab.getAttribute('data-w-tab'));
+    
+    // Process only visible charts in the current tab
+    const visibleChartElements = Array.from(activeTab.querySelectorAll('[id^="biomarker-trend-"]'));
+    console.log(`Found ${visibleChartElements.length} chart elements in active tab`);
+    
+    // Function to process chart after ensuring visibility
+    function processChart(element, biomarkerName) {
+        // Set minimum height and width to ensure proper rendering
+        element.style.minHeight = '300px';
+        element.style.height = '350px';
+        element.style.width = '100%';
         
-        // Keep track if we found any elements for this biomarker
-        let elementFound = false;
+        // If this chart is inside a collapsed container, temporarily make it visible for rendering
+        const biomarkerContainer = element.closest('.biomarker-container');
+        let wasExpanded = false;
         
-        patterns.forEach(pattern => {
-            const element = document.getElementById(pattern);
-            if (element) {
-                console.log(`Found chart element for ${biomarker} with ID: ${pattern}`);
-                createBiomarkerChart(element, biomarker);
-                elementFound = true;
-            }
-        });
-        
-        // If we didn't find any elements with standard patterns, try a more aggressive search
-        if (!elementFound) {
-            // Search for any element starting with "biomarker-trend-" that might contain our biomarker name
-            const allChartElements = document.querySelectorAll('[id^="biomarker-trend-"]');
-            for (const element of allChartElements) {
-                const elementId = element.id.toLowerCase();
-                
-                // See if the element ID contains the biomarker name or its simplified form
-                if (elementId.includes(standardizedName) || 
-                    elementId.includes(biomarker.toLowerCase().replace(/[^a-z0-9]/g, ''))) {
-                    console.log(`Found chart element for ${biomarker} with partial match ID: ${element.id}`);
-                    createBiomarkerChart(element, biomarker);
-                    elementFound = true;
-                    break;
-                }
-            }
+        if (biomarkerContainer && !biomarkerContainer.classList.contains('expanded')) {
+            biomarkerContainer.classList.add('temp-expand-for-render');
+            wasExpanded = true;
         }
         
-        if (!elementFound) {
-            console.warn(`No chart element found for biomarker: ${biomarker}`);
+        // Short delay to allow DOM to update
+        setTimeout(() => {
+            createBiomarkerChart(element, biomarkerName);
+            
+            // Remove temporary expansion class if we added it
+            if (wasExpanded) {
+                setTimeout(() => {
+                    biomarkerContainer.classList.remove('temp-expand-for-render');
+                }, 100);
+            }
+        }, 50);
+    }
+    
+    // Check each biomarker against available elements
+    biomarkers.forEach(biomarker => {
+        // Create standardized name for DOM ID matching
+        const standardizedName = biomarker.toLowerCase()
+            .replace(/[\s()]/g, '')
+            .replace(/[-+]/g, '');
+            
+        // Find matching elements in the current active tab
+        const matchingElements = visibleChartElements.filter(el => {
+            const id = el.id.toLowerCase();
+            return id.includes(standardizedName) || 
+                   id.includes(biomarker.toLowerCase().replace(/[^a-z0-9]/g, ''));
+        });
+        
+        if (matchingElements.length > 0) {
+            console.log(`Found ${matchingElements.length} chart elements for ${biomarker}`);
+            matchingElements.forEach(element => {
+                processChart(element, biomarker);
+            });
         }
     });
 }
 
 // Ensure chart reinitialization when tabs change
+// function setupTabChangeHandlers() {
+//     // Add event listeners to all tab links
+//     document.querySelectorAll('.w-tab-link').forEach(tab => {
+//         tab.addEventListener('click', function() {
+//             // Wait for tab change animation to finish
+//             setTimeout(() => {
+//                 console.log('Tab changed, reinitializing charts...');
+//                 initializeBiomarkerCharts();
+//             }, 250);
+//         });
+//     });
+// }
 function setupTabChangeHandlers() {
     // Add event listeners to all tab links
     document.querySelectorAll('.w-tab-link').forEach(tab => {
         tab.addEventListener('click', function() {
-            // Wait for tab change animation to finish
+            // Get the target tab ID
+            const targetTabId = this.getAttribute('data-w-tab');
+            console.log(`Tab changed to: ${targetTabId}`);
+            
+            // Wait for tab change animation to complete
             setTimeout(() => {
-                console.log('Tab changed, reinitializing charts...');
-                initializeBiomarkerCharts();
-            }, 250);
+                // Find all chart containers in the newly active tab
+                const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+                if (activeTab) {
+                    // Check if there are any collapsed biomarker containers that need to be expanded
+                    // for chart rendering
+                    const collapsedContainers = activeTab.querySelectorAll('.biomarker-container:not(.expanded)');
+                    
+                    // If the tab has dropdown content, we need special handling
+                    if (activeTab.querySelectorAll('.category-dropdown-list').length > 0) {
+                        console.log('Tab contains dropdown categories, initializing charts with expanded view');
+                        
+                        // Special handling for category tabs - make sure dropdowns are visible
+                        // for proper chart rendering
+                        const dropdowns = activeTab.querySelectorAll('.category-dropdown-list');
+                        let dropdownsOpen = false;
+                        
+                        dropdowns.forEach(dropdown => {
+                            if (!dropdown.classList.contains('w--open')) {
+                                dropdown.classList.add('temp-open-for-render');
+                                dropdownsOpen = true;
+                            }
+                        });
+                        
+                        // Wait for DOM update before initializing charts
+                        setTimeout(() => {
+                            initializeBiomarkerCharts();
+                            
+                            // Remove temporary classes after charts are initialized
+                            setTimeout(() => {
+                                document.querySelectorAll('.temp-open-for-render').forEach(el => {
+                                    el.classList.remove('temp-open-for-render');
+                                });
+                            }, 300);
+                        }, 100);
+                    } else {
+                        // Standard tab, just initialize charts
+                        initializeBiomarkerCharts();
+                    }
+                }
+            }, 300); // Increase timeout for tab change animation
+        });
+    });
+    // Also handle biomarker container expansion/collapse events
+    document.querySelectorAll('.biomarker-container').forEach(container => {
+        container.addEventListener('click', function(e) {
+            // If this container has been expanded and contains a chart
+            if (this.classList.contains('expanded')) {
+                const chartElement = this.querySelector('[id^="biomarker-trend-"]');
+                if (chartElement) {
+                    // Resize the chart after a short delay to ensure the container is fully expanded
+                    setTimeout(() => {
+                        try {
+                            Plotly.Plots.resize(chartElement);
+                        } catch (err) {
+                            console.warn('Error resizing chart:', err);
+                        }
+                    }, 300);
+                }
+            }
         });
     });
 }
+// Add CSS styles for temporary classes
+function addTemporaryStyling() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .temp-expand-for-render {
+            height: auto !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            z-index: -1 !important;
+            pointer-events: none !important;
+        }
+        
+        .temp-open-for-render {
+            display: block !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            z-index: -1 !important;
+            pointer-events: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing biomarker charts...');
+
+    // Add temporary styling classes
+    addTemporaryStyling();
     
     // Check if __INITIAL_DATA__ is available
     if (!window.__INITIAL_DATA__) {
         console.error('__INITIAL_DATA__ not found. Charts cannot be initialized.');
         return;
     }
+
+    // Set up tab change handlers
+    setupTabChangeHandlers();
     
     // Initialize charts
     initializeBiomarkerCharts();
-    
-    // Set up tab change handlers
-    setupTabChangeHandlers();
     
     // Also reinitialize charts after a delay to catch any rendering issues
     setTimeout(initializeBiomarkerCharts, 1000);
