@@ -154,43 +154,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     const yMin = Math.min(minRef * 0.9, Math.min(...values) * 0.9);
     const yMax = Math.max(maxRef * 1.1, Math.max(...values) * 1.1);
 
-    // overlap detection code
-    // const yAxisValues = [];
-    // for (let tick = yMin; tick <= yMax; tick += (yMax - yMin) / 10) {
-    // yAxisValues.push(parseFloat(tick.toFixed(1)));
-    // }
-
-    // const minRefTooClose = isValueInArray(minRef, yAxisValues);
-    // const maxRefTooClose = isValueInArray(maxRef, yAxisValues);
-
-    // Calculate reasonable y-axis tick values based on the range
-    // const range = yMax - yMin;
-    // const tickInterval = calculateTickInterval(range);
-    // const firstTick = Math.floor(yMin / tickInterval) * tickInterval;
-    // const yAxisTicks = [];
-
-    // for (let tick = firstTick; tick <= yMax; tick += tickInterval) {
-    //     yAxisTicks.push(tick);
-    // }
-
-    // // Check if reference range values exactly match any standard y-axis ticks
-    // const minRefTooClose = yAxisTicks.some(tick => Math.abs(tick - minRef) < 0.0001);
-    // const maxRefTooClose = yAxisTicks.some(tick => Math.abs(tick - maxRef) < 0.0001);
-
-    // Calculate reasonable y-axis tick values based on the range
-    // const range = yMax - yMin;
-    // const tickInterval = calculateTickInterval(range);
-    // const firstTick = Math.floor(yMin / tickInterval) * tickInterval;
-    // const yAxisTicks = [];
-    
-    // for (let tick = firstTick; tick <= yMax; tick += tickInterval) {
-    //     yAxisTicks.push(tick);
-    // }
-    
-    // // Check if reference range values are too close to or exactly match standard y-axis ticks
-    // const minRefTooClose = yAxisTicks.some(tick => Math.abs(tick - minRef) < tickInterval * 0.2 || Math.abs(tick - minRef) < 0.0001);
-    // const maxRefTooClose = yAxisTicks.some(tick => Math.abs(tick - maxRef) < tickInterval * 0.2 || Math.abs(tick - maxRef) < 0.0001);
-    
     // Create pink background for reference range zones
     const rangeShapes = [
         // Lower out-of-range area (pink background)
@@ -338,7 +301,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             type: 'date',
             showgrid: false,
             zeroline: false,
-            tickformat: '%b', // Only month abbreviation
+            tickformat: '%b', // Only show month abbreviation
             tickfont: {
                 family: 'Arial, sans-serif',
                 size: 12,
@@ -353,7 +316,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             spikedash: 'dot',
             spikecolor: '#999',
             spikemode: 'across',
-            // Use unique month ticks
+            // Use unique month ticks to avoid duplicates
             tickmode: 'array',
             tickvals: Array.from(new Set(dates.map(d => new Date(d.getFullYear(), d.getMonth(), 1))))
         },
@@ -409,13 +372,13 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     );
     layout.xaxis2 = {
         type: 'date',
-        tickformat: '%Y',
+        tickformat: '%Y', // Show only year
         showgrid: false,
         zeroline: false,
         showline: false,
         overlaying: 'x',
         side: 'bottom',
-        position: 0.1,
+        position: 0.1, // Position below the month ticks
         anchor: 'free',
         tickfont: {
             family: 'Arial, sans-serif',
@@ -435,19 +398,19 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         staticPlot: false
     };
 
-    try {
-        // Create the dummy trace
-        const dummyTrace = {
-            x: getUniqueYears(dates),
-            y: Array(getUniqueYears(dates).length).fill(yMin * 0.9), // Well below the visible area
-            type: 'scatter',
-            mode: 'markers',
-            marker: { opacity: 0 },
-            showlegend: false,
-            xaxis: 'x2',
-            yaxis: 'y'
-        };
+    // Create dummy trace for the second x-axis
+    const dummyTrace = {
+        x: getUniqueYears(dates),
+        y: Array(getUniqueYears(dates).length).fill(yMin * 0.9), // Below visible area
+        type: 'scatter',
+        mode: 'markers',
+        marker: { opacity: 0 },
+        showlegend: false,
+        xaxis: 'x2',
+        yaxis: 'y'
+    };
 
+    try {
         Plotly.newPlot(biomarkerElement.id, [trace, dummyTrace], layout, config)
             .then(() => {
                 console.log(`Successfully plotted chart for ${biomarkerName}`);
