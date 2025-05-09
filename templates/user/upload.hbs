@@ -84,6 +84,7 @@
           </div>
 
           <div class="labs-content w-tab-content">
+
             <!-- File Details Edit Modal -->
             <div id="fileDetailsEditModal" class="biomarker-modal">
               <div class="biomarker-modal-content">
@@ -120,7 +121,7 @@
                   <div class="flex">
                     <div class="upload-page-text-1">HealthLync extracts data from your bloodwork/lab files automatically
                     </div>
-                    <button class="upload-info-button" aria-label="Show important upload file details">
+                    <button class="info-button" aria-label="Show important upload file details">
                       {{> svg/info}}
                     </button>
                   </div>
@@ -195,6 +196,7 @@
                   {{/if}}
                 </div>
               </div>
+
             </div>
             <div class="table-module">
               <div class="table-content"></div>
@@ -349,6 +351,35 @@
       </div>
       <div class="upload-page-text-1"><br>‍<br><br><br><br>
         <br>‍<br>
+      </div>
+
+      <!-- Upload Info Modal -->
+      <div class="modal-wrapper upload-info-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <div class="modal-header">
+            <a class="modal-return-button w-inline-block w--current" aria-current="page">
+              {{> svg/backArrow}}
+            </a>
+            <h1 class="modal-button">Upload Information</h1>
+          </div>
+
+          <div class="modal-description">
+            <p>For the best results when extracting data from your medical documents:</p>
+            <ul>
+              <li><strong>PDF files are preferred</strong> - They generally provide the highest quality text data for our system to process.</li>
+              <li><strong>Avoid low-resolution images</strong> - Blurry or low-quality photos will significantly reduce extraction accuracy.</li>
+              <li><strong>Ensure documents are well-lit and flat</strong> - If taking photos, use good lighting and avoid shadows or glare.</li>
+              <li><strong>Include the entire document</strong> - Make sure lab value tables and reference ranges are fully visible.</li>
+              <li><strong>Check your results</strong> - After upload, review the extracted data in the File Output tab to verify accuracy.</li>
+            </ul>
+            <p>Our optical character recognition (OCR) system works best with clear, high-resolution documents in PDF format directly from medical providers.</p>
+          </div>
+
+          <div class="modal-footer">
+            <a href="/upload" aria-current="page" class="cancel-button cancel-space">Close</a>
+          </div>
+        </div>
       </div>
 
       <script
@@ -954,7 +985,24 @@
           }
         });
       </script>
+      <script> // Info button modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+          // Upload info button modal
+          const uploadInfoButton = document.querySelector('.info-button');
+          if (uploadInfoButton) {
+            uploadInfoButton.addEventListener('click', () => {
+              document.querySelector('.upload-info-modal').classList.add('active');
+            });
+          }
 
+          // Close modal handlers
+          document.querySelectorAll('.upload-info-modal .modal-background, .upload-info-modal .cancel-button, .upload-info-modal .modal-return-button').forEach(element => {
+            element.addEventListener('click', () => {
+              document.querySelector('.upload-info-modal').classList.remove('active');
+            });
+          });
+        });
+      </script>
 </body>
 
 </html>
