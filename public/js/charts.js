@@ -1,4 +1,6 @@
-// Enhanced biomarker trend charts function
+//// Enhanced biomarker trend charts function
+
+/// Helper/Utility functions (loaded first)
 
 // Helper function to calculate nice tick intervals
 function calculateTickInterval(range) {
@@ -30,10 +32,6 @@ function calculateTickInterval(range) {
 function isValueInArray(value, array, epsilon = 0.00001) {
     return array.some(item => Math.abs(item - value) < epsilon);
 }
-
-// function isExactMatch(value, tickValues, epsilon = 0.00001) {
-//     return tickValues.some(tick => Math.abs(tick - value) < epsilon);
-// }
 
 // Improved helper function to find lab values regardless of data structure
 function findLabValue(file, name) {
@@ -98,6 +96,37 @@ function findLabValue(file, name) {
     return null;
 }
 
+// Helper function to check if an element is visible (accounts for all parent containers)
+function isElementVisible(element) {
+    if (!element) return false;
+    
+    // Check if this element has dimensions
+    const rect = element.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return false;
+    
+    // Check if this element or any parent is hidden via style
+    let currentElement = element;
+    while (currentElement) {
+        const style = window.getComputedStyle(currentElement);
+        if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+            return false;
+        }
+        
+        // Check for tab pane that's not active
+        if (currentElement.classList.contains('w-tab-pane') && 
+            !currentElement.classList.contains('w--tab-active')) {
+            return false;
+        }
+        
+        // Move up to parent
+        currentElement = currentElement.parentElement;
+    }
+    
+    return true;
+}
+
+/// CSS and DOM preparation (run before any chart functionality)
+
 // Add CSS styles for temporary classes
 function addTemporaryStyling() {
     const style = document.createElement('style');
@@ -123,39 +152,7 @@ function addTemporaryStyling() {
     document.head.appendChild(style);
 }
 
-function getUniqueYears(dates) {
-    // Guard against empty arrays
-    if (!dates || dates.length === 0) {
-        return [];
-    }
-    
-    const years = {};
-    
-    dates.forEach(date => {
-        const year = date.getFullYear();
-        if (!years[year]) {
-            // Find midpoint of all dates in this year
-            const datesInYear = dates.filter(d => d.getFullYear() === year);
-            
-            // Make sure we convert any potential date strings to Date objects
-            const timestamps = datesInYear.map(d => d instanceof Date ? d.getTime() : new Date(d).getTime());
-            const earliestTimestamp = Math.min(...timestamps);
-            const latestTimestamp = Math.max(...timestamps);
-            
-            // Use the middle of the year's data range for better centering
-            const midpoint = new Date((earliestTimestamp + latestTimestamp) / 2);
-            
-            // Store the midpoint date
-            years[year] = midpoint;
-            
-            console.log(`Year ${year} midpoint: ${midpoint.toISOString()}`);
-        }
-    });
-    
-    return Object.values(years);
-}
-
-// Function for creating biomarker trend charts
+// Core chart rendering function (optimized for performance)
 function createBiomarkerChart(biomarkerElement, biomarkerName) {
     if (!biomarkerElement) {
         console.warn(`Element for biomarker ${biomarkerName} not found`);
@@ -165,10 +162,35 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     console.log(`Creating chart for biomarker: ${biomarkerName} in element:`, biomarkerElement.id);
     
     // Check if element is actually visible (has dimensions)
-    const rect = biomarkerElement.getBoundingClientRect();
+    let rect = biomarkerElement.getBoundingClientRect();
+    
+    // If element has zero dimensions, try to force a size calculation
     if (rect.width === 0 || rect.height === 0) {
-        console.warn(`Skipping chart creation for ${biomarkerName} - element has zero dimensions`);
-        return;
+        // Set explicit dimensions to ensure proper rendering
+        biomarkerElement.style.width = '100%';
+        biomarkerElement.style.height = '350px';
+        biomarkerElement.style.minHeight = '300px';
+        biomarkerElement.style.minWidth = '200px';
+        biomarkerElement.style.display = 'block';
+        
+        // Force layout recalculation
+        void biomarkerElement.offsetHeight;
+        
+        // Get updated dimensions
+        rect = biomarkerElement.getBoundingClientRect();
+        
+        console.log(`Forced dimensions for ${biomarkerName}:`, {width: rect.width, height: rect.height});
+        
+        // If still zero dimensions, use fallback values
+        if (rect.width === 0 || rect.height === 0) {
+            // Try to get parent width
+            const parentRect = biomarkerElement.parentElement?.getBoundingClientRect() || {width: 0};
+            rect = {
+                width: parentRect.width || 400,  // Use parent width or fallback to 400px
+                height: 350
+            };
+            console.log(`Using fallback dimensions for ${biomarkerName}:`, rect);
+        }
     }
     
     const files = window.__INITIAL_DATA__?.files || [];
@@ -285,12 +307,15 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     };
 
     // Important: Determine available width for better responsiveness
-    const containerWidth = rect.width || 400; // Fallback to 400 if we can't determine width
-    const containerHeight = rect.height || 350; // Fallback to 350 if we can't determine height
+    // We use a minimum of 350px width to ensure proper rendering in all cases
+    const containerWidth = Math.max(rect.width, 350);
+    const containerHeight = Math.max(rect.height, 300);
+    
+    console.log(`Chart container dimensions for ${biomarkerName}:`, {width: containerWidth, height: containerHeight});
     
     // Adjust margins based on container size
     const margins = {
-        l: containerWidth < 300 ? 40 : 50,  // Smaller left margin for narrow containers
+        l: containerWidth < 350 ? 40 : 50,
         r: 30,
         t: 80,
         b: 60
@@ -347,7 +372,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
 
     // Always add unit label annotation
     annotations.push({
-        x: containerWidth < 300 ? -0.12 : -0.08,  // Adjust position for smaller containers
+        x: containerWidth < 350 ? -0.12 : -0.08,
         y: 1.14, 
         xref: 'paper',
         yref: 'paper',
@@ -355,7 +380,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         showarrow: false,
         font: {
             family: 'Arial, sans-serif',
-            size: containerWidth < 300 ? 12 : 14,  // Smaller font for narrow containers
+            size: containerWidth < 350 ? 12 : 14,
             color: '#666'
         },
         align: 'left'
@@ -383,7 +408,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         showarrow: false,
         font: {
             family: 'Arial, sans-serif',
-            size: containerWidth < 300 ? 10 : 12,  // Smaller font for narrow containers
+            size: containerWidth < 350 ? 10 : 12,
             color: '#888'
         },
         textangle: 0
@@ -419,7 +444,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             tickformat: '%b', // Only show month abbreviation
             tickfont: {
                 family: 'Arial, sans-serif',
-                size: containerWidth < 300 ? 10 : 12,  // Smaller font for narrow containers
+                size: containerWidth < 350 ? 10 : 12,
                 color: '#666'
             },
             range: [
@@ -489,7 +514,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             tickformat: '.1f',
             tickfont: {
                 family: 'Arial, sans-serif',
-                size: containerWidth < 300 ? 10 : 12,  // Smaller font for narrow containers
+                size: containerWidth < 350 ? 10 : 12,
                 color: '#666'
             },
             title: null
@@ -538,19 +563,45 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         staticPlot: false
     };
 
+    // Track this operation in window for debugging
+    window.lastPlotOperation = {
+        elementId: biomarkerElement.id,
+        biomarker: biomarkerName,
+        timestamp: new Date().toISOString(),
+        dimensions: {width: containerWidth, height: containerHeight}
+    };
+
     try {
         // Clear any existing plot first
         Plotly.purge(biomarkerElement.id);
         
-        // Create new plot
+        // Create new plot with a promise chain for better error handling
         Plotly.newPlot(biomarkerElement.id, [trace], layout, config)
             .then(() => {
                 console.log(`Successfully plotted chart for ${biomarkerName}`);
                 
-                // Force a small resize after a delay to ensure proper rendering
+                // Force a resize after creation to ensure proper layout
+                return Plotly.Plots.resize(document.getElementById(biomarkerElement.id));
+            })
+            .then(() => {
+                // Schedule a second resize after everything else has finished
                 setTimeout(() => {
-                    Plotly.Plots.resize(document.getElementById(biomarkerElement.id));
-                }, 100);
+                    try {
+                        // Get current dimensions to check if they've changed
+                        const currentRect = biomarkerElement.getBoundingClientRect();
+                        console.log(`Delayed resize for ${biomarkerName}:`, {
+                            width: currentRect.width, 
+                            height: currentRect.height
+                        });
+                        
+                        // Only resize if needed
+                        if (currentRect.width > 0 && currentRect.height > 0) {
+                            Plotly.Plots.resize(document.getElementById(biomarkerElement.id));
+                        }
+                    } catch (err) {
+                        console.warn(`Error during delayed resize for ${biomarkerName}:`, err);
+                    }
+                }, 500);
             })
             .catch(error => {
                 console.error(`Error plotting chart for ${biomarkerName}:`, error);
@@ -560,7 +611,7 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     }
 }
 
-// Full chart initialization function
+// Main chart initialization function
 function initializeBiomarkerCharts() {
     console.log('Starting biomarker chart initialization');
     
@@ -635,129 +686,7 @@ function initializeBiomarkerCharts() {
     });
 }
 
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays > 365) {
-        return `over a year ago`;
-    } else if (diffDays > 30) {
-        const months = Math.floor(diffDays / 30);
-        return `${months} month${months > 1 ? 's' : ''} ago`;
-    } else if (diffDays > 7) {
-        const weeks = Math.floor(diffDays / 7);
-        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-    } else if (diffDays > 1) {
-        return `${diffDays} days ago`;
-    } else if (diffDays === 1) {
-        return 'yesterday';
-    } else {
-        return 'today';
-    }
-}
-
-// Helper to check if an element is in a visible tab
-function isElementInVisibleTab(element) {
-    if (!element) return false;
-    
-    const tabPane = element.closest('.w-tab-pane');
-    if (!tabPane) return true; // Not in a tab pane, assume visible
-    
-    return tabPane.classList.contains('w--tab-active');
-}
-
-// Debug function to dump biomarker data
-function logBiomarkerData() {
-    const files = window.__INITIAL_DATA__?.files || [];
-    const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
-    
-    console.log(`Found ${files.length} files and ${biomarkers.length} biomarkers`);
-    
-    if (files.length === 0 || biomarkers.length === 0) {
-        console.warn('Missing files or biomarkers in __INITIAL_DATA__');
-        console.log('__INITIAL_DATA__:', window.__INITIAL_DATA__);
-        return;
-    }
-    
-    // Log biomarker availability for each file
-    const biomarkerAvailability = {};
-    
-    biomarkers.forEach(biomarker => {
-        biomarkerAvailability[biomarker] = {
-            count: 0,
-            files: []
-        };
-        
-        files.forEach(file => {
-            const value = findLabValue(file, biomarker);
-            if (value) {
-                biomarkerAvailability[biomarker].count++;
-                biomarkerAvailability[biomarker].files.push({
-                    filename: file.originalName || file.filename,
-                    value: value.value,
-                    unit: value.unit
-                });
-            }
-        });
-    });
-    
-    console.log('Biomarker availability:', biomarkerAvailability);
-    
-    // Log which biomarkers have chart elements
-    const biomarkerElements = {};
-    
-    biomarkers.forEach(biomarker => {
-        const standardizedName = biomarker.toLowerCase()
-            .replace(/[()]/g, '')
-            .replace(/\s+/g, '');
-            
-        const elementIds = [
-            `biomarker-trend-${standardizedName}`,
-            `biomarker-trend-${standardizedName}-freq`,
-            `biomarker-trend-${standardizedName}-all`
-        ];
-        
-        const found = elementIds.filter(id => document.getElementById(id) !== null);
-        
-        biomarkerElements[biomarker] = {
-            found: found.length > 0,
-            elements: found
-        };
-    });
-    
-    console.log('Biomarker chart elements:', biomarkerElements);
-}
-
-// Helper function to check if an element is visible (accounts for all parent containers)
-function isElementVisible(element) {
-    if (!element) return false;
-    
-    // Check if this element has dimensions
-    const rect = element.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return false;
-    
-    // Check if this element or any parent is hidden via style
-    let currentElement = element;
-    while (currentElement) {
-        const style = window.getComputedStyle(currentElement);
-        if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
-            return false;
-        }
-        
-        // Check for tab pane that's not active
-        if (currentElement.classList.contains('w-tab-pane') && 
-            !currentElement.classList.contains('w--tab-active')) {
-            return false;
-        }
-        
-        // Move up to parent
-        currentElement = currentElement.parentElement;
-    }
-    
-    return true;
-}
-
+// Event handlers and lifecycle functions
 function setupTabChangeHandlers() {
     // Add event listeners to all tab links
     document.querySelectorAll('.w-tab-link').forEach(tab => {
@@ -863,3 +792,76 @@ window.addEventListener('resize', function() {
         initializeBiomarkerCharts();
     }, 500);
 });
+
+// Create a function to manually trigger chart updates from console for debugging
+window.updateAllCharts = function() {
+    console.log('Manual chart update triggered');
+    
+    // Get current active tab
+    const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+    if (!activeTab) {
+        console.warn('No active tab found');
+        return 'Error: No active tab found';
+    }
+    
+    console.log('Active tab:', activeTab.getAttribute('data-w-tab'));
+    
+    // Special handling for Category and Frequency tabs
+    const tabId = activeTab.getAttribute('data-w-tab');
+    if (tabId === 'Category' || tabId === 'Frequency') {
+        // For Category and Frequency tabs, temporarily expand dropdowns
+        const dropdowns = activeTab.querySelectorAll('.category-dropdown-list');
+        let openedDropdowns = false;
+        
+        dropdowns.forEach(dropdown => {
+            if (!dropdown.classList.contains('w--open')) {
+                dropdown.classList.add('temp-open-for-render');
+                openedDropdowns = true;
+            }
+        });
+        
+        // Force a layout recalculation
+        void activeTab.offsetHeight;
+        
+        // Render with forced option
+        initializeBiomarkerCharts(true);
+        
+        // Remove temporary classes after rendering
+        if (openedDropdowns) {
+            setTimeout(() => {
+                document.querySelectorAll('.temp-open-for-render').forEach(el => {
+                    el.classList.remove('temp-open-for-render');
+                });
+            }, 300);
+        }
+    } else {
+        // For "All" tab, do a standard render
+        initializeBiomarkerCharts(true);
+    }
+    
+    // Schedule a second render after a delay to ensure everything is properly sized
+    setTimeout(() => {
+        console.log('Secondary render to ensure proper sizing');
+        
+        // Resize any existing charts first
+        try {
+            const chartElements = activeTab.querySelectorAll('[id^="biomarker-trend-"]');
+            chartElements.forEach(el => {
+                if (el.id && document.getElementById(el.id)) {
+                    try {
+                        Plotly.Plots.resize(document.getElementById(el.id));
+                    } catch (err) {
+                        // Ignore errors from elements that aren't Plotly charts
+                    }
+                }
+            });
+        } catch (err) {
+            console.warn('Error resizing charts:', err);
+        }
+        
+        // Then do a full re-render
+        initializeBiomarkerCharts(true);
+    }, 500);
+    
+    return 'Chart update sequence started - check console for details';
+};
