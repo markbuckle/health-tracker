@@ -429,14 +429,14 @@ hbs.registerHelper("getMetricUrl", function (metricKey) {
 
 // Calculate bar height based on value relative to max value
 hbs.registerHelper("calculateBarHeight", function (value, maxValue) {
-  if (!value || !maxValue) return 40; // Minimum height for visibility
+  if (!value || value === 0) return 10; // Return 10px minimum height for zero values
+  if (!maxValue) return 40; // Minimum height for visibility if no maxValue
   
   const percentage = (value / maxValue);
   // Set the maximum height to 180px (matching our CSS)
   const height = Math.max(Math.round(180 * percentage), 40);
   return height;
 });
-
 
 // Count biomarkers in range for a specific file
 hbs.registerHelper("countInRange", function (labValues) {
