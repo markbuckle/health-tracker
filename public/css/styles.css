@@ -2042,105 +2042,16 @@ img,
   gap: 0.3em;
   min-height: 1.4em; /* Consistent line height */
 }
-.word-sequence {
-  display: inline-flex;
-  align-items: center;
-  align-items: baseline;
-}
-.word-sequence.group1,
-.word-sequence.group2 {
-  margin: 0; /* Reduce margins between words */
-}
+
 .phrase {
   line-height: 1.4;
-}
-/* Group 1 Animation */
-.word-sequence.group1 {
-  opacity: 0;
-  animation: slideFromLeft 1.0s ease-out forwards;
-}
-@keyframes slideFromLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-200px);
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 .secure-wrapper {
   position: relative;
   display: inline-block;
   align-items: baseline;
 }
-/* Group 2 Animation */
-.word-sequence.group2 {
-  opacity: 0;
-  animation: slideFromRight 1.0s ease-out forwards;
-  animation-delay: 0.75s; /* Start after group1 finishes */
-}
 
-@keyframes slideFromRight {
-  0% {
-    opacity: 0;
-    transform: translateX(200px);
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-/* .word-sequence.typing {
-  animation: slideFromLeft 1s ease-out forwards,
-    typing 2s steps(11, end) forwards, blinkCursor 2.5s step-end;
-  animation-delay: 3s, 3s, 3s;
-  white-space: nowrap;
-  border-right: 2px solid transparent;
-}
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 11ch;
-  }
-}
-
-@keyframes blinkCursor {
-  from,
-  to {
-    border-right-color: transparent;
-  }
-  50% {
-    border-right-color: #74cd83;
-  }
-} */
-
-/* Phrase (personalized health tracker) simple fade in */
-.word-sequence.phrase {
-  opacity: 0;
-  animation: slideFromLeft 1.1s ease-out forwards;
-  animation-delay: 1.4s;
-}
-
-@keyframes slideFromBottom {
-  0% {
-    opacity: 0;
-    transform: translateY(200px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 /* Initial state */
 .hero-title {
   visibility: hidden; 
@@ -2207,31 +2118,7 @@ img,
   transform: none !important;
   transition: all 0.3s ease-in-out;
 }
-.shield {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 105%;
-  height: 105%;
-  transform: translate(-50%, -50%);
-  border: 2px solid #88ed99;
-  border-radius: 8px;
-  opacity: 0;
-  animation: shieldPulse 0.9s ease-in-out 3; /* Faster animation, 3 times */
-  animation-delay: 7s; /* Start after everything else appears */
-}
 
-@keyframes shieldPulse {
-  0%,
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.02);
-  }
-}
 /* State for when animations are skipped */
 .no-animation {
   visibility: visible !important;
@@ -2391,11 +2278,122 @@ img,
 }
 
 .hero-title {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+.hero-text {
+  display: block;
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #333;
+  opacity: 0;
+  animation: gradientFadeIn 1.5s ease forwards;
+}
+/* .hero-phrase {
+  font-size: 3.5rem;
+  margin-top: 0.5rem;
+  color: var(--primary-color);
+} */
+
+.shield-icon {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  background-image: url('/images/shield.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-left: 0.2em;
+  vertical-align: middle;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards 1.2s;
 }
 
+/* Add this to your styles.css file */
+
+/* Hero text container */
+.hero-title {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+/* Unified text effect */
+.hero-text {
+  display: block;
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #333;
+  opacity: 0;
+  animation: gradientFadeIn 1.5s ease forwards;
+}
+
+/* Adjust size for the main phrase */
+/* .hero-phrase {
+  font-size: 3.5rem;
+  margin-top: 0.5rem;
+  color: var(--primary-color);
+} */
+
+/* Optional emphasis for 'secure' */
+/* .secure-text {
+  position: relative;
+  color: var(--primary-color);
+} */
+
+/* Shield icon styling */
+.shield-icon {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  background-image: url('/images/shield.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-left: 0.2em;
+  vertical-align: middle;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards 1.2s;
+}
+
+/* Gradient fade-in animation */
+@keyframes gradientFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    background: linear-gradient(to bottom, var(--primary-color) 0%, #333 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+/* Simple fade in for shield icon */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-text {
+    font-size: 2.5rem;
+  }
+  
+  .hero-phrase {
+    font-size: 2.8rem;
+  }
+}
 .use-cases {
   display: flex;
   justify-content: center;

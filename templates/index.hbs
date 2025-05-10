@@ -12,24 +12,9 @@
     <section class="hero content-container">
       <div class="hero-container">
         <h1 class="hero-title">
-          <!-- First line -->
-          <div class="title-line">
-            <span class="word-sequence group1">Your</span>
-            <span class="word-sequence group1 secure-wrapper"
-              >secure <span class="shield"></span
-            ></span>
-          </div>
-          <!-- Second line -->
-          <div class="title-line">
-            <span class="word-sequence group2">and</span>
-            <span class="word-sequence typing group2">easy-to-use</span>
-          </div>
-          <!-- Third line -->
-          <div class="title-line phrase">
-            <span class="word-sequence phrase"
-              >personalized health tracker</span
-            >
-          </div>
+          <span class="hero-text">Your <span class="secure-text">secure</span></span>
+          <span class="hero-text" style="animation-delay: 0.3s;">and easy-to-use</span>
+          <span class="hero-text hero-phrase" style="animation-delay: 0.6s;">personalized health tracker</span>
         </h1>
         <a href="/demo" class="button-basics btn-primary">
           <div class="flex-horizontal">Try the demo</div>
@@ -167,9 +152,7 @@
     </div>
     {{> footer}}
     <script src="js/main.js" defer type="module"></script>
-    <script>
-      // animated hero section (floating dots)
-      // Create floating dots background
+    <script> // animated hero section (floating dots)
       function createDots() {
         const container = document.getElementById("floatingDots");
         const dotCount = 20;
@@ -213,60 +196,46 @@
         });
       });
     </script>
-    <script>
-      // Animation handling
-      document.addEventListener("DOMContentLoaded", () => {
-        // Flag to track if animations have played during this session
-        let animationsHavePlayed = false;
+    <script> // Animation handling
+          document.addEventListener("DOMContentLoaded", () => {
+      // Flag to track if animations have played during this session
+      let animationsHavePlayed = sessionStorage.getItem('heroAnimationPlayed') === 'true';
 
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              const title = entry.target;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const title = entry.target;
 
-              if (entry.isIntersecting && !animationsHavePlayed) {
+            if (entry.isIntersecting) {
+              // Make title visible
+              title.style.visibility = "visible";
+              
+              // Make image and button visible
+              document.querySelector(".mobile").style.visibility = "visible";
+              document.querySelector(".btn-primary").style.visibility = "visible";
+              
+              if (!animationsHavePlayed) {
                 // First time seeing the title - play animations
-                title.style.visibility = "visible";
-                
-                // Make image and button visible for animations to work
-                document.querySelector(".mobile").style.visibility = "visible";
-                document.querySelector(".btn-primary").style.visibility = "visible";
-                
                 animationsHavePlayed = true;
-              } else if (entry.isIntersecting && animationsHavePlayed) {
+                sessionStorage.setItem('heroAnimationPlayed', 'true');
+              } else {
                 // Already seen the title - show without animations
-                title.style.visibility = "visible";
-
-                // Remove animations and show content immediately
-                document.querySelectorAll(".word-sequence, .mobile, .btn-primary").forEach((el) => {
+                document.querySelectorAll(".hero-text, .mobile, .btn-primary, .shield-icon").forEach((el) => {
                   el.style.animation = "none";
                   el.style.opacity = "1";
                   el.style.transform = "none";
-                  el.style.visibility = "visible";
                 });
-
-                const shield = document.querySelector(".shield");
-                if (shield) {
-                  shield.style.animation = "none";
-                  shield.style.opacity = "0";
-                }
-
-                const typingElement = document.querySelector(".typing");
-                if (typingElement) {
-                  typingElement.style.width = "11ch";
-                  typingElement.style.animation = "none";
-                  typingElement.style.opacity = "1";
-                }
               }
-            });
-          },
-          {
-            threshold: 0.5,
-          }
-        );
+            }
+          });
+        },
+        {
+          threshold: 0.5,
+        }
+      );
 
-        observer.observe(document.querySelector(".hero-title"));
-      });
+      observer.observe(document.querySelector(".hero-title"));
+    });
     </script>
     <script src="/js/feedbackWidget.js"></script>
   </body>
