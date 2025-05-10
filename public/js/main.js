@@ -75,6 +75,58 @@ function initializeHeaderScroll() {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeHeaderScroll);
 
+// Vertical slider functionality for hero section
+document.addEventListener('DOMContentLoaded', () => {
+    const navDots = document.querySelectorAll('.nav-dot');
+    const useCards = document.querySelectorAll('.use-case-card');
+    
+    // Initialize with first card active
+    updateActiveCard(0);
+    
+    // Set up click listeners for navigation dots
+    navDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const index = parseInt(dot.getAttribute('data-index'));
+        updateActiveCard(index);
+      });
+    });
+    
+    // Optional: Auto-rotate slides every 5 seconds
+    let currentIndex = 0;
+    const totalSlides = useCards.length;
+    
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      updateActiveCard(currentIndex);
+    }, 5000);
+    
+    // Function to update active card
+    function updateActiveCard(index) {
+      // Update navigation dots
+      navDots.forEach(dot => dot.classList.remove('active'));
+      navDots[index].classList.add('active');
+      
+      // Update cards
+      useCards.forEach(card => card.classList.remove('active'));
+      useCards[index].classList.add('active');
+      
+      // Update current index for auto-rotation
+      currentIndex = index;
+    }
+    
+    // Optional: Pause auto-rotation when user interacts
+    navDots.forEach(dot => {
+      dot.addEventListener('mouseenter', () => {
+        clearInterval(autoRotateInterval);
+      });
+    });
+    
+    // For a more advanced implementation, you could add:
+    // - Touch swipe support
+    // - Keyboard navigation
+    // - Scroll-based activation
+  });
+
 // ---------------- MOBILE HEADER -------------------- //
 
   function toggleMenu() {

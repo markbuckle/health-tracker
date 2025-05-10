@@ -12,24 +12,10 @@
     <section class="hero content-container">
       <div class="hero-container">
         <h1 class="hero-title">
-          <!-- First line -->
-          <div class="title-line">
-            <span class="word-sequence group1">Your</span>
-            <span class="word-sequence group1 secure-wrapper"
-              >secure <span class="shield"></span
-            ></span>
-          </div>
-          <!-- Second line -->
-          <div class="title-line">
-            <span class="word-sequence group2">and</span>
-            <span class="word-sequence typing group2">easy-to-use</span>
-          </div>
-          <!-- Third line -->
-          <div class="title-line phrase">
-            <span class="word-sequence phrase"
-              >personalized health tracker</span
-            >
-          </div>
+          <span class="hero-text">Your secure</span>
+          <span class="hero-text">and easy-to-use</span>
+          <span class="hero-text">personalized</span> 
+          <span class="hero-text">health tracker</span>
         </h1>
         <a href="/demo" class="button-basics btn-primary">
           <div class="flex-horizontal">Try the demo</div>
@@ -51,71 +37,66 @@
 
     <!-- New animated hero section -->
     <div class="hero-wrapper">
-      {{!--
-      <div class="floating-dots" id="floatingDots"></div>
-      --}}
       <h1 class="quote-3">Perfect for you if you are</h1>
-      <div class="use-cases">
-        <div class="use-case">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"
-              />
-            </svg>
-          </div>
-          <h3>Trying to be proactive with your health</h3>
-          <p>
-            Pick up on out-of-range biomarkers and trends earlier
-          </p>
+      
+      <div class="use-cases-container">
+        <div class="use-cases-navigation">
+          <div class="nav-indicator"></div>
+          {{#each useCases as |useCase index|}}
+            <button class="nav-dot {{#if @first}}active{{/if}}" data-index="{{index}}"></button>
+          {{/each}}
         </div>
-
-        <div class="use-case">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24">
-              <path
-                d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z"
-              />
-            </svg>
+        
+        <div class="use-cases-slider">
+          <div class="use-case-card active" data-index="0">
+            <div class="icon-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+              </svg>
+            </div>
+            <h3>Trying to be proactive with your health</h3>
+            <p>Pick up on out-of-range biomarkers and trends earlier</p>
           </div>
-          <h3>Managing chronic conditions</h3>
-          <p>Track symptoms, medications, and progress over time</p>
-        </div>
-
-        <div class="use-case">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24">
-              <path
-                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-              />
-            </svg>
+          
+          <div class="use-case-card" data-index="1">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z" />
+              </svg>
+            </div>
+            <h3>Managing chronic conditions</h3>
+            <p>Track symptoms, medications, and progress over time</p>
           </div>
-          <h3>Caring for loved ones</h3>
-          <p>Keep track of appointments and medical history</p>
-        </div>
-
-        <div class="use-case">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24">
-              <path
-                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-              />
-            </svg>
+          
+          <div class="use-case-card" data-index="2">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </div>
+            <h3>Caring for loved ones</h3>
+            <p>Keep track of appointments and medical history</p>
           </div>
-          <h3>Searching for a diagnosis</h3>
-          <p>Document symptoms and track patterns</p>
-        </div>
-
-        <div class="use-case">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24">
-              <path
-                d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z"
-              />
-            </svg>
+          
+          <div class="use-case-card" data-index="3">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+              </svg>
+            </div>
+            <h3>Searching for a diagnosis</h3>
+            <p>Document symptoms and track patterns</p>
           </div>
-          <h3>Boosting overall health</h3>
-          <p>Monitor wellness metrics and lifestyle factors</p>
+          
+          <div class="use-case-card" data-index="4">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z" />
+              </svg>
+            </div>
+            <h3>Boosting overall health</h3>
+            <p>Monitor wellness metrics and lifestyle factors</p>
+          </div>
         </div>
       </div>
     </div>
@@ -167,9 +148,7 @@
     </div>
     {{> footer}}
     <script src="js/main.js" defer type="module"></script>
-    <script>
-      // animated hero section (floating dots)
-      // Create floating dots background
+    <script> // animated hero section (floating dots)
       function createDots() {
         const container = document.getElementById("floatingDots");
         const dotCount = 20;
@@ -213,8 +192,7 @@
         });
       });
     </script>
-    <script>
-      // Animation handling
+    <script> // Animation handling
       document.addEventListener("DOMContentLoaded", () => {
         // Flag to track if animations have played during this session
         let animationsHavePlayed = false;
@@ -238,24 +216,17 @@
                 title.style.visibility = "visible";
 
                 // Remove animations and show content immediately
-                document.querySelectorAll(".word-sequence, .mobile, .btn-primary").forEach((el) => {
+                document.querySelectorAll(".hero-text, .mobile, .btn-primary").forEach((el) => {
                   el.style.animation = "none";
                   el.style.opacity = "1";
                   el.style.transform = "none";
                   el.style.visibility = "visible";
                 });
 
-                const shield = document.querySelector(".shield");
-                if (shield) {
-                  shield.style.animation = "none";
-                  shield.style.opacity = "0";
-                }
-
-                const typingElement = document.querySelector(".typing");
-                if (typingElement) {
-                  typingElement.style.width = "11ch";
-                  typingElement.style.animation = "none";
-                  typingElement.style.opacity = "1";
+                // Handle secure-text element specifically
+                const secureText = document.querySelector(".secure-text");
+                if (secureText) {
+                  secureText.style.color = "#5cb15d"; // Ensure color is applied when animations are skipped
                 }
               }
             });
