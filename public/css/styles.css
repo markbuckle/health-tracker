@@ -1191,6 +1191,7 @@ body {
   color: white;
   font-size: 14px;
   font-weight: bold;
+  margin: 0; /* Reset any margins that might affect spacing */
 }
 .nav-dot span {
   opacity: 0.8;
@@ -2478,11 +2479,12 @@ img,
 /* ------- animated hero section ------- */
 .hero-wrapper {
   height: 100vh;
-  position: sticky;
+  position: sticky; /* Back to sticky */
+  top: 0;
   padding: 4rem 2rem;
-  background-color: #e8f4f4;
-  overflow: visible;
-  z-index: 1;
+  background-color: #e0ecee;
+  overflow: hidden;
+  z-index: 10;
 }
 .hero-wrapper.sticky {
   position: fixed;
@@ -2491,7 +2493,6 @@ img,
   right: 0;
   width: 100%;
 }
-
 .hero-text {
   display: block;
   font-size: 2.2rem; /* Reduced size */
@@ -2661,12 +2662,13 @@ img,
 }
 /* Scroll spacer to create room for scrolling */
 .scroll-spacer {
-  height: 500vh; /* 5x viewport height */
+  height: 400vh; /* 4x viewport height is enough for 5 cards */
   width: 100%;
   display: block;
   pointer-events: none;
   position: relative;
   opacity: 0;
+  margin-bottom: -400vh; /* Negative margin to prevent pushing content down */
 }
 @media (max-width: 768px) {
   .use-cases-navigation {
@@ -7074,13 +7076,8 @@ body[data-insights-hover="true"] #Insights {
 .dashboard-img,
 .quote-background-2,
 footer {
-  position: relative; /* Ensures these appear above/after scroll content */
-  z-index: 20; /* Higher than hero-wrapper */
-}
-
-.wave-light-bg {
   position: relative;
-  z-index: 2;
+  z-index: 11; /* One higher than hero-wrapper */
 }
 
 /* Responsive Styles */

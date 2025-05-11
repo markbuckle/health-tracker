@@ -252,151 +252,72 @@
       });
     </script>
     <script> // Scroll-based hero slider functionality
-      document.addEventListener('DOMContentLoaded', function() {
-        const heroSection = document.getElementById('scrollHero');
-        if (!heroSection) return;
-        
-        const heroNavDots = heroSection.querySelectorAll('.nav-dot');
-        const heroCards = heroSection.querySelectorAll('.use-case-card');
-        const scrollSpacer = heroSection.querySelector('.scroll-spacer');
-        
-        if (heroNavDots.length === 0 || heroCards.length === 0) return;
-        
-        // Create a spacer element to maintain scroll position when hero becomes fixed
-        const heroHeight = heroSection.offsetHeight;
-        const heroPlaceholder = document.createElement('div');
-        heroPlaceholder.style.height = heroHeight + 'px';
-        heroPlaceholder.style.display = 'none';
-        heroSection.parentNode.insertBefore(heroPlaceholder, heroSection.nextSibling);
-        
-        // Set initial state
-        let heroCurrentIndex = 0;
-        let lastScrollTop = 0;
-        let isAnimating = false;
-        
-        // Calculate scroll thresholds - make it larger for clear separation
-        const totalCards = heroCards.length;
-        const cardHeight = window.innerHeight * 0.8; // Each card takes 80% of viewport
-        const totalScrollHeight = cardHeight * totalCards;
-        
-        // Function to update active card
-        function updateActiveCard(index) {
-          // Only proceed if not already animating
-          if (isAnimating) return;
-          isAnimating = true;
-          
-          // Make sure index is within bounds
-          if (index < 0) index = 0;
-          if (index >= heroCards.length) index = heroCards.length - 1;
-          
-          // If no change in index, just release lock
-          if (index === heroCurrentIndex) {
-            isAnimating = false;
-            return;
-          }
-          
-          // Update navigation dots
-          heroNavDots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
-          });
-          
-          // Remove all classes first
-          heroCards.forEach(card => {
-            card.classList.remove('active', 'prev');
-          });
-          
-          // Add appropriate classes
-          if (index > heroCurrentIndex) {
-            // Scrolling down
-            heroCards[heroCurrentIndex].classList.add('prev');
-          }
-          heroCards[index].classList.add('active');
-          
-          // Update current index
-          heroCurrentIndex = index;
-          
-          // Release the animation lock after transition completes
-          setTimeout(() => {
-            isAnimating = false;
-          }, 500);
-        }
-        
-        // Initialize the first card
-        updateActiveCard(0);
-        
-        // Set up click listeners for navigation dots
-        heroNavDots.forEach(dot => {
-          dot.addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index'));
-            if (!isNaN(index)) {
-              updateActiveCard(index);
-              
-              // Calculate scroll position for this card
-              const heroTop = heroSection.offsetTop;
-              const targetScroll = heroTop + (index * cardHeight);
-              
-              // Scroll to position
-              window.scrollTo({
-                top: targetScroll,
-                behavior: 'smooth'
-              });
-            }
-          });
-        });
-        
-        // Listen for scroll events
-        window.addEventListener('scroll', function() {
-          const scrollTop = window.scrollY;
-          const heroTop = heroSection.offsetTop;
-          const heroBottom = heroTop + heroHeight;
-          
-          // Determine if we should be in the sticky state
-          if (scrollTop >= heroTop && scrollTop < (heroTop + totalScrollHeight)) {
-            // Make hero fixed
-            heroSection.classList.add('sticky');
-            heroPlaceholder.style.display = 'block';
-            
-            // Calculate which card should be active
-            const scrollOffset = scrollTop - heroTop;
-            const cardIndex = Math.min(Math.floor(scrollOffset / cardHeight), totalCards - 1);
-            
-            // Update active card if needed
-            if (cardIndex !== heroCurrentIndex) {
-              updateActiveCard(cardIndex);
-            }
-          } else {
-            // Reset to normal flow
-            heroSection.classList.remove('sticky');
-            heroPlaceholder.style.display = 'none';
-            
-            // If we've scrolled past, make sure last card is active
-            if (scrollTop >= (heroTop + totalScrollHeight) && heroCurrentIndex !== totalCards - 1) {
-              updateActiveCard(totalCards - 1);
-            }
-            
-            // If we've scrolled before, make sure first card is active
-            if (scrollTop < heroTop && heroCurrentIndex !== 0) {
-              updateActiveCard(0);
-            }
-          }
-          
-          // Update last scroll position
-          lastScrollTop = scrollTop;
-        });
-        
-        // Add keyboard navigation
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'ArrowDown') {
-            if (heroCurrentIndex < heroCards.length - 1) {
-              updateActiveCard(heroCurrentIndex + 1);
-            }
-          } else if (e.key === 'ArrowUp') {
-            if (heroCurrentIndex > 0) {
-              updateActiveCard(heroCurrentIndex - 1);
-            }
-          }
-        });
-      });
+      // Modify this section in your existing JS
+document.addEventListener('DOMContentLoaded', function() {
+  const heroSection = document.getElementById('scrollHero');
+  if (!heroSection) return;
+  
+  const heroNavDots = heroSection.querySelectorAll('.nav-dot');
+  const heroCards = heroSection.querySelectorAll('.use-case-card');
+  const scrollSpacer = heroSection.querySelector('.scroll-spacer');
+  
+  if (heroNavDots.length === 0 || heroCards.length === 0) return;
+  
+  // Set initial state
+  let heroCurrentIndex = 0;
+  let lastScrollTop = 0;
+  let isAnimating = false;
+  
+  // Calculate the height needed for each card transition
+  const totalCards = heroCards.length;
+  const viewportHeight = window.innerHeight;
+  const cardHeight = viewportHeight * 0.8; // Each card takes 80% of viewport
+  const totalScrollHeight = cardHeight * totalCards;
+  
+  // Ensure scroll spacer has correct height
+  if (scrollSpacer) {
+    scrollSpacer.style.height = `${totalScrollHeight}px`;
+    scrollSpacer.style.marginBottom = `-${totalScrollHeight}px`;
+  }
+  
+  // Initialize first card
+  updateActiveCard(0);
+  
+  // Function to update active card
+  function updateActiveCard(index) {
+    // Your existing updateActiveCard function code...
+  }
+  
+  // Listen for scroll events
+  window.addEventListener('scroll', function() {
+    const scrollTop = window.scrollY;
+    const heroTop = heroSection.offsetTop;
+    
+    // Only process when scrolling through the hero section + spacer
+    if (scrollTop >= heroTop && scrollTop < (heroTop + totalScrollHeight)) {
+      // Calculate which card should be active based on scroll position
+      const relativeScroll = scrollTop - heroTop;
+      const targetIndex = Math.min(Math.floor(relativeScroll / cardHeight), totalCards - 1);
+      
+      // Only update if the index has changed
+      if (targetIndex !== heroCurrentIndex) {
+        console.log(`Scrolling to card ${targetIndex}, scroll pos: ${scrollTop}`); // Debug logging
+        updateActiveCard(targetIndex);
+      }
+    } else if (scrollTop < heroTop && heroCurrentIndex !== 0) {
+      // If scrolling above hero section, set to first card
+      updateActiveCard(0);
+    } else if (scrollTop >= (heroTop + totalScrollHeight) && heroCurrentIndex !== totalCards - 1) {
+      // If scrolling below hero + spacer, set to last card
+      updateActiveCard(totalCards - 1);
+    }
+    
+    // Update last scroll position
+    lastScrollTop = scrollTop;
+  });
+  
+  // Rest of your click and keyboard handling code...
+});
     </script>
     <script src="/js/feedbackWidget.js"></script>
   </body>
