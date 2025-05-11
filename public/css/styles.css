@@ -2479,11 +2479,17 @@ img,
 .hero-wrapper {
   height: 100vh;
   position: sticky;
-  top: 0;
   padding: 4rem 2rem;
   background-color: #e8f4f4;
-  overflow: hidden;
-  z-index: 10;
+  overflow: visible;
+  z-index: 1;
+}
+.hero-wrapper.sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
 }
 
 .hero-text {
@@ -2656,13 +2662,11 @@ img,
 /* Scroll spacer to create room for scrolling */
 .scroll-spacer {
   height: 500vh; /* 5x viewport height */
-  position: absolute; /* Changed from relative to absolute */
   width: 100%;
-  left: 0;
-  bottom: 0; /* Position it at the bottom of hero-wrapper */
-  opacity: 0;
+  display: block;
   pointer-events: none;
-  z-index: -1; /* Ensure it's behind content */
+  position: relative;
+  opacity: 0;
 }
 @media (max-width: 768px) {
   .use-cases-navigation {
@@ -7072,6 +7076,11 @@ body[data-insights-hover="true"] #Insights {
 footer {
   position: relative; /* Ensures these appear above/after scroll content */
   z-index: 20; /* Higher than hero-wrapper */
+}
+
+.wave-light-bg {
+  position: relative;
+  z-index: 2;
 }
 
 /* Responsive Styles */
