@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
     const totalSlides = useCards.length;
     
-    setInterval(() => {
+    const autoRotateInterval = setInterval(() => {
       currentIndex = (currentIndex + 1) % totalSlides;
       updateActiveCard(currentIndex);
     }, 5000);
@@ -113,19 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update current index for auto-rotation
       currentIndex = index;
     }
-    
-    // Optional: Pause auto-rotation when user interacts
-    navDots.forEach(dot => {
-      dot.addEventListener('mouseenter', () => {
-        clearInterval(autoRotateInterval);
-      });
-    });
-    
-    // For a more advanced implementation, you could add:
-    // - Touch swipe support
-    // - Keyboard navigation
-    // - Scroll-based activation
-  });
+});
 
 // ---------------- MOBILE HEADER -------------------- //
 

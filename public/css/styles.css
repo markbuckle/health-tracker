@@ -1174,9 +1174,10 @@ body {
   height: auto;
   max-width: 9rem;
 }
+/* Numbered navigation dots */
 .nav-dot {
-  width: 14px;
-  height: 14px;
+  width: 24px;
+  height: 24px;
   background-color: #b2c9e6;
   border-radius: 50%;
   margin: 10px 0;
@@ -1185,10 +1186,100 @@ body {
   transition: all 0.3s ease;
   position: relative;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+.nav-dot span {
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
 }
 .nav-dot.active {
   background-color: #5cb15d;
-  transform: scale(1.3);
+  transform: scale(1.1);
+}
+.nav-dot.active span {
+  opacity: 1;
+}
+.nav-arrow {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 10;
+  padding: 0;
+}
+
+.nav-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-arrow:hover {
+  background-color: #f5f7fa;
+  transform: scale(1.05);
+}
+.prev-arrow {
+  margin-right: 15px;
+}
+
+.next-arrow {
+  margin-left: 15px;
+}
+
+@media (max-width: 768px) {
+  .nav-dot {
+    width: 28px;
+    height: 28px;
+    margin: 0 6px;
+    font-size: 13px;
+  }
+  
+  .use-cases-navigation {
+    flex-direction: row;
+    width: 100%;
+    position: relative;
+    top: auto;
+    margin-right: 0;
+    margin-bottom: 30px;
+    height: 30px;
+    justify-content: center;
+  }
+  
+  .nav-indicator {
+    width: 100%;
+    height: 2px;
+  }
+  
+  .use-cases-slider-container {
+    flex-direction: column;
+  }
+  
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .prev-arrow {
+    left: 10px;
+    margin-right: 0;
+  }
+  
+  .next-arrow {
+    right: 10px;
+    margin-left: 0;
+  }
 }
 .nav-indicator {
   position: absolute;
@@ -2358,7 +2449,7 @@ img,
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   padding: 0 0.5rem;
   font-family: "Poppins-Bold", sans-serif;
   font-size: clamp(24px, 5vw, 32px);
@@ -2440,8 +2531,9 @@ img,
 /* ------- animated hero section ------- */
 .hero-wrapper {
   padding: 4rem 2rem;
-  background-color: #e8f4f4; /* Same light blue bg color */
+  background-color: #e8f4f4;
   position: relative;
+  overflow: hidden;
 }
 
 .hero-text {
@@ -2537,10 +2629,17 @@ img,
   text-align: center;
   transition: transform 0.3s ease;
 }
+.use-cases-slider-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
 .use-cases-slider {
   flex: 1;
   position: relative;
   overflow: visible;
+  height: 400px;
 }
 .use-case-card {
   position: absolute;
@@ -2551,17 +2650,19 @@ img,
   box-shadow: 0 8px 24px rgba(149, 175, 211, 0.1);
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  top: 0;
+  left: 0;
 }
 .use-case-card.active {
   opacity: 1;
   transform: translateY(0);
-  pointer-events: auto;
+  visibility: visible;
 }
 .icon-circle {
   width: 70px;
@@ -2572,7 +2673,6 @@ img,
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
-  transform: translateX(0%) scale(1);
   transition: transform 0.3s ease;
 }
 .use-case-card:hover .icon-circle {
@@ -2616,9 +2716,8 @@ img,
     height: 2px;
   }
   
-  .use-case-card {
-    position: relative;
-    margin-bottom: 20px;
+  .use-cases-slider {
+    height: 350px;
   }
 }
 /* 

@@ -42,12 +42,22 @@
       <div class="use-cases-container">
         <div class="use-cases-navigation">
           <div class="nav-indicator"></div>
-          {{#each useCases as |useCase index|}}
-            <button class="nav-dot {{#if @first}}active{{/if}}" data-index="{{index}}"></button>
-          {{/each}}
+          <button class="nav-dot active" data-index="0"><span>1</span></button>
+          <button class="nav-dot" data-index="1"><span>2</span></button>
+          <button class="nav-dot" data-index="2"><span>3</span></button>
+          <button class="nav-dot" data-index="3"><span>4</span></button>
+          <button class="nav-dot" data-index="4"><span>5</span></button>
         </div>
+
+      <div class="use-cases-slider-container">
+          <button class="nav-arrow prev-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#b2c9e6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
         
         <div class="use-cases-slider">
+          {{!-- Use case card #1 --}}
           <div class="use-case-card active" data-index="0">
             <div class="icon-circle">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -57,7 +67,7 @@
             <h3>Trying to be proactive with your health</h3>
             <p>Pick up on out-of-range biomarkers and trends earlier</p>
           </div>
-          
+          {{!-- Use case card #2 --}}
           <div class="use-case-card" data-index="1">
             <div class="icon-circle">
               <svg viewBox="0 0 24 24">
@@ -67,7 +77,7 @@
             <h3>Managing chronic conditions</h3>
             <p>Track symptoms, medications, and progress over time</p>
           </div>
-          
+          {{!-- Use case card #3 --}}
           <div class="use-case-card" data-index="2">
             <div class="icon-circle">
               <svg viewBox="0 0 24 24">
@@ -77,7 +87,7 @@
             <h3>Caring for loved ones</h3>
             <p>Keep track of appointments and medical history</p>
           </div>
-          
+          {{!-- Use case card #4 --}}
           <div class="use-case-card" data-index="3">
             <div class="icon-circle">
               <svg viewBox="0 0 24 24">
@@ -87,7 +97,7 @@
             <h3>Searching for a diagnosis</h3>
             <p>Document symptoms and track patterns</p>
           </div>
-          
+          {{!-- Use case card #5 --}}
           <div class="use-case-card" data-index="4">
             <div class="icon-circle">
               <svg viewBox="0 0 24 24">
@@ -98,8 +108,16 @@
             <p>Monitor wellness metrics and lifestyle factors</p>
           </div>
         </div>
+
+        <button class="nav-arrow next-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#b2c9e6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+
       </div>
     </div>
+  </div>
 
     <div class="wave-light-bg">
       <div class="wave-pattern">
@@ -237,6 +255,96 @@
         );
 
         observer.observe(document.querySelector(".hero-title"));
+      });
+    </script>
+    <script> // Completely isolated hero slider functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        // Only run this code if the hero slider elements exist
+        const heroWrapper = document.querySelector('.hero-wrapper');
+        if (!heroWrapper) return;
+        
+        const heroNavDots = heroWrapper.querySelectorAll('.nav-dot');
+        const heroCards = heroWrapper.querySelectorAll('.use-case-card');
+        const prevArrow = heroWrapper.querySelector('.prev-arrow');
+        const nextArrow = heroWrapper.querySelector('.next-arrow');
+        
+        if (heroNavDots.length === 0 || heroCards.length === 0) return;
+        
+        // Local variable for tracking current slide
+        let heroCurrentIndex = 0;
+        
+        // Function to update active card - completely isolated
+        function heroUpdateActiveCard(index) {
+          // Make sure index is within bounds
+          if (index < 0) index = heroCards.length - 1;
+          if (index >= heroCards.length) index = 0;
+          
+          // Update navigation dots
+          heroNavDots.forEach(dot => dot.classList.remove('active'));
+          if (heroNavDots[index]) {
+            heroNavDots[index].classList.add('active');
+          }
+          
+          // Update cards
+          heroCards.forEach(card => card.classList.remove('active'));
+          if (heroCards[index]) {
+            heroCards[index].classList.add('active');
+          }
+          
+          // Update current index
+          heroCurrentIndex = index;
+        }
+        
+        // Initialize with first card active
+        heroUpdateActiveCard(0);
+        
+        // Set up click listeners for navigation dots
+        heroNavDots.forEach(dot => {
+          dot.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            if (!isNaN(index)) {
+              heroUpdateActiveCard(index);
+            }
+          });
+        });
+        
+        // Set up arrow navigation
+        if (prevArrow) {
+          prevArrow.addEventListener('click', function() {
+            heroUpdateActiveCard(heroCurrentIndex - 1);
+          });
+        }
+        
+        if (nextArrow) {
+          nextArrow.addEventListener('click', function() {
+            heroUpdateActiveCard(heroCurrentIndex + 1);
+          });
+        }
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'ArrowLeft') {
+            heroUpdateActiveCard(heroCurrentIndex - 1);
+          } else if (e.key === 'ArrowRight') {
+            heroUpdateActiveCard(heroCurrentIndex + 1);
+          }
+        });
+        
+        // Auto-rotate slides every 5 seconds
+        const heroRotateInterval = setInterval(function() {
+          heroCurrentIndex = (heroCurrentIndex + 1) % heroCards.length;
+          heroUpdateActiveCard(heroCurrentIndex);
+        }, 5000);
+        
+        // Pause auto-rotation when hovering over the slider
+        heroWrapper.addEventListener('mouseenter', function() {
+          clearInterval(heroRotateInterval);
+        });
+        
+        // Clean up interval when user leaves the page
+        window.addEventListener('beforeunload', function() {
+          clearInterval(heroRotateInterval);
+        });
       });
     </script>
     <script src="/js/feedbackWidget.js"></script>
