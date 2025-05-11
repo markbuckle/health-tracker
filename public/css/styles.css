@@ -1176,11 +1176,10 @@ body {
 }
 /* Numbered navigation dots */
 .nav-dot {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   background-color: #b2c9e6;
   border-radius: 50%;
-  margin: 10px 0;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1190,7 +1189,7 @@ body {
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
 }
 .nav-dot span {
@@ -1236,57 +1235,14 @@ body {
 .next-arrow {
   margin-left: 15px;
 }
-
-@media (max-width: 768px) {
-  .nav-dot {
-    width: 28px;
-    height: 28px;
-    margin: 0 6px;
-    font-size: 13px;
-  }
-  
-  .use-cases-navigation {
-    flex-direction: row;
-    width: 100%;
-    position: relative;
-    top: auto;
-    margin-right: 0;
-    margin-bottom: 30px;
-    height: 30px;
-    justify-content: center;
-  }
-  
-  .nav-indicator {
-    width: 100%;
-    height: 2px;
-  }
-  
-  .use-cases-slider-container {
-    flex-direction: column;
-  }
-  
-  .nav-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  
-  .prev-arrow {
-    left: 10px;
-    margin-right: 0;
-  }
-  
-  .next-arrow {
-    right: 10px;
-    margin-left: 0;
-  }
-}
 .nav-indicator {
   position: absolute;
   width: 2px;
   height: 100%;
   background-color: #d1dff0;
   z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .nav-divider-basics {
   background-color: #e1e6f0;
@@ -2446,18 +2402,9 @@ img,
 }
 
 .quote-3 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 3rem;
-  padding: 0 0.5rem;
-  font-family: "Poppins-Bold", sans-serif;
-  font-size: clamp(24px, 5vw, 32px);
-  line-height: 1.8; /* Changed from fixed 72px for better scaling */
-  letter-spacing: -0.01em;
   text-align: center;
-  color: rgb(51, 51, 51);
-  text-shadow: 2px 2px 4px rgba(209, 209, 209, 0.8);
+  margin-bottom: 3rem;
+  color: #333;
 }
 .demo-page-img {
   border: 1px solid #999797;
@@ -2530,10 +2477,13 @@ img,
 }
 /* ------- animated hero section ------- */
 .hero-wrapper {
+  height: 100vh;
+  position: sticky;
+  top: 0;
   padding: 4rem 2rem;
   background-color: #e8f4f4;
-  position: relative;
   overflow: hidden;
+  z-index: 10;
 }
 
 .hero-text {
@@ -2610,15 +2560,17 @@ img,
   margin: 0 auto;
 }
 .use-cases-navigation {
-  position: sticky;
-  top: 30vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-right: 30px;
-  height: 200px;
+  justify-content: space-between;
+  padding: 50px 0;
+  height: 100%;
 }
 .use-case {
   position: relative;
@@ -2637,9 +2589,11 @@ img,
 }
 .use-cases-slider {
   flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
   position: relative;
-  overflow: visible;
   height: 400px;
+  perspective: 1000px;
 }
 .use-case-card {
   position: absolute;
@@ -2649,7 +2603,7 @@ img,
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(149, 175, 211, 0.1);
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(100px);
   visibility: hidden;
   transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
   display: flex;
@@ -2663,10 +2617,16 @@ img,
   opacity: 1;
   transform: translateY(0);
   visibility: visible;
+  z-index: 5;
+}
+.use-case-card.prev {
+  opacity: 0;
+  transform: translateY(-100px);
+  visibility: hidden;
 }
 .icon-circle {
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   background-color: #b2c9e6;
   border-radius: 50%;
   display: flex;
@@ -2679,45 +2639,53 @@ img,
   transform: scale(1.1);
 }
 .icon-circle svg {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   fill: white;
 }
 .use-case-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: #333;
   margin-bottom: 1rem;
 }
 .use-case-card p {
   color: #666;
   line-height: 1.6;
+  font-size: 1.1rem;
+}
+/* Scroll spacer to create room for scrolling */
+.scroll-spacer {
+  height: 500vh; /* 5x viewport height */
+  position: absolute; /* Changed from relative to absolute */
+  width: 100%;
+  left: 0;
+  bottom: 0; /* Position it at the bottom of hero-wrapper */
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1; /* Ensure it's behind content */
 }
 @media (max-width: 768px) {
-  .use-cases-container {
-    flex-direction: column;
-  }
-  
   .use-cases-navigation {
-    flex-direction: row;
-    width: 100%;
-    position: relative;
-    top: auto;
-    margin-right: 0;
-    margin-bottom: 30px;
-    height: 30px;
+    flex-direction: column;
+    width: 30px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    padding: 50px 0;
+    margin: 0;
   }
   
   .nav-dot {
-    margin: 0 8px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
   }
   
   .nav-indicator {
-    width: 100%;
-    height: 2px;
-  }
-  
-  .use-cases-slider {
-    height: 350px;
+    width: 2px;
+    height: 100%;
   }
 }
 /* 
@@ -7097,7 +7065,14 @@ body[data-insights-hover="true"] #Insights {
   font-size: 1.25rem;
   font-family: "Poppins-Bold", sans-serif;
 }
-
+.wave-light-bg, 
+.quote-background-1, 
+.dashboard-img,
+.quote-background-2,
+footer {
+  position: relative; /* Ensures these appear above/after scroll content */
+  z-index: 20; /* Higher than hero-wrapper */
+}
 
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
