@@ -71,277 +71,276 @@
   <div class="dashboard-content">
     <div class="dashboard-container">
 
-      <div class="w-layout-grid main-grid">
-        <div data-duration-in="300" data-duration-out="100" data-current="All projects" data-easing="ease"
-          class="tabs w-tabs">
-          <div class="in-page-menu w-tab-menu">
-            <a data-w-tab="Uploads" class="in-page-link w-inline-block w-tab-link w--current">
-              <div class="text-block">Upload Files</div>
-            </a>
-            <a data-w-tab="Output" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block">File Output</div>
-            </a>
+    <div class="w-layout-grid main-grid">
+      <div data-duration-in="300" data-duration-out="100" data-current="All projects" data-easing="ease"
+        class="tabs w-tabs">
+        <div class="in-page-menu w-tab-menu">
+          <a data-w-tab="Uploads" class="in-page-link w-inline-block w-tab-link w--current">
+            <div class="text-block">Upload Files</div>
+          </a>
+          <a data-w-tab="Output" class="in-page-link w-inline-block w-tab-link">
+            <div class="text-block">File Output</div>
+          </a>
+        </div>
+
+        <div class="labs-content w-tab-content">
+
+          <!-- File Details Edit Modal -->
+          <div id="fileDetailsEditModal" class="biomarker-modal">
+            <div class="biomarker-modal-content">
+              <div class="biomarker-modal-header">
+                <h2>Edit File Details</h2>
+                <span class="close-modal">&times;</span>
+              </div>
+              <div class="biomarker-modal-body">
+                <form id="fileDetailsEditForm">
+                  <input type="hidden" id="editFileId">
+                  <div class="form-group">
+                    <label for="editFileName">File Name:</label>
+                    <input type="text" id="editFileName" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="editUploadDate">Upload Date:</label>
+                    <input type="datetime-local" id="editUploadDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="editTestDate">Test Date:</label>
+                    <input type="datetime-local" id="editTestDate" required>
+                  </div>
+                  <div class="form-actions">
+                    <button type="submit" class="save-btn">Save Changes</button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
 
-          <div class="labs-content w-tab-content">
-
-            <!-- File Details Edit Modal -->
-            <div id="fileDetailsEditModal" class="biomarker-modal">
-              <div class="biomarker-modal-content">
-                <div class="biomarker-modal-header">
-                  <h2>Edit File Details</h2>
-                  <span class="close-modal">&times;</span>
+          <div data-w-tab="Uploads" class="tab-pane-basic-info w-tab-pane w--tab-active">
+            <div class="dropdown-wrapper user-content-bg">
+              <div class="div-block-9">
+                <div class="flex">
+                  <div class="upload-page-text-1">HealthLync extracts data from your bloodwork/lab files automatically
+                  </div>
+                  <button class="info-button" aria-label="Show important upload file details">
+                    {{> svg/info}}
+                  </button>
                 </div>
-                <div class="biomarker-modal-body">
-                  <form id="fileDetailsEditForm">
-                    <input type="hidden" id="editFileId">
-                    <div class="form-group">
-                      <label for="editFileName">File Name:</label>
-                      <input type="text" id="editFileName" required>
+                {{!-- Upload container --}}
+                <div class="file-upload-container">
+                  <div class="file-upload-area" id="dropZone">
+                    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input" />
+                    <div class="upload-content">
+                      <div class="upload-text">Drag and drop files here</div>
+                      <button class="browse-button">Browse files</button>
+                      {{> svg/upload }}
+                      <div class="file-limits">Limit 200MB per file • PDF, JPEG, PNG</div>
                     </div>
-                    <div class="form-group">
-                      <label for="editUploadDate">Upload Date:</label>
-                      <input type="datetime-local" id="editUploadDate" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="editTestDate">Test Date:</label>
-                      <input type="datetime-local" id="editTestDate" required>
-                    </div>
-                    <div class="form-actions">
-                      <button type="submit" class="save-btn">Save Changes</button>
-                    </div>
-                  </form>
+                  </div>
+                  <div id="fileList" class="file-list"></div>
+                  <button id="processFiles" class="process-button" disabled>Upload File(s)</button>
                 </div>
+                <div class="upload-page-text-container">
+                  {{!-- <div class="upload-page-text2">Supported file types:
+                    <li>PDFs</li>
+                    <li>Photos &amp; Images (JPEG
+                      and PNG)</li>... More to come
+                  </div> --}}
+                </div>
+                {{!-- <div class="upload-page-text">Once your data is uploaded successfully, pop on over to the File
+                  Output
+                  tab above to double-check your uploaded data.
+                </div> --}}
+                <div class="upload-page-text-2">Uploaded documents:</div>
+                <div class="file-list-header">
+                  <div class="file-list-title">Name</div>
+                  <div class="file-list-title">Test/Collection Date</div>
+                  <div class="file-list-title">Uploaded</div>
+                  <div class="file-list-title checkbox-header">
+                    <input type="checkbox" id="selectAllFiles" class="select-all-checkbox" aria-label="Select all files">
+                  </div>
+                  <div class="file-list-title">Actions</div>
+                </div>
+                <div class="uploaded-documents-list">
+                  {{#if user.files}}
+                  {{#each user.files}}
+                  <div class="file-list-row">
+                    <div class="file-name">
+                      <a href="/uploads/{{this.filename}}" target="_blank">{{this.originalName}}</a>
+                    </div>
+                    <div class="file-date">{{formatDate this.testDate}}</div>
+                    <div class="file-uploaded">{{formatDate this.uploadDate}}</div>
+                    <div class="file-checkbox-container">
+                      <input type="checkbox" class="file-checkbox" data-file-id="{{this._id}}" aria-label="Select file">
+                    </div>
+                    <div class="file-actions">
+                      <button class="edit-file-btn" onclick="showFileDetailsEdit('{{this._id}}','{{this.originalName}}','{{formatDateString this.uploadDate}}','{{formatDateString this.testDate}}')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                      </button>
+                      <button class="delete-file-btn" data-file-id="{{this._id}}">
+                        <span class="delete-icon">×</span>
+                      </button>
+                    </div>
+                  </div>
+                  {{/each}}
+                  {{else}}
+                  <div class="no-files-message">No documents uploaded yet</div>
+                  {{/if}}
+                </div>
+                {{#if user.files}}
+                <div class="bulk-actions">
+                  <button id="deleteSelectedFiles" class="delete-selected-btn" disabled>Delete Selected Files</button>
+                </div>
+                {{/if}}
               </div>
             </div>
 
-            <div data-w-tab="Uploads" class="tab-pane-basic-info w-tab-pane w--tab-active">
-              <div class="dropdown-wrapper user-content-bg">
-                <div class="div-block-9">
-                  <div class="flex">
-                    <div class="upload-page-text-1">HealthLync extracts data from your bloodwork/lab files automatically
+          </div>
+          <div class="table-module">
+            <div class="table-content"></div>
+          </div>
+        </div>
+
+        <div data-w-tab="Output" class="tab-pane-ongoing w-tab-pane">
+          <div class="dropdown-wrapper user-content-bg">
+            <div class="div-block-9">
+              <div class="upload-page-text-1">Data from uploaded file(s):</div>
+
+              {{#if user.files}} {{!-- Check if user has any files in mongoDB - see registerSchema --}}
+              {{#each user.files}} {{!-- Loop through each files  --}}
+              <div class="lab-result-card {{confidenceClass extractionMethod}}">
+                <div class="lab-result-header">
+                  <div class="lab-result-header-left">
+                    <h5>{{originalName}}</h5>
+                    <div class="file-dates lab-result-dates">
+                      <span>Uploaded: {{formatDate uploadDate}}</span>
+                      <span>Test Date: {{formatDate testDate}}</span>
+                      <button class="edit-file-btn"
+                        onclick="event.stopPropagation(); showFileDetailsEdit('{{_id}}', '{{originalName}}', '{{uploadDate}}', '{{testDate}}')">
+                        <span class="edit-icon2">✎</span>
+                      </button>
                     </div>
-                    <button class="info-button" aria-label="Show important upload file details">
-                      {{> svg/info}}
-                    </button>
                   </div>
-                  {{!-- Upload container --}}
-                  <div class="file-upload-container">
-                    <div class="file-upload-area" id="dropZone">
-                      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input" />
-                      <div class="upload-content">
-                        <div class="upload-text">Drag and drop files here</div>
-                        <button class="browse-button">Browse files</button>
-                        {{> svg/upload }}
-                        <div class="file-limits">Limit 200MB per file • PDF, JPEG, PNG</div>
-                      </div>
+                  <div class="dropdown-indicator"></div>
+                </div>
+
+                {{#if labValues}}
+                <div class="lab-values">
+                  {{#each labValues as |value testName|}}
+                  <div class="lab-value {{confidenceClass value.confidence}}" data-file-id="{{../this._id}}"
+                    data-biomarker="{{testName}}" data-value="{{value.value}}" data-unit="{{value.unit}}"
+                    data-range="{{value.referenceRange}}">
+                    <div class="lab-value-content">
+                      <span class="test-name">{{testName}}:</span><br>
+                      <span class="test-value">{{formatNumber value.value 2}} {{value.unit}}</span><br>
+                      {{#if value.referenceRange}}
+                      <span class="reference-range">(Range: {{value.referenceRange}})</span>
+                      {{/if}}
                     </div>
-                    <div id="fileList" class="file-list"></div>
-                    <button id="processFiles" class="process-button" disabled>Upload File(s)</button>
-                  </div>
-                  <div class="upload-page-text-container">
-                    {{!-- <div class="upload-page-text2">Supported file types:
-                      <li>PDFs</li>
-                      <li>Photos &amp; Images (JPEG
-                        and PNG)</li>... More to come
-                    </div> --}}
-                  </div>
-                  {{!-- <div class="upload-page-text">Once your data is uploaded successfully, pop on over to the File
-                    Output
-                    tab above to double-check your uploaded data.
-                  </div> --}}
-                  <div class="upload-page-text-2">Uploaded documents:</div>
-                  <div class="file-list-header">
-                    <div class="file-list-title">Name</div>
-                    <div class="file-list-title">Test/Collection Date</div>
-                    <div class="file-list-title">Uploaded</div>
-                    <div class="file-list-title checkbox-header">
-                      <input type="checkbox" id="selectAllFiles" class="select-all-checkbox" aria-label="Select all files">
-                    </div>
-                    <div class="file-list-title">Actions</div>
-                  </div>
-                  <div class="uploaded-documents-list">
-                    {{#if user.files}}
-                    {{#each user.files}}
-                    <div class="file-list-row">
-                      <div class="file-name">
-                        <a href="/uploads/{{this.filename}}" target="_blank">{{this.originalName}}</a>
-                      </div>
-                      <div class="file-date">{{formatDate this.testDate}}</div>
-                      <div class="file-uploaded">{{formatDate this.uploadDate}}</div>
-                      <div class="file-checkbox-container">
-                        <input type="checkbox" class="file-checkbox" data-file-id="{{this._id}}" aria-label="Select file">
-                      </div>
-                      <div class="file-actions">
-                        <button class="edit-file-btn" onclick="showFileDetailsEdit('{{this._id}}','{{this.originalName}}','{{formatDateString this.uploadDate}}','{{formatDateString this.testDate}}')">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="button-container-2">
+                      <button class="edit-biomarker-btn"
+                        onclick="showBiomarkerEdit('{{testName}}', '{{value.value}}', '{{value.unit}}', '{{value.referenceRange}}', '{{../this._id}}')">
+                        <div class="edit-btn-content">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                           </svg>
-                        </button>
-                        <button class="delete-file-btn" data-file-id="{{this._id}}">
-                          <span class="delete-icon">×</span>
-                        </button>
-                      </div>
+                          <span class="edit-btn-text">Edit</span>
+                        </div>
+                      </button>
+                      <button class="delete-biomarker-btn" onclick="deleteBiomarker('{{../this._id}}', '{{@key}}')">
+                        <div class="delete-btn-content">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                              d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                          <span class="delete-btn-text">Delete</span>
+                        </div>
+                      </button>
                     </div>
-                    {{/each}}
-                    {{else}}
-                    <div class="no-files-message">No documents uploaded yet</div>
-                    {{/if}}
                   </div>
-                  {{#if user.files}}
-                  <div class="bulk-actions">
-                    <button id="deleteSelectedFiles" class="delete-selected-btn" disabled>Delete Selected Files</button>
-                  </div>
-                  {{/if}}
+                  {{/each}}
                 </div>
-              </div>
-
-            </div>
-            <div class="table-module">
-              <div class="table-content"></div>
-            </div>
-          </div>
-
-          <div data-w-tab="Output" class="tab-pane-ongoing w-tab-pane">
-            <div class="dropdown-wrapper user-content-bg">
-              <div class="div-block-9">
-                <div class="upload-page-text-1">Data from uploaded file(s):</div>
-
-                {{#if user.files}} {{!-- Check if user has any files in mongoDB - see registerSchema --}}
-                {{#each user.files}} {{!-- Loop through each files  --}}
-                <div class="lab-result-card {{confidenceClass extractionMethod}}">
-                  <div class="lab-result-header">
-                    <div class="lab-result-header-left">
-                      <h5>{{originalName}}</h5>
-                      <div class="file-dates lab-result-dates">
-                        <span>Uploaded: {{formatDate uploadDate}}</span>
-                        <span>Test Date: {{formatDate testDate}}</span>
-                        <button class="edit-file-btn"
-                          onclick="event.stopPropagation(); showFileDetailsEdit('{{_id}}', '{{originalName}}', '{{uploadDate}}', '{{testDate}}')">
-                          <span class="edit-icon2">✎</span>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="dropdown-indicator"></div>
-                  </div>
-
-                  {{#if labValues}}
-                  <div class="lab-values">
-                    {{#each labValues as |value testName|}}
-                    <div class="lab-value {{confidenceClass value.confidence}}" data-file-id="{{../this._id}}"
-                      data-biomarker="{{testName}}" data-value="{{value.value}}" data-unit="{{value.unit}}"
-                      data-range="{{value.referenceRange}}">
-                      <div class="lab-value-content">
-                        <span class="test-name">{{testName}}:</span><br>
-                        <span class="test-value">{{formatNumber value.value 2}} {{value.unit}}</span><br>
-                        {{#if value.referenceRange}}
-                        <span class="reference-range">(Range: {{value.referenceRange}})</span>
-                        {{/if}}
-                      </div>
-                      <div class="button-container-2">
-                        <button class="edit-biomarker-btn"
-                          onclick="showBiomarkerEdit('{{testName}}', '{{value.value}}', '{{value.unit}}', '{{value.referenceRange}}', '{{../this._id}}')">
-                          <div class="edit-btn-content">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                              stroke-width="2">
-                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            <span class="edit-btn-text">Edit</span>
-                          </div>
-                        </button>
-                        <button class="delete-biomarker-btn" onclick="deleteBiomarker('{{../this._id}}', '{{@key}}')">
-                          <div class="delete-btn-content">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                              stroke-width="2">
-                              <path
-                                d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                              </path>
-                              <line x1="10" y1="11" x2="10" y2="17"></line>
-                              <line x1="14" y1="11" x2="14" y2="17"></line>
-                            </svg>
-                            <span class="delete-btn-text">Delete</span>
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-                    {{/each}}
-                  </div>
-                  {{else}}
-                  <p class="no-values">No lab values detected</p>
-                  {{/if}}
-
-                  {{#if processingErrors}}
-                  <div class="processing-errors">
-                    {{#each processingErrors}}
-                    <p class="error">{{this}}</p>
-                    {{/each}}
-                  </div>
-                  {{/if}}
-                </div>
-                {{/each}}
                 {{else}}
-                <div class="no-files-message">No documents uploaded yet</div>
+                <p class="no-values">No lab values detected</p>
                 {{/if}}
 
+                {{#if processingErrors}}
+                <div class="processing-errors">
+                  {{#each processingErrors}}
+                  <p class="error">{{this}}</p>
+                  {{/each}}
+                </div>
+                {{/if}}
+              </div>
+              {{/each}}
+              {{else}}
+              <div class="no-files-message">No documents uploaded yet</div>
+              {{/if}}
 
-                <!-- Details Modal -->
-                <div id="biomarkerDetailsModal" class="biomarker-modal">
-                  <div class="biomarker-modal-content">
-                    <div class="biomarker-modal-header">
-                      <h2 id="biomarkerDetailsTitle"></h2>
-                      <span class="close-modal">&times;</span>
-                    </div>
-                    <div class="biomarker-modal-body">
-                      <div class="biomarker-details">
-                        <div class="biomarker-info">
-                          <h3>Current Value</h3>
-                          <p id="biomarkerValue"></p>
-                        </div>
-                        <div class="biomarker-source">
-                          <h3>Source Document</h3>
-                          <p id="biomarkerSource"></p>
-                          <div id="sourceImageContainer"></div>
-                        </div>
+
+              <!-- Details Modal -->
+              <div id="biomarkerDetailsModal" class="biomarker-modal">
+                <div class="biomarker-modal-content">
+                  <div class="biomarker-modal-header">
+                    <h2 id="biomarkerDetailsTitle"></h2>
+                    <span class="close-modal">&times;</span>
+                  </div>
+                  <div class="biomarker-modal-body">
+                    <div class="biomarker-details">
+                      <div class="biomarker-info">
+                        <h3>Current Value</h3>
+                        <p id="biomarkerValue"></p>
+                      </div>
+                      <div class="biomarker-source">
+                        <h3>Source Document</h3>
+                        <p id="biomarkerSource"></p>
+                        <div id="sourceImageContainer"></div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Lab Values Edit Modal -->
-                <div id="biomarkerEditModal" class="biomarker-modal">
-                  <div class="biomarker-modal-content">
-                    <div class="biomarker-modal-header">
-                      <h2 id="biomarkerEditTitle"></h2>
-                      <span class="close-modal">&times;</span>
-                    </div>
-                    <div class="biomarker-modal-subtitle">
-                      Our automated scanner may occasionally need your help to ensure accuracy. Please verify this
-                      value
-                      and make any necessary corrections.
-                    </div>
-                    <div class="biomarker-modal-body">
-                      <form id="biomarkerEditForm">
-                        <input type="hidden" id="editFileId">
-                        <input type="hidden" id="editBiomarkerName">
-                        <div class="form-group">
-                          <label for="editValue">Value:</label>
-                          <input type="number" id="editValue" required step="any">
-                        </div>
-                        <div class="form-group">
-                          <label for="editUnit">Unit:</label>
-                          <input type="text" id="editUnit" required>
-                        </div>
-                        <div class="form-group">
-                          <label for="editRange">Reference Range:</label>
-                          <input type="text" id="editRange">
-                        </div>
-                        <div class="form-actions">
-                          <button type="submit" class="save-btn">Save Changes</button>
-                        </div>
-                      </form>
-                    </div>
+              <!-- Lab Values Edit Modal -->
+              <div id="biomarkerEditModal" class="biomarker-modal">
+                <div class="biomarker-modal-content">
+                  <div class="biomarker-modal-header">
+                    <h2 id="biomarkerEditTitle"></h2>
+                    <span class="close-modal">&times;</span>
+                  </div>
+                  <div class="biomarker-modal-subtitle">
+                    Our automated scanner may occasionally need your help to ensure accuracy. Please verify this
+                    value
+                    and make any necessary corrections.
+                  </div>
+                  <div class="biomarker-modal-body">
+                    <form id="biomarkerEditForm">
+                      <input type="hidden" id="editFileId">
+                      <input type="hidden" id="editBiomarkerName">
+                      <div class="form-group">
+                        <label for="editValue">Value:</label>
+                        <input type="number" id="editValue" required step="any">
+                      </div>
+                      <div class="form-group">
+                        <label for="editUnit">Unit:</label>
+                        <input type="text" id="editUnit" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="editRange">Reference Range:</label>
+                        <input type="text" id="editRange">
+                      </div>
+                      <div class="form-actions">
+                        <button type="submit" class="save-btn">Save Changes</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -349,660 +348,805 @@
           </div>
         </div>
       </div>
-      <div class="upload-page-text-1"><br>‍<br><br><br><br>
+    </div>
+  
+    <div class="upload-page-text-1"><br>‍<br><br><br><br>
         <br>‍<br>
       </div>
+    </div>
+  </div>
 
-      <!-- Upload Info Modal -->
-      <div class="modal-wrapper upload-info-modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <div class="modal-header">
-            <a class="modal-return-button w-inline-block w--current" aria-current="page">
-              {{> svg/backArrow}}
-            </a>
-            <h1 class="modal-button">Upload Information</h1>
-          </div>
-
-          <div class="modal-description">
-            <p>For the best results when extracting data from your medical documents:</p>
-            <ul>
-              <li><strong>PDF files are preferred</strong> - They generally provide the highest quality text data for our system to process.</li>
-              <li><strong>Avoid low-resolution images</strong> - Blurry or low-quality photos will significantly reduce extraction accuracy.</li>
-              <li><strong>Ensure documents are well-lit and flat</strong> - If taking photos, use good lighting and avoid shadows or glare.</li>
-              <li><strong>Include the entire document</strong> - Make sure lab value tables and reference ranges are fully visible.</li>
-              <li><strong>Check your results</strong> - After upload, review the extracted data in the File Output tab to verify accuracy.</li>
-            </ul>
-            <p>Our optical character recognition (OCR) system works best with clear, high-resolution documents in PDF format directly from medical providers.</p>
-          </div>
-
-          <div class="modal-footer">
-            <a href="/upload" aria-current="page" class="cancel-button cancel-space">Close</a>
-          </div>
-        </div>
+  <!-- Update the modal div to have these changes -->
+  <div id="simpleInfoModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 1000; padding-left: 160px;">
+    <div style="position: absolute; top: 0; left: -160px; width: 160px; height: 100%; background: transparent;"></div>
+    <div style="position: relative; background-color: white; margin: 40px auto; max-width: 700px; width: 90%; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden;">
+      <!-- Header section -->
+      <div style="display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e5e7eb;">
+        <button id="simpleModalBackButton" style="background: none; border: none; cursor: pointer; margin-right: 10px; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #111827;">Upload Information</h2>
+        <button id="simpleModalCloseX" style="margin-left: auto; background: none; border: none; cursor: pointer; font-size: 20px; line-height: 1;">×</button>
       </div>
+      
+      <!-- Content section -->
+      <div style="padding: 20px; max-height: 70vh; overflow-y: auto;">
+        <p style="margin-top: 0; color: #374151;">For the best results when extracting data from your medical documents:</p>
+        <ul style="padding-left: 24px; color: #374151;">
+          <li style="margin-bottom: 8px;"><strong>PDF files are preferred</strong> - They generally provide the highest quality text data for our system to process.</li>
+          <li style="margin-bottom: 8px;"><strong>Avoid low-resolution images</strong> - Blurry or low-quality photos will significantly reduce extraction accuracy.</li>
+          <li style="margin-bottom: 8px;"><strong>Ensure documents are well-lit and flat</strong> - If taking photos, use good lighting and avoid shadows or glare.</li>
+          <li style="margin-bottom: 8px;"><strong>Include the entire document</strong> - Make sure lab value tables and reference ranges are fully visible.</li>
+          <li style="margin-bottom: 8px;"><strong>Check your results</strong> - After upload, review the extracted data in the File Output tab to verify accuracy.</li>
+        </ul>
+        <p style="margin-bottom: 0; color: #374151;">Our optical character recognition (OCR) system works best with clear, high-resolution documents in PDF format directly from medical providers.</p>
+      </div>
+      
+      <!-- Footer section -->
+      <div style="padding: 16px 20px; border-top: 1px solid #e5e7eb; text-align: right;">
+        <button id="simpleModalCloseButton" style="padding: 8px 16px; background-color: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Close</button>
+      </div>
+    </div>
+  </div>
 
-      <script
-        src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6606de22e8c152e6b19be98a"
-        type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
-        crossorigin="anonymous"></script>
-      <script src="js/main.js" type="text/javascript"></script>
-      <script> // File Uploader
-        document.addEventListener('DOMContentLoaded', function () {
-          const dropZone = document.getElementById('dropZone');
-          const fileInput = document.getElementById('fileInput');
-          const fileList = document.getElementById('fileList');
-          const processButton = document.getElementById('processFiles');
-          const processingStatus = document.getElementById('processingStatus');
-          const files = new Set();
+  <script
+    src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6606de22e8c152e6b19be98a"
+    type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+    crossorigin="anonymous"></script>
+  <script src="js/main.js" type="text/javascript"></script>
+  <script> // File Uploader
+    document.addEventListener('DOMContentLoaded', function () {
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const fileList = document.getElementById('fileList');
+      const processButton = document.getElementById('processFiles');
+      const processingStatus = document.getElementById('processingStatus');
+      const files = new Set();
 
-          // Define the loading functions
-          function showLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-              overlay.style.display = 'flex';
-            }
+      // Define the loading functions
+      function showLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+          overlay.style.display = 'flex';
+        }
+      }
+
+      function hideLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+          overlay.style.display = 'none';
+        }
+      }
+
+      // Handle click on browse button
+      document.querySelector('.browse-button').addEventListener('click', (e) => {
+        e.preventDefault();
+        fileInput.click();
+      });
+
+      // Handle drag and drop
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#2563eb';
+        dropZone.style.backgroundColor = '#f1f5f9';
+      });
+
+      dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#3b82f6';
+        dropZone.style.backgroundColor = '#f8fafc';
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#3b82f6';
+        dropZone.style.backgroundColor = '#f8fafc';
+        handleFiles(e.dataTransfer.files);
+      });
+
+      // Handle file input change
+      fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+      });
+
+      // File handler function
+      function handleFiles(fileList) {
+        for (const file of fileList) {
+          if (file.size > 200 * 1024 * 1024) { // 200MB limit
+            alert(`File ${file.name} is too large. Maximum size is 200MB.`);
+            continue;
           }
 
-          function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-              overlay.style.display = 'none';
-            }
+          if (!['application/pdf', 'image/jpeg', 'image/png'].includes(file.type)) {
+            alert(`File ${file.name} is not supported. Please upload PDF, JPEG, or PNG files.`);
+            continue;
           }
 
-          // Handle click on browse button
-          document.querySelector('.browse-button').addEventListener('click', (e) => {
-            e.preventDefault();
-            fileInput.click();
-          });
+          files.add(file);
+          displayFile(file);
+        }
+        updateProcessButton();
+      }
 
-          // Handle drag and drop
-          dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#2563eb';
-            dropZone.style.backgroundColor = '#f1f5f9';
-          });
+      // Display file function
+      function displayFile(file) {
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.innerHTML = `
+        <span class="file-name">${file.name}</span>
+        <button class="remove-file">Remove</button>
+    `;
 
-          dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#3b82f6';
-            dropZone.style.backgroundColor = '#f8fafc';
-          });
-
-          dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#3b82f6';
-            dropZone.style.backgroundColor = '#f8fafc';
-            handleFiles(e.dataTransfer.files);
-          });
-
-          // Handle file input change
-          fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-          });
-
-          // File handler function
-          function handleFiles(fileList) {
-            for (const file of fileList) {
-              if (file.size > 200 * 1024 * 1024) { // 200MB limit
-                alert(`File ${file.name} is too large. Maximum size is 200MB.`);
-                continue;
-              }
-
-              if (!['application/pdf', 'image/jpeg', 'image/png'].includes(file.type)) {
-                alert(`File ${file.name} is not supported. Please upload PDF, JPEG, or PNG files.`);
-                continue;
-              }
-
-              files.add(file);
-              displayFile(file);
-            }
-            updateProcessButton();
-          }
-
-          // Display file function
-          function displayFile(file) {
-            const div = document.createElement('div');
-            div.className = 'file-item';
-            div.innerHTML = `
-            <span class="file-name">${file.name}</span>
-            <button class="remove-file">Remove</button>
-        `;
-
-            div.querySelector('.remove-file').addEventListener('click', () => {
-              files.delete(file);
-              div.remove();
-              updateProcessButton();
-            });
-
-            fileList.appendChild(div);
-          }
-
-          function updateProcessButton() {
-            processButton.disabled = files.size === 0;
-          }
-
-          // Process button click handler
-          processButton.addEventListener('click', async () => {
-            const formData = new FormData();
-            files.forEach(file => {
-              formData.append('files', file);
-            });
-
-            try {
-              showLoading();
-
-              // Create WebSocket connection
-              const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-              const ws = new WebSocket(`${protocol}//${window.location.host}`);
-
-              ws.onopen = () => {
-                console.log('WebSocket connected');
-              };
-
-              ws.onmessage = function (event) {
-                const message = event.data;
-                const statusDiv = document.getElementById('processingStatus');
-                const documentDiv = document.getElementById('documentStatus');
-
-                if (message.includes('Processing file')) {
-                  const match = message.match(/Processing file (\d+) of (\d+)/);
-                  if (match && documentDiv) {
-                    documentDiv.textContent = `Processing document ${match[1]} of ${match[2]}`;
-                  }
-                }
-                else if (message.includes('Processing page')) {
-                  const match = message.match(/Processing page (\d+) of (\d+)/);
-                  if (match && statusDiv) {
-                    statusDiv.textContent = `Processing page ${match[1]} of ${match[2]}`;
-                  }
-                }
-              };
-
-              ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-              };
-
-              const response = await fetch('/upload-files', {
-                method: 'POST',
-                body: formData
-              });
-
-              if (response.ok) {
-                const result = await response.json();
-                ws.close();
-                alert('Files processed successfully!');
-                files.clear();
-                fileList.innerHTML = '';
-                updateProcessButton();
-
-                setTimeout(() => {
-                  window.location.reload();
-                }, 500);
-              } else {
-                throw new Error('Upload failed');
-              }
-            } catch (error) {
-              alert('Error processing files: ' + error.message);
-            } finally {
-                hideLoading();
-            }
-          });
-
-          // Handle file deletions
-          document.querySelectorAll('.delete-file-btn').forEach(button => {
-            button.addEventListener('click', async function () {
-              if (!confirm('Are you sure you want to delete this file?')) return;
-
-              const fileId = this.dataset.fileId;
-              try {
-                const response = await fetch('/delete-file', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ fileId })
-                });
-
-                if (response.ok) {
-                  // Remove the file row from the UI
-                  this.closest('.file-list-row').remove();
-
-                  // If no files left, show the no files message
-                  const filesList = document.querySelector('.uploaded-documents-list');
-                  if (!filesList.querySelector('.file-list-row')) {
-                    filesList.innerHTML = '<div class="no-files-message">No documents uploaded yet</div>';
-                  }
-                } else {
-                  throw new Error('Failed to delete file');
-                }
-              } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to delete file: ' + error.message);
-              }
-            });
-          });
+        div.querySelector('.remove-file').addEventListener('click', () => {
+          files.delete(file);
+          div.remove();
+          updateProcessButton();
         });
-      </script>
-      <script> // Biomarker editor
-        window.showBiomarkerDetails = function (name, value, unit, range, sourceDoc) {
-          const modal = document.getElementById('biomarkerDetailsModal');
-          const title = document.getElementById('biomarkerDetailsTitle');
-          const valueEl = document.getElementById('biomarkerValue');
-          const sourceEl = document.getElementById('biomarkerSource');
 
-          title.textContent = name;
-          valueEl.textContent = `${value} ${unit} (Reference Range: ${range})`;
-          sourceEl.textContent = `Document: ${sourceDoc}`;
+        fileList.appendChild(div);
+      }
 
-          modal.style.display = 'block';
-        };
+      function updateProcessButton() {
+        processButton.disabled = files.size === 0;
+      }
 
-        window.showBiomarkerEdit = function (name, value, unit, range, fileId) {
-          console.log('Edit biomarker called with:', { name, value, unit, range, fileId });
-          const modal = document.getElementById('biomarkerEditModal');
-          const title = document.getElementById('biomarkerEditTitle');
-          const valueInput = document.getElementById('editValue');
-          const unitInput = document.getElementById('editUnit');
-          const rangeInput = document.getElementById('editRange');
-          const fileIdInput = document.getElementById('editFileId');
-          const biomarkerNameInput = document.getElementById('editBiomarkerName');
+      // Process button click handler
+      processButton.addEventListener('click', async () => {
+        const formData = new FormData();
+        files.forEach(file => {
+          formData.append('files', file);
+        });
 
-          title.textContent = `Edit ${name}`;
-          valueInput.value = value;
-          unitInput.value = unit;
-          rangeInput.value = range;
-          fileIdInput.value = fileId;
-          biomarkerNameInput.value = name;
+        try {
+          showLoading();
 
-          console.log('Set fileId input value to:', fileId); // Debug log
-          modal.style.display = 'block';
-        };
+          // Create WebSocket connection
+          const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          const ws = new WebSocket(`${protocol}//${window.location.host}`);
 
-        window.formatDateForInput = function (dateString) {
-          if (!dateString) return '';
-          const date = new Date(dateString);
-          return date.toISOString().slice(0, 16);
-        };
+          ws.onopen = () => {
+            console.log('WebSocket connected');
+          };
 
-        window.showFileDetailsEdit = function (fileId, fileName, uploadDate, testDate) {
-          console.log('Edit button clicked:', { fileId, fileName, uploadDate, testDate });
+          ws.onmessage = function (event) {
+            const message = event.data;
+            const statusDiv = document.getElementById('processingStatus');
+            const documentDiv = document.getElementById('documentStatus');
 
-          const modal = document.getElementById('fileDetailsEditModal');
-          if (!modal) {
-            console.error('Modal element not found!');
-            return;
-          }
-
-          const fileIdInput = document.getElementById('editFileId');
-          const fileNameInput = document.getElementById('editFileName');
-          const uploadDateInput = document.getElementById('editUploadDate');
-          const testDateInput = document.getElementById('editTestDate');
-
-          if (!fileIdInput || !fileNameInput || !uploadDateInput || !testDateInput) {
-            console.error('One or more input elements not found!');
-            return;
-          }
-
-          try {
-            fileIdInput.value = fileId;
-            fileNameInput.value = fileName;
-            uploadDateInput.value = formatDateForInput(uploadDate);
-            testDateInput.value = formatDateForInput(testDate);
-
-            console.log('Set input values:', {
-              fileId: fileIdInput.value,
-              fileName: fileNameInput.value,
-              uploadDate: uploadDateInput.value,
-              testDate: testDateInput.value
-            });
-
-            modal.style.display = 'block';
-          } catch (error) {
-            console.error('Error setting input values:', error);
-          }
-        };
-
-        // Improved date formatting function
-        function formatDateForInput(dateString) {
-          if (!dateString) {
-            console.warn('Empty date string received');
-            return '';
-          }
-          try {
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-              console.warn('Invalid date string:', dateString);
-              return '';
-            }
-            return date.toISOString().slice(0, 16);
-          } catch (error) {
-            console.error('Error formatting date:', error);
-            return '';
-          }
-        }
-
-        // Close modal if clicking outside
-        window.onclick = function (event) {
-          if (event.target.classList.contains('biomarker-modal')) {
-            event.target.style.display = 'none';
-          }
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-          // Add to your existing event listeners
-          document.getElementById('fileDetailsEditForm').onsubmit = async function (e) {
-            e.preventDefault();
-
-            const fileId = document.getElementById('editFileId').value;
-            const fileName = document.getElementById('editFileName').value;
-            const uploadDate = document.getElementById('editUploadDate').value;
-            const testDate = document.getElementById('editTestDate').value;
-
-            try {
-              const response = await fetch('/update-file-details', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  fileId,
-                  fileName,
-                  uploadDate,
-                  testDate
-                })
-              });
-
-              if (response.ok) {
-                document.getElementById('fileDetailsEditModal').style.display = 'none';
-                window.location.reload();
-              } else {
-                throw new Error('Failed to update file details');
+            if (message.includes('Processing file')) {
+              const match = message.match(/Processing file (\d+) of (\d+)/);
+              if (match && documentDiv) {
+                documentDiv.textContent = `Processing document ${match[1]} of ${match[2]}`;
               }
-            } catch (error) {
-              console.error('Error:', error);
-              alert('Failed to update file details: ' + error.message);
+            }
+            else if (message.includes('Processing page')) {
+              const match = message.match(/Processing page (\d+) of (\d+)/);
+              if (match && statusDiv) {
+                statusDiv.textContent = `Processing page ${match[1]} of ${match[2]}`;
+              }
             }
           };
-        });
 
-        // Add deleteBiomarker to window object so it's globally accessible
-        window.deleteBiomarker = async function (fileId, biomarkerName) {
-          if (!confirm(`Are you sure you want to delete ${biomarkerName}?`)) {
-            return;
+          ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+          };
+
+          const response = await fetch('/upload-files', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            ws.close();
+            alert('Files processed successfully!');
+            files.clear();
+            fileList.innerHTML = '';
+            updateProcessButton();
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+          } else {
+            throw new Error('Upload failed');
           }
+        } catch (error) {
+          alert('Error processing files: ' + error.message);
+        } finally {
+            hideLoading();
+        }
+      });
 
+      // Handle file deletions
+      document.querySelectorAll('.delete-file-btn').forEach(button => {
+        button.addEventListener('click', async function () {
+          if (!confirm('Are you sure you want to delete this file?')) return;
+
+          const fileId = this.dataset.fileId;
           try {
-            const response = await fetch('/delete-biomarker', {
+            const response = await fetch('/delete-file', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                fileId,
-                biomarkerName
-              })
+              body: JSON.stringify({ fileId })
             });
 
-            const result = await response.json();
-
             if (response.ok) {
-              // Remove the biomarker element from the UI
-              const biomarkerElement = document.querySelector(
-                `.lab-value[data-file-id="${fileId}"][data-biomarker="${biomarkerName}"]`
-              );
-              if (biomarkerElement) {
-                biomarkerElement.remove();
+              // Remove the file row from the UI
+              this.closest('.file-list-row').remove();
+
+              // If no files left, show the no files message
+              const filesList = document.querySelector('.uploaded-documents-list');
+              if (!filesList.querySelector('.file-list-row')) {
+                filesList.innerHTML = '<div class="no-files-message">No documents uploaded yet</div>';
               }
-              // Optional: show success message
-              alert('Biomarker deleted successfully!');
             } else {
-              throw new Error(result.message || 'Failed to delete biomarker');
+              throw new Error('Failed to delete file');
             }
           } catch (error) {
             console.error('Error:', error);
-            alert('Failed to delete biomarker: ' + error.message);
+            alert('Failed to delete file: ' + error.message);
           }
-        };
+        });
+      });
+    });
+  </script>
+  <script> // Biomarker editor
+    window.showBiomarkerDetails = function (name, value, unit, range, sourceDoc) {
+      const modal = document.getElementById('biomarkerDetailsModal');
+      const title = document.getElementById('biomarkerDetailsTitle');
+      const valueEl = document.getElementById('biomarkerValue');
+      const sourceEl = document.getElementById('biomarkerSource');
 
-        // DOM ready event listener for initialization
-        document.addEventListener('DOMContentLoaded', function () {
-          // Close modals
-          document.querySelectorAll('.close-modal').forEach(button => {
-            button.onclick = function () {
-              this.closest('.biomarker-modal').style.display = 'none';
-            }
+      title.textContent = name;
+      valueEl.textContent = `${value} ${unit} (Reference Range: ${range})`;
+      sourceEl.textContent = `Document: ${sourceDoc}`;
+
+      modal.style.display = 'block';
+    };
+
+    window.showBiomarkerEdit = function (name, value, unit, range, fileId) {
+      console.log('Edit biomarker called with:', { name, value, unit, range, fileId });
+      const modal = document.getElementById('biomarkerEditModal');
+      const title = document.getElementById('biomarkerEditTitle');
+      const valueInput = document.getElementById('editValue');
+      const unitInput = document.getElementById('editUnit');
+      const rangeInput = document.getElementById('editRange');
+      const fileIdInput = document.getElementById('editFileId');
+      const biomarkerNameInput = document.getElementById('editBiomarkerName');
+
+      title.textContent = `Edit ${name}`;
+      valueInput.value = value;
+      unitInput.value = unit;
+      rangeInput.value = range;
+      fileIdInput.value = fileId;
+      biomarkerNameInput.value = name;
+
+      console.log('Set fileId input value to:', fileId); // Debug log
+      modal.style.display = 'block';
+    };
+
+    window.formatDateForInput = function (dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toISOString().slice(0, 16);
+    };
+
+    window.showFileDetailsEdit = function (fileId, fileName, uploadDate, testDate) {
+      console.log('Edit button clicked:', { fileId, fileName, uploadDate, testDate });
+
+      const modal = document.getElementById('fileDetailsEditModal');
+      if (!modal) {
+        console.error('Modal element not found!');
+        return;
+      }
+
+      const fileIdInput = document.getElementById('editFileId');
+      const fileNameInput = document.getElementById('editFileName');
+      const uploadDateInput = document.getElementById('editUploadDate');
+      const testDateInput = document.getElementById('editTestDate');
+
+      if (!fileIdInput || !fileNameInput || !uploadDateInput || !testDateInput) {
+        console.error('One or more input elements not found!');
+        return;
+      }
+
+      try {
+        fileIdInput.value = fileId;
+        fileNameInput.value = fileName;
+        uploadDateInput.value = formatDateForInput(uploadDate);
+        testDateInput.value = formatDateForInput(testDate);
+
+        console.log('Set input values:', {
+          fileId: fileIdInput.value,
+          fileName: fileNameInput.value,
+          uploadDate: uploadDateInput.value,
+          testDate: testDateInput.value
+        });
+
+        modal.style.display = 'block';
+      } catch (error) {
+        console.error('Error setting input values:', error);
+      }
+    };
+
+    // Improved date formatting function
+    function formatDateForInput(dateString) {
+      if (!dateString) {
+        console.warn('Empty date string received');
+        return '';
+      }
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+          console.warn('Invalid date string:', dateString);
+          return '';
+        }
+        return date.toISOString().slice(0, 16);
+      } catch (error) {
+        console.error('Error formatting date:', error);
+        return '';
+      }
+    }
+
+    // Close modal if clicking outside
+    window.onclick = function (event) {
+      if (event.target.classList.contains('biomarker-modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      // Add to your existing event listeners
+      document.getElementById('fileDetailsEditForm').onsubmit = async function (e) {
+        e.preventDefault();
+
+        const fileId = document.getElementById('editFileId').value;
+        const fileName = document.getElementById('editFileName').value;
+        const uploadDate = document.getElementById('editUploadDate').value;
+        const testDate = document.getElementById('editTestDate').value;
+
+        try {
+          const response = await fetch('/update-file-details', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              fileId,
+              fileName,
+              uploadDate,
+              testDate
+            })
           });
 
-          // Close modal if clicking outside
-          window.onclick = function (event) {
-            if (event.target.classList.contains('biomarker-modal')) {
-              event.target.style.display = 'none';
-            }
+          if (response.ok) {
+            document.getElementById('fileDetailsEditModal').style.display = 'none';
+            window.location.reload();
+          } else {
+            throw new Error('Failed to update file details');
           }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to update file details: ' + error.message);
+        }
+      };
+    });
 
-          // Handle form submission
-          document.getElementById('biomarkerEditForm').onsubmit = async function (e) {
-            e.preventDefault();
+    // Add deleteBiomarker to window object so it's globally accessible
+    window.deleteBiomarker = async function (fileId, biomarkerName) {
+      if (!confirm(`Are you sure you want to delete ${biomarkerName}?`)) {
+        return;
+      }
 
-            // Get form values
-            const fileId = document.getElementById('editFileId').value;
-            const biomarkerName = document.getElementById('editBiomarkerName').value;
-            const value = document.getElementById('editValue').value;
-            const unit = document.getElementById('editUnit').value;
-            const range = document.getElementById('editRange').value;
+      try {
+        const response = await fetch('/delete-biomarker', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileId,
+            biomarkerName
+          })
+        });
 
-            // console.log('Submitting update:', { fileId, biomarkerName, value, unit, range }); // Debug log
+        const result = await response.json();
 
-            try {
+        if (response.ok) {
+          // Remove the biomarker element from the UI
+          const biomarkerElement = document.querySelector(
+            `.lab-value[data-file-id="${fileId}"][data-biomarker="${biomarkerName}"]`
+          );
+          if (biomarkerElement) {
+            biomarkerElement.remove();
+          }
+          // Optional: show success message
+          alert('Biomarker deleted successfully!');
+        } else {
+          throw new Error(result.message || 'Failed to delete biomarker');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to delete biomarker: ' + error.message);
+      }
+    };
 
-              const response = await fetch('/update-biomarker', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  fileId,
-                  biomarkerName,
-                  value,
-                  unit,
-                  referenceRange: range
-                })
-              });
-              const result = await response.json();
-              // console.log('Server response:', result); // Debug log
+    // DOM ready event listener for initialization
+    document.addEventListener('DOMContentLoaded', function () {
+      // Close modals
+      document.querySelectorAll('.close-modal').forEach(button => {
+        button.onclick = function () {
+          this.closest('.biomarker-modal').style.display = 'none';
+        }
+      });
 
-              if (response.ok) {
-                alert('Biomarker updated successfully!');
-                // Close the modal and refresh the page to show updated values
-                document.getElementById('biomarkerEditModal').style.display = 'none';
+      // Close modal if clicking outside
+      window.onclick = function (event) {
+        if (event.target.classList.contains('biomarker-modal')) {
+          event.target.style.display = 'none';
+        }
+      }
 
-                // Update the UI immediately
-                const biomarkerElement = document.querySelector(
-                  `.lab-value[data-file-id="${fileId}"][data-biomarker="${biomarkerName}"]`
-                );
+      // Handle form submission
+      document.getElementById('biomarkerEditForm').onsubmit = async function (e) {
+        e.preventDefault();
 
-                if (biomarkerElement) {
-                  biomarkerElement.querySelector('.test-value').textContent =
-                    `${parseFloat(value).toFixed(2)} ${unit}`;
-                  const rangeSpan = biomarkerElement.querySelector('.reference-range');
-                  if (rangeSpan) {
-                    rangeSpan.textContent = range ? `(Range: ${range})` : '';
-                  }
-                }
+        // Get form values
+        const fileId = document.getElementById('editFileId').value;
+        const biomarkerName = document.getElementById('editBiomarkerName').value;
+        const value = document.getElementById('editValue').value;
+        const unit = document.getElementById('editUnit').value;
+        const range = document.getElementById('editRange').value;
 
-                // Force a page refresh to ensure data is current
-                window.location.reload();
-              } else {
-                throw new Error(result.message || 'Failed to update biomarker');
+        // console.log('Submitting update:', { fileId, biomarkerName, value, unit, range }); // Debug log
+
+        try {
+
+          const response = await fetch('/update-biomarker', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              fileId,
+              biomarkerName,
+              value,
+              unit,
+              referenceRange: range
+            })
+          });
+          const result = await response.json();
+          // console.log('Server response:', result); // Debug log
+
+          if (response.ok) {
+            alert('Biomarker updated successfully!');
+            // Close the modal and refresh the page to show updated values
+            document.getElementById('biomarkerEditModal').style.display = 'none';
+
+            // Update the UI immediately
+            const biomarkerElement = document.querySelector(
+              `.lab-value[data-file-id="${fileId}"][data-biomarker="${biomarkerName}"]`
+            );
+
+            if (biomarkerElement) {
+              biomarkerElement.querySelector('.test-value').textContent =
+                `${parseFloat(value).toFixed(2)} ${unit}`;
+              const rangeSpan = biomarkerElement.querySelector('.reference-range');
+              if (rangeSpan) {
+                rangeSpan.textContent = range ? `(Range: ${range})` : '';
               }
-            } catch (error) {
-              console.error('Error:', error);
-              alert('Failed to update biomarker: ' + error.message);
             }
-          };
 
-          // Close the modal
-          document.getElementById('biomarkerEditModal').style.display = 'none';
-        });
-      </script>
-      <script> // Miscellaneous
-        // Make toggleLabValues available globally
-        window.toggleLabValues = function (header) {
-          const card = header.closest('.lab-result-card');
-          if (card) {
-            card.classList.toggle('expanded');
-            console.log('Toggled expanded class:', card.classList.contains('expanded')); // Debug log
+            // Force a page refresh to ensure data is current
+            window.location.reload();
+          } else {
+            throw new Error(result.message || 'Failed to update biomarker');
           }
-        };
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to update biomarker: ' + error.message);
+        }
+      };
 
-        // Add event listeners after DOM loads
-        document.addEventListener('DOMContentLoaded', function () {
-          // Prevent edit button from triggering dropdown
-          document.querySelectorAll('.edit-file-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-              e.stopPropagation();
-            });
-          });
+      // Close the modal
+      document.getElementById('biomarkerEditModal').style.display = 'none';
+    });
+  </script>
+  <script> // Miscellaneous
+    // Make toggleLabValues available globally
+    window.toggleLabValues = function (header) {
+      const card = header.closest('.lab-result-card');
+      if (card) {
+        card.classList.toggle('expanded');
+        console.log('Toggled expanded class:', card.classList.contains('expanded')); // Debug log
+      }
+    };
 
-          // Initialize dropdowns (if needed)
-          document.querySelectorAll('.lab-result-card').forEach(card => {
-            const header = card.querySelector('.lab-result-header');
-            if (header) {
-              header.addEventListener('click', function () {
-                toggleLabValues(this);
-              });
-            }
-          });
+    // Add event listeners after DOM loads
+    document.addEventListener('DOMContentLoaded', function () {
+      // Prevent edit button from triggering dropdown
+      document.querySelectorAll('.edit-file-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
         });
-      </script>
-      <script> // Open the page on the Output tab
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for tab parameter in the URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const tabParam = urlParams.get('tab');
+      });
+
+      // Initialize dropdowns (if needed)
+      document.querySelectorAll('.lab-result-card').forEach(card => {
+        const header = card.querySelector('.lab-result-header');
+        if (header) {
+          header.addEventListener('click', function () {
+            toggleLabValues(this);
+          });
+        }
+      });
+    });
+  </script>
+  <script> // Open the page on the Output tab
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for tab parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+        
+        // If tab parameter exists and matches one of our tabs
+        if (tabParam) {
+          // Find all tab links
+          const tabLinks = document.querySelectorAll('.in-page-link');
+          const tabPanes = document.querySelectorAll('.w-tab-pane');
+          
+          // Look for the tab that matches our parameter
+          tabLinks.forEach((link, index) => {
+            const tabName = link.getAttribute('data-w-tab');
             
-            // If tab parameter exists and matches one of our tabs
-            if (tabParam) {
-              // Find all tab links
-              const tabLinks = document.querySelectorAll('.in-page-link');
-              const tabPanes = document.querySelectorAll('.w-tab-pane');
-              
-              // Look for the tab that matches our parameter
-              tabLinks.forEach((link, index) => {
-                const tabName = link.getAttribute('data-w-tab');
-                
-                // If this is the tab we want to activate
-                if (tabName === tabParam) {
-                  // Remove active classes from all tabs
-                  tabLinks.forEach(l => {
-                    l.classList.remove('w--current');
-                  });
-                  
-                  tabPanes.forEach(p => {
-                    p.classList.remove('w--tab-active');
-                  });
-                  
-                  // Add active classes to the selected tab
-                  link.classList.add('w--current');
-                  tabPanes[index].classList.add('w--tab-active');
-                }
+            // If this is the tab we want to activate
+            if (tabName === tabParam) {
+              // Remove active classes from all tabs
+              tabLinks.forEach(l => {
+                l.classList.remove('w--current');
               });
+              
+              tabPanes.forEach(p => {
+                p.classList.remove('w--tab-active');
+              });
+              
+              // Add active classes to the selected tab
+              link.classList.add('w--current');
+              tabPanes[index].classList.add('w--tab-active');
             }
           });
-      </script>
-      <script> // Select all files checkboxes
-        document.addEventListener('DOMContentLoaded', function() {
-          // Select elements
-          const selectAllCheckbox = document.getElementById('selectAllFiles');
-          const fileCheckboxes = document.querySelectorAll('.file-checkbox');
-          const deleteSelectedBtn = document.getElementById('deleteSelectedFiles');
-          
-          if (selectAllCheckbox) {
-            // Toggle all checkboxes
-            selectAllCheckbox.addEventListener('change', function() {
-              const isChecked = this.checked;
-              fileCheckboxes.forEach(checkbox => {
-                checkbox.checked = isChecked;
-              });
-              
-              updateDeleteButtonState();
-            });
-          }
-          
-          // Update select all checkbox when individual checkboxes change
+        }
+      });
+  </script>
+  <script> // Select all files checkboxes
+    document.addEventListener('DOMContentLoaded', function() {
+      // Select elements
+      const selectAllCheckbox = document.getElementById('selectAllFiles');
+      const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+      const deleteSelectedBtn = document.getElementById('deleteSelectedFiles');
+      
+      if (selectAllCheckbox) {
+        // Toggle all checkboxes
+        selectAllCheckbox.addEventListener('change', function() {
+          const isChecked = this.checked;
           fileCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-              updateSelectAllCheckbox();
-              updateDeleteButtonState();
-            });
+            checkbox.checked = isChecked;
           });
           
-          // Delete selected files
-          if (deleteSelectedBtn) {
-            deleteSelectedBtn.addEventListener('click', async function() {
-              if (!confirm('Are you sure you want to delete the selected files?')) return;
-              
-              const selectedFileIds = Array.from(document.querySelectorAll('.file-checkbox:checked'))
-                .map(checkbox => checkbox.dataset.fileId);
-              
-              if (selectedFileIds.length === 0) return;
-              
-              try {
-                const response = await fetch('/delete-selected-files', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ fileIds: selectedFileIds })
-                });
-                
-                if (response.ok) {
-                  window.location.reload();
-                } else {
-                  throw new Error('Failed to delete files');
-                }
-              } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to delete files: ' + error.message);
-              }
+          updateDeleteButtonState();
+        });
+      }
+      
+      // Update select all checkbox when individual checkboxes change
+      fileCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          updateSelectAllCheckbox();
+          updateDeleteButtonState();
+        });
+      });
+      
+      // Delete selected files
+      if (deleteSelectedBtn) {
+        deleteSelectedBtn.addEventListener('click', async function() {
+          if (!confirm('Are you sure you want to delete the selected files?')) return;
+          
+          const selectedFileIds = Array.from(document.querySelectorAll('.file-checkbox:checked'))
+            .map(checkbox => checkbox.dataset.fileId);
+          
+          if (selectedFileIds.length === 0) return;
+          
+          try {
+            const response = await fetch('/delete-selected-files', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fileIds: selectedFileIds })
             });
-          }
-          
-          function updateSelectAllCheckbox() {
-            if (!selectAllCheckbox) return;
             
-            const totalCheckboxes = fileCheckboxes.length;
-            const checkedCheckboxes = document.querySelectorAll('.file-checkbox:checked').length;
-            
-            selectAllCheckbox.checked = totalCheckboxes > 0 && checkedCheckboxes === totalCheckboxes;
-            selectAllCheckbox.indeterminate = checkedCheckboxes > 0 && checkedCheckboxes < totalCheckboxes;
-          }
-          
-          function updateDeleteButtonState() {
-            if (!deleteSelectedBtn) return;
-            
-            const anyChecked = document.querySelectorAll('.file-checkbox:checked').length > 0;
-            deleteSelectedBtn.disabled = !anyChecked;
+            if (response.ok) {
+              window.location.reload();
+            } else {
+              throw new Error('Failed to delete files');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete files: ' + error.message);
           }
         });
-      </script>
-      <script> // Info button modal functionality
-        document.addEventListener('DOMContentLoaded', function() {
-          // Upload info button modal
-          const uploadInfoButton = document.querySelector('.info-button');
-          if (uploadInfoButton) {
-            uploadInfoButton.addEventListener('click', () => {
-              document.querySelector('.upload-info-modal').classList.add('active');
-            });
-          }
+      }
+      
+      function updateSelectAllCheckbox() {
+        if (!selectAllCheckbox) return;
+        
+        const totalCheckboxes = fileCheckboxes.length;
+        const checkedCheckboxes = document.querySelectorAll('.file-checkbox:checked').length;
+        
+        selectAllCheckbox.checked = totalCheckboxes > 0 && checkedCheckboxes === totalCheckboxes;
+        selectAllCheckbox.indeterminate = checkedCheckboxes > 0 && checkedCheckboxes < totalCheckboxes;
+      }
+      
+      function updateDeleteButtonState() {
+        if (!deleteSelectedBtn) return;
+        
+        const anyChecked = document.querySelectorAll('.file-checkbox:checked').length > 0;
+        deleteSelectedBtn.disabled = !anyChecked;
+      }
+    });
+  </script>
+  <script> // Info button modal functionality
+    // Replace your info button modal code with this
+    document.addEventListener('DOMContentLoaded', function() {
+      // Info button in uploads page
+      const uploadInfoButton = document.querySelector('.info-button');
+      const uploadInfoModal = document.querySelector('.upload-info-modal');
 
-          // Close modal handlers
-          document.querySelectorAll('.upload-info-modal .modal-background, .upload-info-modal .cancel-button, .upload-info-modal .modal-return-button').forEach(element => {
-            element.addEventListener('click', () => {
-              document.querySelector('.upload-info-modal').classList.remove('active');
-            });
+      if (uploadInfoButton && uploadInfoModal) {
+        // Add click handler to button
+        uploadInfoButton.addEventListener('click', function(e) {
+          console.log('Info button clicked');
+          e.preventDefault();
+          e.stopPropagation();
+          uploadInfoModal.classList.add('active');
+        });
+
+        // Add close handlers
+        const closeElements = uploadInfoModal.querySelectorAll('.modal-background, .cancel-button, .modal-return-button');
+        closeElements.forEach(element => {
+          element.addEventListener('click', function() {
+            uploadInfoModal.classList.remove('active');
           });
         });
-      </script>
+      } else {
+        console.error('Upload info button or modal not found', {
+          button: uploadInfoButton, 
+          modal: uploadInfoModal
+        });
+      }
+    });
+
+    // Test function to manually show modal
+    function showUploadInfoModal() {
+      const modal = document.querySelector('.upload-info-modal');
+      if (modal) {
+        modal.classList.add('active');
+        console.log("Modal should be visible now");
+      } else {
+        console.error("Modal element not found");
+      }
+    }
+  </script>
+  <!-- Add this script at the VERY END of your file, just before the closing </body> tag -->
+  <script>
+    (function() {
+      // Wait for the page to be fully loaded
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeModal);
+      } else {
+        initializeModal();
+      }
+      
+      function initializeModal() {
+        // Get modal elements
+        const modal = document.getElementById('simpleInfoModal');
+        const closeButton = document.getElementById('simpleModalCloseButton');
+        const closeX = document.getElementById('simpleModalCloseX');
+        const backButton = document.getElementById('simpleModalBackButton');
+        
+        // Get all info buttons (both our original and possibly others)
+        const infoButtons = document.querySelectorAll('.info-button');
+        
+        // Adjust modal padding based on sidebar width
+        function adjustModalPadding() {
+          const sidebar = document.querySelector('.sidebar');
+          if (sidebar) {
+            const sidebarWidth = sidebar.offsetWidth;
+            modal.style.paddingLeft = sidebarWidth + 'px';
+            
+            // Update the transparent area to match sidebar width
+            const transparentArea = modal.querySelector('div:first-child');
+            if (transparentArea) {
+              transparentArea.style.width = sidebarWidth + 'px';
+              transparentArea.style.left = -sidebarWidth + 'px';
+            }
+          }
+        }
+        
+        // Function to show modal
+        function showModal() {
+          if (modal) {
+            adjustModalPadding(); // Adjust padding before showing
+            modal.style.display = 'block';
+            
+            // Add keydown event listener for Escape key
+            document.addEventListener('keydown', handleEscKey);
+          }
+        }
+        
+        // Function to hide modal
+        function hideModal() {
+          if (modal) {
+            modal.style.display = 'none';
+            
+            // Remove keydown event listener
+            document.removeEventListener('keydown', handleEscKey);
+          }
+        }
+        
+        // Handle Escape key press
+        function handleEscKey(e) {
+          if (e.key === 'Escape') {
+            hideModal();
+          }
+        }
+        
+        // Add event listeners to close buttons
+        if (closeButton) {
+          closeButton.addEventListener('click', hideModal);
+        }
+        
+        if (closeX) {
+          closeX.addEventListener('click', hideModal);
+        }
+        
+        if (backButton) {
+          backButton.addEventListener('click', hideModal);
+        }
+        
+        // Add click handlers to all info buttons
+        if (infoButtons.length > 0) {
+          infoButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              showModal();
+            });
+          });
+          console.log(`Added click handlers to ${infoButtons.length} info buttons`);
+        } else {
+          console.warn('No info buttons found');
+        }
+        
+        // Click outside modal content to close (but not on the transparent sidebar area)
+        modal.addEventListener('click', function(e) {
+          // Close only if clicking the background, not the content or transparent sidebar area
+          if (e.target === modal) {
+            hideModal();
+          }
+        });
+        
+        // Make the functions available globally for debugging
+        window.showInfoModal = showModal;
+        window.hideInfoModal = hideModal;
+        
+        // Run adjustment once and on window resize
+        adjustModalPadding();
+        window.addEventListener('resize', adjustModalPadding);
+        
+        console.log('Modal initialization complete with matched styling');
+      }
+    })();
+  </script>
 </body>
 
 </html>

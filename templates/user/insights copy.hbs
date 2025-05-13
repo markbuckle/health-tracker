@@ -1035,32 +1035,39 @@
           // Base height of the tallest bar
           const maxBarHeight = 180;
           
-          // Apply heights with animation
-          setTimeout(() => {
-            // In Range
-            const inRangeValue = labsData.inRange || 0;
-            chartBars[0].style.height = inRangeValue > 0 ? `${maxBarHeight}px` : '10px';
-            
-            // Improving
-            const improvingValue = labsData.improving || 0;
-            chartBars[1].style.height = improvingValue > 0 ? 
-              `${Math.max(calculateBarHeight(improvingValue, maxValue), 40)}px` : '10px';
+          // Calculate and set heights
+          if (maxValue > 0) {
+            // In Range (always set to max height as the reference)
+            let inRangeHeight = maxBarHeight;
             
             // Out of Range
-            const outOfRangeValue = labsData.outOfRange || 0;
-            chartBars[2].style.height = outOfRangeValue > 0 ? 
-              `${Math.max(calculateBarHeight(outOfRangeValue, maxValue), 40)}px` : '10px';
+            let outOfRangeHeight = maxBarHeight * (labsData.outOfRange / maxValue);
             
-            // Declining
-            const decliningValue = labsData.declining || 0;
-            chartBars[3].style.height = decliningValue > 0 ? 
-              `${Math.max(calculateBarHeight(decliningValue, maxValue), 40)}px` : '10px';
-          }, 300);
-          
-          // Helper function to calculate bar height based on value
-          function calculateBarHeight(value, maxValue) {
-            if (value === 0) return 10; // Fixed height for zero values
-            return Math.max(Math.round(maxBarHeight * (value / maxValue)), 40);
+            // Improving
+            let improvingHeight = maxBarHeight * (labsData.improving / maxValue);
+            
+            // Declining (new)
+            let decliningHeight = maxBarHeight * (labsData.declining / maxValue);
+            
+            // Ensure minimum height for visibility
+            outOfRangeHeight = Math.max(outOfRangeHeight, 10);
+            improvingHeight = Math.max(improvingHeight, 10);
+            decliningHeight = Math.max(decliningHeight, 10);
+            
+            // Apply heights with animation
+            setTimeout(() => {
+              chartBars[0].style.height = `${inRangeHeight}px`;
+              chartBars[0].querySelector('.chart-value').textContent = labsData.inRange;
+              
+              chartBars[1].style.height = `${outOfRangeHeight}px`;
+              chartBars[1].querySelector('.chart-value').textContent = labsData.outOfRange;
+              
+              chartBars[2].style.height = `${improvingHeight}px`;
+              chartBars[2].querySelector('.chart-value').textContent = labsData.improving;
+              
+              chartBars[3].style.height = `${decliningHeight}px`;
+              chartBars[3].querySelector('.chart-value').textContent = labsData.declining;
+            }, 300);
           }
         }
 

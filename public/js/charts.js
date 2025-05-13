@@ -138,6 +138,7 @@ function addTemporaryStyling() {
             position: absolute !important;
             z-index: -1 !important;
             pointer-events: none !important;
+            transform: translateZ(0) !important; /* Force GPU rendering */
         }
         
         .temp-open-for-render {
@@ -147,9 +148,37 @@ function addTemporaryStyling() {
             position: absolute !important;
             z-index: -1 !important;
             pointer-events: none !important;
+            transform: translateZ(0) !important; /* Force GPU rendering */
+        }
+        
+        /* Add better sizing for chart containers */
+        [id^="biomarker-trend-"] {
+            min-height: 300px !important;
+            height: 350px !important;
+            width: 100% !important;
+            display: block !important;
         }
     `;
     document.head.appendChild(style);
+}
+
+/// Core chart functions
+
+// Add this function to your charts.js file:
+function forcePlotlyRender() {
+    document.querySelectorAll('[id^="biomarker-trend-"]').forEach(chart => {
+        try {
+            if (chart && chart.id) {
+                // Force the chart to use 100% width of its container
+                chart.style.width = '100%';
+                
+                // Tell Plotly to resize itself
+                Plotly.Plots.resize(chart.id);
+            }
+        } catch (e) {
+            // Ignore errors
+        }
+    });
 }
 
 // Core chart rendering function (optimized for performance)
@@ -158,6 +187,16 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         console.warn(`Element for biomarker ${biomarkerName} not found`);
         return;
     }
+
+    // IMPORTANT FIX: Set explicit dimensions BEFORE getting dimensions
+    biomarkerElement.style.width = '100%';
+    biomarkerElement.style.height = '350px';
+    biomarkerElement.style.minHeight = '300px';
+    biomarkerElement.style.minWidth = '200px';
+    biomarkerElement.style.display = 'block';
+
+    // Force layout recalculation
+    void biomarkerElement.offsetHeight;
     
     console.log(`Creating chart for biomarker: ${biomarkerName} in element:`, biomarkerElement.id);
     
@@ -166,31 +205,12 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     
     // If element has zero dimensions, try to force a size calculation
     if (rect.width === 0 || rect.height === 0) {
-        // Set explicit dimensions to ensure proper rendering
-        biomarkerElement.style.width = '100%';
-        biomarkerElement.style.height = '350px';
-        biomarkerElement.style.minHeight = '300px';
-        biomarkerElement.style.minWidth = '200px';
-        biomarkerElement.style.display = 'block';
-        
-        // Force layout recalculation
-        void biomarkerElement.offsetHeight;
-        
-        // Get updated dimensions
-        rect = biomarkerElement.getBoundingClientRect();
-        
-        console.log(`Forced dimensions for ${biomarkerName}:`, {width: rect.width, height: rect.height});
-        
-        // If still zero dimensions, use fallback values
-        if (rect.width === 0 || rect.height === 0) {
-            // Try to get parent width
-            const parentRect = biomarkerElement.parentElement?.getBoundingClientRect() || {width: 0};
-            rect = {
-                width: parentRect.width || 400,  // Use parent width or fallback to 400px
-                height: 350
-            };
-            console.log(`Using fallback dimensions for ${biomarkerName}:`, rect);
-        }
+        const parentRect = biomarkerElement.parentElement?.getBoundingClientRect() || {width: 0};
+        rect = {
+            width: parentRect.width || 350,  // Use parent width or fallback to 400px
+            height: 350
+        };
+        console.log(`Using fallback dimensions for ${biomarkerName}:`, rect);
     }
     
     const files = window.__INITIAL_DATA__?.files || [];
@@ -426,10 +446,12 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             x: 0.01,
             xanchor: 'left'
         },
-        height: containerHeight,
-        width: containerWidth,
+        height: 350,
+        // height: containerHeight,
+        // width: containerWidth,
         autosize: true,
-        margin: margins,
+        margin: { l: 50, r: 30, t: 80, b: 60 },
+        // margin: margins,
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         shapes: rangeShapes,
@@ -580,28 +602,13 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             .then(() => {
                 console.log(`Successfully plotted chart for ${biomarkerName}`);
                 
-                // Force a resize after creation to ensure proper layout
-                return Plotly.Plots.resize(document.getElementById(biomarkerElement.id));
-            })
-            .then(() => {
-                // Schedule a second resize after everything else has finished
-                setTimeout(() => {
-                    try {
-                        // Get current dimensions to check if they've changed
-                        const currentRect = biomarkerElement.getBoundingClientRect();
-                        console.log(`Delayed resize for ${biomarkerName}:`, {
-                            width: currentRect.width, 
-                            height: currentRect.height
-                        });
-                        
-                        // Only resize if needed
-                        if (currentRect.width > 0 && currentRect.height > 0) {
+                // One single, well-timed resize after everything else has likely finished
+                    setTimeout(() => {
+                        if (document.getElementById(biomarkerElement.id)) {
                             Plotly.Plots.resize(document.getElementById(biomarkerElement.id));
+                            console.log(`Resized chart for ${biomarkerName}`);
                         }
-                    } catch (err) {
-                        console.warn(`Error during delayed resize for ${biomarkerName}:`, err);
-                    }
-                }, 500);
+                    }, 250); // A quarter-second delay
             })
             .catch(error => {
                 console.error(`Error plotting chart for ${biomarkerName}:`, error);
@@ -640,12 +647,20 @@ function initializeBiomarkerCharts() {
         element.style.minHeight = '300px';
         element.style.height = '350px';
         element.style.width = '100%';
+        element.style.display = 'block';
         
         // If this chart is inside a collapsed container, temporarily make it visible for rendering
         const biomarkerContainer = element.closest('.biomarker-container');
         let wasExpanded = false;
+        let parentDisplay = null;
         
         if (biomarkerContainer && !biomarkerContainer.classList.contains('expanded')) {
+            parentDisplay = biomarkerContainer.style.display;
+            biomarkerContainer.style.height = 'auto';
+            biomarkerContainer.style.overflow = 'hidden';
+            biomarkerContainer.style.position = 'absolute';
+            biomarkerContainer.style.visibility = 'hidden';
+            biomarkerContainer.style.display = 'block';
             biomarkerContainer.classList.add('temp-expand-for-render');
             wasExpanded = true;
         }
@@ -654,13 +669,20 @@ function initializeBiomarkerCharts() {
         setTimeout(() => {
             createBiomarkerChart(element, biomarkerName);
             
-            // Remove temporary expansion class if we added it
-            if (wasExpanded) {
+             // Remove temporary expansion if we added it
+             if (wasExpanded) {
                 setTimeout(() => {
                     biomarkerContainer.classList.remove('temp-expand-for-render');
-                }, 100);
+                    if (parentDisplay !== null) {
+                        biomarkerContainer.style.display = parentDisplay;
+                    }
+                    biomarkerContainer.style.position = '';
+                    biomarkerContainer.style.visibility = '';
+                    biomarkerContainer.style.overflow = '';
+                    biomarkerContainer.style.height = '';
+                }, 300);
             }
-        }, 50);
+        }, 100);
     }
     
     // Check each biomarker against available elements
@@ -686,7 +708,9 @@ function initializeBiomarkerCharts() {
     });
 }
 
-// Event handlers and lifecycle functions
+/// Event handlers and lifecycle functions
+
+// Tab change handler
 function setupTabChangeHandlers() {
     // Add event listeners to all tab links
     document.querySelectorAll('.w-tab-link').forEach(tab => {
@@ -781,6 +805,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Also reinitialize charts after a delay to catch any rendering issues
     setTimeout(initializeBiomarkerCharts, 1000);
+
+    window.addEventListener('load', function() {
+        console.log('Window fully loaded, doing final chart initialization');
+        
+        // Wait for EVERYTHING to be truly done
+        setTimeout(() => {
+            forcePlotlyRender();
+            
+            // Try once more after another delay
+            setTimeout(forcePlotlyRender, 1000);
+        }, 500);
+    });
 });
 
 // Re-initialize on window resize for responsive behavior
