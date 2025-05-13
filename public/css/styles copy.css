@@ -555,27 +555,8 @@ body {
   display: none;
   padding: 0;
 }
-/* .w-tab-pane {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
-  will-change: opacity, transform;
-}
-.w-tab-pane {
-  opacity: 0;
-  transition: opacity 0.3s ease-out;
-  pointer-events: none;
-} */
 .w--tab-active {
   display: block;
-}
-.w-tab-pane.w--tab-active {
-  opacity: 1;
-  pointer-events: auto;
-}
-/* Ensure the active tab is on top */
-.w-tab-pane.w--tab-active {
-  z-index: 1;
 }
 .w-dyn-empty {
   padding: 10px;
@@ -604,7 +585,6 @@ body {
   margin-bottom: 0.5rem;
   display: flex;
   position: static;
-  contain: layout; /* Add containment for better performance */
 }
 
 .in-page-link {
@@ -619,7 +599,6 @@ body {
   margin-left: 0;
   margin-right: 0.4em;
   padding: 4px 12px;
-  transition: background-color 0.3s ease;
 }
 .in-page-link:hover {
   background-color: #b8b7b7;
@@ -640,23 +619,7 @@ body {
   font-size: 10px;
   text-align: center;
 }
-.columns.w-row {
-  display: flex;
-  flex-wrap: wrap;
-  contain: layout style; /* Add containment for better performance */
-}
-.column.w-col.w-col-6 {
-  contain: layout style; /* Add containment for better performance */
-}
-/* Reduce animation on page load */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    animation-delay: 0.001ms !important;
-  }
-}
+
 /* ------- dropdown styles --------- */
 .dropdown-wrapper {
   display: flex;
@@ -858,20 +821,18 @@ body {
 .biomarker-container {
   border-radius: 10px;
   width: auto;
-  --is-expanded: 0;
-  transition: none; /* Remove any transitions that could cause flickering */
 }
 /* .biomarker-container.show .biomarker-bottom {
     height: auto;
 } */
 .biomarker-container-hover {
-  contain: layout style;
   box-shadow: 1px 1px 5px #b1dee000;
   border: 0.25px solid #cacaca;
   border-radius: 5px;
   margin-top: 0.35rem;
-  transition: box-shadow 0.25s, transform 0.25s;
-  will-change: box-shadow, transform;
+  /* margin-left: 0.2rem; */
+  /* margin-right: 0.2rem; */
+  transition: all 0.25s;
 }
 .biomarker-container-hover:hover {
   box-shadow: 1px 1px 10px #99b6b785;
@@ -900,17 +861,6 @@ body {
   font-family: "Poppins-Regular", sans-serif;
   font-size: 14px;
 }
-/* .biomarker-dropdown {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  width: 1.25em;
-  height: 1.25em;
-  margin: auto;
-  position: relative;
-  cursor: pointer;
-} */
 .biomarker-dropdown {
   display: flex;
   flex-flow: column;
@@ -921,7 +871,6 @@ body {
   margin: auto;
   position: relative;
   cursor: pointer;
-  contain: layout; /* Add containment for better performance */
 }
 .biomarker-textbox {
   color: #666;
@@ -932,17 +881,8 @@ body {
 .biomarker-bottom {
   overflow: hidden;
   height: 0px;
-  opacity: 0;
-  visibility: hidden; /* Hide completely when collapsed */
   background-color: white;
   border-radius: 5px;
-  transition: height 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s linear 0.3s;
-}
-.biomarker-container.expanded .biomarker-bottom {
-  height: auto;
-  opacity: 1;
-  visibility: visible; /* Make visible when expanded */
-  transition: height 0.3s ease-out, opacity 0.3s ease-out, visibility 0s linear;
 }
 .biomarker-content-divider {
   padding-left: 20px;
@@ -971,51 +911,32 @@ body {
   margin: 0 auto;
 }
 
-/* .stripe-1 {
-  background-color: #8dbbd6;
-  width: 80%;
-  height: 0.15em;
-  position: relative;
-  transition: transform 0.3s ease-in-out;
-} */
 .stripe-1 {
   background-color: #8dbbd6;
   width: 80%;
   height: 0.15em;
   position: relative;
-  transform: rotate(0deg); /* Set initial rotation */
   transition: transform 0.3s ease-in-out;
-  will-change: transform;
 }
-/* .stripe-2 {
-  background-color: #8dbbd6;
-  width: 0.15em;
-  height: 80%;
-  position: absolute;
-  transition: all 0.3s ease-in-out;
-} */
+
 .stripe-2 {
   background-color: #8dbbd6;
   width: 0.15em;
   height: 80%;
   position: absolute;
-  transform: rotate(0deg); /* Set initial rotation */
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  will-change: transform, opacity;
+  transition: all 0.3s ease-in-out;
 }
 
 /* Modified spin classes */
 .stripe-1.spin {
   transform: rotate(0deg); /* Changed to 0deg to keep horizontal */
 }
-/* .stripe-2.spin {
+
+.stripe-2.spin {
   height: 0;
   opacity: 0;
-} */
-.stripe-2.spin {
-  transform: rotate(90deg); /* Rotate instead of changing height */
-  opacity: 0;
 }
+
 .html-embed {
   grid-column-gap: 0px;
   grid-row-gap: 0px;
@@ -1034,12 +955,8 @@ body {
   max-width: none;
   min-height: 400px;
   position: relative;
-  contain: layout style; /* Add containment for better performance */
 }
-/* Apply containment to all chart divs */
-[id^="biomarker-trend-"] {
-  contain: layout style;
-}
+
 .w-tab-pane .html-embed.chart {
   min-height: 400px;
   position: relative;
