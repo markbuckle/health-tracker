@@ -117,26 +117,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ---------------- MOBILE HEADER -------------------- //
 
-  function toggleMenu() {
+function toggleMenu() {
     var menu = document.querySelector('.mobile-menu');
+    
+    // Check if menu exists before trying to modify it
+    if (!menu) {
+      console.warn("Element with class 'mobile-menu' not found. Cannot toggle menu.");
+      return; // Exit the function early if menu doesn't exist
+    }
+    
     menu.classList.toggle('mobile-menu-closed');
-  }
-
-  toggleMenu();
+}
 
 // ---------------- SIDEBAR - RESPONSIVE MOBILE -------------------- //
 
-// function responsiveSidebar() {
-//     document.addEventListener('DOMContentLoaded', () => {
-//         const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-//         const sidebar = document.querySelector('.sidebar');
+function responsiveSidebar() {
+    document.addEventListener('DOMContentLoaded', () => {
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
 
-//         mobileMenuToggle.addEventListener('click', () => {
-//             sidebar.classList.toggle('open');
-//         });
-//     });
-// }
-// responsiveSidebar();
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    });
+}
+responsiveSidebar();
 
 // ---------------- REPORTS PAGE - DASHBOARD INTERACTIONS -------------------- //
 function initializeDashboard() {

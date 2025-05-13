@@ -107,6 +107,7 @@ body {
   width: 100%;
   height: auto;
   overflow: hidden;
+  z-index: 2;
 }
 .wave-pattern svg {
   width: 100%;
@@ -1184,14 +1185,22 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 14px;
   font-weight: bold;
-  margin: 0; /* Reset any margins that might affect spacing */
+  margin: 0 !important;
+}
+/* First and last dots alignment */
+.nav-dot:first-child {
+  margin-top: 0 !important; /* Align with top of card */
+}
+
+.nav-dot:last-child {
+  margin-bottom: 0 !important; /* Align with bottom of card */
 }
 .nav-dot span {
   opacity: 0.8;
@@ -1200,6 +1209,13 @@ body {
 .nav-dot.active {
   background-color: #5cb15d;
   transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(92, 177, 93, 0.4);
+}
+.nav-dot:hover {
+  transform: scale(1.05);
+}
+.nav-dot:active {
+  transform: scale(0.95);
 }
 .nav-dot.active span {
   opacity: 1;
@@ -1239,12 +1255,16 @@ body {
 .nav-indicator {
   position: absolute;
   width: 2px;
-  height: 100%;
   background-color: #d1dff0;
   z-index: 1;
   left: 50%;
   transform: translateX(-50%);
+  /* Adjust height and position to align with dots */
+  top: 15px !important; /* Align with center of first dot */
+  bottom: 15px !important; /* Align with center of last dot */
+  height: auto !important; /* Let top and bottom determine height */
 }
+
 .nav-divider-basics {
   background-color: #e1e6f0;
   height: 1px;
@@ -1401,6 +1421,8 @@ img,
 }
 .dashboard-img {
   background-color: #b3d6ff;
+  position: relative !important;
+  z-index: 1 !important; /* Lower than hero-wrapper */
 }
 .dashboard-content {
   margin-left: 10rem;
@@ -2478,21 +2500,33 @@ img,
 }
 /* ------- animated hero section ------- */
 .hero-wrapper {
-  height: 100vh;
-  position: sticky; /* Back to sticky */
-  top: 0;
-  padding: 4rem 2rem;
+  height: 100vh !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
   background-color: #e0ecee;
-  overflow: hidden;
-  z-index: 10;
+  overflow: hidden !important;
+  padding: 6rem 2rem;
+  margin-bottom: 275vh !important; /* Create space for 5 full viewport heights of scroll */
 }
-.hero-wrapper.sticky {
+/* Scroll spacer to create room for scrolling */
+.scroll-spacer {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100vh !important; /* Just enough to create a reference point */
+  bottom: -300vh !important; /* Match the margin-bottom */
+  left: 0 !important;
+  opacity: 0 !important; 
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+/* .hero-wrapper.sticky {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
-}
+} */
 .hero-text {
   display: block;
   font-size: 2.2rem; /* Reduced size */
@@ -2553,11 +2587,13 @@ img,
   animation: fadeSlideUp 0.8s ease forwards 0.9s;
 }
 .use-cases-container {
+  position: relative;
   display: flex;
-  max-width: 1200px;
+  max-width: 975px;
   margin: 0 auto;
   position: relative;
   min-height: 400px;
+  z-index: 3;
 }
 .use-cases {
   display: flex;
@@ -2567,17 +2603,21 @@ img,
   margin: 0 auto;
 }
 .use-cases-navigation {
+  /* Add calculated positioning */
   position: absolute;
   left: 0;
-  top: 0;
-  bottom: 0;
-  width: 30px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 50px 0;
-  height: 100%;
+  width: 30px;
+  z-index: 4;
+  /* Remove flexible positioning */
+  /* top: 20px !important; */
+  /* bottom: 20px !important; */
+  top: 60px !important;
+  bottom: 60px !important;
+  height: calc(100% - 120px) !important;
+  /* height: calc(100% - 40px) !important; */
+  justify-content: space-between !important;
 }
 .use-case {
   position: relative;
@@ -2601,18 +2641,21 @@ img,
   position: relative;
   height: 400px;
   perspective: 1000px;
+  z-index: 3 !important;
 }
 .use-case-card {
   position: absolute;
   width: 100%;
   background-color: white;
-  padding: 3rem 2rem 2rem;
+  margin-top: 2rem;
+  /* padding: 3rem 2rem 2rem; */
+  padding-top: 60px !important;
+  padding-bottom: 60px !important;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(149, 175, 211, 0.1);
   opacity: 0;
-  transform: translateY(100px);
   visibility: hidden;
-  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2620,11 +2663,14 @@ img,
   top: 0;
   left: 0;
 }
+/* #scrollHero {
+  position: relative;
+  z-index: 10;
+} */
 .use-case-card.active {
-  opacity: 1;
-  transform: translateY(0);
-  visibility: visible;
-  z-index: 5;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 5 !important;
 }
 .use-case-card.prev {
   opacity: 0;
@@ -2660,27 +2706,13 @@ img,
   line-height: 1.6;
   font-size: 1.1rem;
 }
-/* Scroll spacer to create room for scrolling */
-.scroll-spacer {
-  height: 400vh; /* 4x viewport height is enough for 5 cards */
-  width: 100%;
-  display: block;
-  pointer-events: none;
-  position: relative;
-  opacity: 0;
-  margin-bottom: -400vh; /* Negative margin to prevent pushing content down */
-}
 @media (max-width: 768px) {
+  .hero-wrapper {
+    padding: 2rem 1rem;
+  }
+  
   .use-cases-navigation {
-    flex-direction: column;
     width: 30px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    height: 100%;
-    padding: 50px 0;
-    margin: 0;
   }
   
   .nav-dot {
@@ -2689,9 +2721,36 @@ img,
     font-size: 13px;
   }
   
-  .nav-indicator {
-    width: 2px;
-    height: 100%;
+  .use-case-card {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-wrapper {
+    padding: 2rem 1rem;
+  }
+  
+  .use-case-card {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+  
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .icon-circle svg {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .use-case-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .use-case-card p {
+    font-size: 0.9rem;
   }
 }
 /* 
@@ -2699,7 +2758,7 @@ img,
   transform: translateY(-10px);
 } */
 
-.use-case::before {
+/* .use-case::before {
   content: "";
   position: absolute;
   top: -15px;
@@ -2713,7 +2772,7 @@ img,
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 /* .icon-circle {
   position: absolute;
@@ -2730,25 +2789,25 @@ img,
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 } */
 
-.use-case svg {
+/* .use-case svg {
   width: 30px;
   height: 30px;
   fill: white;
-}
+} */
 
-.use-case h3 {
+/* .use-case h3 {
   color: #333;
   font-size: 0.9rem;
   margin: 1.5rem 0 0.5rem;
-}
+} */
 
-.use-case p {
+/* .use-case p {
   color: #666;
   font-size: 0.75rem;
   line-height: 1.3;
-}
+} */
 
-.floating-dots {
+/* .floating-dots {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -2790,7 +2849,7 @@ img,
   .use-case {
     width: 100%;
   }
-}
+} */
 /* ------- footer ------- */
  /* Modern footer design */
  .footer {
@@ -7071,13 +7130,18 @@ body[data-insights-hover="true"] #Insights {
   font-size: 1.25rem;
   font-family: "Poppins-Bold", sans-serif;
 }
-.wave-light-bg, 
 .quote-background-1, 
-.dashboard-img,
-.quote-background-2,
-footer {
+.quote-background-2 {
+  position: relative !important;
+  z-index: 1 !important; /* Lower than hero-wrapper */
+}
+.wave-light-bg, .quote-background-1, .quote-background-2, .dashboard-img, footer {
   position: relative;
-  z-index: 11; /* One higher than hero-wrapper */
+  z-index: 20 !important; /* Higher than hero-wrapper */
+}
+.wave-light-bg:first-of-type {
+  position: relative !important;
+  z-index: 20 !important;
 }
 
 /* Responsive Styles */

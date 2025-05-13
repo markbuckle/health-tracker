@@ -43,7 +43,7 @@
       <div class="use-cases-container">
         <div class="use-cases-navigation">
           <div class="nav-indicator"></div>
-          <button class="nav-dot" data-index="0"><span>1</span></button>
+          <button class="nav-dot active" data-index="0"><span>1</span></button>
           <button class="nav-dot" data-index="1"><span>2</span></button>
           <button class="nav-dot" data-index="2"><span>3</span></button>
           <button class="nav-dot" data-index="3"><span>4</span></button>
@@ -51,7 +51,7 @@
         </div>
         
         <div class="use-cases-slider">
-          <div class="use-case-card" data-index="0">
+          <div class="use-case-card active" data-index="0">
             <div class="icon-circle">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
@@ -102,8 +102,8 @@
           </div>
         </div>
       </div>
-      
-      <!-- Hidden spacer to create scroll range -->
+  
+    <!-- This spacer is critical - it creates the scroll space needed -->
       <div class="scroll-spacer"></div>
     </div>
 
@@ -159,10 +159,17 @@
 
     {{> footer}}
 
-    <script src="js/main.js" defer type="module"></script>
+    {{!-- <script src="js/main.js" defer type="module"></script> --}}
     <script> // animated hero section (floating dots)
       function createDots() {
         const container = document.getElementById("floatingDots");
+        
+        // Check if container exists before trying to append to it
+        if (!container) {
+          console.warn("Element with ID 'floatingDots' not found. Skipping dot creation.");
+          return; // Exit the function early if container doesn't exist
+        }
+        
         const dotCount = 20;
 
         for (let i = 0; i < dotCount; i++) {
@@ -187,9 +194,6 @@
           container.appendChild(dot);
         }
       }
-
-      // Initialize dots
-      createDots();
 
       // Add hover effect to use cases
       document.querySelectorAll(".use-case").forEach((card) => {
@@ -251,74 +255,479 @@
         observer.observe(document.querySelector(".hero-title"));
       });
     </script>
-    <script> // Scroll-based hero slider functionality
-      // Modify this section in your existing JS
-document.addEventListener('DOMContentLoaded', function() {
-  const heroSection = document.getElementById('scrollHero');
-  if (!heroSection) return;
+    <script>
+// Add this as a separate script tag at the end of your page
+// This script focuses ONLY on the scroll functionality
+// Complete rewrite of the scrolling functionality
+// Complete rewrite of the scrolling functionality
+// Fixed scrolling implementation
+// Fixed scrolling implementation with improved card detection
+// Add this script to debug scroll behavior in real-time and adjust trigger points
+(function() {
+  console.log("Creating enhanced debug panel with adjusted trigger points");
   
-  const heroNavDots = heroSection.querySelectorAll('.nav-dot');
-  const heroCards = heroSection.querySelectorAll('.use-case-card');
-  const scrollSpacer = heroSection.querySelector('.scroll-spacer');
-  
-  if (heroNavDots.length === 0 || heroCards.length === 0) return;
-  
-  // Set initial state
-  let heroCurrentIndex = 0;
-  let lastScrollTop = 0;
-  let isAnimating = false;
-  
-  // Calculate the height needed for each card transition
-  const totalCards = heroCards.length;
-  const viewportHeight = window.innerHeight;
-  const cardHeight = viewportHeight * 0.8; // Each card takes 80% of viewport
-  const totalScrollHeight = cardHeight * totalCards;
-  
-  // Ensure scroll spacer has correct height
-  if (scrollSpacer) {
-    scrollSpacer.style.height = `${totalScrollHeight}px`;
-    scrollSpacer.style.marginBottom = `-${totalScrollHeight}px`;
-  }
-  
-  // Initialize first card
-  updateActiveCard(0);
-  
-  // Function to update active card
-  function updateActiveCard(index) {
-    // Your existing updateActiveCard function code...
-  }
-  
-  // Listen for scroll events
-  window.addEventListener('scroll', function() {
-    const scrollTop = window.scrollY;
-    const heroTop = heroSection.offsetTop;
+  document.addEventListener('DOMContentLoaded', function() {
+    // Create debug panel
+    const debugPanel = document.createElement('div');
+    debugPanel.style.cssText = `
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 300px;
+      padding: 12px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-family: monospace;
+      font-size: 12px;
+      border-radius: 5px;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0.9;
+    `;
     
-    // Only process when scrolling through the hero section + spacer
-    if (scrollTop >= heroTop && scrollTop < (heroTop + totalScrollHeight)) {
-      // Calculate which card should be active based on scroll position
-      const relativeScroll = scrollTop - heroTop;
-      const targetIndex = Math.min(Math.floor(relativeScroll / cardHeight), totalCards - 1);
+    document.body.appendChild(debugPanel);
+    
+    // Add buttons to control the debug panel
+    const controlPanel = document.createElement('div');
+    controlPanel.style.cssText = `
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      display: flex;
+      gap: 10px;
+      z-index: 10000;
+    `;
+    
+    const toggleButton = document.createElement('button');
+    toggleButton.textContent = 'Toggle Debug';
+    toggleButton.style.cssText = `
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    `;
+    
+    const resetButton = document.createElement('button');
+    resetButton.textContent = 'Reset Cards';
+    resetButton.style.cssText = `
+      padding: 5px 10px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    `;
+    
+    controlPanel.appendChild(toggleButton);
+    controlPanel.appendChild(resetButton);
+    document.body.appendChild(controlPanel);
+    
+    // Add functionality to buttons
+    toggleButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+    });
+    
+    resetButton.addEventListener('click', function(e) {
+      e.stopPropagation();
       
-      // Only update if the index has changed
-      if (targetIndex !== heroCurrentIndex) {
-        console.log(`Scrolling to card ${targetIndex}, scroll pos: ${scrollTop}`); // Debug logging
-        updateActiveCard(targetIndex);
-      }
-    } else if (scrollTop < heroTop && heroCurrentIndex !== 0) {
-      // If scrolling above hero section, set to first card
-      updateActiveCard(0);
-    } else if (scrollTop >= (heroTop + totalScrollHeight) && heroCurrentIndex !== totalCards - 1) {
-      // If scrolling below hero + spacer, set to last card
-      updateActiveCard(totalCards - 1);
+      // Find all cards and reset them
+      const cards = document.querySelectorAll('.use-case-card');
+      const navDots = document.querySelectorAll('.nav-dot');
+      
+      // Reset to first card
+      cards.forEach((card, i) => {
+        if (i === 0) {
+          card.classList.add('active');
+          card.style.opacity = '1';
+          card.style.visibility = 'visible';
+        } else {
+          card.classList.remove('active');
+          card.style.opacity = '0';
+          card.style.visibility = 'hidden';
+        }
+      });
+      
+      // Reset nav dots
+      navDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === 0);
+      });
+      
+      console.log("Cards reset to initial state");
+    });
+    
+    // Get required elements
+    const heroSection = document.getElementById('scrollHero');
+    let scrollSpacer = heroSection?.querySelector('.scroll-spacer');
+    const cards = heroSection?.querySelectorAll('.use-case-card');
+    const navDots = heroSection?.querySelectorAll('.nav-dot');
+    
+    // Check which card is currently active
+    function getActiveCardIndex() {
+      let activeIndex = -1;
+      cards?.forEach((card, index) => {
+        if (card.classList.contains('active')) {
+          activeIndex = index;
+        }
+      });
+      return activeIndex;
     }
     
-    // Update last scroll position
-    lastScrollTop = scrollTop;
+    // *** MODIFIED SECTION: Adjust trigger points calculation ***
+    const triggerPoints = [];
+    if (cards) {
+      const cardCount = cards.length;
+      const viewportHeight = window.innerHeight;
+      const heroTop = heroSection.offsetTop;
+      
+      // Create closer trigger points (60% of viewport height per card)
+      for (let i = 0; i < cardCount; i++) {
+        triggerPoints.push(heroTop + (i * viewportHeight * 0.6));
+      }
+      
+      console.log("Using adjusted trigger points:", triggerPoints);
+      
+      // Add our modified scroll handler (will override any existing ones)
+      window.addEventListener('scroll', function() {
+        const scrollY = window.scrollY;
+        
+        // Find which card to show based on our adjusted trigger points
+        let targetCard = 0;
+        for (let i = cardCount - 1; i >= 0; i--) {
+          if (scrollY >= triggerPoints[i]) {
+            targetCard = i;
+            break;
+          }
+        }
+        
+        // Only update if necessary
+        const currentActive = getActiveCardIndex();
+        if (targetCard !== currentActive) {
+          // Update cards
+          cards.forEach((card, i) => {
+            if (i === targetCard) {
+              card.classList.add('active');
+              card.style.opacity = '1';
+              card.style.visibility = 'visible';
+            } else {
+              card.classList.remove('active');
+              card.style.opacity = '0';
+              card.style.visibility = 'hidden';
+            }
+          });
+          
+          // Update dots
+          navDots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === targetCard);
+          });
+          
+          console.log(`Switched to card ${targetCard} at scroll position ${scrollY}`);
+        }
+      }, { passive: true });
+      
+      // Make nav dots work with our adjusted trigger points
+      navDots.forEach((dot, i) => {
+        dot.addEventListener('click', function() {
+          const index = parseInt(dot.getAttribute('data-index'));
+          // Scroll to adjusted trigger point
+          window.scrollTo({
+            top: triggerPoints[index],
+            behavior: 'smooth'
+          });
+        });
+      });
+    }
+    
+    // Update debug panel on scroll
+    window.addEventListener('scroll', function() {
+      if (!heroSection) {
+        debugPanel.innerHTML = "ERROR: Hero section not found!";
+        return;
+      }
+      
+      const scrollTop = window.scrollY;
+      const heroTop = heroSection.offsetTop;
+      const heroHeight = heroSection.offsetHeight;
+      const spacerHeight = scrollSpacer ? scrollSpacer.offsetHeight : 0;
+      const heroPosition = window.getComputedStyle(heroSection).position;
+      const heroZIndex = window.getComputedStyle(heroSection).zIndex;
+      
+      // Find which trigger zone we're in
+      let currentZone = -1;
+      for (let i = triggerPoints.length - 1; i >= 0; i--) {
+        if (scrollTop >= triggerPoints[i]) {
+          currentZone = i;
+          break;
+        }
+      }
+      
+      // Generate colorized output
+      debugPanel.innerHTML = `
+        <div style="margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #555; padding-bottom: 6px;">Enhanced Scroll Debug</div>
+        
+        <div style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Scroll position:</span>
+            <span>${scrollTop.toFixed(0)}px</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Hero top:</span>
+            <span>${heroTop}px</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Spacer height:</span>
+            <span>${spacerHeight}px</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Current zone:</span>
+            <span style="color: ${currentZone >= 0 ? '#4CAF50' : '#FF5252'}">${currentZone}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Active card:</span>
+            <span style="color: ${getActiveCardIndex() >= 0 ? '#4CAF50' : '#FF5252'}">${getActiveCardIndex()}</span>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 12px; border-bottom: 1px solid #555; padding-bottom: 6px;">
+          <div style="margin-bottom: 6px; font-weight: bold;">Adjusted Trigger Points:</div>
+          ${triggerPoints.map((point, i) => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span>Card ${i}:</span>
+              <span style="color: ${scrollTop >= point ? '#4CAF50' : '#FF5252'}">${point.toFixed(0)}px</span>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid #555; padding-bottom: 6px;">Sticky Status:</div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+          <span>Position:</span>
+          <span style="color: ${heroPosition === 'sticky' ? '#4CAF50' : '#FF5252'}">${heroPosition}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+          <span>Z-Index:</span>
+          <span>${heroZIndex}</span>
+        </div>
+      `;
+    });
+    
+    console.log("Enhanced debug panel with adjusted trigger points initialized");
   });
+})();
+</script>
+{{!-- <script>
+// Add this script to debug scroll behavior in real-time
+(function() {
+  console.log("Creating enhanced debug panel");
   
-  // Rest of your click and keyboard handling code...
-});
-    </script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Create debug panel
+    const debugPanel = document.createElement('div');
+    debugPanel.style.cssText = `
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 300px;
+      padding: 12px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-family: monospace;
+      font-size: 12px;
+      border-radius: 5px;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0.9;
+    `;
+    
+    document.body.appendChild(debugPanel);
+    
+    // Add buttons to control the debug panel
+    const controlPanel = document.createElement('div');
+    controlPanel.style.cssText = `
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      display: flex;
+      gap: 10px;
+      z-index: 10000;
+    `;
+    
+    const toggleButton = document.createElement('button');
+    toggleButton.textContent = 'Toggle Debug';
+    toggleButton.style.cssText = `
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    `;
+    
+    const resetButton = document.createElement('button');
+    resetButton.textContent = 'Reset Cards';
+    resetButton.style.cssText = `
+      padding: 5px 10px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    `;
+    
+    controlPanel.appendChild(toggleButton);
+    controlPanel.appendChild(resetButton);
+    document.body.appendChild(controlPanel);
+    
+    // Add functionality to buttons
+    toggleButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+    });
+    
+    resetButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      
+      // Find all cards and reset them
+      const cards = document.querySelectorAll('.use-case-card');
+      const navDots = document.querySelectorAll('.nav-dot');
+      
+      // Reset to first card
+      cards.forEach((card, i) => {
+        if (i === 0) {
+          card.classList.add('active');
+          card.style.opacity = '1';
+          card.style.visibility = 'visible';
+        } else {
+          card.classList.remove('active');
+          card.style.opacity = '0';
+          card.style.visibility = 'hidden';
+        }
+      });
+      
+      // Reset nav dots
+      navDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === 0);
+      });
+      
+      console.log("Cards reset to initial state");
+    });
+    
+    // Get required elements
+    const heroSection = document.getElementById('scrollHero');
+    let scrollSpacer = heroSection?.querySelector('.scroll-spacer');
+    const cards = heroSection?.querySelectorAll('.use-case-card');
+    const navDots = heroSection?.querySelectorAll('.nav-dot');
+    
+    // Check which card is currently active
+    function getActiveCardIndex() {
+      let activeIndex = -1;
+      cards?.forEach((card, index) => {
+        if (card.classList.contains('active')) {
+          activeIndex = index;
+        }
+      });
+      return activeIndex;
+    }
+    
+    // Calculate the trigger points (this should match your main script)
+    const triggerPoints = [];
+    if (cards) {
+      const cardCount = cards.length;
+      const totalScrollHeight = document.body.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      const scrollablePortion = totalScrollHeight - viewportHeight;
+      const segmentHeight = scrollablePortion / cardCount;
+      
+      for (let i = 0; i < cardCount; i++) {
+        triggerPoints.push(i * segmentHeight);
+      }
+    }
+    
+    // Update on scroll
+    window.addEventListener('scroll', function() {
+      if (!heroSection) {
+        debugPanel.innerHTML = "ERROR: Hero section not found!";
+        return;
+      }
+      
+      const scrollTop = window.scrollY;
+      const heroTop = heroSection.offsetTop;
+      const heroHeight = heroSection.offsetHeight;
+      const spacerHeight = scrollSpacer ? scrollSpacer.offsetHeight : 0;
+      const heroPosition = window.getComputedStyle(heroSection).position;
+      const heroZIndex = window.getComputedStyle(heroSection).zIndex;
+      
+      // Find which trigger zone we're in
+      let currentZone = -1;
+      for (let i = triggerPoints.length - 1; i >= 0; i--) {
+        if (scrollTop >= triggerPoints[i]) {
+          currentZone = i;
+          break;
+        }
+      }
+      
+      // Generate colorized output
+      debugPanel.innerHTML = `
+        <div style="margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #555; padding-bottom: 6px;">Enhanced Scroll Debug</div>
+        
+        <div style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Scroll position:</span>
+            <span>${scrollTop.toFixed(0)}px</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Hero top:</span>
+            <span>${heroTop}px</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Spacer height:</span>
+            <span>${spacerHeight}px</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Current zone:</span>
+            <span style="color: ${currentZone >= 0 ? '#4CAF50' : '#FF5252'}">${currentZone}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Active card:</span>
+            <span style="color: ${getActiveCardIndex() >= 0 ? '#4CAF50' : '#FF5252'}">${getActiveCardIndex()}</span>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 12px; border-bottom: 1px solid #555; padding-bottom: 6px;">
+          <div style="margin-bottom: 6px; font-weight: bold;">Trigger Points:</div>
+          ${triggerPoints.map((point, i) => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span>Card ${i}:</span>
+              <span style="color: ${scrollTop >= point ? '#4CAF50' : '#FF5252'}">${point.toFixed(0)}px</span>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid #555; padding-bottom: 6px;">Sticky Status:</div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+          <span>Position:</span>
+          <span style="color: ${heroPosition === 'sticky' ? '#4CAF50' : '#FF5252'}">${heroPosition}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+          <span>Z-Index:</span>
+          <span>${heroZIndex}</span>
+        </div>
+      `;
+    });
+    
+    console.log("Enhanced debug panel initialized");
+  });
+})();
+</script> --}}
     <script src="/js/feedbackWidget.js"></script>
   </body>
 </html>
