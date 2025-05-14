@@ -1643,7 +1643,15 @@ img,
   font-family: "Poppins-Regular", sans-serif;
   color: rgba(0, 0, 0, 0.847);
 }
-
+.profile-paragraph {
+  font-size: clamp(11px, 4vw, 13px);
+  font-family: "Poppins-Regular", sans-serif;
+  color: rgba(0, 0, 0, 0.847);
+  margin: 0.8rem 0;
+  line-height: 1.6;
+  text-align: justify;
+  max-width: 95%;
+}
 .standard-text,
 .hyperlink-text,
 .form-label,
@@ -4702,12 +4710,58 @@ img,
   color: white;
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  vertical-align: middle;
+}
+.blood-info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 65%;
+  border: none;
+  background-color: #33885182;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 20px;
   margin-left: 1rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
   vertical-align: middle;
 }
 
+.profile-intro-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+  font-size: clamp(11px, 4vw, 13px);
+  font-family: "Poppins-Regular", sans-serif;
+  color: rgba(0, 0, 0, 0.847);
+}
+
+.profile-info-modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+  position: fixed;
+  inset: 0%;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+  display: none;
+}
+
+.profile-info-modal.active {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+}
 /* ----- modal styles ------ */
 
 .modal-form {
@@ -4968,6 +5022,7 @@ label[for="customBloodType"] {
 .source-link a:hover {
   text-decoration: underline;
 }
+
 /* Responsive adjustments */
 @media screen and (max-width: 768px) {
   .blood-type-modal .modal-card {
