@@ -47,9 +47,12 @@
       <div>
         <h2 class="heading2">Profile</h2>
         <h3 class="subheading">Hello {{fname}} {{lname}}</h3>
-        <p class="profile-paragraph">
-          Complete your health profile to unlock personalized insights. Each section you fill out enhances our ability to generate meaningful Reports and Insights tailored specifically to you. The more complete and accurate your information, the more valuable your health analytics will become—helping you make informed decisions about your wellbeing.
-        </p>
+        <div class="profile-intro-container">
+          <span>Complete your health profile to unlock personalized insights.</span>
+          <button class="profile-info-button" aria-label="Show profile information">
+            {{> svg/info}}
+          </button>
+        </div>
         <div class="spacer-block"></div>
       </div>
     </div>
@@ -106,7 +109,7 @@
                         {{/if}}
                       {{/ifEqual}}
                   </span>
-                  <button class="profile-info-button" aria-label="Show blood type information">
+                  <button class="blood-info-button" aria-label="Show blood type information">
                     {{> svg/info}}
                   </button>
                 </div>
@@ -549,6 +552,27 @@
       </div>
       <div class="w-form-fail">
         <div>Oops! Something went wrong while submitting the form.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper profile-info-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a class="modal-return-button w-inline-block w--current" aria-current="page">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Profile Information</h1>
+      </div>
+      
+      <div class="modal-description">
+        <p>Each section you fill out enhances our ability to generate meaningful Reports and Insights tailored specifically to you.</p>
+        <p>The more complete and accurate your information, the more valuable your health analytics will become — helping you make informed decisions about your wellbeing.</p>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" aria-current="page" class="cancel-button cancel-space">Close</a>
       </div>
     </div>
   </div>
@@ -1607,74 +1631,141 @@
       checkBloodType();
     });
 
-// Blood Type Modal Functionality
-document.addEventListener('DOMContentLoaded', function() {
+    // Blood Type Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get references to the modal and button
+      const bloodTypeModal = document.querySelector('.blood-type-modal');
+      const bloodTypeInfoButton = document.querySelector('.blood-info-button');
+      
+      // Function to open the modal
+      function openBloodTypeModal() {
+        if (!bloodTypeModal) return;
+        
+        bloodTypeModal.style.display = 'flex';
+        setTimeout(() => {
+          bloodTypeModal.style.opacity = '1';
+          bloodTypeModal.style.visibility = 'visible';
+        }, 10);
+      }
+      
+      // Function to close the modal
+      function closeBloodTypeModal() {
+        if (!bloodTypeModal) return;
+        
+        bloodTypeModal.style.opacity = '0';
+        bloodTypeModal.style.visibility = 'hidden';
+        setTimeout(() => {
+          bloodTypeModal.style.display = 'none';
+        }, 300); // Allow time for the opacity transition
+      }
+      
+      // Add click event to the info button
+      if (bloodTypeInfoButton) {
+        bloodTypeInfoButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation(); // Prevent event bubbling
+          openBloodTypeModal();
+        });
+      }
+      
+        // Add click events to close the modal
+        if (bloodTypeModal) {
+          // Close when clicking the background
+          const modalBackground = bloodTypeModal.querySelector('.modal-background');
+          if (modalBackground) {
+            modalBackground.addEventListener('click', function(e) {
+              e.preventDefault();
+              closeBloodTypeModal();
+            });
+          }
+          
+          // Close when clicking the return button
+          const returnButton = bloodTypeModal.querySelector('.modal-return-button');
+          if (returnButton) {
+            returnButton.addEventListener('click', function(e) {
+              e.preventDefault();
+              closeBloodTypeModal();
+            });
+          }
+          
+          // Close when clicking the cancel button
+          const cancelButton = bloodTypeModal.querySelector('.cancel-button');
+          if (cancelButton) {
+            cancelButton.addEventListener('click', function(e) {
+              e.preventDefault();
+              closeBloodTypeModal();
+            });
+          }
+        }
+      });
+
+    // Profile Info Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
   // Get references to the modal and button
-  const bloodTypeModal = document.querySelector('.blood-type-modal');
-  const bloodTypeInfoButton = document.querySelector('.profile-info-button');
+  const profileInfoModal = document.querySelector('.profile-info-modal');
+  const profileInfoButton = document.querySelector('.profile-info-button');
   
   // Function to open the modal
-  function openBloodTypeModal() {
-    if (!bloodTypeModal) return;
+  function openProfileInfoModal() {
+    if (!profileInfoModal) return;
     
-    bloodTypeModal.style.display = 'flex';
+    profileInfoModal.style.display = 'flex';
     setTimeout(() => {
-      bloodTypeModal.style.opacity = '1';
-      bloodTypeModal.style.visibility = 'visible';
+      profileInfoModal.style.opacity = '1';
+      profileInfoModal.style.visibility = 'visible';
     }, 10);
   }
   
   // Function to close the modal
-  function closeBloodTypeModal() {
-    if (!bloodTypeModal) return;
+  function closeProfileInfoModal() {
+    if (!profileInfoModal) return;
     
-    bloodTypeModal.style.opacity = '0';
-    bloodTypeModal.style.visibility = 'hidden';
+    profileInfoModal.style.opacity = '0';
+    profileInfoModal.style.visibility = 'hidden';
     setTimeout(() => {
-      bloodTypeModal.style.display = 'none';
+      profileInfoModal.style.display = 'none';
     }, 300); // Allow time for the opacity transition
   }
   
   // Add click event to the info button
-  if (bloodTypeInfoButton) {
-    bloodTypeInfoButton.addEventListener('click', function(e) {
+  if (profileInfoButton) {
+    profileInfoButton.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation(); // Prevent event bubbling
-      openBloodTypeModal();
+      openProfileInfoModal();
     });
   }
   
-    // Add click events to close the modal
-    if (bloodTypeModal) {
-      // Close when clicking the background
-      const modalBackground = bloodTypeModal.querySelector('.modal-background');
-      if (modalBackground) {
-        modalBackground.addEventListener('click', function(e) {
-          e.preventDefault();
-          closeBloodTypeModal();
-        });
-      }
-      
-      // Close when clicking the return button
-      const returnButton = bloodTypeModal.querySelector('.modal-return-button');
-      if (returnButton) {
-        returnButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          closeBloodTypeModal();
-        });
-      }
-      
-      // Close when clicking the cancel button
-      const cancelButton = bloodTypeModal.querySelector('.cancel-button');
-      if (cancelButton) {
-        cancelButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          closeBloodTypeModal();
-        });
-      }
+  // Add click events to close the modal
+  if (profileInfoModal) {
+    // Close when clicking the background
+    const modalBackground = profileInfoModal.querySelector('.modal-background');
+    if (modalBackground) {
+      modalBackground.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeProfileInfoModal();
+      });
     }
-  });
-
+    
+    // Close when clicking the return button
+    const returnButton = profileInfoModal.querySelector('.modal-return-button');
+    if (returnButton) {
+      returnButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeProfileInfoModal();
+      });
+    }
+    
+    // Close when clicking the cancel button
+    const cancelButton = profileInfoModal.querySelector('.cancel-button');
+    if (cancelButton) {
+      cancelButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeProfileInfoModal();
+      });
+    }
+  }
+});
   </script>
   <script> // file upload handler
       document.addEventListener('DOMContentLoaded', function() {
