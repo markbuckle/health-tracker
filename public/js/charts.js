@@ -1,4 +1,4 @@
-//// Enhanced biomarker trend charts function
+// Enhanced biomarker trend charts function - FIXED VERSION
 
 /// Helper/Utility functions (loaded first)
 
@@ -28,7 +28,7 @@ function calculateTickInterval(range) {
     return magnitude * multiplier;
 }
 
-// Helper to checks if any reference range value is effectively the same as any auto-generated y-axis value, with a tiny margin of error to handle floating point precision issues
+// Helper to checks if any reference range value is effectively the same as any auto-generated y-axis value
 function isValueInArray(value, array, epsilon = 0.00001) {
     return array.some(item => Math.abs(item - value) < epsilon);
 }
@@ -90,8 +90,8 @@ function findLabValue(file, name) {
         }
     }
     
-    // Log when a biomarker isn't found
-    console.debug(`Could not find lab value for biomarker: ${name} in file:`, file.filename || 'unknown file');
+    // Log when a biomarker isn't found (at debug level to reduce noise)
+    // console.debug(`Could not find lab value for biomarker: ${name} in file:`, file.filename || 'unknown file');
     
     return null;
 }
@@ -129,8 +129,13 @@ function isElementVisible(element) {
 
 // Add CSS styles for temporary classes
 function addTemporaryStyling() {
+    // Avoid adding styles multiple times
+    if (document.getElementById('chart-temp-styles')) return;
+    
     const style = document.createElement('style');
+    style.id = 'chart-temp-styles';
     style.textContent = `
+        /* Hidden render containers - completely invisible */
         .temp-expand-for-render {
             height: auto !important;
             opacity: 0 !important;
@@ -139,6 +144,7 @@ function addTemporaryStyling() {
             z-index: -1 !important;
             pointer-events: none !important;
             transform: translateZ(0) !important; /* Force GPU rendering */
+            visibility: hidden !important;
         }
         
         .temp-open-for-render {
@@ -149,6 +155,7 @@ function addTemporaryStyling() {
             z-index: -1 !important;
             pointer-events: none !important;
             transform: translateZ(0) !important; /* Force GPU rendering */
+            visibility: hidden !important;
         }
         
         /* Add better sizing for chart containers */
@@ -198,8 +205,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     // Force layout recalculation
     void biomarkerElement.offsetHeight;
     
-    console.log(`Creating chart for biomarker: ${biomarkerName} in element:`, biomarkerElement.id);
-    
     // Check if element is actually visible (has dimensions)
     let rect = biomarkerElement.getBoundingClientRect();
     
@@ -210,12 +215,10 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             width: parentRect.width || 350,  // Use parent width or fallback to 400px
             height: 350
         };
-        console.log(`Using fallback dimensions for ${biomarkerName}:`, rect);
     }
     
     const files = window.__INITIAL_DATA__?.files || [];
     if (files.length === 0) {
-        console.warn('No files found in __INITIAL_DATA__');
         return;
     }
     
@@ -238,7 +241,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         .sort((a, b) => a.date - b.date);
 
     if (chartData.length === 0) {
-        console.warn(`No data points found for biomarker: ${biomarkerName}`);
         return;
     }
     
@@ -330,8 +332,6 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
     // We use a minimum of 350px width to ensure proper rendering in all cases
     const containerWidth = Math.max(rect.width, 350);
     const containerHeight = Math.max(rect.height, 300);
-    
-    console.log(`Chart container dimensions for ${biomarkerName}:`, {width: containerWidth, height: containerHeight});
     
     // Adjust margins based on container size
     const margins = {
@@ -447,11 +447,8 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
             xanchor: 'left'
         },
         height: 350,
-        // height: containerHeight,
-        // width: containerWidth,
         autosize: true,
         margin: { l: 50, r: 30, t: 80, b: 60 },
-        // margin: margins,
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         shapes: rangeShapes,
@@ -585,185 +582,116 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         staticPlot: false
     };
 
-    // Track this operation in window for debugging
-    window.lastPlotOperation = {
-        elementId: biomarkerElement.id,
-        biomarker: biomarkerName,
-        timestamp: new Date().toISOString(),
-        dimensions: {width: containerWidth, height: containerHeight}
-    };
-
     try {
-        // Clear any existing plot first
-        Plotly.purge(biomarkerElement.id);
+        // Check if element already has a plotly chart
+        const existingPlot = document.getElementById(biomarkerElement.id)?.querySelector('.plotly');
         
-        // Create new plot with a promise chain for better error handling
-        Plotly.newPlot(biomarkerElement.id, [trace], layout, config)
-            .then(() => {
-                console.log(`Successfully plotted chart for ${biomarkerName}`);
-                
-                // One single, well-timed resize after everything else has likely finished
-                    setTimeout(() => {
-                        if (document.getElementById(biomarkerElement.id)) {
-                            Plotly.Plots.resize(document.getElementById(biomarkerElement.id));
-                            console.log(`Resized chart for ${biomarkerName}`);
-                        }
-                    }, 250); // A quarter-second delay
-            })
-            .catch(error => {
-                console.error(`Error plotting chart for ${biomarkerName}:`, error);
-            });
+        if (existingPlot) {
+            // Update existing plot 
+            Plotly.react(biomarkerElement.id, [trace], layout, config);
+        } else {
+            // Create new plot
+            Plotly.newPlot(biomarkerElement.id, [trace], layout, config);
+        }
     } catch (error) {
         console.error(`Exception creating chart for ${biomarkerName}:`, error);
     }
 }
 
-// Main chart initialization function
-function initializeBiomarkerCharts() {
-    console.log('Starting biomarker chart initialization');
+// Optimized function to process visible charts only
+function processVisibleCharts() {
+    // Track processed charts to avoid duplicates
+    const processedCharts = new Set();
+    
+    // Process charts from active tab first
+    const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+    if (activeTab) {
+        processChartsInContainer(activeTab, processedCharts);
+    }
+}
+
+// Process charts within a specific container
+function processChartsInContainer(container, processedCharts) {
+    if (!container) return;
     
     const biomarkers = window.__INITIAL_DATA__?.biomarkers || [];
-    if (biomarkers.length === 0) {
-        console.warn('No biomarkers found in __INITIAL_DATA__');
-        return;
-    }
+    if (biomarkers.length === 0) return;
     
-    // Get current active tab
-    const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
-    if (!activeTab) {
-        console.warn('No active tab found');
-        return;
-    }
+    // Find all chart elements in the container
+    const chartElements = Array.from(container.querySelectorAll('[id^="biomarker-trend-"]'));
     
-    console.log('Initializing charts in active tab:', activeTab.getAttribute('data-w-tab'));
-    
-    // Process only visible charts in the current tab
-    const visibleChartElements = Array.from(activeTab.querySelectorAll('[id^="biomarker-trend-"]'));
-    console.log(`Found ${visibleChartElements.length} chart elements in active tab`);
-    
-    // Function to process chart after ensuring visibility
-    function processChart(element, biomarkerName) {
-        // Set minimum height and width to ensure proper rendering
-        element.style.minHeight = '300px';
-        element.style.height = '350px';
-        element.style.width = '100%';
-        element.style.display = 'block';
+    // Process each chart element
+    chartElements.forEach(element => {
+        // Skip if already processed
+        if (processedCharts.has(element.id)) return;
+        processedCharts.add(element.id);
         
-        // If this chart is inside a collapsed container, temporarily make it visible for rendering
-        const biomarkerContainer = element.closest('.biomarker-container');
-        let wasExpanded = false;
-        let parentDisplay = null;
+        // Find biomarker name from element ID
+        const elementId = element.id;
+        let biomarkerName = null;
         
-        if (biomarkerContainer && !biomarkerContainer.classList.contains('expanded')) {
-            parentDisplay = biomarkerContainer.style.display;
-            biomarkerContainer.style.height = 'auto';
-            biomarkerContainer.style.overflow = 'hidden';
-            biomarkerContainer.style.position = 'absolute';
-            biomarkerContainer.style.visibility = 'hidden';
-            biomarkerContainer.style.display = 'block';
-            biomarkerContainer.classList.add('temp-expand-for-render');
-            wasExpanded = true;
+        // Try to match biomarker name from element ID
+        for (const name of biomarkers) {
+            const standardizedName = name.toLowerCase().replace(/[\s()]/g, '').replace(/[-+]/g, '');
+            if (elementId.includes(standardizedName)) {
+                biomarkerName = name;
+                break;
+            }
         }
         
-        // Short delay to allow DOM to update
-        setTimeout(() => {
+        if (biomarkerName) {
+            // Process chart without extra DOM operations
             createBiomarkerChart(element, biomarkerName);
-            
-             // Remove temporary expansion if we added it
-             if (wasExpanded) {
-                setTimeout(() => {
-                    biomarkerContainer.classList.remove('temp-expand-for-render');
-                    if (parentDisplay !== null) {
-                        biomarkerContainer.style.display = parentDisplay;
-                    }
-                    biomarkerContainer.style.position = '';
-                    biomarkerContainer.style.visibility = '';
-                    biomarkerContainer.style.overflow = '';
-                    biomarkerContainer.style.height = '';
-                }, 300);
-            }
-        }, 100);
-    }
-    
-    // Check each biomarker against available elements
-    biomarkers.forEach(biomarker => {
-        // Create standardized name for DOM ID matching
-        const standardizedName = biomarker.toLowerCase()
-            .replace(/[\s()]/g, '')
-            .replace(/[-+]/g, '');
-            
-        // Find matching elements in the current active tab
-        const matchingElements = visibleChartElements.filter(el => {
-            const id = el.id.toLowerCase();
-            return id.includes(standardizedName) || 
-                   id.includes(biomarker.toLowerCase().replace(/[^a-z0-9]/g, ''));
-        });
-        
-        if (matchingElements.length > 0) {
-            console.log(`Found ${matchingElements.length} chart elements for ${biomarker}`);
-            matchingElements.forEach(element => {
-                processChart(element, biomarker);
-            });
         }
     });
+}
+
+// Main chart initialization function with debouncing
+let initializationInProgress = false;
+function initializeBiomarkerCharts() {
+    // Skip if already running
+    if (initializationInProgress) return;
+    initializationInProgress = true;
+    
+    // Try to find proper biomarker data
+    if (!window.__INITIAL_DATA__?.biomarkers) {
+        console.warn('No biomarker data found in __INITIAL_DATA__');
+        initializationInProgress = false;
+        return;
+    }
+    
+    // Process charts with visibility checking
+    processVisibleCharts();
+    
+    // Release lock after a short delay
+    setTimeout(() => {
+        initializationInProgress = false;
+    }, 100);
 }
 
 /// Event handlers and lifecycle functions
 
 // Tab change handler
 function setupTabChangeHandlers() {
-    // Add event listeners to all tab links
+    // Add event listeners to all tab links once
     document.querySelectorAll('.w-tab-link').forEach(tab => {
         tab.addEventListener('click', function() {
             // Get the target tab ID
             const targetTabId = this.getAttribute('data-w-tab');
-            console.log(`Tab changed to: ${targetTabId}`);
             
-            // Wait for tab change animation to complete
+            // Wait for tab change animation to complete 
             setTimeout(() => {
-                // Find all chart containers in the newly active tab
+                // Find the active tab based on the pane, not the link
                 const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
                 if (activeTab) {
-                    // Check if there are any collapsed biomarker containers that need to be expanded
-                    // for chart rendering
-                    const collapsedContainers = activeTab.querySelectorAll('.biomarker-container:not(.expanded)');
-                    
-                    // If the tab has dropdown content, we need special handling
-                    if (activeTab.querySelectorAll('.category-dropdown-list').length > 0) {
-                        console.log('Tab contains dropdown categories, initializing charts with expanded view');
-                        
-                        // Special handling for category tabs - make sure dropdowns are visible
-                        // for proper chart rendering
-                        const dropdowns = activeTab.querySelectorAll('.category-dropdown-list');
-                        let dropdownsOpen = false;
-                        
-                        dropdowns.forEach(dropdown => {
-                            if (!dropdown.classList.contains('w--open')) {
-                                dropdown.classList.add('temp-open-for-render');
-                                dropdownsOpen = true;
-                            }
-                        });
-                        
-                        // Wait for DOM update before initializing charts
-                        setTimeout(() => {
-                            initializeBiomarkerCharts();
-                            
-                            // Remove temporary classes after charts are initialized
-                            setTimeout(() => {
-                                document.querySelectorAll('.temp-open-for-render').forEach(el => {
-                                    el.classList.remove('temp-open-for-render');
-                                });
-                            }, 300);
-                        }, 100);
-                    } else {
-                        // Standard tab, just initialize charts
-                        initializeBiomarkerCharts();
-                    }
+                    // Process charts in the newly activated tab
+                    processVisibleCharts();
                 }
-            }, 300); // Increase timeout for tab change animation
+            }, 350); // Slightly longer than the tab transition
         });
     });
-    // Also handle biomarker container expansion/collapse events
+    
+    // Handle biomarker container expansion/collapse events
     document.querySelectorAll('.biomarker-container').forEach(container => {
         container.addEventListener('click', function(e) {
             // If this container has been expanded and contains a chart
@@ -784,10 +712,8 @@ function setupTabChangeHandlers() {
     });
 }
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready - one-time setup
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing biomarker charts...');
-
     // Add temporary styling classes
     addTemporaryStyling();
     
@@ -800,104 +726,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set up tab change handlers
     setupTabChangeHandlers();
     
-    // Initialize charts
-    initializeBiomarkerCharts();
-    
-    // Also reinitialize charts after a delay to catch any rendering issues
-    setTimeout(initializeBiomarkerCharts, 1000);
-
-    window.addEventListener('load', function() {
-        console.log('Window fully loaded, doing final chart initialization');
+    // Initial chart rendering - only once DOM is ready
+    setTimeout(() => {
+        initializeBiomarkerCharts();
         
-        // Wait for EVERYTHING to be truly done
-        setTimeout(() => {
-            forcePlotlyRender();
-            
-            // Try once more after another delay
-            setTimeout(forcePlotlyRender, 1000);
-        }, 500);
-    });
+        // Final resize after everything else is done
+        window.addEventListener('load', function() {
+            // Single resize once window is fully loaded (images, etc.)
+            setTimeout(forcePlotlyRender, 300);
+        });
+    }, 300); // Slight delay to ensure DOM is stable
 });
 
 // Re-initialize on window resize for responsive behavior
+let resizeTimeout;
 window.addEventListener('resize', function() {
     // Use a debounce to prevent too many updates
-    if (this.resizeTimeout) clearTimeout(this.resizeTimeout);
-    this.resizeTimeout = setTimeout(function() {
-        console.log('Window resized, reinitializing charts...');
-        initializeBiomarkerCharts();
-    }, 500);
+    if (resizeTimeout) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+        forcePlotlyRender();
+    }, 300);
 });
-
-// Create a function to manually trigger chart updates from console for debugging
-window.updateAllCharts = function() {
-    console.log('Manual chart update triggered');
-    
-    // Get current active tab
-    const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
-    if (!activeTab) {
-        console.warn('No active tab found');
-        return 'Error: No active tab found';
-    }
-    
-    console.log('Active tab:', activeTab.getAttribute('data-w-tab'));
-    
-    // Special handling for Category and Frequency tabs
-    const tabId = activeTab.getAttribute('data-w-tab');
-    if (tabId === 'Category' || tabId === 'Frequency') {
-        // For Category and Frequency tabs, temporarily expand dropdowns
-        const dropdowns = activeTab.querySelectorAll('.category-dropdown-list');
-        let openedDropdowns = false;
-        
-        dropdowns.forEach(dropdown => {
-            if (!dropdown.classList.contains('w--open')) {
-                dropdown.classList.add('temp-open-for-render');
-                openedDropdowns = true;
-            }
-        });
-        
-        // Force a layout recalculation
-        void activeTab.offsetHeight;
-        
-        // Render with forced option
-        initializeBiomarkerCharts(true);
-        
-        // Remove temporary classes after rendering
-        if (openedDropdowns) {
-            setTimeout(() => {
-                document.querySelectorAll('.temp-open-for-render').forEach(el => {
-                    el.classList.remove('temp-open-for-render');
-                });
-            }, 300);
-        }
-    } else {
-        // For "All" tab, do a standard render
-        initializeBiomarkerCharts(true);
-    }
-    
-    // Schedule a second render after a delay to ensure everything is properly sized
-    setTimeout(() => {
-        console.log('Secondary render to ensure proper sizing');
-        
-        // Resize any existing charts first
-        try {
-            const chartElements = activeTab.querySelectorAll('[id^="biomarker-trend-"]');
-            chartElements.forEach(el => {
-                if (el.id && document.getElementById(el.id)) {
-                    try {
-                        Plotly.Plots.resize(document.getElementById(el.id));
-                    } catch (err) {
-                        // Ignore errors from elements that aren't Plotly charts
-                    }
-                }
-            });
-        } catch (err) {
-            console.warn('Error resizing charts:', err);
-        }
-        
-        // Then do a full re-render
-        initializeBiomarkerCharts(true);
-    }, 500);
-    
-    return 'Chart update sequence started - check console for details';
-};
