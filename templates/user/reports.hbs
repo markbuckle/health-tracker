@@ -104,6 +104,13 @@
     </section>
 
     {{> dashboardContent}} {{{initialData}}}
+    <script> // Initialize data
+      window.__INITIAL_DATA__ = {
+        files: {{json files}},
+        biomarkers: {{json biomarkers}},
+        biomarkerInfo: {{json biomarkerData}}
+      };
+    </script> 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="js/rangeCalculations.js"></script>
     <script src="js/charts.js"></script>
@@ -252,13 +259,5 @@
         });
       });
     </script>
-
-    <script> // Initialize data
-      window.__INITIAL_DATA__ = {
-        files: {{json files}},
-        biomarkers: {{json biomarkers}},
-        biomarkerInfo: {{json biomarkerData}}
-      };
-    </script> 
   </body>
 </html>
