@@ -1,0 +1,233 @@
+/* ------ how-it-works ------- */
+:root {
+  --card-radius: 16px;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --primary-color: #4a90e2;
+}
+
+.credits-body {
+  background-color: #d7d7d7d7;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-section {
+  margin: 7rem auto;
+  width: 70%;
+  max-width: 100%;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.credits-title {
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: clamp(30px, 5vw, 42px);
+  color: #454545; /* Keep the grey color you wanted */
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+  background-image: linear-gradient(
+    90deg,
+    #454545 0%,
+    #454545 100%
+  );
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Create a separate element for the shine effect */
+.credits-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    #707070 0%,
+    #707070 45%,
+    #ffffff 50%,
+    #707070 55%,
+    #707070 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shine-text-once 3s forwards;
+  animation-delay: 0s;
+}
+@keyframes shine-text-once {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* You might want to adjust these responsive styles if needed */
+@media screen and (max-width: 768px) {
+  .credits-title::before {
+    animation-duration: 3.5s; /* Slightly slower on mobile */
+  }
+}
+
+/* For users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .credits-title::before {
+    animation: none;
+  }
+}
+.credits-subtitle {
+  text-align: center;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: clamp(16px, 2vw, 18px);
+  margin-bottom: 3rem;
+}
+
+/* Step cards */
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.step-block {
+  position: relative;
+  display: flex;
+  padding: 0 2rem 0 2rem; /* Make space for the step number */
+  /* min-height: 160px; */
+}
+
+.step-number {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  color: white;
+  letter-spacing: 1px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: "Poppins-Bold", sans-serif;
+  background: linear-gradient(135deg, #4379ba, #63b1f1);
+  box-shadow: 0 4px 10px rgba(67, 121, 186, 0.3);
+  z-index: 2;
+}
+
+.step-card {
+  flex: 1;
+  background-color: var(--grey-primary);
+  border-radius: var(--card-radius);
+  padding: 0.2rem;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.step-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.5s ease;
+  text-align: left;
+}
+
+.step-title {
+  color: #4379ba;
+  font-size: clamp(20px, 3vw, 24px);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-family: "Poppins-SemiBold", sans-serif;
+}
+
+.step-description {
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 400;
+  line-height: 1.6;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+/* Tablet Styles */
+/* @media screen and (max-width: 1024px) {
+  .content-section {
+    width: 85%;
+    margin: 5rem auto;
+  }
+  
+  .step-block {
+    padding: 0 4rem 0 4rem;
+  }
+  
+  .step-number {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
+  }
+} */
+
+/* Mobile Styles */
+@media screen and (max-width: 768px) {
+  .content-section {
+    width: 90%;
+    margin: 4rem auto;
+  }
+
+  .step-block {
+    padding: 3rem 0;
+  }
+
+  .step-number {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .step-card {
+    padding: 1.5rem;
+  }
+}
+
+/* Small Mobile Styles */
+@media screen and (max-width: 480px) {
+  .content-section {
+    width: 95%;
+    padding: 0 10px;
+  }
+  
+  .step-number {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+  
+  .step-card {
+    padding: 1.25rem;
+  }
+}

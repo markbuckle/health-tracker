@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Credits & Attributions</title>
+    <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/credits-styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="credits-body">
+    {{> header }}
+
+    <main class="content-section">
+        <h1 class="credits-title" data-text="Credits & Attributions">Credits & Attributions</h1>
+        <div class="credits-subtitle">Acknowledging the sources, inspirations, and tools that make HealthLync possible</div>
+        <div class="steps-container">
+            <!-- Content Section -->
+            <div class="step-block">
+                {{!-- <div class="step-number">01</div> --}}
+                <div class="step-card">
+                    <div class="step-content">
+                        <div class="step-title">Content & Medical Information</div>
+                        <p class="step-description">Select content, biomarker information and insights has been adapted from the following sources:</p>
+                        
+                        <div class="highlight">
+                            <strong>Dr. Peter Attia from The Drive and Early Medical</strong>
+                            <p>Information adapted from "The Drive" podcast and "Outlive: The Science and Art of Longevity" (2023).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technologies Section -->
+            <div class="step-block">
+                {{!-- <div class="step-number">02</div> --}}
+                <div class="step-card">
+                    <div class="step-content">
+                        <div class="step-title">Technologies & Frameworks</div>
+                        <p class="step-description">HealthLync is built using the following core technologies:</p>
+                        
+                        <div class="tech-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <div class="highlight" style="margin: 0; padding: 1rem;">
+                                <strong>Node.js & Express</strong>
+                                <p style="font-size: 0.9rem;">Backend framework for building the application server and API endpoints.</p>
+                                <p style="font-size: 0.8rem; color: #666; margin-bottom: 0;">License: MIT</p>
+                            </div>
+                            
+                            <div class="highlight" style="margin: 0; padding: 1rem;">
+                                <strong>MongoDB & Mongoose</strong>
+                                <p style="font-size: 0.9rem;">NoSQL database and ODM library for storing and managing user data.</p>
+                                <p style="font-size: 0.8rem; color: #666; margin-bottom: 0;">License: Open Source</p>
+                            </div>
+                            
+                            <div class="highlight" style="margin: 0; padding: 1rem;">
+                                <strong>PostgreSQL & pgvector</strong>
+                                <p style="font-size: 0.9rem;">Relational database with vector extensions for biomarker data management.</p>
+                                <p style="font-size: 0.8rem; color: #666; margin-bottom: 0;">License: PostgreSQL</p>
+                            </div>
+                            
+                            <div class="highlight" style="margin: 0; padding: 1rem;">
+                                <strong>PaddleOCR</strong>
+                                <p style="font-size: 0.9rem;">OCR library used for extracting lab values from medical documents.</p>
+                                <p style="font-size: 0.8rem; color: #666; margin-bottom: 0;">License: Apache 2.0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Open Source Libraries Section -->
+            <div class="step-block">
+                {{!-- <div class="step-number">03</div> --}}
+                <div class="step-card">
+                    <div class="step-content">
+                        <div class="step-title">Open Source Libraries</div>
+                        <p class="step-description">HealthLync uses numerous open source libraries and resources:</p>
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin: 1rem 0; font-family: inherit; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="background-color: rgba(92, 177, 93, 0.1); border-bottom: 2px solid #e1e6f0;">
+                                    <th style="padding: 0.75rem; text-align: left;">Library</th>
+                                    <th style="padding: 0.75rem; text-align: left;">Purpose</th>
+                                    <th style="padding: 0.75rem; text-align: left;">License</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #e1e6f0;">
+                                    <td style="padding: 0.75rem;">Express.js</td>
+                                    <td style="padding: 0.75rem;">Web framework</td>
+                                    <td style="padding: 0.75rem;">MIT</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e1e6f0; background-color: rgba(92, 177, 93, 0.05);">
+                                    <td style="padding: 0.75rem;">Handlebars (hbs)</td>
+                                    <td style="padding: 0.75rem;">Templating engine</td>
+                                    <td style="padding: 0.75rem;">MIT</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e1e6f0;">
+                                    <td style="padding: 0.75rem;">Passport.js</td>
+                                    <td style="padding: 0.75rem;">Authentication middleware</td>
+                                    <td style="padding: 0.75rem;">MIT</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e1e6f0; background-color: rgba(92, 177, 93, 0.05);">
+                                    <td style="padding: 0.75rem;">Multer</td>
+                                    <td style="padding: 0.75rem;">File upload handling</td>
+                                    <td style="padding: 0.75rem;">MIT</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #e1e6f0;">
+                                    <td style="padding: 0.75rem;">Plotly.js</td>
+                                    <td style="padding: 0.75rem;">Data visualization</td>
+                                    <td style="padding: 0.75rem;">MIT</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p class="step-description" style="font-size: 0.8rem; color: #666; margin-top: 1rem;">
+                            For a complete list of dependencies and their licenses, please refer to the project's package.json file.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Design & Media Section -->
+            <div class="step-block">
+                {{!-- <div class="step-number">04</div> --}}
+                <div class="step-card">
+                    <div class="step-content">
+                        <div class="step-title">Design & Media Resources</div>
+                        <p class="step-description">Visual elements and design resources used in HealthLync:</p>
+                        
+                        <div class="highlight">
+                            <strong>Poppins Font Family</strong>
+                            <p>Primary typeface used throughout the application.</p>
+                            <p style="font-size: 0.8rem; color: #666;">License: Open Font License</p>
+                        </div>
+                        
+                        <div class="highlight">
+                            <strong>Icons & Graphics</strong>
+                            <p>User interface icons and graphical elements.</p>
+                            <p style="font-size: 0.8rem; color: #666;">Various icons from open source collections, used under their respective licenses.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 2rem 0; font-size: 0.9rem; color: #666;">
+            Last updated: May 2025
+        </div>
+    </main>
+
+    <section>
+        <div>
+            <div class="wave-pattern">
+                {{> svg/wavePattern6}}
+            </div>
+        </div>
+    </section>
+
+    {{> footer}}
+
+    <script src="js/main.js" defer type="module"></script>
+</body>
+</html>
