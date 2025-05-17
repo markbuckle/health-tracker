@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Index</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/index-styles.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
   </head>
 
   <body class="home-body">
@@ -18,8 +20,8 @@
           <span class="hero-text">personalized</span> 
           <span class="hero-text">health portal</span>
         </h1>
-        <a href="/demo" class="button-basics btn-primary">
-          <div class="flex-horizontal">Try the demo</div>
+        <a href="/register" class="button-basics btn-primary">
+          <div class="flex-horizontal">TRY IT OUT</div>
         </a>
       </div>
       <img
@@ -43,11 +45,11 @@
       <div class="use-cases-container">
         <div class="use-cases-navigation">
           <div class="nav-indicator"></div>
-          <button class="nav-dot active" data-index="0"><span>1</span></button>
-          <button class="nav-dot" data-index="1"><span>2</span></button>
-          <button class="nav-dot" data-index="2"><span>3</span></button>
-          <button class="nav-dot" data-index="3"><span>4</span></button>
-          <button class="nav-dot" data-index="4"><span>5</span></button>
+          <button class="nav-dot active" data-index="0"><span></span></button>
+          <button class="nav-dot" data-index="1"><span></span></button>
+          <button class="nav-dot" data-index="2"><span></span></button>
+          <button class="nav-dot" data-index="3"><span></span></button>
+          <button class="nav-dot" data-index="4"><span></span></button>
         </div>
         
         <div class="use-cases-slider">
@@ -115,9 +117,9 @@
 
     <div class="quote-background-1">
       <div class="content-container quote-container-1">
-        <div class="quote-1">
-          Optimize your health with unique and actionable insights
-        </div>
+        <h1 class="quote-1">
+          Optimize your health with unique actionable insights
+        </h1>
       </div>
     </div>
 
@@ -145,9 +147,10 @@
         <div class="quote-2">
           &quot;This (system) change will not happen by the medical
           establishment, either; it will happen only if and when patients and
-          physicians demand it&quot; <br />- Dr. Peter Attia in his book
-          Outlive
+          physicians demand it&quot;
         </div>
+        <div class="quote-2-by">- Dr. Peter Attia in his book
+          Outlive</div>
       </div>
     </div>
 
@@ -159,7 +162,7 @@
 
     {{> footer}}
 
-    {{!-- <script src="js/main.js" defer type="module"></script> --}}
+    <script src="js/main.js" defer type="module"></script>
     <script> // animated hero section (floating dots)
       function createDots() {
         const container = document.getElementById("floatingDots");

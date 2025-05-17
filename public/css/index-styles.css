@@ -1,0 +1,949 @@
+/* ----- Hero Section Styles ----- */
+.hero {
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--header-height-default);
+  display: flex;
+}
+
+.hero-container {
+  flex-flow: column;
+  display: flex;
+  align-items: center;
+  width: auto;
+  max-width: 27rem;
+  margin-bottom: 2rem;
+}
+
+/* Hero title and animation styles */
+.hero-title {
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: #000000;
+  position: relative;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+  margin-top: 4rem;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  visibility: hidden;
+}
+
+.hero-title .green {
+  color: #5cb15d;
+  font-size: 1.0em;
+}
+
+.hero-text {
+  display: block;
+  font-size: 2.2rem;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+  opacity: 0;
+  transform: translateY(-15px);
+  animation: fadeSlideIn 1.1s ease forwards;
+  animation-delay: 1.2s;
+}
+
+/* Mobile Phone Image Style */
+.mobile {
+  margin-top: 3rem;
+  margin-bottom: auto;
+  max-width: 35%;
+  height: auto;
+  opacity: 0;
+  transform: translateX(100px);
+  animation: slideFromRight 1.1s ease-out forwards;
+  animation-delay: 2.5s;
+  visibility: hidden;
+}
+
+/* Quote Containers */
+.quote-container-1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-sm);
+  width: 100%;
+}
+
+.quote-container-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.quote-background-1 {
+  background-color: #b3d6ff;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.quote-background-2 {
+  background-color: #e0ecee;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.quote-1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 3rem 0 1rem 0;
+  padding: 0 0.25rem;
+  font-size: clamp(26px, 5vw, 30px);
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #333;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* .quote-2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5rem;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: clamp(18px, 5vw, 22px);
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #000000;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+  max-width: 70%;
+} */
+
+.quote-2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5rem;
+  font-family: "Kalam", cursive; /* Changed to a more readable serif font */
+  font-size: clamp(18px, 5vw, 24px); /* Slightly larger max font size */
+  line-height: 1.6; /* Slightly tighter line height */
+  letter-spacing: 0.01em; /* Slightly increased letter spacing */
+  text-align: center;
+  color: #333333; /* Darker text color for better contrast */
+  font-weight: 400; /* Regular weight */
+  font-style: italic; /* Adding italics for quotation emphasis */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* More subtle shadow */
+  max-width: 80%; /* Slightly wider to accommodate the new font */
+  position: relative; /* For quote marks if desired */
+  padding: 0 20px; /* Add some padding for quote marks */
+}
+.quote-2-by {
+  font-family: "Poppins-Regular", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4rem;
+  font-size: clamp(18px, 5vw, 24px); /* Slightly larger max font size */
+  line-height: 1.6; /* Slightly tighter line height */
+  letter-spacing: 0.01em; /* Slightly increased letter spacing */
+  text-align: center;
+  color: #333333; /* Darker text color for better contrast */
+  font-weight: 400; /* Regular weight */
+  font-style: italic; /* Adding italics for quotation emphasis */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* More subtle shadow */
+  max-width: 80%; /* Slightly wider to accommodate the new font */
+  position: relative; /* For quote marks if desired */
+  padding: 0 20px; /* Add some padding for quote marks */
+}
+/* .quote-2::before,
+.quote-2::after {
+  content: '"';
+  font-family: Georgia, serif;
+  font-size: 2em;
+  color: rgba(67, 121, 186, 0.4); /* Using your blue accent color */
+  /* position: absolute;
+  line-height: 1;
+} */
+
+/* .quote-2::before {
+  top: -15px;
+  left: 0;
+}
+
+.quote-2::after {
+  bottom: -30px;
+  right: 0;
+} */
+.quote-3 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.demo-page-img {
+  border: 1px solid #999797;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  padding-bottom: 0;
+  box-shadow: -4px 10px 16px 5px #0003;
+}
+
+/* ----- Animated Scroll Hero Section ----- */
+.hero-wrapper {
+  height: 125vh !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background-color: #e0ecee;
+  overflow: hidden !important;
+  padding: 4rem 2rem;
+  margin-bottom: 275vh !important;
+}
+
+.scroll-spacer {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100vh !important;
+  bottom: -300vh !important;
+  left: 0 !important;
+  opacity: 0 !important; 
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+/* Use Cases Slider Styles */
+.use-cases-container {
+  position: relative;
+  display: flex;
+  max-width: 975px;
+  margin: 0 auto;
+  min-height: 380px; /* Increased height */
+  z-index: 3;
+}
+
+.use-cases-navigation {
+  position: absolute;
+  left: 10px !important;
+  top: 20px !important;
+  bottom: 10px !important;
+  display: flex;
+  flex-direction: column;
+  width: 30px;
+  z-index: 4;
+  justify-content: space-between !important;
+  align-items: center;
+  height: 270px !important;
+  padding: 0;
+  box-sizing: border-box;
+}
+.use-cases-slider {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  height: 100%;
+  min-height: 300px;
+  perspective: 1000px;
+  z-index: 3 !important;
+}
+
+/* Navigation Dots */
+.nav-dot {
+  width: 20px; /* Reduced from 30px */
+  height: 20px; /* Reduced from 30px */
+  background-color: #b2c9e6;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px; /* Reduced from 14px */
+  font-weight: bold;
+  margin: 0 !important;
+}
+
+.nav-dot:first-child {
+  margin-top: 0 !important;
+}
+
+.nav-dot:last-child {
+  margin-bottom: 0 !important;
+}
+
+.nav-dot span {
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.nav-dot.active {
+  background-color: #5cb15d;
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(92, 177, 93, 0.4);
+}
+
+.nav-dot:hover {
+  transform: scale(1.05);
+}
+
+.nav-dot:active {
+  transform: scale(0.95);
+}
+
+.nav-dot.active span {
+  opacity: 1;
+}
+
+.nav-indicator {
+  position: absolute;
+  width: 2px;
+  background-color: #d1dff0;
+  z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0 !important;
+  bottom: 0 !important;
+  height: 100% !important; /* Use full height of the container */
+}
+
+/* Use Case Cards */
+.use-case-card {
+  position: absolute;
+  width: 100%;
+  background-color: white;
+  margin-top: 0;
+  padding: 50px 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(149, 175, 211, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  top: 0;
+  left: 0;
+  min-height: 300px;
+  box-sizing: border-box;
+}
+
+.use-case-card.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 5 !important;
+}
+
+.use-case-card.prev {
+  opacity: 0;
+  transform: translateY(-100px);
+  visibility: hidden;
+}
+
+.icon-circle {
+  width: 70px; /* Reduced from 80px */
+  height: 70px; /* Reduced from 80px */
+  background-color: #b2c9e6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem; /* Reduced from 1.5rem */
+  transition: transform 0.3s ease;
+}
+
+.use-case-card:hover .icon-circle {
+  transform: scale(1.1);
+}
+
+.icon-circle svg {
+  width: 40px; /* Reduced from 45px */
+  height: 40px; /* Reduced from 45px */
+  fill: white;
+}
+
+.use-case-card h3 {
+  font-size: 1.6rem;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.use-case-card p {
+  color: #666;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+/* ----- Hero Animations ----- */
+@keyframes slideFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-200px);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(200px);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dissolveIn {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: scale(1.2);
+  }
+  30% {
+    opacity: 0.4;
+    filter: blur(6px);
+    transform: scale(1.1);
+  }
+  60% {
+    opacity: 0.7;
+    filter: blur(3px);
+    transform: scale(1.05);
+  }
+  80% {
+    opacity: 0.9;
+    filter: blur(1px);
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+@keyframes shieldPulse {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+}
+
+.btn-primary {
+  opacity: 0;
+  transform: scale(1.2); 
+  animation: dissolveIn 1.1s ease-out forwards;
+  animation-delay: 2.5s;
+}
+
+.btn-primary-scrolled {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.shield {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 105%;
+  height: 105%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #88ed99;
+  border-radius: 8px;
+  opacity: 0;
+  animation: shieldPulse 0.9s ease-in-out 3;
+  animation-delay: 7s;
+}
+
+.no-animation {
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* ----- Z-Index Corrections ----- */
+.quote-background-1, 
+.quote-background-2 {
+  position: relative !important;
+  z-index: 1 !important; /* Lower than hero-wrapper */
+}
+.wave-light-bg, .quote-background-1, .quote-background-2, .dashboard-img, footer {
+  position: relative;
+  z-index: 20 !important;
+}
+
+.wave-light-bg:first-of-type {
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+/* ----- Media Queries ----- */
+/* @media screen and (max-width: 1024px) {
+  .hero-wrapper {
+    padding: 2rem 1rem;
+  }
+  
+  .use-cases-navigation {
+    width: 30px;
+  }
+  
+  .nav-dot {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+  
+  .use-case-card {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+} */
+
+@media (max-width: 768px) {
+  .hero-wrapper {
+    padding: 2rem 1rem;
+  }
+  
+  .use-cases-container {
+    min-height: 320px;
+  }
+  
+  .use-cases-slider {
+    min-height: 300px;
+  }
+  
+  .use-case-card {
+    min-height: 300px;
+    padding: 30px 20px;
+  }
+  
+  .use-cases-navigation {
+    height: 200px !important;
+  }
+  
+  .nav-dot {
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-wrapper {
+    padding: 2rem 1rem;
+  }
+  
+  .use-cases-container {
+    min-height: 300px;
+  }
+
+  .use-case-card {
+    padding: 25px 15px;
+    min-height: 280px;
+  }
+  
+  .icon-circle {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .icon-circle svg {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .use-case-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .use-case-card p {
+    font-size: 0.9rem;
+  }
+  
+  .use-cases-navigation {
+    height: 180px !important;
+  }
+}
+
+/* High-DPI screens */
+/* @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .demo-page-img {
+    box-shadow: -2px 5px 8px 2px #0003;
+  }
+} */
+
+/* -------------- feedback-widget.css ------------- */
+.feedback-widget {
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
+  z-index: 21;
+  font-family: "Poppins-Regular", sans-serif;
+  transition: all 0.3s ease;
+  max-width: 380px; /* Reduced from 420px */
+  width: calc(100% - 40px); /* Responsive width with margins */
+}
+
+.feedback-widget.closed {
+  width: auto;
+}
+.feedback-widget.open {
+  z-index: 21; /* High z-index only when open */
+}
+
+.feedback-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Changed to space-between for better icon distribution */
+  background-color: #5cb15d;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 0.75rem 0.75rem; /* Adjusted padding */
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  /* transition: all 0.3s ease; */
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.feedback-toggle:hover {
+  background-color: #46953f;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.feedback-toggle:active {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-icon {
+  width: 18px; /* Slightly smaller icon */
+  height: 18px;
+}
+
+.chat-icon {
+  width: 1.3rem; /* Slightly larger */
+  height: 1.3rem;
+}
+
+.question-icon {
+  width: 26px; /* Much larger than the chat icon */
+  height: 26px;
+  margin-right: -4px; /* Pull slightly right to center the visual weight */
+}
+
+.feedback-form-container {
+  background-color: white;
+  border-radius: 12px;
+  border: 1.5px solid var(--green-primary);
+  overflow: hidden;
+  margin-bottom: 5rem; /* Reduced to avoid overlap with toggle button */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(3px);
+  transition: all 0.3s ease;
+  /* max-height: 90vh; */
+  /* overflow-y: auto; Add scrolling for very small screens */
+}
+
+.feedback-widget.open .feedback-form-container {
+  opacity: 1;
+  visibility: visible;
+  margin-bottom: 3.5rem;
+  z-index: 11;
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.2rem; /* Reduced padding */
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky; /* Keep header visible when scrolling */
+  top: 0;
+  background-color: white;
+  z-index: 11;
+}
+
+.feedback-header h2 {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 17px; /* Slightly smaller */
+  color: #333;
+  margin: 0;
+}
+
+.feedback-close {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  padding: 4px;
+}
+
+.feedback-close:hover {
+  color: #333;
+  transform: rotate(90deg);
+}
+
+.feedback-form {
+  padding: 0.6rem 1.2rem; /* Reduced padding */
+}
+
+.form-group {
+  margin-bottom: 0.5rem; /* Reduced margin */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px; /* Reduced margin */
+  font-weight: 500;
+  color: #555;
+  font-size: 14px; /* Smaller font */
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.4rem 0.8rem; /* Smaller padding */
+  border: 1px solid #e1e6f0;
+  border-radius: 8px;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* Ensure padding doesn't increase width */
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #5cb15d;
+  box-shadow: 0 0 0 2px rgba(92, 177, 93, 0.2);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px; /* Slightly smaller minimum height */
+  max-height: 140px; /* Set maximum height */
+}
+
+.feedback-submit {
+  background-color: #5cb15d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem; /* Smaller padding */
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 15px; /* Smaller font */
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin-left: auto;
+  box-shadow: 0 2px 6px rgba(92, 177, 93, 0.2);
+}
+
+.feedback-submit:hover {
+  background-color: #46953f;
+  box-shadow: 0 4px 8px rgba(92, 177, 93, 0.3);
+  border: solid 0.5px #000;
+}
+
+.feedback-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
+}
+
+/* Success message */
+.feedback-success {
+  padding: 20px 24px;
+  text-align: center;
+  display: none;
+}
+
+.feedback-success h3 {
+  font-family: "Poppins-SemiBold", sans-serif;
+  color: #46953f;
+  margin-bottom: 12px;
+}
+
+.feedback-success p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.feedback-success.active {
+  display: block;
+}
+
+/* Response animation */
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-icon {
+  display: block;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  background-color: #eaf7ea;
+  border-radius: 50%;
+  padding: 15px;
+  animation: checkmark 0.5s ease-in-out;
+}
+
+.success-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: #46953f;
+}
+
+/* Media Queries */
+@media screen and (max-width: 480px) {
+  .feedback-widget {
+    max-width: 100%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .feedback-toggle {
+    right: 20px;
+    bottom: 20px;
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .feedback-form-container {
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .feedback-widget.open .feedback-toggle {
+    display: none;
+  }
+
+  .form-group textarea {
+    min-height: 70px;
+  }
+
+  .feedback-submit {
+    width: 100%; /* Full width button on mobile */
+    margin: 0;
+  }
+}
+
+/* Additional media query for high zoom levels */
+@media screen and (min-width: 481px) {
+  /* At high zoom, the widget might act like it's on a small screen */
+  .feedback-widget.open {
+    max-height: 100vh;
+    /* overflow-y: auto; */
+    right: 10px;
+  }
+
+  /* When the window is getting cramped (like at high zoom) */
+  @media (max-height: 600px) {
+    .feedback-form-container {
+      max-height: 85vh;
+      margin-bottom: 50px;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group textarea {
+      min-height: 60px;
+    }
+
+    .feedback-header {
+      padding: 12px 16px;
+    }
+
+    .feedback-form {
+      padding: 12px 16px;
+    }
+  }
+}
+
+/* Handle screen readers and accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .feedback-widget,
+  .feedback-form-container,
+  .feedback-close,
+  .feedback-toggle {
+    transition: none;
+  }
+}

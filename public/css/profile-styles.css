@@ -1,0 +1,639 @@
+/* ---- profile page ---- */
+.basic-info-div {
+    background-color: #fff;
+    border-radius: 15px;
+  }
+  .basic-info-subheader {
+    margin-right: 0.5rem;
+  }
+  .username-heading {
+    margin: 1rem auto 0.3rem 1.5rem;
+    font-family: "Poppins-SemiBold", sans-serif;
+    font-size: 24px;
+  }
+  .edit-icon {
+    color: #8b8c92;
+    width: auto;
+    height: auto;
+    margin-right: 10px;
+    display: none;
+  }
+  .edit-icon:hover {
+    color: #b4e8b3;
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+  .form-info {
+    width: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin-left: 10px;
+    font-size: 17px;
+    font-family: "Poppins-Regular", sans-serif;
+  }
+  .form-info-output {
+    width: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin-left: 1.5rem;
+    font-size: 17px;
+    font-family: "Poppins-Regular", sans-serif;
+    display: flex;
+  }
+  .edit-button-modal {
+    color: #000;
+    background-color: #ddd;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    max-width: 13rem;
+    margin: 10px 10px 15px;
+    margin-left: 0;
+    padding: 10px;
+    font-size: 12px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .edit-button-modal:hover {
+    background-color: #b4e8b3;
+    border-radius: 20px;
+  }
+  .button-text {
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    margin-right: 0.2rem;
+  }
+  .history-info {
+    max-width: 33%;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+    padding: 5px 0 5px 0;
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 16px;
+  }
+  .back-icon {
+    color: #57585b;
+    padding: 4px;
+    display: flex;
+  }
+  .form-text-field {
+    width: 100%; /* Full width */
+    line-height: normal;
+    font-size: large;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    transition: border-color 0.3s ease;
+  }
+  .form-text-field:focus {
+    outline: none;
+    border-color: #65b5e0;
+    box-shadow: 0 0 5px rgba(101, 181, 224, 0.5);
+  }
+  
+  .form-click-button {
+    font-size: medium;
+    padding: 5px 10px;
+    margin: 0.2rem 0.2rem 0.2rem 0;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    font-family: "Poppins-Regular", sans-serif;
+  }
+  
+  .form-click-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .form-click-button:active {
+    transform: scale(0.95);
+  }
+  .form-click-button,
+  .profile-button,
+  .cancel-button {
+    z-index: 1002;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .field-label {
+    display: block;
+    margin-top: 0.5rem;
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .profile-button {
+    border-radius: 20px;
+    display: block;
+    color: #534a4a;
+    background-color: #d7effc;
+    border: 3px dashed #65b5e0;
+    border-radius: 20px;
+    padding: 6px 12px;
+    margin-top: 1rem;
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 18px;
+    /* inset: auto 20px 10px auto; */
+  }
+  .profile-button.save {
+    color: #000;
+    background-color: #d7effc;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .profile-button.save:hover {
+    background-color: #80c8f0;
+    border-color: #1374a8;
+    transform: scale(1.05);
+  }
+  .profile-button.save:active {
+    background-color: #70cf96;
+  }
+  
+  .form {
+    margin-top: 1rem;
+  }
+  .w-input {
+    background-color: white;
+  }
+  .w-form-done {
+    display: none;
+    padding: 20px;
+    text-align: center;
+    background-color: #dddddd;
+  }
+  .w-form-fail {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #ffdede;
+  }
+  .profile-modal-button {
+    color: #000;
+    background-color: rgba(196, 196, 196, 0.719);
+    margin: 0.2rem 0.2rem 0.2rem 0;
+    padding: 5px 10px;
+    border: 1px solid #000;
+    font-size: medium;
+    font-family: "Poppins-Regular", sans-serif;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    pointer-events: auto;
+  }
+  .profile-modal-button:hover {
+    background-color: #e0e0e0;
+    border: 2px solid #000;
+  }
+  .profile-modal-button[data-selected="true"] {
+    background-color: lightblue;
+    color: #fff;
+  }
+  .sex-container {
+    display: flex;
+  }
+  .cancel-button {
+    color: #000;
+    background-color: #fff0;
+    margin-top: 10px;
+    padding: 0;
+    font-family: "Poppins-Regular", sans-serif;
+    text-decoration: underline;
+    display: block;
+  }
+  .cancel-button:hover {
+    transform: scale(1.05);
+  }
+  .cancel-space {
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+  }
+  .header-container-3 {
+    background: transparent;
+    display: flex;
+    justify-content: flex-start; /* Changed to flex-start to align logo to left */
+    align-items: center;
+    height: 70px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .edit-entry-button,
+  .delete-entry-button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0.1rem;
+    min-width: 3.5rem;
+  }
+  .edit-entry-button {
+    background-color: #9ad8a3;
+    color: rgb(0, 0, 0);
+    border: 1px solid #000000;
+    margin-left: 0.5rem;
+  }
+  .edit-entry-button:hover {
+    background-color: #78aa80;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .delete-entry-button {
+    background-color: #e5776a;
+    color: rgb(0, 0, 0);
+    border: 1px solid #000000;
+  }
+  .delete-entry-button:hover {
+    background-color: #b45d53;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .edit-entry-button:active,
+  .delete-entry-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+  .edit-entry-button:disabled,
+  .delete-entry-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .family-history-entry {
+    /* background-color: rgb(227, 227, 227); */
+    border-radius: 4px;
+    border: 1px solid rgb(201, 201, 201);
+    padding: 0.5rem 0;
+    margin: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .profile-info-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 65%;
+    border: none;
+    background-color: #33885182;
+    color: white;
+    font-family: "Poppins-SemiBold", sans-serif;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    vertical-align: middle;
+  }
+  .blood-info-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 65%;
+    border: none;
+    background-color: #33885182;
+    color: white;
+    font-family: "Poppins-SemiBold", sans-serif;
+    font-size: 20px;
+    margin-left: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    vertical-align: middle;
+  }
+  
+  .profile-intro-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
+    font-size: clamp(11px, 4vw, 13px);
+    font-family: "Poppins-Regular", sans-serif;
+    color: rgba(0, 0, 0, 0.847);
+  }
+  
+  .profile-info-modal {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+    position: fixed;
+    inset: 0%;
+    justify-content: center;
+    align-items: center;
+    pointer-events: all;
+    display: none;
+  }
+  
+  .profile-info-modal.active {
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+  }
+
+  /* ----- updated profile styles ------- */
+
+/* Family History Table Styles */
+.family-history-container {
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 1.5rem 1rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.family-history-table-header {
+  display: flex;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.family-history-entry {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.family-history-entry:last-child {
+  border-bottom: none;
+}
+
+.family-history-entry:hover {
+  background-color: #f8f9fa;
+}
+
+.family-history-column {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 14px;
+}
+
+.condition-column {
+  flex: 3;
+  font-weight: 500;
+  min-width: 180px;
+}
+
+.relatives-column {
+  flex: 3;
+  min-width: 180px;
+}
+
+.notes-column {
+  flex: 4;
+  min-width: 200px;
+}
+
+.actions-column {
+  flex: 2;
+  justify-content: center; /* Center the actions column content */
+  gap: 8px;
+  min-width: 150px;
+  text-align: center;
+}
+
+.family-history-table-header .actions-column {
+  justify-content: center; /* Center the Actions header */
+}
+
+.family-history-entry .actions-column {
+  justify-content: center; /* Center the action buttons */
+}
+
+.family-history-table-header .family-history-column {
+  font-family: "Poppins-SemiBold", sans-serif;
+  color: #4b5563;
+}
+
+.edit-entry-button-2,
+.delete-entry-button-2 {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.edit-entry-button-2 {
+  background-color: #edf7ed;
+  color: #46953f;
+}
+
+.edit-entry-button-2:hover {
+  background-color: #d3e9d3;
+}
+
+.delete-entry-button-2 {
+  background-color: #fdeded;
+  color: #dc3545;
+}
+
+.delete-entry-button-2:hover {
+  background-color: #f8d7d7;
+}
+
+.family-history-empty {
+  padding: 20px;
+  text-align: left;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Improved Add Button */
+.add-history-button {
+  display: flex;
+  width: 6rem;
+  gap: 8px;
+  background-color: #9b9b9b;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 15px;
+  border: none;
+  border-radius: 28px;
+  padding: 0.5rem 1rem;
+  margin: 0 1rem 1rem 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
+  transition: all 0.3s ease;
+}
+
+.add-history-button:hover {
+  background-color: #83ba7d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(92, 177, 93, 0.3);
+}
+
+.add-history-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
+}
+
+.add-button-icon {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .family-history-table-header,
+  .family-history-entry {
+    flex-direction: column;
+    padding: 10px 0;
+  }
+
+  .family-history-column {
+    padding: 6px 16px;
+  }
+
+  .family-history-table-header {
+    display: none; /* Hide headers on mobile */
+  }
+
+  .condition-column,
+  .relatives-column,
+  .notes-column,
+  .actions-column {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .actions-column {
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+
+  /* Add mobile labels */
+  .relatives-column::before {
+    content: "Relatives: ";
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  .notes-column::before {
+    content: "Notes: ";
+    font-weight: 600;
+    margin-right: 6px;
+  }
+}
+
+.entry-card {
+  width: auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e1e6f0;
+  transition: all 0.2s ease;
+}
+
+.entry-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.entry-label {
+  font-weight: 600;
+  color: #333;
+  margin-right: 8px;
+}
+
+.entry-value {
+  color: #555;
+}
+
+.entry-row {
+  /* display: flex; */
+  align-items: baseline;
+}
+
+.entry-actions {
+  display: flex;
+  margin-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 0.5rem;
+  gap: 0.25em;
+}
+
+.edit-entry-button, .delete-entry-button {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  margin-right: 10px;
+}
+
+.edit-entry-button {
+  background-color: #e1f5e1;
+  color: #46953f;
+}
+
+.edit-entry-button:hover {
+  background-color: #c5eac5;
+}
+
+.delete-entry-button {
+  background-color: #ffebeb;
+  color: #e74c3c;
+}
+
+.delete-entry-button:hover {
+  background-color: #ffd5d5;
+}
+
+.section-empty {
+  /* padding: 30px; */
+  text-align: left;
+  color: #777;
+  font-style: italic;
+}
+
+.add-button-container {
+  margin-top: 0;
+}
+
+.edit-button-modal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d1d1d1;
+  background-color: #f5f7fa;
+  border: 1px solid #d1d1d1;
+  color: #333;
+  padding: 0.25rem 0.5rem;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.edit-button-modal:hover {
+  background-color: #e1f5e1;
+  border: 0.25px solid #777;
+}
+
+.button-text {
+  display: flex;
+  align-items: center;
+}
+
+.button-text::before {
+  content: "+";
+  margin-right: 5px;
+  font-size: 18px;
+}

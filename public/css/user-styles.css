@@ -1,0 +1,709 @@
+/* --- w-tabs ---- */
+.w-tabs {
+    position: relative;
+  }
+  .w-tabs:before,
+  .w-tabs:after {
+    content: " ";
+    display: table;
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+  .w-tabs:after {
+    clear: both;
+  }
+  .w-tab-link {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    text-decoration: none;
+    padding: 9px 30px;
+    text-align: center;
+    cursor: pointer;
+    color: #222222;
+    background-color: #dddddd;
+  }
+  .w-tab-link.w--current {
+    background-color: #c8c8c8;
+  }
+  .w-tab-content {
+    position: relative;
+    display: block;
+    overflow: visible;
+  }
+  .w-tab-pane {
+    position: relative;
+    display: none;
+    padding: 0;
+  }
+  /* .w-tab-pane {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: opacity, transform;
+  }
+  .w-tab-pane {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none;
+  } */
+  .w--tab-active {
+    display: block;
+  }
+  .w-tab-pane.w--tab-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Ensure the active tab is on top */
+  .w-tab-pane.w--tab-active {
+    z-index: 1;
+  }
+  .w-dyn-empty {
+    padding: 10px;
+    background-color: #dddddd;
+  }
+  .w-dyn-hide,
+  .w-dyn-bind-empty,
+  .w-condition-invisible {
+    display: none !important;
+  }
+  /* .wf-layout-layout {
+      display: grid;
+  } */
+  .w-code-component > * {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .in-page-menu {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin-top: 10px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    position: static;
+    contain: layout; /* Add containment for better performance */
+  }
+  
+  .in-page-link {
+    color: #1c1c1c;
+    background-color: #e1e6f0;
+    border: 1px solid #b7b7b7;
+    border-radius: 100px;
+    flex: none;
+    width: auto;
+    min-width: 4rem;
+    text-align: center;
+    margin-left: 0;
+    margin-right: 0.4em;
+    padding: 4px 12px;
+    transition: background-color 0.3s ease;
+  }
+  .in-page-link:hover {
+    background-color: #b8b7b7;
+  }
+  .in-page-link.w--current {
+    background-color: #cfcfcf;
+    color: rgb(18, 18, 18);
+  }
+  .in-page-link.w--current:hover {
+    background-color: #cfcfcf;
+  }
+  .w-inline-block {
+    max-width: 100%;
+    /* display: inline-flex; */
+  }
+  .text-block {
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 10px;
+    text-align: center;
+  }
+  .columns.w-row {
+    display: flex;
+    flex-wrap: wrap;
+    contain: layout style; /* Add containment for better performance */
+  }
+  .column.w-col.w-col-6 {
+    contain: layout style; /* Add containment for better performance */
+  }
+  /* Reduce animation on page load */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      animation-delay: 0.001ms !important;
+    }
+  }
+  /* ------- dropdown styles --------- */
+  .dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    padding: 0;
+    margin: 0;
+  }
+  .user-content-bg {
+    background-color: white;
+    border-radius: 10px;
+    border: 0.1px solid #d8d8d8a7;
+  }
+  .dropdown-content-top {
+    background-color: #fff;
+    border-radius: 10px;
+    width: auto;
+    margin: 0.2rem 0;
+    line-height: 20px;
+    position: static;
+  }
+  .dropdown-content-top:hover {
+    box-shadow: 0 0 10px rgba(66, 137, 155, 0.3);
+  }
+  .category-dropdown-icon-2 {
+    display: inline-block;
+    width: 100%;
+    position: static;
+  }
+  .w-dropdown {
+    display: inline-block;
+    position: relative;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 900;
+  }
+  .w-dropdown-btn,
+  .w-dropdown-toggle,
+  .w-dropdown-link {
+    position: relative;
+    vertical-align: top;
+    text-decoration: none;
+    color: #222222;
+    padding: 0.75rem;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    white-space: nowrap;
+  }
+  .w-dropdown-toggle {
+    user-select: none;
+    display: inline-block;
+    cursor: pointer;
+    padding-right: 40px;
+  }
+  .w-icon-dropdown-toggle:before {
+    content: "\e603";
+  }
+  .w-dropdown-list {
+    position: absolute;
+    background: #dddddd;
+    display: none;
+    min-width: 100%;
+  }
+  .w-dropdown-list.w--open {
+    display: block;
+  }
+  .w-dropdown-link {
+    padding: 10px 20px;
+    display: block;
+  }
+  .w-dropdown-link.w--current {
+    color: #0082f3;
+  }
+  .category-title-dropdown-container {
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: center;
+    line-height: 18px;
+    position: static;
+  }
+  .category-subtitle {
+    margin: auto 0 auto auto;
+    font-family: "Poppins-SemiBold", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .dropdown-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .dropdown-arrow {
+    width: 0.4em;
+    height: 0.4em;
+    position: relative;
+    transform: rotate(0deg);
+    transform-origin: center center;
+    transition: transform 0.3s ease;
+    display: inline-block;
+    margin-left: 3px;
+  }
+  .dropdown-arrow::before {
+    width: 0.4em;
+    height: 0.4em;
+    content: "";
+    position: absolute;
+    border-right: 2px solid #8dbbd6;
+    border-bottom: 2px solid #8dbbd6;
+    transition: transform 0.3s ease;
+    transform: rotate(45deg);
+    transform-origin: 40% -5%;
+    top: -1px;
+    left: 3px;
+  }
+  .dropdown-arrow.active {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+  }
+  .category-dropdown-list {
+    background-color: #ebf8ff;
+    width: auto;
+    display: none;
+    position: static;
+    border-radius: 10px;
+  }
+  .category-dropdown-list.w--open {
+    display: inline-block;
+  }
+  .category-dropdown-toggle {
+    padding-left: 1.5rem;
+    position: static;
+  }
+  .category-dropdown-toggle.w--open {
+    display: flex;
+    margin: auto;
+    position: static;
+  }
+  
+  .dropdown-content-bottom {
+    background-color: #fff;
+    transition: max-height 0.3s ease-in-out;
+    border-radius: 10px;
+  }
+  
+  .table-headers {
+    background-color: #f8f9fb;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+  }
+  .table-headers._3-columns {
+    box-shadow: 0.5px 0.5px 15px 0 var(--box-shadow-1);
+    border: 0.25px solid #615f5f7a;
+    border-radius: 0;
+    grid-template-columns: 0.25fr 0.28fr 0.25fr 0.65fr;
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+  .table-headers-all {
+    display: grid;
+    grid-gap: 16px;
+    grid-template-rows: auto;
+    background-color: #f8f9fb;
+    padding: 0.5rem 1.5rem;
+    grid-template-rows: auto;
+    /* grid-template-columns: 1fr 1fr 1fr 1fr; */
+    grid-template-columns: 0.25fr 0.35fr 0.25fr 0.7fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    width: auto;
+    box-shadow: 0.5px 0.5px 15px 0 var(--box-shadow-1);
+    border: 0.25px solid #615f5f7a;
+  }
+  .table-headers._3-columns,
+  .biomarker-table-top._3-columns {
+    width: auto;
+  }
+  .caption-large {
+    color: #627183;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0;
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  .biomarker-container {
+    border-radius: 10px;
+    width: auto;
+    --is-expanded: 0;
+    transition: none; /* Remove any transitions that could cause flickering */
+  }
+  /* .biomarker-container.show .biomarker-bottom {
+      height: auto;
+  } */
+  .biomarker-container-hover {
+    contain: layout style;
+    box-shadow: 1px 1px 5px #b1dee000;
+    border: 0.25px solid #cacaca;
+    border-radius: 5px;
+    margin-top: 0.35rem;
+    transition: box-shadow 0.25s, transform 0.25s;
+    will-change: box-shadow, transform;
+  }
+  .biomarker-container-hover:hover {
+    box-shadow: 1px 1px 10px #99b6b785;
+    border: 0.25px solid #cacaca;
+  }
+  .biomarker-container-link {
+    transition: box-shadow 0.2s;
+    display: block;
+  }
+  .biomarker-container-link:hover {
+    box-shadow: 0 3px 8px #76879a14, 0 1px 1px #76879a3d;
+  }
+  .biomarker {
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Poppins-Regular", sans-serif;
+  }
+  .biomarker-result {
+    color: var(--black);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 14px;
+  }
+  /* .biomarker-dropdown {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    width: 1.25em;
+    height: 1.25em;
+    margin: auto;
+    position: relative;
+    cursor: pointer;
+  } */
+  .biomarker-dropdown {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    width: 1.25em;
+    height: 1.25em;
+    margin: auto;
+    position: relative;
+    cursor: pointer;
+    contain: layout; /* Add containment for better performance */
+  }
+  .biomarker-textbox {
+    color: #666;
+    margin-bottom: 0;
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 16px;
+  }
+  .biomarker-bottom {
+    overflow: hidden;
+    height: 0px;
+    opacity: 0;
+    visibility: hidden; /* Hide completely when collapsed */
+    background-color: white;
+    border-radius: 5px;
+    transition: height 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s linear 0.3s;
+  }
+  .biomarker-container.expanded .biomarker-bottom {
+    height: auto;
+    opacity: 1;
+    visibility: visible; /* Make visible when expanded */
+    transition: height 0.3s ease-out, opacity 0.3s ease-out, visibility 0s linear;
+  }
+  .biomarker-content-divider {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .biomarker-content-divider2 {
+    border-bottom: 1px dashed #3333;
+    width: 100%;
+    height: 0;
+  }
+  .biomarker-textbox-container {
+    padding: 20px 20px 30px;
+  }
+  .biomarker-table-top {
+    grid-template-rows: auto;
+    grid-template-columns: 0.4fr 0.4fr 0.4fr 1fr;
+    align-items: center;
+    padding: 0 1rem;
+    font-size: 14px;
+    gap: 0;
+  }
+  .biomarker-table-top._3-columns {
+    grid-template-rows: 1fr;
+    grid-template-columns: 0.4fr 0.4fr 0.4fr 1fr;
+    width: auto;
+    margin: 0 auto;
+  }
+  
+  /* .stripe-1 {
+    background-color: #8dbbd6;
+    width: 80%;
+    height: 0.15em;
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+  } */
+  .stripe-1 {
+    background-color: #8dbbd6;
+    width: 80%;
+    height: 0.15em;
+    position: relative;
+    transform: rotate(0deg); /* Set initial rotation */
+    transition: transform 0.3s ease-in-out;
+    will-change: transform;
+  }
+  /* .stripe-2 {
+    background-color: #8dbbd6;
+    width: 0.15em;
+    height: 80%;
+    position: absolute;
+    transition: all 0.3s ease-in-out;
+  } */
+  .stripe-2 {
+    background-color: #8dbbd6;
+    width: 0.15em;
+    height: 80%;
+    position: absolute;
+    transform: rotate(0deg); /* Set initial rotation */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    will-change: transform, opacity;
+  }
+  
+  /* Modified spin classes */
+  .stripe-1.spin {
+    transform: rotate(0deg); /* Changed to 0deg to keep horizontal */
+  }
+  /* .stripe-2.spin {
+    height: 0;
+    opacity: 0;
+  } */
+  .stripe-2.spin {
+    transform: rotate(90deg); /* Rotate instead of changing height */
+    opacity: 0;
+  }
+  .html-embed {
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    min-width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0 1rem;
+    display: block;
+  }
+  
+  .html-embed.chart {
+    min-width: auto;
+    max-width: none;
+    min-height: 400px;
+    position: relative;
+    contain: layout style; /* Add containment for better performance */
+  }
+  /* Apply containment to all chart divs */
+  [id^="biomarker-trend-"] {
+    contain: layout style;
+  }
+  .w-tab-pane .html-embed.chart {
+    min-height: 400px;
+    position: relative;
+  }
+  
+  .w-tab-pane .html-embed.chart > div {
+    height: 100% !important;
+    width: 100% !important;
+    position: absolute;
+  }
+  
+  .w-embed:before,
+  .w-embed:after {
+    content: " ";
+    display: table;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    grid-column-end: 2;
+    grid-row-end: 2;
+  }
+  .w-embed:after {
+    clear: both;
+  }
+  .graphs {
+    background-color: #ebf8ff;
+    height: 1000px;
+    margin: auto;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .columns {
+    flex-flow: row;
+    flex: 1;
+    display: flex;
+  }
+  .columns-2 {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    display: block;
+  }
+  .w-container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 940px;
+  }
+  .w-container:before,
+  .w-container:after {
+    content: " ";
+    display: table;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    grid-column-end: 2;
+    grid-row-end: 2;
+  }
+  .w-container:after {
+    clear: both;
+  }
+  .w-container .w-row {
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+  .w-row:before,
+  .w-row:after {
+    content: " ";
+    display: table;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    grid-column-end: 2;
+    grid-row-end: 2;
+  }
+  .w-row:after {
+    clear: both;
+  }
+  .w-row .w-row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .w-col {
+    position: relative;
+    float: left;
+    width: 100%;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .w-col .w-col {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .w-col-1 {
+    width: 8.33333333%;
+  }
+  .w-col-2 {
+    width: 16.66666667%;
+  }
+  .w-col-3 {
+    width: 25%;
+  }
+  .w-col-4 {
+    width: 33.33333333%;
+  }
+  .w-col-5 {
+    width: 41.66666667%;
+  }
+  .w-col-6 {
+    width: 50%;
+  }
+  .w-col-7 {
+    width: 58.33333333%;
+  }
+  .w-col-8 {
+    width: 66.66666667%;
+  }
+  .w-col-9 {
+    width: 75%;
+  }
+  .w-col-10 {
+    width: 83.33333333%;
+  }
+  .w-col-11 {
+    width: 91.66666667%;
+  }
+  .w-col-12 {
+    width: 100%;
+  }
+  .w-hidden-main {
+    display: none !important;
+  }
+  .column,
+  .column-2 {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  .superscript {
+    vertical-align: baseline;
+    justify-content: center;
+    align-items: center;
+    display: inline;
+    position: relative;
+  }
+  .table-module {
+    background-color: #fff;
+    border-radius: 12px;
+    flex-direction: column;
+    display: flex;
+    box-shadow: 0 1px 1px #76879a3d, 0 3px 8px #76879a14;
+  }
+  .table-content {
+    border-radius: 10px;
+    overflow: auto;
+  }
+  .tab-pane-ongoing-2 {
+    margin-top: 5px;
+  }
+  .no-biomarkers-message {
+    padding: 0.5rem 0 0.75rem 0.25rem;
+    border-top: 1px dashed #3333;
+  }
+  .no-biomarkers-message-container {
+    margin-left: 1.5rem;
+    margin-top: -0.15rem;
+  }
+  .no-biomarkers-message-all {
+    color: #777;
+    font-style: italic;
+    font-size: small;
+    background-color: white;
+    border: 0.25px solid rgb(184, 184, 184);
+    padding: 0.75rem 1rem;
+    border-top: 1px dashed #3333;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+  .inactive-category {
+    opacity: 0.6;
+  }
+  .inactive-category .category-subtitle {
+    color: #666; /* Slightly darker text for inactive categories */
+  }
+  /* ----- user pages ------ */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }

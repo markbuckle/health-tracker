@@ -1,0 +1,284 @@
+/* ------------- Welcome Page styles --------------- */
+
+.step-container {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .welcome-step-number {
+    background-color: var(--grey-primary);
+    color: white;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    text-align: center;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 1rem;
+  }
+  
+  .step-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.5s ease;
+  }
+  
+  .step-title {
+    font-family: "Poppins-SemiBold", sans-serif;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+  }
+  
+  .step-description {
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 1rem;
+    color: #4a4a4a;
+    line-height: 1.6;
+  }
+  
+  .highlight {
+    background-color: rgba(92, 177, 93, 0.1);
+    border-left: 3px solid #5cb15d;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+  
+  .actions {
+    display: flex;
+    margin-top: 1.5rem;
+    gap: 12px;
+  }
+  
+  .button-next {
+    background-color: #5cb15d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: "Poppins-Regular", sans-serif;
+    transition: all 0.3s ease;
+  }
+  
+  .button-next:hover {
+    background-color: #46953f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button-skip {
+    background-color: transparent;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: "Poppins-Regular", sans-serif;
+    transition: all 0.3s ease;
+  }
+  
+  .button-skip:hover {
+    background-color: #f5f5f5;
+  }
+  
+  /* Navigation highlight effect */
+  .highlight-nav {
+    position: absolute;
+    background-color: rgba(92, 177, 93, 0.2);
+    border: 2px solid #5cb15d;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 100;
+    display: none;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(92, 177, 93, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(92, 177, 93, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(92, 177, 93, 0);
+    }
+  }
+  
+  /* Arrow styles */
+  .arrow {
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    display: none;
+    z-index: 99;
+  }
+  
+  .arrow svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Fade in animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fade-in {
+    animation: fadeInUp 0.8s forwards;
+  }
+  
+  /* Progress bar */
+  .progress-container {
+    width: 100%;
+    background-color: #f1f1f1;
+    border: 0.25px solid #e0e0e0;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+    height: 4px;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 4px;
+    background-color: #5cb15d;
+    width: 0%;
+    transition: width 0.6s ease;
+  }
+  
+  /* Welcome card */
+  .welcome-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 1rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  }
+  
+  .welcome-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .welcome-title {
+    font-size: 2rem;
+    color: #5cb15d;
+    margin-bottom: 0.5rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  .get-started-btn {
+    display: inline-block;
+    background-color: #77c778;
+    color: #000;
+    font-family: "Poppins-SemiBold", sans-serif;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: 0.25px solid #000;
+    text-decoration: none;
+    margin: 1rem;
+    box-shadow: 0 4px 10px rgba(92, 177, 93, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .get-started-btn:hover {
+    background-color: #46953f;
+    box-shadow: 0 6px 15px rgba(92, 177, 93, 0.4);
+    cursor: pointer;
+    color: #fff;
+    font-size: 1rem;
+  }
+  
+  /* Feature overview */
+  .feature-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .feature-item {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .feature-item:hover {
+    /* transform: translateY(-5px); */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--green-primary);
+    cursor: pointer;
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
+    color: #5cb15d;
+    margin-bottom: 1rem;
+  }
+  
+  .feature-title {
+    font-family: "Poppins-SemiBold", sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-description {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .steps-container2 {
+    display: none;
+  }
+  
+  /* Force override for sidebar links when hovering on features */
+  body[data-profile-hover="true"] #Profile {
+    background-color: #bcdcbe !important;
+    z-index: 10000 !important;
+    position: relative !important;
+    border-radius: 10px;
+  }
+  
+  body[data-upload-hover="true"] #Upload {
+    background-color: #bcdcbe !important;
+    z-index: 10000 !important;
+    position: relative !important;
+    border-radius: 10px;
+  }
+  
+  body[data-reports-hover="true"] #Reports {
+    background-color: #bcdcbe !important;
+    z-index: 10000 !important;
+    position: relative !important;
+    border-radius: 10px;
+  }
+  
+  body[data-insights-hover="true"] #Insights {
+    background-color: #bcdcbe !important;
+    z-index: 10000 !important;
+    position: relative !important;
+    border-radius: 10px;
+  }
