@@ -91,7 +91,34 @@
     border-color: #65b5e0;
     box-shadow: 0 0 5px rgba(101, 181, 224, 0.5);
   }
-  
+  .form-text-field select,
+.form-text-field textarea {
+  width: 100%;
+  line-height: normal;
+  font-size: medium;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  font-family: "Poppins-Regular", sans-serif;
+  background-color: white;
+}
+
+.form-text-field select:focus,
+.form-text-field textarea:focus {
+  outline: none;
+  border-color: #65b5e0;
+  box-shadow: 0 0 5px rgba(101, 181, 224, 0.5);
+}
+
+.form-text-field select {
+  cursor: pointer;
+}
+
+.form-text-field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
   .form-click-button {
     font-size: medium;
     padding: 5px 10px;
@@ -544,10 +571,23 @@
   transform: translateY(-2px);
 }
 
-.entry-label {
+.entry-card .entry-row {
+  margin-bottom: 0.5rem;
+}
+.entry-card .entry-row:last-of-type {
+  margin-bottom: 1rem;
+}
+/* .entry-label {
   font-weight: 600;
   color: #333;
   margin-right: 8px;
+} */
+.entry-label {
+  font-weight: 600;
+  color: #333;
+  margin-right: 0.5rem;
+  min-width: 4rem;
+  display: inline-block;
 }
 
 .entry-value {

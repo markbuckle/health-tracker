@@ -276,21 +276,33 @@
                     {{#each profile.medsandsups}}
                       <div class="medsandsups-entry entry-card">
                         <div class="entry-row">
-                          <span class="entry-label">Medicine:</span>
-                          <span class="entry-value" id="medicine">
-                            {{#if medicine}}{{medicine}}{{else}}-{{/if}}
+                          <span class="entry-label">Type:</span>
+                          <span class="entry-value" id="type">
+                            {{#if type}}{{type}}{{else}}-{{/if}}
                           </span>
                         </div>
                         <div class="entry-row">
-                          <span class="entry-label">Supplement:</span>
-                          <span class="entry-value" id="supplement">
-                            {{#if supplement}}{{supplement}}{{else}}-{{/if}}
+                          <span class="entry-label">Name:</span>
+                          <span class="entry-value" id="name">
+                            {{#if name}}{{name}}{{else}}-{{/if}}
                           </span>
                         </div>
-                         <div class="entry-row">
+                        <div class="entry-row">
+                          <span class="entry-label">Dosage:</span>
+                          <span class="entry-value" id="dosage">
+                            {{#if dosage}}{{dosage}}{{else}}-{{/if}}
+                          </span>
+                        </div>
+                        <div class="entry-row">
+                          <span class="entry-label">Frequency:</span>
+                          <span class="entry-value" id="frequency">
+                            {{#if frequency}}{{frequency}}{{else}}-{{/if}}
+                          </span>
+                        </div>
+                        <div class="entry-row">
                           <span class="entry-label">Notes:</span>
-                          <span class="entry-value" id="medsAndSupsNotes">
-                            {{#if medsAndSupsNotes}}{{medsAndSupsNotes}}{{else}}-{{/if}}
+                          <span class="entry-value" id="notes">
+                            {{#if notes}}{{notes}}{{else}}-{{/if}}
                           </span>
                         </div>
                         <div class="entry-actions">
@@ -306,8 +318,7 @@
               </div>
               <div class="add-button-container">
                 <a data-w-id="Meds-Sups-1234" href="#" class="edit-button-modal w-inline-block">
-                  <div class="button-text">Add
-                  </div>
+                  <div class="button-text">Add</div>
                 </a>
               </div>
             </div>
@@ -535,14 +546,24 @@
         <input type="hidden" name="action" value="add">
         <input type="hidden" name="type" value="medsandsups">
 
-        <label for="medicine" class="field-label">Medicine</label>
-        <input class="form-text-field" name="medicine" id="medicine" maxlength="256" placeholder="" type="text" value="{{#if medicine}}{{medicine}}{{/if}}">
+        <label for="medSupType" class="field-label">Type</label>
+        <select class="form-text-field" name="medSupType" id="medSupType" required>
+          <option value="">Select type...</option>
+          <option value="Medication">Medication</option>
+          <option value="Supplement">Supplement</option>
+        </select>
 
-        <label for="supplement" class="field-label">Supplement</label>
-        <input class="form-text-field" name="supplement" id="supplement" maxlength="256" placeholder="" type="text" value="{{#if supplement}}{{supplement}}{{/if}}">
+        <label for="name" class="field-label">Name</label>
+        <input class="form-text-field" name="name" id="name" maxlength="256" placeholder="" type="text" required value="">
 
-        <label for="medsAndSupsNotes" class="field-label">Notes</label>
-        <input class="form-text-field" name="medsAndSupsNotes" id="medsAndSupsNotes" maxlength="256" placeholder="" type="text" value="{{#if medsAndSupsNotes}}{{medsAndSupsNotes}}{{/if}}" aria-hidden="true">
+        <label for="dosage" class="field-label">Dosage</label>
+        <input class="form-text-field" name="dosage" id="dosage" maxlength="256" placeholder="e.g., 500mg, 2 capsules" type="text" value="">
+
+        <label for="frequency" class="field-label">Frequency</label>
+        <input class="form-text-field" name="frequency" id="frequency" maxlength="256" placeholder="e.g., Once daily, Twice per week" type="text" value="">
+
+        <label for="notes" class="field-label">Notes</label>
+        <textarea class="form-text-field" name="notes" id="notes" maxlength="500" placeholder="Additional notes (optional)" rows="3"></textarea>
 
         <div class="modal-footer">
           <a href="/profile" aria-current="page" class="cancel-button">Cancel</a>
@@ -783,9 +804,11 @@
         if (entryIdInput) entryIdInput.remove();
 
         // Clear all form fields
-        document.getElementById('medicine').value = '';
-        document.getElementById('supplement').value = '';
-        document.getElementById('medsAndSupsNotes').value = '';
+        document.getElementById('medSupType').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('dosage').value = '';
+        document.getElementById('frequency').value = '';
+        document.getElementById('notes').value = '';
       }
 
       // ====== Form Utility Functions ======
@@ -1202,24 +1225,30 @@
             if (existingEntryId) existingEntryId.remove();
 
             // Updated selectors to match your HTML structure
-            const medicineElement = entry.querySelector('#medicine');
-            const supplementElement = entry.querySelector('#supplement');
-            const notesElement = entry.querySelector('#medsAndSupsNotes');
+            const typeElement = entry.querySelector('#type');
+            const nameElement = entry.querySelector('#name');
+            const dosageElement = entry.querySelector('#dosage');
+            const frequencyElement = entry.querySelector('#frequency');
+            const notesElement = entry.querySelector('#notes');
 
             console.log('Found elements:', {
-              medicine: medicineElement?.textContent,
-              supplement: supplementElement?.textContent,
+              type: typeElement?.textContent,
+              name: nameElement?.textContent,
+              dosage: dosageElement?.textContent,
+              frequency: frequencyElement?.textContent,
               notes: notesElement?.textContent
             });
 
-            if (!medicineElement || !supplementElement || !notesElement) {
+            if (!typeElement || !nameElement) {
               throw new Error('Could not find all required elements');
             }
 
-            // Populate form fields (no need to replace text since we're using spans)
-            form.medicine.value = medicineElement.textContent.trim();
-            form.supplement.value = supplementElement.textContent.trim();
-            form.medsAndSupsNotes.value = notesElement.textContent.trim();
+            // Populate form fields with NEW field names
+            form.medSupType.value = typeElement.textContent.trim();
+            form.name.value = nameElement.textContent.trim();
+            form.dosage.value = dosageElement.textContent.trim() === '-' ? '' : dosageElement.textContent.trim();
+            form.frequency.value = frequencyElement.textContent.trim() === '-' ? '' : frequencyElement.textContent.trim();
+            form.notes.value = notesElement.textContent.trim() === '-' ? '' : notesElement.textContent.trim();
 
             // Add hidden fields
             const actionInput = document.createElement('input');
@@ -1242,9 +1271,11 @@
 
             console.log('Form populated with:', {
               entryId,
-              medicine: form.medicine.value,
-              supplement: form.supplement.value,
-              notes: form.medsAndSupsNotes.value
+              type: form.medSupType.value,
+              name: form.name.value,
+              dosage: form.dosage.value,
+              frequency: form.frequency.value,
+              notes: form.notes.value
             });
 
             // Show the modal
