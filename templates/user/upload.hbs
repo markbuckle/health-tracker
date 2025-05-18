@@ -383,7 +383,7 @@
           <li style="margin-bottom: 8px;"><strong>Include the entire document</strong> - Make sure lab value tables and reference ranges are fully visible.</li>
           <li style="margin-bottom: 8px;"><strong>Check your results</strong> - After upload, review the extracted data in the File Output tab to verify accuracy.</li>
         </ul>
-        <p style="margin-bottom: 0; color: #374151;">Our optical character recognition (OCR) system works best with clear, high-resolution documents in PDF format directly from medical providers.</p>
+        <p style="margin-bottom: 0; color: #374151;">Our optical character recognition (OCR) system works best with clear, high-resolution documents in PDF format.</p>
       </div>
       
       <!-- Footer section -->
@@ -508,6 +508,9 @@
           const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
           const ws = new WebSocket(`${protocol}//${window.location.host}`);
 
+          let currentDocument = 1;
+          let totalDocuments = files.size;
+
           ws.onopen = () => {
             console.log('WebSocket connected');
           };
@@ -517,16 +520,34 @@
             const statusDiv = document.getElementById('processingStatus');
             const documentDiv = document.getElementById('documentStatus');
 
+            // Handle document processing messages
             if (message.includes('Processing file')) {
               const match = message.match(/Processing file (\d+) of (\d+)/);
               if (match && documentDiv) {
-                documentDiv.textContent = `Processing document ${match[1]} of ${match[2]}`;
+                currentDocument = parseInt(match[1]);
+                totalDocuments = parseInt(match[2]);
+                documentDiv.textContent = `Processing document ${currentDocument} of ${totalDocuments}`;
+                // Clear page status when starting a new document
+                if (statusDiv) {
+                  statusDiv.textContent = '';
+                }
               }
             }
+            // Handle page processing messages
             else if (message.includes('Processing page')) {
               const match = message.match(/Processing page (\d+) of (\d+)/);
               if (match && statusDiv) {
-                statusDiv.textContent = `Processing page ${match[1]} of ${match[2]}`;
+                const currentPage = match[1];
+                const totalPages = match[2];
+                statusDiv.textContent = `Processing page ${currentPage} of ${totalPages}`;
+              }
+            }
+            // Handle document with total pages info
+            else if (message.includes('Processing document with')) {
+              const match = message.match(/Processing document with (\d+) pages/);
+              if (match && statusDiv) {
+                const totalPages = match[1];
+                statusDiv.textContent = `Document has ${totalPages} pages`;
               }
             }
           };

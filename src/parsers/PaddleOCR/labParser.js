@@ -198,8 +198,23 @@ function runPaddleOCR(filePath) {
         return;
       }
       
+      // Process stderr for page tracking information
       if (stderr) {
-        console.warn(`PaddleOCR warnings: ${stderr}`);
+        const stderrLines = stderr.split('\n');
+        let totalPages = 1;
+        
+        stderrLines.forEach(line => {
+          if (line.startsWith('TOTAL_PAGES:')) {
+            totalPages = parseInt(line.split(':')[1]);
+            console.log(`Processing document with ${totalPages} pages`);
+          } else if (line.startsWith('CURRENT_PAGE:')) {
+            const currentPage = parseInt(line.split(':')[1]);
+            console.log(`Processing page ${currentPage} of ${totalPages}`);
+          } else if (line.trim() && !line.startsWith('TOTAL_PAGES:') && !line.startsWith('CURRENT_PAGE:')) {
+            // Log other stderr messages as warnings
+            console.warn(`PaddleOCR warnings: ${line}`);
+          }
+        });
       }
       
       resolve(stdout.trim());
