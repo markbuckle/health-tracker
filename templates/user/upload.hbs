@@ -523,6 +523,8 @@
           let progressInterval;
           let totalPages = 1;
           let processingStarted = false;
+          let processingCompleted = false;
+          let extractionCompleted = false;
 
           // Get DOM elements for status updates
           const statusDiv = document.getElementById('processingStatus');
@@ -555,6 +557,8 @@
                 clearInterval(progressInterval);
                 estimatedProgress = 0;
                 processingStarted = false;
+                processingCompleted = false;
+                extractionCompleted = false;
                 if (progressFill) {
                   progressFill.style.width = '0%';
                   progressText.textContent = '0%';
@@ -568,41 +572,32 @@
                 statusDiv.textContent = 'Initializing OCR engine...';
               }
               
-              // Start basic progress (5% when OCR starts)
+              // Start immediate progression when OCR starts
               estimatedProgress = 5;
               if (progressFill) {
                 progressFill.style.width = '5%';
                 progressText.textContent = '5%';
               }
+              
+              // Start steady progression to 90% over ~60-90 seconds (typical processing time)
+              clearInterval(progressInterval);
+              progressInterval = setInterval(() => {
+                if (!processingCompleted && estimatedProgress < 90) {
+                  estimatedProgress += 1; // 1% per second, reaches 90% in ~85 seconds
+                  if (progressFill) {
+                    progressFill.style.width = estimatedProgress + '%';
+                    progressText.textContent = Math.round(estimatedProgress) + '%';
+                  }
+                }
+              }, 333); // Update every second
             }
             
-            // Handle document with total pages info - start realistic estimated progress
+            // Handle document with total pages info
             else if (message.includes('Processing document with')) {
               const match = message.match(/Processing document with (\d+) pages/);
               if (match && statusDiv) {
                 totalPages = parseInt(match[1]);
                 statusDiv.textContent = `Analyzing ${totalPages} pages...`;
-                processingStarted = true;
-                
-                // Start slow, steady progress tracking
-                estimatedProgress = 10; // Start at 10% once we know page count
-                clearInterval(progressInterval);
-                
-                // Calculate realistic timing: assume 15-30 seconds per page for processing
-                const estimatedTimePerPage = Math.max(15000, Math.min(30000, 20000)); // 15-30 seconds
-                const totalEstimatedTime = totalPages * estimatedTimePerPage;
-                const progressIncrement = 75 / (totalEstimatedTime / 2000); // 75% progress over total time, update every 2 seconds
-                
-                progressInterval = setInterval(() => {
-                  if (processingStarted && estimatedProgress < 85) {
-                    estimatedProgress = Math.min(estimatedProgress + progressIncrement, 85);
-                    
-                    if (progressFill) {
-                      progressFill.style.width = estimatedProgress + '%';
-                      progressText.textContent = Math.round(estimatedProgress) + '%';
-                    }
-                  }
-                }, 2000); // Update every 2 seconds for smooth progress
               }
             }
             
@@ -617,37 +612,34 @@
                 // Update status text
                 statusDiv.textContent = `Processing page ${currentPage} of ${totalPagesFromMessage}${isEstimated ? ' (estimated)' : ''}`;
                 
-                // Only update progress bar for actual (non-estimated) page completion
-                if (!isEstimated) {
-                  // Clear estimated progress interval when we get actual page numbers
+                // If we get actual page processing and progress is still low, speed it up
+                if (!isEstimated && estimatedProgress < 75) {
                   clearInterval(progressInterval);
-                  processingStarted = false;
-                  
-                  // Actual progress: 10% start + 80% for page processing + 10% finalization
-                  const pageProgress = (currentPage / totalPagesFromMessage) * 80;
-                  const actualProgress = 10 + pageProgress;
-                  estimatedProgress = actualProgress;
-                  
-                  if (progressFill) {
-                    progressFill.style.width = actualProgress + '%';
-                    progressText.textContent = Math.round(actualProgress) + '%';
-                  }
+                  progressInterval = setInterval(() => {
+                    if (!processingCompleted && estimatedProgress < 90) {
+                      estimatedProgress += 2; // Speed up to catch up
+                      if (progressFill) {
+                        progressFill.style.width = estimatedProgress + '%';
+                        progressText.textContent = Math.round(estimatedProgress) + '%';
+                      }
+                    }
+                  }, 400); // Update every 400ms
                 }
               }
             }
             
-            // Handle completion messages
+            // Handle completion messages - processing is done
             else if (message.includes('Completed processing')) {
               const match = message.match(/Completed processing (\d+) pages/);
               if (match && statusDiv) {
+                processingCompleted = true;
                 clearInterval(progressInterval);
-                processingStarted = false;
                 statusDiv.textContent = 'Extracting data and finalizing...';
                 
-                // Gradual progress to 95%
+                // Quickly progress to 95% when processing completes
                 const finalizeInterval = setInterval(() => {
                   if (estimatedProgress < 95) {
-                    estimatedProgress = Math.min(estimatedProgress + 2, 95);
+                    estimatedProgress = Math.min(estimatedProgress + 3, 95);
                     if (progressFill) {
                       progressFill.style.width = estimatedProgress + '%';
                       progressText.textContent = Math.round(estimatedProgress) + '%';
@@ -655,20 +647,21 @@
                   } else {
                     clearInterval(finalizeInterval);
                   }
-                }, 200);
+                }, 333); // Fast transition to 95%
               }
             }
             
-            // Handle extraction completion
+            // Handle extraction completion - everything is done
             else if (message.includes('Found lab values:')) {
+              extractionCompleted = true;
               if (statusDiv) {
                 statusDiv.textContent = 'Processing complete!';
               }
               
-              // Gradual completion to 100%
+              // Complete to 100%
               const completeInterval = setInterval(() => {
                 if (estimatedProgress < 100) {
-                  estimatedProgress = Math.min(estimatedProgress + 3, 100);
+                  estimatedProgress = Math.min(estimatedProgress + 5, 100);
                   if (progressFill) {
                     progressFill.style.width = estimatedProgress + '%';
                     progressText.textContent = Math.round(estimatedProgress) + '%';
@@ -676,7 +669,7 @@
                 } else {
                   clearInterval(completeInterval);
                 }
-              }, 150);
+              }, 200); // Very fast completion
             }
           };
 
@@ -698,27 +691,44 @@
             const result = await response.json();
             ws.close();
             
-            // Ensure progress reaches 100% if it hasn't already
-            if (progressFill && estimatedProgress < 100) {
-              progressFill.style.width = '100%';
-              progressText.textContent = '100%';
+            // If extraction hasn't completed yet, force completion
+            if (!extractionCompleted) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Upload complete!';
+              }
+              
+              // Force completion to 100%
+              const forceCompleteInterval = setInterval(() => {
+                if (estimatedProgress < 100) {
+                  estimatedProgress = Math.min(estimatedProgress + 10, 100);
+                  if (progressFill) {
+                    progressFill.style.width = estimatedProgress + '%';
+                    progressText.textContent = Math.round(estimatedProgress) + '%';
+                  }
+                } else {
+                  clearInterval(forceCompleteInterval);
+                }
+              }, 100);
             }
             
-            if (statusDiv) {
-              statusDiv.textContent = 'Upload complete!';
-            }
-            
-            // Longer delay to show completion before alert
-            setTimeout(() => {
-              alert('Files processed successfully!');
-              files.clear();
-              fileList.innerHTML = '';
-              updateProcessButton();
+            // Wait for progress to reach 100% before showing success
+            const waitForCompletion = setInterval(() => {
+              if (estimatedProgress >= 100) {
+                clearInterval(waitForCompletion);
+                
+                // Show success after progress completes
+                setTimeout(() => {
+                  alert('Files processed successfully!');
+                  files.clear();
+                  fileList.innerHTML = '';
+                  updateProcessButton();
 
-              setTimeout(() => {
-                window.location.reload();
-              }, 500);
-            }, 1000); // Increased delay to show completion
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 500);
+                }, 1500); // Wait 1.5 seconds after reaching 100%
+              }
+            }, 100);
             
           } else {
             throw new Error('Upload failed');
