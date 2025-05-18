@@ -18,7 +18,7 @@ require("dotenv").config();
 // const processEmitter = new EventEmitter(); // for the processing files modal
 const WebSocket = require("ws");
 const { calculateRangePositions } = require("../public/js/rangeCalculations");
-const { biomarkerData, markerCategories } = require("./parsers/biomarkerData");
+const { biomarkerData, markerCategories, getRecommendableBiomarkers } = require("./parsers/biomarkerData");
 const { Resend } = require("resend"); // npm install resend
 const ragRoutes = require("./db/routes/ragRoutes");
 // const { extractFromPDF } = require('./parsers/PaddleOCR/labParser');
@@ -811,34 +811,23 @@ app.get("/insights", checkAuth, async (req, res) => {
     // Update the total score in the category header
     const totalScore = completionPercentage;
 
-    // Get recommendations based on missing data
-    const recommendations = [];
-    if (!inputs.physical) {
-      recommendations.push("Schedule your annual physical examination");
-    }
-    if (!inputs.bloodPressure) {
-      recommendations.push("Start tracking your blood pressure regularly");
-    }
-    // Add more recommendations based on your criteria
+    // Get recommendations based on missing data (existing function)
+    const profileRecommendations = createRecommendations(inputs);
+
+    // Get biomarker-specific recommendations (new function)
+    const biomarkerRecommendations = generateBiomarkerRecommendations(user.files);
+
+    // Combine all recommendations
+    const allRecommendations = [...biomarkerRecommendations, ...profileRecommendations];
   
     // Get recent files for labs summary tab
     const recentFiles = getRecentFiles(user.files, 5);
 
-    // res.render("user/insights", {
-    //   naming: req.user.uname,
-    //   // this becomes {{json scores}} in insights.hbs
-    //   scores: { inputs },
-    //   totalScore,
-    //   recommendations: createRecommendations(inputs), // Using renamed function
-    //   // recommendations: generateRecommendations(inputs), // this becomes {{json recommendations}}
-    //   biomarkerSummary,
-    //   recentFiles
-    // });
     res.render("user/insights", {
       naming: req.user.uname,
       scores: { inputs },
       totalScore,
-      recommendations: createRecommendations(inputs), // Use the correct function
+      recommendations: allRecommendations,
       biomarkerSummary,
       recentFiles
     });
@@ -846,6 +835,125 @@ app.get("/insights", checkAuth, async (req, res) => {
     console.error("Error generating insights:", error);
     res.status(500).send("Error loading insights page");
   }
+});
+
+// Helper to check if recommendation is biomarker-related
+hbs.registerHelper('isBiomarkerRecommendation', function(recommendation) {
+  // Handle both new structured format and legacy string format
+  if (typeof recommendation === 'object' && recommendation.type) {
+    return recommendation.type === 'biomarker';
+  }
+  // Legacy support for string-based recommendations
+  return recommendation && (
+    recommendation.includes('Consider testing') ||
+    recommendation.includes('ApoB') || 
+    recommendation.includes('Lp(a)')
+  );
+});
+
+// Helper to check if there are any biomarker recommendations
+hbs.registerHelper('hasBiomarkerRecommendations', function(recommendations) {
+  if (!recommendations || !Array.isArray(recommendations)) return false;
+  return recommendations.some(rec => {
+    if (typeof rec === 'object' && rec.type) {
+      return rec.type === 'biomarker';
+    }
+    // Legacy string checking
+    return rec.includes('Consider testing') || rec.includes('ApoB') || rec.includes('Lp(a)');
+  });
+});
+
+// Helper to get priority class for styling
+hbs.registerHelper('getPriorityClass', function(recommendation) {
+  if (typeof recommendation === 'object' && recommendation.priority) {
+    return `${recommendation.priority}-priority`;
+  }
+  // Legacy support - detect priority from emoji indicators
+  if (typeof recommendation === 'string') {
+    if (recommendation.includes('🔴')) return 'high-priority';
+    if (recommendation.includes('🟡')) return 'medium-priority';
+    if (recommendation.includes('⚪')) return 'low-priority';
+  }
+  return '';
+});
+
+// Helper to format recommendation text (handles both legacy and new formats)
+hbs.registerHelper('formatRecommendationText', function(recommendation) {
+  if (typeof recommendation === 'object' && recommendation.text) {
+    return recommendation.text;
+  }
+  if (typeof recommendation === 'string') {
+    // Remove priority indicators for legacy format
+    return recommendation.replace(/^[🔴🟡⚪]\s*/, '');
+  }
+  return recommendation;
+});
+
+// Helper to get icon based on category
+hbs.registerHelper('getCategoryIcon', function(category) {
+  const iconMap = {
+    'Cardiovascular Risk': '❤️',
+    'Metabolic Health': '🩺',
+    'Inflammation': '🔥',
+    'Nutritional Status': '🥗',
+    'Preventive Care': '🏥',
+    'Monitoring': '📊',
+    'Profile Information': '👤'
+  };
+  return iconMap[category] || '💡';
+});
+
+// Helper to group recommendations by type and category
+hbs.registerHelper('groupRecommendations', function(recommendations) {
+  if (!recommendations || !Array.isArray(recommendations)) return {};
+  
+  const grouped = {
+    biomarker: {},
+    profile: {}
+  };
+  
+  recommendations.forEach(rec => {
+    // Handle both new structured format and legacy strings
+    let type, category, processedRec;
+    
+    if (typeof rec === 'object' && rec.type) {
+      type = rec.type;
+      category = rec.category || 'Other';
+      processedRec = rec;
+    } else {
+      // Legacy string handling - FIXED: removed extra closing parenthesis
+      if (rec.includes('Consider testing') || rec.includes('ApoB') || rec.includes('Lp(a)')) {
+        type = 'biomarker';
+        category = 'Lab Tests';
+      } else {
+        type = 'profile';
+        category = 'General Health';
+      }
+      processedRec = {
+        type: type,
+        category: category,
+        text: rec,
+        priority: 'medium' // default priority for legacy items
+      };
+    }
+    
+    if (!grouped[type][category]) {
+      grouped[type][category] = [];
+    }
+    grouped[type][category].push(processedRec);
+  });
+  
+  return grouped;
+});
+
+// Helper to check if object has any properties
+hbs.registerHelper('hasProperties', function(obj) {
+  return obj && Object.keys(obj).length > 0;
+});
+
+// Helper to get object keys
+hbs.registerHelper('getKeys', function(obj) {
+  return obj ? Object.keys(obj) : [];
 });
 
 // Helper function to calculate biomarker summary
@@ -1024,21 +1132,92 @@ function getRecentFiles(files, limit = 5) {
     }));
 }
 
+// Updated generateBiomarkerRecommendations function using your biomarkerData
+function generateBiomarkerRecommendations(userFiles) {
+  const recommendations = [];
+  
+  // Get all biomarkers that have been tested across all user's files
+  const testedBiomarkers = new Set();
+  
+  if (userFiles && Array.isArray(userFiles)) {
+    userFiles.forEach(file => {
+      if (file.labValues) {
+        // Handle both Map and regular object structures
+        const entries = file.labValues instanceof Map 
+          ? Array.from(file.labValues.entries()) 
+          : Object.entries(file.labValues);
+        
+        entries.forEach(([biomarkerName, _]) => {
+          testedBiomarkers.add(biomarkerName.toLowerCase());
+        });
+      }
+    });
+  }
+
+  // Get biomarkers that have recommendation data
+  const recommendableBiomarkers = getRecommendableBiomarkers();
+
+  // Check for missing biomarkers
+  Object.entries(recommendableBiomarkers).forEach(([biomarkerKey, biomarkerInfo]) => {
+    const recommendation = biomarkerInfo.recommendation;
+    
+    // Check if any alias of this biomarker has been tested
+    const isPresent = recommendation.aliases.some(alias => 
+      Array.from(testedBiomarkers).some(tested => 
+        tested.includes(alias) || alias.includes(tested)
+      )
+    );
+
+    if (!isPresent) {
+      recommendations.push({
+        type: 'biomarker',
+        priority: recommendation.priority,
+        category: recommendation.category,
+        text: `Consider testing ${biomarkerKey} - ${recommendation.explanation}`,
+        biomarker: biomarkerKey,
+        displayName: biomarkerKey
+      });
+    }
+  });
+
+  return recommendations;
+}
+
 // Helper function to generate recommendations
 function createRecommendations(inputs) {
   const recommendations = [];
   
-  if (inputs.bloodType === false) {
-    recommendations.push("Add your blood type to your profile");
+    if (inputs.bloodType === false) {
+    recommendations.push({
+      type: 'profile',
+      priority: 'medium',
+      category: 'Profile Information',
+      text: "Add your blood type to your profile"
+    });
   }
   if (inputs.familyHistory === false) {
-    recommendations.push("Add family history information");
+    recommendations.push({
+      type: 'profile',
+      priority: 'medium',
+      category: 'Profile Information',
+      text: "Add family history information"
+    });
   }
   if (inputs.bloodPressure === false) {
-    recommendations.push("Start tracking your blood pressure regularly");
+    recommendations.push({
+      type: 'profile',
+      priority: 'medium',
+      category: 'Monitoring',
+      text: "Start tracking your blood pressure regularly"
+    });
   }
   if (inputs.physical === false) {
-    recommendations.push("Schedule your annual physical examination");
+    recommendations.push({
+      type: 'profile',
+      priority: 'high',
+      category: 'Preventive Care',
+      text: "Schedule your annual physical examination"
+    });
   }
   
   return recommendations;
@@ -1201,8 +1380,13 @@ app.post("/update-profile", checkAuth, async (req, res) => {
       lifestyleNotes,
       medicine,
       supplement,
-      entryId,
       medsAndSupsNotes,
+      medSupType,
+      name,
+      dosage,
+      frequency,
+      notes,
+      entryId,
       action,
     } = req.body;
 
@@ -1271,13 +1455,22 @@ app.post("/update-profile", checkAuth, async (req, res) => {
               monitoringNotes: monitoringNotes || "",
             });
           }
-          if (medicine || supplement) {
+          if (medSupType && name) {
             user.profile.medsandsups.push({
-              medicine,
-              supplement,
-              medsAndSupsNotes: medsAndSupsNotes || "",
+              type: medSupType,        // Map medSupType to type
+              name: name,              // Use name directly
+              dosage: dosage || "",
+              frequency: frequency || "",
+              notes: notes || ""       // Use notes instead of medsAndSupsNotes
             });
           }
+          // if (medicine || supplement) {
+          //   user.profile.medsandsups.push({
+          //     medicine,
+          //     supplement,
+          //     medsAndSupsNotes: medsAndSupsNotes || "",
+          //   });
+          // }
           break;
 
         case "edit":
@@ -1495,6 +1688,99 @@ app.post("/update-profile", checkAuth, async (req, res) => {
           break;
       }
     }
+
+    // Handle meds & sups updates
+    // if (action) {
+    //   switch (action) {
+    //     case "add":
+    //       if (medSupType && name) {  // Use the correct field names
+    //         user.profile.medsandsups.push({
+    //           type: medSupType,        // Map medSupType to type
+    //           name: name,              // Use name directly
+    //           dosage: dosage || "",
+    //           frequency: frequency || "",
+    //           notes: notes || ""       // Use notes (not medsAndSupsNotes)
+    //         });
+    //       }
+    //       break;
+
+    //     case "edit":
+    //       if (entryId && medSupType && name) {  // Use correct field names
+    //         const medsAndSupsIndex = user.profile.medsandsups.findIndex(
+    //           (entry) => entry._id.toString() === entryId
+    //         );
+    //         if (medsAndSupsIndex !== -1) {
+    //           user.profile.medsandsups[medsAndSupsIndex].type = medSupType;      // Map correctly
+    //           user.profile.medsandsups[medsAndSupsIndex].name = name;            // Use name directly
+    //           user.profile.medsandsups[medsAndSupsIndex].dosage = dosage || "";
+    //           user.profile.medsandsups[medsAndSupsIndex].frequency = frequency || "";
+    //           user.profile.medsandsups[medsAndSupsIndex].notes = notes || "";    // Use notes
+    //         }
+    //       }
+    //       break;
+
+    //     case "delete":
+    //       if (entryId) {
+    //         try {
+    //           console.log("Attempting to delete entry with ID:", entryId);
+
+    //           // Find the most recent version of the user
+    //           const targetUser = await registerCollection.findById(user._id);
+    //           if (!targetUser) {
+    //             throw new Error("User not found");
+    //           }
+
+    //           let updateField;
+    //           let targetArray;
+
+    //           // Determine which array to update based on the type
+    //           switch (req.body.type) {
+    //             case "monitoring":
+    //               updateField = "profile.monitoring";
+    //               targetArray = targetUser.profile.monitoring;
+    //               break;
+    //             case "medsandsups":
+    //               updateField = "profile.medsandsups";
+    //               targetArray = targetUser.profile.medsandsups;
+    //               break;
+    //             default:
+    //               updateField = "profile.familyHistory";
+    //               targetArray = targetUser.profile.familyHistory;
+    //           }
+
+    //           // Filter out the entry to be deleted
+    //           const filteredArray = targetArray.filter(
+    //             (entry) => entry._id.toString() !== entryId
+    //           );
+
+    //           // Use findOneAndUpdate instead of save to avoid version conflicts
+    //           const updatedUser = await registerCollection.findOneAndUpdate(
+    //             { _id: user._id },
+    //             { $set: { [updateField]: filteredArray } },
+    //             { new: true }
+    //           );
+
+    //           if (!updatedUser) {
+    //             throw new Error("Failed to update user");
+    //           }
+
+    //           // Update the local user object to match
+    //           user.profile[updateField.split(".")[1]] =
+    //             updatedUser.profile[updateField.split(".")[1]];
+
+    //           console.log("Delete operation completed");
+    //           console.log(
+    //             `${updateField} after:`,
+    //             updatedUser.profile[updateField.split(".")[1]]
+    //           );
+    //         } catch (error) {
+    //           console.error("Error deleting entry:", error);
+    //           throw new Error(`Failed to delete entry: ${error.message}`);
+    //         }
+    //       }
+    //       break;
+    //   }
+    // }
 
     // Calculate and set age
     user.profile.age = user.calculateAge();

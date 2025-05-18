@@ -71,6 +71,13 @@ const biomarkerData = {
     link: "https://www.thelancet.com/journals/lanhl/article/PIIS2666-7568(21)00120-3/fulltext",
     frequency: "quarterly/annually",
     id: "1",
+    // Add these new properties for recommendations:
+    recommendation: {
+      priority: 'high',
+      category: 'Cardiovascular Risk',
+      explanation: 'ApoB provides a more accurate assessment of cardiovascular risk than standard cholesterol panels. It counts the actual number of atherogenic particles that can penetrate artery walls, making it especially important for people with diabetes, metabolic syndrome, or family history of heart disease.',
+      aliases: ['apob', 'apolipoprotein b', 'apo b', 'apolipoprotein b-100', 'apolipoprotein-b']
+    }
   },
   "ApoA1": {
     category: "cardiovascular",
@@ -85,6 +92,12 @@ const biomarkerData = {
     link: "https://peterattiamd.com/high-lpa-risk-factors/",
     frequency: "one-time",
     id: "2",
+    recommendation: {
+      priority: 'high',
+      category: 'Cardiovascular Risk',
+      explanation: 'Lp(a) is a genetically determined risk factor for cardiovascular disease that affects about 20% of the population. Unlike other cholesterol markers, Lp(a) levels are largely inherited and remain stable throughout life. High levels significantly increase heart attack and stroke risk.',
+      aliases: ['lp(a)', 'lipoprotein(a)', 'lipoprotein a', 'lp a', 'lpa', 'lp-a']
+    }
   },
  "LDL-C": {
     category: "cardiovascular",
@@ -177,7 +190,13 @@ const biomarkerData = {
     description: "Measures your average blood sugar levels over the past 2-3 months.",
     frequency: "quarterly/annually",
     link: "",
-    id: ""
+    id: "",
+    recommendation: {
+      priority: 'high',
+      category: 'Metabolic Health',
+      explanation: 'HbA1c reflects your average blood sugar levels over the past 2-3 months. It\'s crucial for detecting prediabetes and monitoring diabetes risk, even before fasting glucose becomes abnormal. Elevated levels increase cardiovascular disease risk.',
+      aliases: ['hba1c', 'hemoglobin a1c', 'glycated hemoglobin', 'a1c', 'hgba1c']
+    }
   },
   "Fasting Blood Glucose": {
     category: "metabolic",
@@ -228,7 +247,13 @@ const biomarkerData = {
     description: "High-sensitivity C-reactive protein, a marker of inflammation in your body.",
     frequency: "quarterly/annually",
     link: "",
-    id: ""
+    id: "",
+     recommendation: {
+      priority: 'medium',
+      category: 'Inflammation',
+      explanation: 'hsCRP measures chronic inflammation in your body, which is a key driver of atherosclerosis and cardiovascular disease. It helps identify increased heart disease risk even when cholesterol levels are normal.',
+      aliases: ['hscrp', 'hs-crp', 'high-sensitivity crp', 'c-reactive protein', 'crp high sensitivity', 'hs crp']
+    }
   },
   "Homocysteine": {
     category: "immunity",
@@ -607,7 +632,13 @@ const biomarkerData = {
   description: "Fat-soluble vitamin crucial for bone health, immune function, and overall health.",
   frequency: "quarterly/annually",
   link: "",
-  id: ""
+  id: "",
+  recommendation: {
+      priority: 'medium',
+      category: 'Nutritional Status',
+      explanation: 'Vitamin D deficiency is extremely common and linked to increased risk of cardiovascular disease, osteoporosis, immune dysfunction, and mood disorders. Most people need supplementation, especially during winter months.',
+      aliases: ['vitamin d', '25-hydroxyvitamin d', '25(oh)d', 'vitamin d 25-hydroxy', 'vitamin d3', '25-oh vitamin d']
+    }
 },
 "Vitamin B12": {
   category: "nutrients",
@@ -1039,7 +1070,18 @@ const biomarkerData = {
   // Add more biomarkers with their categories...
 };
 
+// Helper function to get biomarkers that should be recommended when missing
+function getRecommendableBiomarkers() {
+  return Object.entries(biomarkerData)
+    .filter(([key, data]) => data.recommendation)
+    .reduce((acc, [key, data]) => {
+      acc[key] = data;
+      return acc;
+    }, {});
+}
+
 module.exports = {
   biomarkerData,
-  markerCategories
+  markerCategories,
+  getRecommendableBiomarkers
 };
