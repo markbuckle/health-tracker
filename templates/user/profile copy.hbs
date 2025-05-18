@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Profile</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
+  <link href="css/user-styles.css" rel="stylesheet" type="text/css" />
+  <link href="css/profile-styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="user-body">
+  {{> mobileHeader}}
+
+  <div class="sidebar">
+    <div class="sidebar-logo-wrapper">
+      <a href="/" class="sidebar-logo-link">
+        <img src="images/logo2.png" loading="lazy" alt="Logo" class="sidebar-logo"></a>
+    </div>
+    <div class="nav-divider-basics nav-divider-top"></div>
+    <a id="Profile" href="/profile" class="page-link w-inline-block w--current">
+      <img loading="lazy" src="images/user.svg" alt="Icon" class="nav-icon">
+      <div class="page-link-text-block"><span class="page-link-text-span">Profile</span></div>
+    </a>
+    <a id="Upload" href="/upload" class="page-link w-inline-block">
+      <img src="images/file-text.svg" loading="lazy" alt="Icon" class="nav-icon">
+      <div class="page-link-text-block"><span class="page-link-text-span">Upload</span></div>
+    </a>
+    <a id="Reports" href="/reports" aria-current="page" class="page-link w-inline-block"><img src="images/clipboard.svg" loading="lazy" alt="Icon" class="nav-icon">
+      <div class="page-link-text-block"><span class="page-link-text-span">Reports</span></div>
+    </a>
+    <a id="Insights" href="/insights" class="page-link w-inline-block">
+      <img src="images/layout.svg" loading="lazy" alt="Icon" class="nav-icon">
+      <div class="page-link-text-block"><span class="page-link-text-span">Insights</span></div>
+    </a>
+    <div class="nav-divider-basics nav-divider-bottom"></div>
+    <a href="/how-it-works" class="page-link w-inline-block"><img src="images/help-circle.svg" loading="lazy" alt="Icon" class="nav-icon">
+      <div class="page-link-text-block"><span class="page-link-text-span">Help</span></div>
+    </a>
+    <a id="Log-out" href="/" class="page-link w-inline-block"><img src="images/unlock.svg" loading="lazy" alt="Icon" class="nav-icon">
+      <div class="page-link-text-block"><span class="page-link-text-span">Log out</span></div>
+    </a>
+    <div class="sidebar-bottom-spacer"></div>
+  </div>
+
+  <section class="demo-header">
+    <div class="header-container-2">
+      <div>
+        <h2 class="heading2">Profile</h2>
+        <h3 class="subheading">Hello {{fname}} {{lname}}</h3>
+        <div class="profile-intro-container">
+          <span>Complete your health profile to unlock personalized insights</span>
+          <button class="profile-info-button" aria-label="Show profile information">
+            {{> svg/info}}
+          </button>
+        </div>
+        <div class="spacer-block"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="dashboard-content">
+    <div class="dashboard-container">
+      <div class="w-layout-grid main-grid">
+        <div class="w-tabs" data-duration-in="300" data-duration-out="100">
+          <div class="in-page-menu">
+            <a data-w-tab="Basic Info" class="in-page-link w-inline-block w-tab-link w--current">
+              <div class="text-block">Basic Info</div>
+            </a>
+            <a data-w-tab="History" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block">History</div>
+            </a>
+            <a data-w-tab="Monitoring" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block">Monitoring</div>
+            </a>
+            <a data-w-tab="Lifestyle" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block">Lifestyle</div>
+            </a>
+            <a data-w-tab="Meds-Sups" class="in-page-link w-inline-block w-tab-link">
+              <div class="text-block">Meds & Sups</div>
+            </a>
+          </div>
+
+          <div class="w-tab-content">
+
+            <div data-w-tab="Basic Info" class="w-tab-pane w--tab-active">
+              <div class="dropdown-wrapper user-content-bg">
+                <div class="header-container-3">
+                  <h1 class="username-heading">
+                    <span id="uname">
+                      {{#if uname}}{{uname}}{{else}}-{{/if}}
+                    </span>
+                  </h1>
+                </div>
+                <div class="form-info-output"><div class="basic-info-subheader">Age:</div>
+                  <span id="ageDisplay">
+                    {{#if profile.age}}{{profile.age}}{{else}}<div class="section-empty">Birthdate not added</div>{{/if}}
+                  </span>
+                </div>
+                <div class="form-info-output">
+                  <div class="basic-info-subheader">Blood Type:</div>
+                  <span id="bloodTypeDisplay">
+                    {{#ifEqual profile.bloodType "Other"}}
+                      {{profile.customBloodType}}
+                      {{else}}
+                        {{#if profile.bloodType}}
+                          {{profile.bloodType}}
+                        {{else}}
+                          <div class="section-empty">Blood type not added</div>
+                        {{/if}}
+                      {{/ifEqual}}
+                  </span>
+                  <button class="blood-info-button" aria-label="Show blood type information">
+                    {{> svg/info}}
+                  </button>
+                </div>
+                <br>
+                {{!-- <div class="form-info">Sex:<span id="sexDisplay">-</span></div> --}}
+              </div>
+              <a data-w-id="basicInfo-1234" href="#" class="edit-button-modal w-inline-block">
+                <div class="button-text">Add/Update</div>
+              </a>
+            </div>
+
+            <div data-w-tab="History" class="w-tab-pane">
+              <div class="dropdown-wrapper user-content-bg">
+                <div class="header-container-3">
+                  <h1 class="username-heading">Family History</h1>
+                </div>
+
+                <div class="family-history-container">
+                  <!-- Table Header -->
+                  <div class="family-history-table-header">
+                    <div class="family-history-column condition-column">Condition</div>
+                    <div class="family-history-column relatives-column">Relative(s) Impacted</div>
+                    <div class="family-history-column notes-column">Notes</div>
+                    <div class="family-history-column actions-column">Actions</div>
+                  </div>
+
+                  <!-- Table Content -->
+                  <div class="family-history-table-content">
+                    {{#if profile.familyHistory.length}}
+                      {{#each profile.familyHistory}}
+                        <div class="family-history-entry">
+                          <div class="family-history-column condition-column">{{familyCondition}}</div>
+                          <div class="family-history-column relatives-column">
+                            {{#each relatives}}
+                              {{this}}{{#unless @last}}, {{/unless}}
+                            {{/each}}
+                          </div>
+                          <div class="family-history-column notes-column">{{addNotes}}</div>
+                          <div class="family-history-column actions-column">
+                            <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                            <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
+                          </div>
+                        </div>
+                      {{/each}}
+                    {{else}}
+                      <div class="family-history-empty">No family history or genetic conditions reported</div>
+                    {{/if}}
+                  </div>
+                </div>
+              </div>
+                <div class="add-button-container">
+                  <a data-w-id="familyHistory-1234" href="#" class="edit-button-modal w-inline-block">
+                    <div class="button-text">Add </div>
+                  </a>
+                </div>
+            </div>
+
+            <div data-w-tab="Monitoring" class="w-tab-pane">
+              <div class="dropdown-wrapper user-content-bg">
+                <div class="header-container-3">
+                  <h1 class="username-heading">Monitoring</h1>
+                </div>
+                <div class="history-info">
+                  {{#if profile.monitoring.length}}
+                    {{#each profile.monitoring}}
+                      <div class="monitoring-entry entry-card">
+                          <div class="entry-row">
+                            <span class="entry-label">Weight:</span>
+                            <span class="entry-value" id="weightDisplay">
+                              {{#if weight}}{{weight}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row">
+                            <span class="entry-label">Blood Pressure:</span>
+                            <span class="entry-value" id="bloodPressure">
+                              {{#if bloodPressure}}{{bloodPressure}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row"> 
+                            <span class="entry-label">Resting Heart Rate:</span>
+                              <span class="entry-value" id="restingHeartRate">
+                              {{#if restingHeartRate}}{{restingHeartRate}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row">
+                            <span class="entry-label">Sleep:</span>
+                            <span class="entry-value" id="sleep">
+                              {{#if sleep}}{{sleep}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-row">
+                            <span class="entry-label">Notes:</span>
+                            <span class="entry-value" id="monitoringNotes">
+                              {{#if monitoringNotes}}{{monitoringNotes}}{{else}}-{{/if}}
+                            </span>
+                          </div>
+                          <div class="entry-actions">
+                            <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                            <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
+                          </div>
+                      </div>
+                    {{/each}}
+                  {{else}}
+                    <div class="section-empty">No monitoring habits recorded</div>
+                  {{/if}}
+                </div> <!-- history-info closing div -->
+              </div> <!-- dropdown-wrapper closing div -->
+
+              <div class="add-button-container">
+                <a data-w-id="Monitoring-1234" href="#" class="edit-button-modal w-inline-block">
+                  <div class="button-text">Add </div>
+                </a>
+              </div>
+            </div>
+
+            <div data-w-tab="Lifestyle" class="w-tab-pane">
+              <div class="dropdown-wrapper user-content-bg">
+                <div class="header-container-3">
+                  <h1 class="username-heading">Lifestyle</h1>
+                </div>
+                <div class="history-info">
+                  {{#if profile.lifestyle.length}}
+                    {{#each profile.lifestyle}}
+                      <div class="lifestyle-entry entry-card">
+                        <div class="entry-row">
+                          <span class="entry-label">Habit Type:</span>
+                          <span class="entry-value">{{habitType}}</span>
+                        </div>
+                        <div class="entry-row">
+                          <span class="entry-label">Status:</span>
+                          <span class="entry-value">{{status}}</span>
+                        </div>
+                        <div class="entry-row">
+                          <span class="entry-label">Notes:</span>
+                          <span class="entry-value">{{lifestyleNotes}}</span>
+                        </div>
+                        <div class="entry-actions">
+                          <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                          <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
+                        </div>
+                      </div>
+                    {{/each}}
+                  {{else}}
+                    <div class="section-empty">No lifestyle habits recorded</div>
+                  {{/if}}
+                </div>
+              </div>
+              <div class="add-button-container">
+                <a data-w-id="Lifestyle-1234" href="#" class="edit-button-modal w-inline-block">
+                  <div class="button-text">Add </div>
+                </a>
+              </div>
+            </div>
+
+            <div data-w-tab="Meds-Sups" class="w-tab-pane">
+              <div class="dropdown-wrapper user-content-bg">
+                <div class="header-container-3">
+                  <h1 class="username-heading">Medications & Supplements</h1>
+                </div>
+                <div class="history-info">
+                  {{#if profile.medsandsups.length}}
+                    {{#each profile.medsandsups}}
+                      <div class="medsandsups-entry entry-card">
+                        <div class="entry-row">
+                          <span class="entry-label">Medicine:</span>
+                          <span class="entry-value" id="medicine">
+                            {{#if medicine}}{{medicine}}{{else}}-{{/if}}
+                          </span>
+                        </div>
+                        <div class="entry-row">
+                          <span class="entry-label">Supplement:</span>
+                          <span class="entry-value" id="supplement">
+                            {{#if supplement}}{{supplement}}{{else}}-{{/if}}
+                          </span>
+                        </div>
+                         <div class="entry-row">
+                          <span class="entry-label">Notes:</span>
+                          <span class="entry-value" id="medsAndSupsNotes">
+                            {{#if medsAndSupsNotes}}{{medsAndSupsNotes}}{{else}}-{{/if}}
+                          </span>
+                        </div>
+                        <div class="entry-actions">
+                          <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                          <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
+                        </div>
+                      </div>
+                    {{/each}}
+                  {{else}}
+                    <div class="section-empty">No Medications or Supplements recorded</div>
+                  {{/if}}
+                </div>
+              </div>
+              <div class="add-button-container">
+                <a data-w-id="Meds-Sups-1234" href="#" class="edit-button-modal w-inline-block">
+                  <div class="button-text">Add
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper modal-wrapper-1">
+    <div data-w-id="" class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a data-w-id="" class="modal-return-button w-inline-block w--current" aria-current="page">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Edit Profile</h1>
+      </div>
+      <form class="modal-form" id="basicInfoForm" method="post" action="/update-profile">
+        <label for="fname" class="field-label">First Name</label>
+        <input class="form-text-field" name="fname" id="fname" aria-label="First Name" aria-required="true" maxlength="256" type="text" required="" value="{{#if fname}}{{fname}}{{/if}}">
+
+        <label for="lname" class="field-label">Last Name</label>
+        <input class="form-text-field" name="lname" id="lname" aria-label="Last Name" aria-required="true" maxlength="256" name="Last Name" placeholder="" type="text" required="" value="{{#if lname}}{{lname}}{{/if}}" />
+
+        <label for="birthDate" class="field-label">Birth Date</label>
+        <input class="form-text-field" name="birthDate" id="birthDate" maxlength="256" placeholder="" type="date" required="" value="{{#if profile.birthDate}}{{formatDate profile.birthDate}}{{/if}}">
+
+        <label id="sex-label" class="field-label">Sex (at birth)</label>
+        <div class="sex-container" role="group" aria-labelledby="sex-label">
+          <!-- prettier-ignore -->
+          <button type="button" class="profile-modal-button" data-value="Male" id="sex-male" {{#ifEqual
+            profile.sex 'Male' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual profile.sex 'Male'}}true{{else}}false{{/ifEqual}}">Male</button>
+          <!-- prettier-ignore -->
+          <button type="button" class="profile-modal-button" data-value="Female" id="sex-female" {{#ifEqual
+            profile.sex 'Female' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual profile.sex 'Female'}}true{{else}}false{{/ifEqual}}">Female</button>
+          <!-- prettier-ignore -->
+          <button type="button" class="profile-modal-button" data-value="Other" id="sex-other" {{#ifEqual
+            profile.sex 'Other' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual profile.sex 'Other'}}true{{else}}false{{/ifEqual}}">Other</button>
+          <input type="hidden" name="sex" id="sex" value="{{profile.sex}}" aria-hidden="true">
+        </div>
+
+        <label for="bloodType" class="field-label">Blood Type</label>
+        <select class="bloodType" name="bloodType" id="bloodType" onchange="checkBloodType()">
+          <option value="Unknown" {{#ifEqual profile.bloodType 'Unknown' }}selected{{/ifEqual}}>Unknown</option>
+          <option value="A+" {{#ifEqual profile.bloodType 'A+' }}selected{{/ifEqual}}>A+</option>
+          <option value="A-" {{#ifEqual profile.bloodType 'A-' }}selected{{/ifEqual}}>A-</option>
+          <option value="B+" {{#ifEqual profile.bloodType 'B+' }}selected{{/ifEqual}}>B+</option>
+          <option value="B-" {{#ifEqual profile.bloodType 'B-' }}selected{{/ifEqual}}>B-</option>
+          <option value="O+" {{#ifEqual profile.bloodType 'O+' }}selected{{/ifEqual}}>O+</option>
+          <option value="O-" {{#ifEqual profile.bloodType 'O-' }}selected{{/ifEqual}}>O-</option>
+          <option value="AB+" {{#ifEqual profile.bloodType 'AB+' }}selected{{/ifEqual}}>AB+</option>
+          <option value="AB-" {{#ifEqual profile.bloodType 'AB-' }}selected{{/ifEqual}}>AB-</option>
+          <option value="Other" {{#ifEqual profile.bloodType 'Other' }}selected{{/ifEqual}}>Other</option>
+        </select>
+        <div class="customBloodTypeContainer" style="display: none;">
+          <label for="customBloodType" class="field-label">Other Blood Types:</label>
+          <input class="form-text-field" name="customBloodType" id="customBloodType" aria-label="Custom Blood Type" aria-required="true" maxlength="256" type="text" value="{{#if profile.customBloodType}}{{profile.customBloodType}}{{/if}}">
+        </div>
+        <div class="modal-footer">
+          <a data-w-id="" href="/profile" aria-current="page" class="cancel-button">Cancel</a>
+          <input type="submit" class="profile-button save" value="Save" aria-label="Save Profile Changes" />
+        </div>
+      </form>
+      <div class="w-form-done">
+        <div>Thank you! Your submission has been received!</div>
+      </div>
+      <div class="w-form-fail">
+        <div>Oops! Something went wrong while submitting the form.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper modal-wrapper-2">
+    <div data-w-id="" class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a data-w-id="" aria-current="page" class="modal-return-button w-inline-block w--current">
+          {{> svg/backArrow}}</a>
+        <h1 class="modal-button">Family History</h1>
+      </div>
+      <form class="modal-form" id="familyHistoryForm" name="familyHistoryForm" method="post" action="/update-profile">
+        <label for="familyCondition" class="field-label">Condition</label>
+        <input class="form-text-field" name="familyCondition" id="familyCondition" maxlength="256" placeholder="" type="text" value="{{#if profile.familyHistory.[0].familyCondition}}{{profile.familyHistory.[0].familyCondition}}{{/if}}" />
+
+        <label id="relatives-label" class="field-label">Relatives Impacted</label>
+        <div class="relatives-container" role="group" aria-labelledby="relatives-label">
+          <button type="button" class="profile-modal-button" data-value="Mother" id="relatives-mother" {{#ifEqual
+            this 'Mother' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Mother'}}true{{else}}false{{/ifEqual}}">Mother</button>
+          <button type="button" class="profile-modal-button" data-value="Father" id="relatives-father" {{#ifEqual
+            this 'Father' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Father'}}true{{else}}false{{/ifEqual}}">Father</button>
+          <button type="button" class="profile-modal-button" data-value="Grandparent" id="relatives-grandparent" {{#ifEqual this 'Grandparent' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Grandparent'}}true{{else}}false{{/ifEqual}}">Grandparent</button>
+          <button type="button" class="profile-modal-button" data-value="Sibling" id="relatives-sibling" {{#ifEqual
+            this 'Sibling' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Sibling'}}true{{else}}false{{/ifEqual}}">Sibling</button>
+          <button type="button" class="profile-modal-button" data-value="Aunt" id="relatives-aunt" {{#ifEqual
+            this 'Aunt' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Aunt'}}true{{else}}false{{/ifEqual}}">Aunt</button>
+          <button type="button" class="profile-modal-button" data-value="Uncle" id="relatives-uncle" {{#ifEqual
+            this 'Uncle' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Uncle'}}true{{else}}false{{/ifEqual}}">Uncle</button>
+          <button type="button" class="profile-modal-button" data-value="Cousin" id="relatives-cousin" {{#ifEqual
+            this 'Cousin' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Cousin'}}true{{else}}false{{/ifEqual}}">Cousin</button>
+          <button type="button" class="profile-modal-button" data-value="Child" id="relatives-child" {{#ifEqual
+            this 'Child' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Child'}}true{{else}}false{{/ifEqual}}">Child</button>
+          <button type="button" class="profile-modal-button" data-value="Other" id="relatives-other" {{#ifEqual
+            this 'Other' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Other'}}true{{else}}false{{/ifEqual}}">Other</button>
+        </div>
+        <input type="hidden" name="relatives" id="relatives" value="{{#if profile.familyHistory.[0].relatives}}{{profile.familyHistory.[0].relatives}}{{/if}}">
+
+        <label for="addNotes" class="field-label">Add Notes</label>
+        <input class="form-text-field" maxlength="256" name="addNotes" placeholder="" type="text" id="addNotes" value="{{#if profile.familyHistory.[0].addNotes}}{{profile.familyHistory.[0].addNotes}}{{/if}}" aria-hidden="true" />
+
+        <div class="modal-footer">
+          <a href="/profile" aria-current="page" class="cancel-button">Cancel</a>
+          <input type="submit" class="profile-button save" value="Save" aria-label="Save Profile Changes" />
+        </div>
+      </form>
+      <div class="w-form-done">
+        <div>Thank you! Your submission has been received!</div>
+      </div>
+      <div class="w-form-fail">
+        <div>Oops! Something went wrong while submitting the form.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper modal-wrapper-3">
+    <div data-w-id="" class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a data-w-id="" aria-current="page" class="modal-return-button w-inline-block w--current">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Monitoring</h1>
+      </div>
+
+      <form class="modal-form" id="monitoringForm" name="monitoringForm" method="post" action="/update-profile">
+        <input type="hidden" name="action" value="add">
+        <input type="hidden" name="type" value="monitoring">
+
+        <label for="weight" class="field-label">Weight</label>
+        <input class="form-text-field" name="weight" id="weight" maxlength="256" placeholder="" type="text" value="{{#if weight}}{{weight}}{{/if}}">
+
+        <label for="bloodPressure" class="field-label">Blood Pressure</label>
+        <input class="form-text-field" name="bloodPressure" id="bloodPressure" maxlength="256" placeholder="" type="text" value="{{#if bloodPressure}}{{bloodPressure}}{{/if}}">
+
+        <label for="restingHeartRate" class="field-label">Resting Heart Rate</label>
+        <input class="form-text-field" name="restingHeartRate" id="restingHeartRate" maxlength="256" placeholder="" type="text" value="{{#if restingHeartRate}}{{restingHeartRate}}{{/if}}">
+
+        <label for="sleep" class="field-label">Sleep</label>
+        <input class="form-text-field" name="sleep" id="sleep" maxlength="256" aria-label="sleep" placeholder="" type="text" value="{{#if sleep}}{{sleep}}{{/if}}">
+
+        <label for="monitoringNotes" class="field-label">Notes</label>
+        <input class="form-text-field" name="monitoringNotes" id="monitoringNotes" maxlength="256" placeholder="" type="text" value="{{#if monitoringNotes}}{{monitoringNotes}}{{/if}}" aria-hidden="true">
+
+        <div class="modal-footer">
+          <a href="/profile" aria-current="page" class="cancel-button">Cancel</a>
+          <input type="submit" class="profile-button save" value="Save" aria-label="Save Profile Changes" />
+        </div>
+      </form>
+      <div class="w-form-done">
+        <div>Thank you! Your submission has been received!</div>
+      </div>
+      <div class="w-form-fail">
+        <div>Oops! Something went wrong while submitting the form.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper modal-wrapper-4">
+    <div data-w-id="" class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a data-w-id="" aria-current="page" class="modal-return-button w-inline-block w--current">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Lifestyle</h1>
+      </div>
+      <form class="modal-form" id="lifestyleForm" id="lifestyleForm" method="post" action="/update-profile">
+        <input type="hidden" name="action" value="add">
+        <input type="hidden" name="type" value="lifestyleForm">
+
+        <label for="habitType" class="field-label">Habit Type</label>
+        <input class="form-text-field" name="habitType" id="habitType" maxlength="256" placeholder="" type="text" value="{{#if profile.lifestyle.[0].habitType}}{{profile.lifestyle.[0].habitType}}{{/if}}" />
+
+        <label id="status-label" class="field-label">Status</label>
+        <div class="status-container" role="group" aria-labelledby="status-label">
+          <button type="button" class="profile-modal-button" data-value="Every day" id="status-everyday" {{#ifEqual
+            this 'Everyday' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Everyday'}}true{{else}}false{{/ifEqual}}">Every day</button>
+          <button type="button" class="profile-modal-button" data-value="Some days" id="status-somedays" {{#ifEqual
+            this 'Somedays' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Somedays'}}true{{else}}false{{/ifEqual}}">Some day</button>
+          <button type="button" class="profile-modal-button" data-value="Used to" id="status-usedto" {{#ifEqual
+            this 'Usedto' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Usedto'}}true{{else}}false{{/ifEqual}}">Used to</button>
+          <button type="button" class="profile-modal-button" data-value="Never" id="status-never" {{#ifEqual
+            this 'Never' }}data-selected="true" {{/ifEqual}} aria-pressed="{{#ifEqual this 'Never'}}true{{else}}false{{/ifEqual}}">Never</button>
+        </div>
+        <input type="hidden" name="status" id="status" value="{{#if profile.lifestyle.[0].status}}{{profile.lifestyle.[0].status}}{{/if}}">
+
+        <label for="lifestyleNotes" class="field-label">Add Notes</label>
+        <input class="form-text-field" maxlength="256" name="lifestyleNotes" placeholder="" type="text" id="lifestyleNotes" value="{{#if profile.lifestyle.[0].lifestyleNotes}}{{profile.lifestyle.[0].lifestyleNotes}}{{/if}}" aria-hidden="true" />
+
+        <div class="modal-footer">
+          <a href="/profile" aria-current="page" class="cancel-button">Cancel</a>
+          <input type="submit" class="profile-button save" value="Save" aria-label="Save Profile Changes" />
+        </div>
+      </form>
+      <div class="w-form-done">
+        <div>Thank you! Your submission has been received!</div>
+      </div>
+      <div class="w-form-fail">
+        <div>Oops! Something went wrong while submitting the form.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper modal-wrapper-5">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a class="modal-return-button w-inline-block w--current">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Medications & Supplements</h1>
+      </div>
+
+      <form class="modal-form" id="medsAndSupsForm" name="medsAndSupsForm" method="post" action="/update-profile">
+        <input type="hidden" name="action" value="add">
+        <input type="hidden" name="type" value="medsandsups">
+
+        <label for="medicine" class="field-label">Medicine</label>
+        <input class="form-text-field" name="medicine" id="medicine" maxlength="256" placeholder="" type="text" value="{{#if medicine}}{{medicine}}{{/if}}">
+
+        <label for="supplement" class="field-label">Supplement</label>
+        <input class="form-text-field" name="supplement" id="supplement" maxlength="256" placeholder="" type="text" value="{{#if supplement}}{{supplement}}{{/if}}">
+
+        <label for="medsAndSupsNotes" class="field-label">Notes</label>
+        <input class="form-text-field" name="medsAndSupsNotes" id="medsAndSupsNotes" maxlength="256" placeholder="" type="text" value="{{#if medsAndSupsNotes}}{{medsAndSupsNotes}}{{/if}}" aria-hidden="true">
+
+        <div class="modal-footer">
+          <a href="/profile" aria-current="page" class="cancel-button">Cancel</a>
+          <input type="submit" class="profile-button save" value="Save" aria-label="Save Profile Changes" />
+        </div>
+      </form>
+      <div class="w-form-done">
+        <div>Thank you! Your submission has been received!</div>
+      </div>
+      <div class="w-form-fail">
+        <div>Oops! Something went wrong while submitting the form.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper profile-info-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a class="modal-return-button w-inline-block w--current" aria-current="page">
+          {{> svg/backArrow}}
+        </a>
+        <h1 class="modal-button">Profile Information</h1>
+      </div>
+      
+      <div class="modal-description">
+        <p>Each section you fill out enhances our ability to generate meaningful Reports and Insights tailored specifically to you.</p>
+        <p>The more complete and accurate your information, the more valuable your health analytics will become — helping you make informed decisions about your wellbeing.</p>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" aria-current="page" class="cancel-button cancel-space">Close</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper blood-type-modal">
+    <div class="modal-background"></div>
+      <div class="modal-card">
+        <div class="modal-header">
+          <a class="modal-return-button w-inline-block w--current" aria-current="page">
+            {{> svg/backArrow}}
+          </a>
+          <h1 class="modal-button">Blood Type Information</h1>
+        </div>
+        
+        <div class="modal-description">
+          <p>Your blood type is essential medical information that can be critical in emergencies. Blood types determine compatibility for transfusions - receiving incompatible blood can cause severe, potentially fatal reactions.</p>
+          
+          <h3>Blood Type Compatibility Chart</h3>
+          <div class="blood-type-table-container">
+            <table class="blood-type-table">
+              <thead>
+                <tr>
+                  <th>Recipient Blood Type</th>
+                  <th>Compatible Donor Blood Types</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>A+</td>
+                  <td>A+, A-, O+, O-</td>
+                </tr>
+                <tr>
+                  <td>A-</td>
+                  <td>A-, O-</td>
+                </tr>
+                <tr>
+                  <td>B+</td>
+                  <td>B+, B-, O+, O-</td>
+                </tr>
+                <tr>
+                  <td>B-</td>
+                  <td>B-, O-</td>
+                </tr>
+                <tr>
+                  <td>AB+</td>
+                  <td>Compatible with all blood types</td>
+                </tr>
+                <tr>
+                  <td>AB-</td>
+                  <td>AB-, A-, B-, O-</td>
+                </tr>
+                <tr>
+                  <td>O+</td>
+                  <td>O+, O-</td>
+                </tr>
+                <tr>
+                  <td>O-</td>
+                  <td>O-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="blood-type-facts">
+            <h3>Key Facts:</h3>
+            <ul>
+              <li>O- is the universal donor (can donate to any blood type)</li>
+              <li>AB+ is the universal recipient (can receive from any blood type)</li>
+              <li>Blood type is inherited from your parents</li>
+              <li>Besides ABO types, the Rh factor (+ or -) is also important for compatibility</li>
+            </ul>
+          </div>
+          
+          <p class="source-link">Source: <a href="https://www.redcrossblood.org/donate-blood/blood-types.html" target="_blank">American Red Cross</a></p>
+        </div>
+
+        <div class="modal-footer">
+          <a href="/profile" aria-current="page" class="cancel-button cancel-space">Close</a>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6606de22e8c152e6b19be98a" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Your edit button script should come after jQuery -->
+  <script src="js/main.js" type="text/javascript"></script>
+  <script> // modals
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if there's a stored active tab
+      const storedTab = sessionStorage.getItem('activeTab');
+      if (storedTab) {
+        setActiveTab(storedTab);
+        // Clear the stored tab
+        sessionStorage.removeItem('activeTab');
+      }
+      // ====== Modal Management Functions ======
+      function closeModal(modal) {
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
+        modal.style.display = 'none';
+      }
+
+      function openModal(modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.style.opacity = '1';
+          modal.style.visibility = 'visible';
+        }, 10);
+      }
+
+      function getCurrentTab() {
+        const activeTab = document.querySelector('.w-tab-link.w--current');
+        return activeTab ? activeTab.getAttribute('data-w-tab') : 'Basic Info';
+      }
+
+      function setActiveTab(tabName) {
+        const tab = document.querySelector(`[data-w-tab="${tabName}"]`);
+        if (tab) {
+          // Remove current class from all tabs and content
+          document.querySelectorAll('.w-tab-link').forEach(t => t.classList.remove('w--current'));
+          document.querySelectorAll('.w-tab-pane').forEach(p => p.classList.remove('w--tab-active'));
+
+          // Add current class to selected tab and its content
+          tab.classList.add('w--current');
+          const pane = document.querySelector(`.w-tab-pane[data-w-tab="${tabName}"]`);
+          if (pane) pane.classList.add('w--tab-active');
+        }
+      }
+
+      function clearFamilyHistoryForm() {
+        const form = document.getElementById('familyHistoryForm');
+        form.reset();
+
+        // Clear any hidden fields
+        const actionInput = form.querySelector('#action');
+        const entryIdInput = form.querySelector('#entryId');
+        if (actionInput) actionInput.remove();
+        if (entryIdInput) entryIdInput.remove();
+
+        // Reset all relative buttons
+        form.querySelectorAll('.profile-modal-button').forEach(btn => {
+          btn.removeAttribute('data-selected');
+          btn.setAttribute('aria-pressed', 'false');
+        });
+
+        // Clear the hidden relatives input
+        const relativesInput = document.getElementById('relatives');
+        if (relativesInput) relativesInput.value = '';
+
+        // Clear condition and notes
+        document.getElementById('familyCondition').value = '';
+        document.getElementById('addNotes').value = '';
+      }
+
+      function clearMonitoringForm() {
+        const form = document.getElementById('monitoringForm');
+        form.reset();
+
+        // Clear any hidden fields
+        const actionInput = form.querySelector('#action');
+        const entryIdInput = form.querySelector('#entryId');
+        if (actionInput) actionInput.remove();
+        if (entryIdInput) entryIdInput.remove();
+
+        // Clear all form fields
+        document.getElementById('weight').value = '';
+        document.getElementById('bloodPressure').value = '';
+        document.getElementById('restingHeartRate').value = '';
+        document.getElementById('sleep').value = '';
+        document.getElementById('monitoringNotes').value = '';
+      }
+
+      function clearLifestyleForm() {
+        const form = document.getElementById('lifestyleForm');
+        form.reset();
+
+        // Clear any hidden fields
+        const actionInput = form.querySelector('#action');
+        const entryIdInput = form.querySelector('#entryId');
+        if (actionInput) actionInput.remove();
+        if (entryIdInput) entryIdInput.remove();
+
+        // Reset all relative buttons
+        form.querySelectorAll('.profile-modal-button').forEach(btn => {
+          btn.removeAttribute('data-selected');
+          btn.setAttribute('aria-pressed', 'false');
+        });
+
+        // Clear the hidden relatives input
+        const statusInput = document.getElementById('status');
+        if (statusInput) statusInput.value = '';
+
+        // Clear condition and notes
+        document.getElementById('habitType').value = '';
+        document.getElementById('lifestyleNotes').value = '';
+      }
+
+      function clearMedsAndSupsForm() {
+        const form = document.getElementById('medsAndSupsForm');
+        form.reset();
+
+        // Clear any hidden fields
+        const actionInput = form.querySelector('#action');
+        const entryIdInput = form.querySelector('#entryId');
+        if (actionInput) actionInput.remove();
+        if (entryIdInput) entryIdInput.remove();
+
+        // Clear all form fields
+        document.getElementById('medicine').value = '';
+        document.getElementById('supplement').value = '';
+        document.getElementById('medsAndSupsNotes').value = '';
+      }
+
+      // ====== Form Utility Functions ======
+      function checkBloodType() {
+        const bloodTypeSelect = document.getElementById('bloodType');
+        const customBloodTypeContainer = document.querySelector('.customBloodTypeContainer');
+        const customBloodTypeInput = document.getElementById('customBloodType');
+
+        if (bloodTypeSelect.value === 'Other') {
+          customBloodTypeContainer.style.display = 'block';
+          customBloodTypeInput.setAttribute('required', 'true');
+        } else {
+          customBloodTypeContainer.style.display = 'none';
+          customBloodTypeInput.removeAttribute('required');
+          customBloodTypeInput.value = ''; // Clear the input when hidden
+        }
+      }
+
+      // Add event listener to blood type select
+      document.getElementById('bloodType')?.addEventListener('change', checkBloodType);
+
+      // Run on initial page load to set correct state
+      document.addEventListener('DOMContentLoaded', function() {
+        checkBloodType();
+      });
+
+      // ====== Event Listeners ======
+      // Modal trigger buttons
+      const updateProfileButton = document.querySelector('[data-w-id="basicInfo-1234"]');
+      const addFamilyHistoryButton = document.querySelector('[data-w-id="familyHistory-1234"]');
+      const addMonitoringButton = document.querySelector('[data-w-id="Monitoring-1234"]');
+      const addLifestyleButton = document.querySelector('[data-w-id="Lifestyle-1234"]');
+      const addMedsAndSupsButton = document.querySelector('[data-w-id="Meds-Sups-1234"]');
+
+      // Family History edit entry functionality
+      document.querySelectorAll('.family-history-entry .edit-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          console.log('Family History Edit button clicked');
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.family-history-entry');
+
+          try {
+            // Get data from table cells
+            const conditionElement = entry.querySelector('.condition-column');
+            const relativesElement = entry.querySelector('.relatives-column');
+            const notesElement = entry.querySelector('.notes-column');
+
+            if (!conditionElement || !relativesElement) {
+              throw new Error('Could not find all required elements');
+            }
+
+            // Get text content without the need to replace labels since we're using table columns
+            const condition = conditionElement.textContent.trim();
+            const relativesStr = relativesElement.textContent.trim();
+            const notes = notesElement ? notesElement.textContent.trim() : '';
+
+            // Populate form
+            document.getElementById('familyCondition').value = condition;
+            document.getElementById('addNotes').value = notes;
+
+            // Parse relatives string (comma separated) into array
+            const relatives = relativesStr.split(',').map(r => r.trim());
+
+            // Reset and select appropriate relative buttons
+            document.querySelectorAll('.relatives-container .profile-modal-button').forEach(btn => {
+              const isSelected = relatives.includes(btn.getAttribute('data-value'));
+              btn.removeAttribute('data-selected');
+              btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+              if (isSelected) {
+                btn.setAttribute('data-selected', 'true');
+              }
+            });
+
+            // Set hidden relatives input - this is important for MongoDB
+            document.getElementById('relatives').value = relatives.join(',');
+
+            // Add hidden fields for edit action and entry ID - critical for updating the right document
+            const form = document.getElementById('familyHistoryForm');
+            
+            // For action
+            let actionInput = form.querySelector('input[name="action"]');
+            if (!actionInput) {
+              actionInput = document.createElement('input');
+              actionInput.type = 'hidden';
+              actionInput.id = 'action';
+              actionInput.name = 'action';
+              form.appendChild(actionInput);
+            }
+            actionInput.value = 'edit';
+            
+            // For entryId
+            let entryIdInput = form.querySelector('input[name="entryId"]');
+            if (!entryIdInput) {
+              entryIdInput = document.createElement('input');
+              entryIdInput.type = 'hidden';
+              entryIdInput.id = 'entryId';
+              entryIdInput.name = 'entryId';
+              form.appendChild(entryIdInput);
+            }
+            entryIdInput.value = entryId;
+
+            // Show modal
+            const modal = document.querySelector('.modal-wrapper-2');
+            openModal(modal);
+          } catch (error) {
+            console.error('Error preparing edit form:', error);
+            alert('Could not load family history entry for editing.');
+          }
+        });
+      });
+
+      // Family History Delete entry functionality
+      document.querySelectorAll('.family-history-entry .delete-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          if (!confirm('Are you sure you want to delete this entry?')) return;
+
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.family-history-entry');
+
+          try {
+            const response = await fetch('/update-profile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'delete',
+                entryId: entryId
+              })
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const result = await response.json();
+
+            if (result.success) {
+              entry.remove();
+              
+              // Check if there are any family history entries left
+              const historyTable = document.querySelector('.family-history-table-content');
+              if (!historyTable.querySelector('.family-history-entry')) {
+                historyTable.innerHTML = '<div class="family-history-empty">No family history or genetic conditions reported</div>';
+              }
+            } else {
+              throw new Error(result.message || 'Failed to delete entry');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete entry: ' + error.message);
+          }
+        });
+      });
+
+      // Monitoring Edit entry functionality
+      document.querySelectorAll('.monitoring-entry .edit-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          const entryId = this.getAttribute('data-id');
+          console.log('Edit button clicked for monitoring entry:', entryId);
+
+          const entry = this.closest('.monitoring-entry');
+          const form = document.getElementById('monitoringForm');
+
+          // Log form data before sending
+          console.log('Form data being sent:', {
+            entryId: entryId,
+            action: 'edit',
+            type: 'monitoring',
+            weight: form.weight.value,
+            bloodPressure: form.bloodPressure.value,
+            restingHeartRate: form.restingHeartRate.value,
+            sleep: form.sleep.value,
+            monitoringNotes: form.monitoringNotes.value
+          });
+
+          try {
+            const form = document.getElementById('monitoringForm');
+
+            // Clear any existing hidden inputs first
+            form.querySelectorAll('input[type="hidden"]').forEach(input => input.remove());
+
+            // Get values directly from spans within form-info-output divs
+            form.weight.value = entry.querySelector('[id="weightDisplay"]').textContent.trim();
+            form.bloodPressure.value = entry.querySelector('[id="bloodPressure"]').textContent.trim();
+            form.restingHeartRate.value = entry.querySelector('[id="restingHeartRate"]').textContent.trim();
+            form.sleep.value = entry.querySelector('[id="sleep"]').textContent.trim();
+            form.monitoringNotes.value = entry.querySelector('[id="monitoringNotes"]').textContent.trim();
+
+            // Add hidden fields
+            const hiddenFields = [{
+                name: 'action',
+                value: 'edit'
+              },
+              {
+                name: 'type',
+                value: 'monitoring'
+              },
+              {
+                name: 'entryId',
+                value: entryId
+              }
+            ];
+
+            hiddenFields.forEach(field => {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = field.name;
+              input.value = field.value;
+              form.appendChild(input);
+            });
+
+            // Show modal
+            const modal = document.querySelector('.modal-wrapper-3');
+            openModal(modal);
+
+            console.log('Edit form populated with:', {
+              entryId,
+              action: 'edit',
+              type: 'monitoring',
+              values: {
+                weight: form.weight.value,
+                bloodPressure: form.bloodPressure.value,
+                restingHeartRate: form.restingHeartRate.value,
+                sleep: form.sleep.value,
+                monitoringNotes: form.monitoringNotes.value
+              }
+            });
+
+          } catch (error) {
+            console.error('Error preparing monitoring edit form:', error);
+            alert('Could not load monitoring entry for editing.');
+          }
+        });
+      });
+
+      // Monitoring Delete functionality
+      document.querySelectorAll('.monitoring-entry .delete-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          if (!confirm('Are you sure you want to delete this entry?')) return;
+
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.monitoring-entry');
+
+          try {
+            const response = await fetch('/update-profile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'delete',
+                entryId: entryId,
+                type: 'monitoring'
+              })
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const result = await response.json();
+            if (result.success) {
+              entry.remove();
+              const monitoringContainer = document.querySelector('.history-info');
+              if (!monitoringContainer.querySelector('.monitoring-entry')) {
+                monitoringContainer.innerHTML = '<div class="form-info">No monitoring data recorded</div>';
+              }
+            } else {
+              throw new Error(result.message || 'Failed to delete entry');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete entry: ' + error.message);
+          }
+        });
+      });
+
+      // Lifestyle edit entry functionality
+      document.querySelectorAll('.lifestyle-entry .edit-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          console.log('Lifestyle Edit button clicked');
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.lifestyle-entry');
+
+          try {
+            // Get existing data with corrected selectors
+            const habitTypeElement = entry.querySelector('.entry-row:nth-child(1) .entry-value');
+            const statusElement = entry.querySelector('.entry-row:nth-child(2) .entry-value');
+            const notesElement = entry.querySelector('.entry-row:nth-child(3) .entry-value');
+
+            if (!habitTypeElement || !statusElement || !notesElement) {
+              throw new Error('Could not find all required elements');
+            }
+
+            const habitType = habitTypeElement.textContent.replace('Habit Type:', '').trim();
+            const statusStr = statusElement.textContent.replace('Status:', '').trim();
+            const notes = notesElement.textContent.replace('Notes:', '').trim();
+
+            console.log('Found data:', {
+              habitType,
+              statusStr,
+              notes
+            }); // Debug log
+
+            // Populate the modal form
+            document.getElementById('habitType').value = habitType;
+            document.getElementById('lifestyleNotes').value = notes;
+
+            // Reset and select appropriate status button
+            document.querySelectorAll('.status-container .profile-modal-button').forEach(btn => {
+              const isSelected = btn.getAttribute('data-value') === statusStr;
+              if (isSelected) {
+                btn.setAttribute('data-selected', 'true');
+                btn.setAttribute('aria-pressed', 'true');
+              } else {
+                btn.removeAttribute('data-selected');
+                btn.setAttribute('aria-pressed', 'false');
+              }
+            });
+
+            // Set hidden status input value
+            document.getElementById('status').value = statusStr;
+
+            // Add hidden fields for edit action and entry ID
+            const form = document.getElementById('lifestyleForm');
+            let actionInput = document.getElementById('action');
+            let entryIdInput = document.getElementById('entryId');
+
+            if (!actionInput) {
+              actionInput = document.createElement('input');
+              actionInput.type = 'hidden';
+              actionInput.id = 'action';
+              actionInput.name = 'action';
+              form.appendChild(actionInput);
+            }
+            actionInput.value = 'edit';
+
+            if (!entryIdInput) {
+              entryIdInput = document.createElement('input');
+              entryIdInput.type = 'hidden';
+              entryIdInput.id = 'entryId';
+              entryIdInput.name = 'entryId';
+              form.appendChild(entryIdInput);
+            }
+            entryIdInput.value = entryId;
+
+            // Show the modal
+            const modal = document.querySelector('.modal-wrapper-4');
+            openModal(modal);
+          } catch (error) {
+            console.error('Error preparing lifestyle edit form:', error);
+            alert('Could not load lifestyle entry for editing.');
+          }
+        });
+      });
+
+      // Lifestyle delete button functionality
+      document.querySelectorAll('.lifestyle-entry .delete-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          if (!confirm('Are you sure you want to delete this habit?')) return;
+
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.lifestyle-entry');
+
+          try {
+            const response = await fetch('/update-profile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'delete',
+                entryId: entryId,
+                type: 'lifestyle' // Add this to differentiate from family history
+              })
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const result = await response.json();
+
+            if (result.success) {
+              entry.remove();
+              const lifestyleContainer = document.querySelector('.history-info');
+              if (!lifestyleContainer.querySelector('.lifestyle-entry')) {
+                lifestyleContainer.innerHTML = '<div class="form-info">No lifestyle habits recorded</div>';
+              }
+            } else {
+              throw new Error(result.message || 'Failed to delete entry');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete lifestyle entry: ' + error.message);
+          }
+        });
+      });
+
+      // Meds & Supps edit entry functionality
+      document.querySelectorAll('.medsandsups-entry .edit-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.medsandsups-entry');
+
+          try {
+            console.log('Edit button clicked for Meds & Sups entry:', entryId);
+
+            // Get the correct form
+            const form = document.getElementById('medsAndSupsForm');
+            if (!form) {
+              throw new Error('Meds & Sups form not found');
+            }
+
+            // Clear any existing hidden inputs
+            const existingAction = form.querySelector('input[name="action"]');
+            const existingEntryId = form.querySelector('input[name="entryId"]');
+            if (existingAction) existingAction.remove();
+            if (existingEntryId) existingEntryId.remove();
+
+            // Updated selectors to match your HTML structure
+            const medicineElement = entry.querySelector('#medicine');
+            const supplementElement = entry.querySelector('#supplement');
+            const notesElement = entry.querySelector('#medsAndSupsNotes');
+
+            console.log('Found elements:', {
+              medicine: medicineElement?.textContent,
+              supplement: supplementElement?.textContent,
+              notes: notesElement?.textContent
+            });
+
+            if (!medicineElement || !supplementElement || !notesElement) {
+              throw new Error('Could not find all required elements');
+            }
+
+            // Populate form fields (no need to replace text since we're using spans)
+            form.medicine.value = medicineElement.textContent.trim();
+            form.supplement.value = supplementElement.textContent.trim();
+            form.medsAndSupsNotes.value = notesElement.textContent.trim();
+
+            // Add hidden fields
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'edit';
+            form.appendChild(actionInput);
+
+            const typeInput = document.createElement('input');
+            typeInput.type = 'hidden';
+            typeInput.name = 'type';
+            typeInput.value = 'medsandsups';
+            form.appendChild(typeInput);
+
+            const entryIdInput = document.createElement('input');
+            entryIdInput.type = 'hidden';
+            entryIdInput.name = 'entryId';
+            entryIdInput.value = entryId;
+            form.appendChild(entryIdInput);
+
+            console.log('Form populated with:', {
+              entryId,
+              medicine: form.medicine.value,
+              supplement: form.supplement.value,
+              notes: form.medsAndSupsNotes.value
+            });
+
+            // Show the modal
+            const modal = document.querySelector('.modal-wrapper-5');
+            if (modal) {
+              openModal(modal);
+            } else {
+              throw new Error('Meds & Sups modal not found');
+            }
+          } catch (error) {
+            console.error('Error preparing meds and sups edit form:', error);
+            alert('Could not load entry for editing: ' + error.message);
+          }
+        });
+      });
+
+      // Meds & Sups Delete functionality 
+      document.querySelectorAll('.medsandsups-entry .delete-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          if (!confirm('Are you sure you want to delete this entry?')) return;
+
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.medsandsups-entry');
+
+          try {
+            const response = await fetch('/update-profile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'delete',
+                entryId: entryId,
+                type: 'medsandsups'
+              })
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const result = await response.json();
+            if (result.success) {
+              entry.remove();
+              const medsAndSupsContainer = document.querySelector('.history-info');
+              if (!medsAndSupsContainer.querySelector('.medsandsups-entry')) {
+                medsAndSupsContainer.innerHTML = '<div class="form-info">No Medications or Supplements recorded</div>';
+              }
+            } else {
+              throw new Error(result.message || 'Failed to delete entry');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete entry: ' + error.message);
+          }
+        });
+      });
+
+      // Button Click Handlers
+      if (updateProfileButton) {
+        updateProfileButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetModal = document.querySelector('.modal-wrapper-1');
+          if (targetModal) openModal(targetModal);
+        });
+      }
+
+      if (addFamilyHistoryButton) {
+        addFamilyHistoryButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearFamilyHistoryForm();
+          const targetModal = document.querySelector('.modal-wrapper-2');
+          if (targetModal) openModal(targetModal);
+        });
+      }
+
+      if (addMonitoringButton) {
+        addMonitoringButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearMonitoringForm();
+          const targetModal = document.querySelector('.modal-wrapper-3');
+          if (targetModal) openModal(targetModal);
+        });
+      }
+
+      if (addLifestyleButton) {
+        addLifestyleButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearLifestyleForm();
+          const targetModal = document.querySelector('.modal-wrapper-4');
+          if (targetModal) openModal(targetModal);
+        });
+      }
+
+      if (addMedsAndSupsButton) {
+        addMedsAndSupsButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearMedsAndSupsForm();
+          const targetModal = document.querySelector('.modal-wrapper-5');
+          if (targetModal) openModal(targetModal);
+        });
+      }
+
+      // Modal Close Handlers
+      document.querySelectorAll('.modal-background, .modal-return-button, .cancel-button').forEach(element => {
+        element.addEventListener('click', (e) => {
+          e.preventDefault();
+          const parentModal = element.closest('.modal-wrapper, .modal-wrapper-1, .modal-wrapper-2, .modal-wrapper-3, .modal-wrapper-4, .modal-wrapper-5');
+          if (parentModal) closeModal(parentModal);
+        });
+      });
+
+      // Basic Info Form Submission
+      document.getElementById('basicInfoForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentTab = getCurrentTab();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            // Update the displayed information
+            const ageDisplay = document.getElementById('ageDisplay');
+            const bloodTypeDisplay = document.getElementById('bloodTypeDisplay');
+            const sexDisplay = document.getElementById('sexDisplay');
+
+            if (ageDisplay) {
+              ageDisplay.textContent = result.age || '-';
+            }
+            if (bloodTypeDisplay) {
+              if (result.bloodType === 'Other') {
+                bloodTypeDisplay.textContent = result.customBloodType || '-';
+              } else {
+                bloodTypeDisplay.textContent = result.bloodType || '-';
+              }
+            }
+            if (sexDisplay) {
+              sexDisplay.textContent = result.sex || '-';
+            }
+
+            // Close the modal
+            const modal = this.closest('.modal-wrapper, .modal-wrapper-1');
+            if (modal) {
+              closeModal(modal);
+            }
+            setActiveTab(currentTab);
+          } else {
+            throw new Error(result.message || 'Failed to update profile');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to update profile: ' + error.message);
+        }
+      });
+
+      // Family history Form Submission
+      document.getElementById('familyHistoryForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentTab = getCurrentTab();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data.action) {
+          data.action = 'add';
+        }
+
+        try {
+          const response = await fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const result = await response.json();
+          if (result.success) {
+            sessionStorage.setItem('activeTab', currentTab);
+            window.location.reload();
+          } else {
+            throw new Error(result.message || 'Failed to update entry');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to save changes: ' + error.message);
+        }
+      });
+
+      // Monitoring Form Submission
+      document.getElementById('monitoringForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentTab = getCurrentTab();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        console.log('Form submission data:', data);
+        console.log('Hidden fields:', {
+          action: this.querySelector('input[name="action"]')?.value,
+          entryId: this.querySelector('input[name="entryId"]')?.value,
+          type: this.querySelector('input[name="type"]')?.value
+        });
+
+        try {
+          const response = await fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              action: data.action || 'add',
+              type: 'monitoring',
+              entryId: data.entryId,
+              weight: data.weight,
+              bloodPressure: data.bloodPressure,
+              restingHeartRate: data.restingHeartRate,
+              sleep: data.sleep,
+              monitoringNotes: data.monitoringNotes
+            })
+          });
+
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const result = await response.json();
+          if (result.success) {
+            sessionStorage.setItem('activeTab', currentTab);
+            window.location.reload();
+          } else {
+            throw new Error(result.message || 'Failed to update monitoring entry');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to save changes: ' + error.message);
+        }
+      });
+
+      // Lifestyle Form Submission
+      document.getElementById('lifestyleForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentTab = getCurrentTab();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // If no action is set, default to 'add'
+        if (!data.action) {
+          data.action = 'add';
+        }
+
+        try {
+          const response = await fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const result = await response.json();
+          if (result.success) {
+            sessionStorage.setItem('activeTab', currentTab);
+            window.location.reload();
+          } else {
+            throw new Error(result.message || 'Failed to update lifestyle entry');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to save changes: ' + error.message);
+        }
+      });
+
+      // Meds & Sups Form Submission
+      document.getElementById('medsAndSupsForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentTab = getCurrentTab();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // Ensure type is set for both new and edit submissions
+        if (!data.action) {
+          data.action = 'add';
+        }
+
+        try {
+          const response = await fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const result = await response.json();
+          if (result.success) {
+            sessionStorage.setItem('activeTab', currentTab);
+            window.location.reload();
+          } else {
+            throw new Error(result.message || 'Failed to update meds and supplements');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to save changes: ' + error.message);
+        }
+      });
+
+      // =========== Button Selection Handlers =========== //
+
+      // Sex Buttons
+      document.querySelectorAll('.sex-container .profile-modal-button').forEach(button => {
+        button.addEventListener('click', function() {
+          // Remove selected state from all sex buttons
+          const sexContainer = this.closest('.sex-container');
+          sexContainer.querySelectorAll('.profile-modal-button').forEach(btn => {
+            btn.removeAttribute('data-selected');
+            btn.setAttribute('aria-pressed', 'false');
+          });
+
+          // Add selected state to clicked button
+          this.setAttribute('data-selected', 'true');
+          this.setAttribute('aria-pressed', 'true');
+
+          // Update hidden input
+          const sexInput = document.getElementById('sex');
+          if (sexInput) {
+            sexInput.value = this.getAttribute('data-value');
+          }
+        });
+      });
+
+      // Relative Buttons
+      document.querySelectorAll('.relatives-container .profile-modal-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const relativesContainer = this.closest('.relatives-container');
+
+          // Toggle selected state
+          if (this.hasAttribute('data-selected')) {
+            this.removeAttribute('data-selected');
+            this.setAttribute('aria-pressed', 'false');
+          } else {
+            this.setAttribute('data-selected', 'true');
+            this.setAttribute('aria-pressed', 'true');
+          }
+
+          // Update hidden input with all selected relatives
+          const selectedButtons = relativesContainer.querySelectorAll('[data-selected]');
+          const selectedValues = Array.from(selectedButtons).map(btn => btn.getAttribute('data-value'));
+          document.getElementById('relatives').value = selectedValues.join(',');
+        });
+      });
+
+      // Status Buttons (single select)
+      document.querySelectorAll('.status-container .profile-modal-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const statusContainer = this.closest('.status-container');
+
+          // Remove selected state from all status buttons
+          statusContainer.querySelectorAll('.profile-modal-button').forEach(btn => {
+            btn.removeAttribute('data-selected');
+            btn.setAttribute('aria-pressed', 'false');
+          });
+
+          // Add selected state to clicked button
+          this.setAttribute('data-selected', 'true');
+          this.setAttribute('aria-pressed', 'true');
+
+          // Update hidden input
+          const statusInput = document.getElementById('status');
+          if (statusInput) {
+            statusInput.value = this.getAttribute('data-value');
+          }
+        });
+      });
+
+        // Initialize
+      checkBloodType();
+    });
+
+    // Blood Type Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get references to the modal and button
+      const bloodTypeModal = document.querySelector('.blood-type-modal');
+      const bloodTypeInfoButton = document.querySelector('.blood-info-button');
+      
+      // Function to open the modal
+      function openBloodTypeModal() {
+        if (!bloodTypeModal) return;
+        
+        bloodTypeModal.style.display = 'flex';
+        setTimeout(() => {
+          bloodTypeModal.style.opacity = '1';
+          bloodTypeModal.style.visibility = 'visible';
+        }, 10);
+      }
+      
+      // Function to close the modal
+      function closeBloodTypeModal() {
+        if (!bloodTypeModal) return;
+        
+        bloodTypeModal.style.opacity = '0';
+        bloodTypeModal.style.visibility = 'hidden';
+        setTimeout(() => {
+          bloodTypeModal.style.display = 'none';
+        }, 300); // Allow time for the opacity transition
+      }
+      
+      // Add click event to the info button
+      if (bloodTypeInfoButton) {
+        bloodTypeInfoButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation(); // Prevent event bubbling
+          openBloodTypeModal();
+        });
+      }
+      
+        // Add click events to close the modal
+        if (bloodTypeModal) {
+          // Close when clicking the background
+          const modalBackground = bloodTypeModal.querySelector('.modal-background');
+          if (modalBackground) {
+            modalBackground.addEventListener('click', function(e) {
+              e.preventDefault();
+              closeBloodTypeModal();
+            });
+          }
+          
+          // Close when clicking the return button
+          const returnButton = bloodTypeModal.querySelector('.modal-return-button');
+          if (returnButton) {
+            returnButton.addEventListener('click', function(e) {
+              e.preventDefault();
+              closeBloodTypeModal();
+            });
+          }
+          
+          // Close when clicking the cancel button
+          const cancelButton = bloodTypeModal.querySelector('.cancel-button');
+          if (cancelButton) {
+            cancelButton.addEventListener('click', function(e) {
+              e.preventDefault();
+              closeBloodTypeModal();
+            });
+          }
+        }
+      });
+
+    // Profile Info Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+  // Get references to the modal and button
+  const profileInfoModal = document.querySelector('.profile-info-modal');
+  const profileInfoButton = document.querySelector('.profile-info-button');
+  
+  // Function to open the modal
+  function openProfileInfoModal() {
+    if (!profileInfoModal) return;
+    
+    profileInfoModal.style.display = 'flex';
+    setTimeout(() => {
+      profileInfoModal.style.opacity = '1';
+      profileInfoModal.style.visibility = 'visible';
+    }, 10);
+  }
+  
+  // Function to close the modal
+  function closeProfileInfoModal() {
+    if (!profileInfoModal) return;
+    
+    profileInfoModal.style.opacity = '0';
+    profileInfoModal.style.visibility = 'hidden';
+    setTimeout(() => {
+      profileInfoModal.style.display = 'none';
+    }, 300); // Allow time for the opacity transition
+  }
+  
+  // Add click event to the info button
+  if (profileInfoButton) {
+    profileInfoButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent event bubbling
+      openProfileInfoModal();
+    });
+  }
+  
+  // Add click events to close the modal
+  if (profileInfoModal) {
+    // Close when clicking the background
+    const modalBackground = profileInfoModal.querySelector('.modal-background');
+    if (modalBackground) {
+      modalBackground.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeProfileInfoModal();
+      });
+    }
+    
+    // Close when clicking the return button
+    const returnButton = profileInfoModal.querySelector('.modal-return-button');
+    if (returnButton) {
+      returnButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeProfileInfoModal();
+      });
+    }
+    
+    // Close when clicking the cancel button
+    const cancelButton = profileInfoModal.querySelector('.cancel-button');
+    if (cancelButton) {
+      cancelButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeProfileInfoModal();
+      });
+    }
+  }
+});
+  </script>
+  <script> // file upload handler
+      document.addEventListener('DOMContentLoaded', function() {
+        const processButton = document.getElementById('processFiles');
+        
+        if (processButton) {
+          processButton.addEventListener('click', async () => {
+            // Your existing code here...
+            
+            // Add this part to properly hide the loading overlay when done
+            const waitForComplete = (maxWaitTime = 300000) => {
+              return new Promise((resolve) => {
+                // WebSocket for real-time updates
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const ws = new WebSocket(`${protocol}//${window.location.host}`);
+                
+                ws.onmessage = function(event) {
+                  const message = event.data;
+                  
+                  // If the message indicates completion or contains 'Files saved successfully'
+                  if (message.includes('Files saved successfully') || message.includes('completed')) {
+                    console.log('Processing complete, closing WebSocket');
+                    ws.close();
+                    resolve();
+                  }
+                };
+                
+                // Set a maximum wait time in case we miss the completion message
+                setTimeout(() => {
+                  console.log('Maximum wait time reached, closing WebSocket');
+                  ws.close();
+                  resolve();
+                }, maxWaitTime);
+              });
+            };
+            
+            try {
+              // Your existing form submission code...
+              
+              // After form submission completes, wait for the socket to signal completion
+              await waitForComplete();
+              
+              // Hide the loading overlay
+              const loadingOverlay = document.getElementById('loadingOverlay');
+              if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+              }
+              
+              // Reload the page or update UI as needed
+              window.location.reload();
+            } catch (error) {
+              console.error('Error:', error);
+              
+              // Hide the loading overlay even on error
+              const loadingOverlay = document.getElementById('loadingOverlay');
+              if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+              }
+            }
+          });
+        }
+      });
+  </script>
+
+</body>
+
+</html>
