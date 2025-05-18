@@ -19,6 +19,15 @@
       <div class="loader-text1">Processing your documents...</div>
       <div id="documentStatus" class="loader-text2"></div>
       <div id="processingStatus" class="loader-text2"></div>
+
+      <!-- Add progress bar -->
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <div id="progressText" class="progress-text">0%</div>
+      </div>
+
       <div class="loader-subtext">This may take a few minutes depending on your file size</div>
     </div>
   </div>
@@ -510,6 +519,16 @@
 
           let currentDocument = 1;
           let totalDocuments = files.size;
+          let estimatedProgress = 0;
+          let progressInterval;
+          let totalPages = 1;
+          let processingStarted = false;
+
+          // Get DOM elements for status updates
+          const statusDiv = document.getElementById('processingStatus');
+          const documentDiv = document.getElementById('documentStatus');
+          const progressFill = document.getElementById('progressFill');
+          const progressText = document.getElementById('progressText');
 
           ws.onopen = () => {
             console.log('WebSocket connected');
@@ -517,8 +536,7 @@
 
           ws.onmessage = function (event) {
             const message = event.data;
-            const statusDiv = document.getElementById('processingStatus');
-            const documentDiv = document.getElementById('documentStatus');
+            console.log('Received WebSocket message:', message);
 
             // Handle document processing messages
             if (message.includes('Processing file')) {
@@ -527,58 +545,194 @@
                 currentDocument = parseInt(match[1]);
                 totalDocuments = parseInt(match[2]);
                 documentDiv.textContent = `Processing document ${currentDocument} of ${totalDocuments}`;
-                // Clear page status when starting a new document
+                
+                // Reset status for new document
                 if (statusDiv) {
-                  statusDiv.textContent = '';
+                  statusDiv.textContent = 'Preparing document for OCR...';
+                }
+                
+                // Reset progress bar
+                clearInterval(progressInterval);
+                estimatedProgress = 0;
+                processingStarted = false;
+                if (progressFill) {
+                  progressFill.style.width = '0%';
+                  progressText.textContent = '0%';
                 }
               }
             }
-            // Handle page processing messages
-            else if (message.includes('Processing page')) {
-              const match = message.match(/Processing page (\d+) of (\d+)/);
-              if (match && statusDiv) {
-                const currentPage = match[1];
-                const totalPages = match[2];
-                statusDiv.textContent = `Processing page ${currentPage} of ${totalPages}`;
+            
+            // Handle OCR initialization
+            else if (message.includes('Running command:')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Initializing OCR engine...';
+              }
+              
+              // Start basic progress (5% when OCR starts)
+              estimatedProgress = 5;
+              if (progressFill) {
+                progressFill.style.width = '5%';
+                progressText.textContent = '5%';
               }
             }
-            // Handle document with total pages info
+            
+            // Handle document with total pages info - start realistic estimated progress
             else if (message.includes('Processing document with')) {
               const match = message.match(/Processing document with (\d+) pages/);
               if (match && statusDiv) {
-                const totalPages = match[1];
-                statusDiv.textContent = `Document has ${totalPages} pages`;
+                totalPages = parseInt(match[1]);
+                statusDiv.textContent = `Analyzing ${totalPages} pages...`;
+                processingStarted = true;
+                
+                // Start slow, steady progress tracking
+                estimatedProgress = 10; // Start at 10% once we know page count
+                clearInterval(progressInterval);
+                
+                // Calculate realistic timing: assume 15-30 seconds per page for processing
+                const estimatedTimePerPage = Math.max(15000, Math.min(30000, 20000)); // 15-30 seconds
+                const totalEstimatedTime = totalPages * estimatedTimePerPage;
+                const progressIncrement = 75 / (totalEstimatedTime / 2000); // 75% progress over total time, update every 2 seconds
+                
+                progressInterval = setInterval(() => {
+                  if (processingStarted && estimatedProgress < 85) {
+                    estimatedProgress = Math.min(estimatedProgress + progressIncrement, 85);
+                    
+                    if (progressFill) {
+                      progressFill.style.width = estimatedProgress + '%';
+                      progressText.textContent = Math.round(estimatedProgress) + '%';
+                    }
+                  }
+                }, 2000); // Update every 2 seconds for smooth progress
               }
+            }
+            
+            // Handle actual page processing messages
+            else if (message.includes('Processing page')) {
+              const match = message.match(/Processing page (\d+) of (\d+)/);
+              if (match && statusDiv) {
+                const currentPage = parseInt(match[1]);
+                const totalPagesFromMessage = parseInt(match[2]);
+                const isEstimated = message.includes('(estimated)');
+                
+                // Update status text
+                statusDiv.textContent = `Processing page ${currentPage} of ${totalPagesFromMessage}${isEstimated ? ' (estimated)' : ''}`;
+                
+                // Only update progress bar for actual (non-estimated) page completion
+                if (!isEstimated) {
+                  // Clear estimated progress interval when we get actual page numbers
+                  clearInterval(progressInterval);
+                  processingStarted = false;
+                  
+                  // Actual progress: 10% start + 80% for page processing + 10% finalization
+                  const pageProgress = (currentPage / totalPagesFromMessage) * 80;
+                  const actualProgress = 10 + pageProgress;
+                  estimatedProgress = actualProgress;
+                  
+                  if (progressFill) {
+                    progressFill.style.width = actualProgress + '%';
+                    progressText.textContent = Math.round(actualProgress) + '%';
+                  }
+                }
+              }
+            }
+            
+            // Handle completion messages
+            else if (message.includes('Completed processing')) {
+              const match = message.match(/Completed processing (\d+) pages/);
+              if (match && statusDiv) {
+                clearInterval(progressInterval);
+                processingStarted = false;
+                statusDiv.textContent = 'Extracting data and finalizing...';
+                
+                // Gradual progress to 95%
+                const finalizeInterval = setInterval(() => {
+                  if (estimatedProgress < 95) {
+                    estimatedProgress = Math.min(estimatedProgress + 2, 95);
+                    if (progressFill) {
+                      progressFill.style.width = estimatedProgress + '%';
+                      progressText.textContent = Math.round(estimatedProgress) + '%';
+                    }
+                  } else {
+                    clearInterval(finalizeInterval);
+                  }
+                }, 200);
+              }
+            }
+            
+            // Handle extraction completion
+            else if (message.includes('Found lab values:')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Processing complete!';
+              }
+              
+              // Gradual completion to 100%
+              const completeInterval = setInterval(() => {
+                if (estimatedProgress < 100) {
+                  estimatedProgress = Math.min(estimatedProgress + 3, 100);
+                  if (progressFill) {
+                    progressFill.style.width = estimatedProgress + '%';
+                    progressText.textContent = Math.round(estimatedProgress) + '%';
+                  }
+                } else {
+                  clearInterval(completeInterval);
+                }
+              }, 150);
             }
           };
 
           ws.onerror = (error) => {
             console.error('WebSocket error:', error);
+            clearInterval(progressInterval);
           };
 
+          // Start the upload
           const response = await fetch('/upload-files', {
             method: 'POST',
             body: formData
           });
 
+          // Clean up WebSocket and intervals
+          clearInterval(progressInterval);
+
           if (response.ok) {
             const result = await response.json();
             ws.close();
-            alert('Files processed successfully!');
-            files.clear();
-            fileList.innerHTML = '';
-            updateProcessButton();
-
+            
+            // Ensure progress reaches 100% if it hasn't already
+            if (progressFill && estimatedProgress < 100) {
+              progressFill.style.width = '100%';
+              progressText.textContent = '100%';
+            }
+            
+            if (statusDiv) {
+              statusDiv.textContent = 'Upload complete!';
+            }
+            
+            // Longer delay to show completion before alert
             setTimeout(() => {
-              window.location.reload();
-            }, 500);
+              alert('Files processed successfully!');
+              files.clear();
+              fileList.innerHTML = '';
+              updateProcessButton();
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 500);
+            }, 1000); // Increased delay to show completion
+            
           } else {
             throw new Error('Upload failed');
           }
         } catch (error) {
+          // Clean up on error
+          if (progressInterval) {
+            clearInterval(progressInterval);
+          }
+          
+          console.error('Upload error:', error);
           alert('Error processing files: ' + error.message);
         } finally {
-            hideLoading();
+          hideLoading();
         }
       });
 

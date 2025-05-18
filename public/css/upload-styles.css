@@ -785,8 +785,16 @@
   .loader-text1 {
     font-family: "Poppins-Regular", sans-serif;
     color: #1e293b;
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-bottom: 0.5rem;
+  }
+  .loader-text2 {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    color: #666;
+    min-height: 1.2rem; /* Prevent layout shift */
+    margin-bottom: 8px;
+    font-family: "Poppins-Regular", sans-serif;
   }
   
   .loader-subtext {
@@ -845,11 +853,6 @@
     }
   }
   
-  .loader-text2 {
-    margin-bottom: 8px;
-    font-family: "Poppins-Regular", sans-serif;
-  }
-  
   #documentStatus {
     font-size: 0.9rem;
     color: #4b5563;
@@ -865,4 +868,57 @@
     font-family: "Poppins-Regular", sans-serif;
     color: #64748b;
     font-size: 0.875rem;
+    font-style: italic;
   }
+
+  /* ----- Spinner Progress Bar ------ */
+.progress-container {
+  margin: 1.5rem 0 1rem 0;
+  width: 100%;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e0e0e0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #66bb6a);
+  width: 0%;
+  transition: width 0.5s ease;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+  font-weight: 500;
+  font-family: "Poppins-SemiBold", sans-serif;
+}
+
+/* Update existing loader styles for better spacing */
+.loader-text2 {
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  color: #666;
+  min-height: 1.2rem;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.loader-container {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 450px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e1e6f0;
+}
