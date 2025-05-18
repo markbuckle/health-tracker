@@ -16,8 +16,8 @@ const HF_API_TOKEN = process.env.HF_API_TOKEN;
 //   apiKey: process.env.ANTHROPIC_API_KEY, // You'll need to get this from Anthropic
 // });
 
-// console.log("OPENAI_API_KEY present:", !!process.env.OPENAI_API_KEY);
-// console.log("HF_API_TOKEN present:", !!process.env.HF_API_TOKEN);
+console.log("OPENAI_API_KEY present:", !!process.env.OPENAI_API_KEY);
+console.log("HF_API_TOKEN present:", !!process.env.HF_API_TOKEN);
 // console.log("ANTHROPIC_API_KEY present:", !!process.env.ANTHROPIC_API_KEY);
 
 // Simple post-processing function that removes known hallucinations
@@ -87,7 +87,8 @@ async function generateBasicResponse(query, context) {
     const formattedContext = formatContext(context);
 
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+      // "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
       {
         method: "POST",
         headers: {

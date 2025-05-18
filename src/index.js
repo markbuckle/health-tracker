@@ -629,6 +629,10 @@ app.get("/welcome", (req, res) => {
   res.render("user/welcome");
 });
 
+app.get("/credits", (req, res) => {
+  res.render("credits");
+});
+
 app.get("/profile", checkAuth, (req, res) => {
   res.render("user/profile", {
     fname: req.user.fname,
