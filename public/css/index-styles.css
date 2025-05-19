@@ -1001,37 +1001,63 @@
 }
 
 /* Tablet Landscape (768px - 991px) */
-@media screen and (min-width: 768px) and (max-width: 991px) {
+@media screen and (min-width: 769px) and (max-width: 991px) {
   .hero {
-    padding: 2rem 0 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--header-height-default);
   }
   
   .hero-container {
-    max-width: 26rem;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3rem !important;
+    width: auto !important;
+    max-width: none !important;
+    margin-bottom: 2rem !important;
   }
-  
+  .hero-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    max-width: 27rem !important;
+    order: 1 !important;
+  }
   .hero-title {
-    font-size: 1.25rem;
-    margin-top: 3rem;
+    margin-bottom: 2rem !important;
+    text-align: center !important;
   }
   
   .hero-text {
     font-size: 2rem;
     margin-bottom: 0.5rem;
   }
+
+  .hero-text-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 27rem;
+    order: 1;
+  }
   
+  /* Right side: Mobile image */
   .mobile {
-    max-width: 45%;
-    margin-top: 2rem;
+    order: 2 !important;
+    max-width: 35% !important;
+    height: auto !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
   }
   
   .btn-primary {
-    /* width: 250px; */
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 0 !important;
+    width: auto !important;
+    max-width: none !important;
   }
-  
   .quote-container-1,
   .quote-container-2 {
     padding: 2rem 1rem;
@@ -1159,7 +1185,7 @@
   }
   
   .mobile {
-    order: 3;
+    order: 2;
     max-width: clamp(250px, 70%, 350px);
     height: auto;
     margin-top: 0;
@@ -1168,7 +1194,7 @@
   }
   
   .btn-primary {
-    order: 2;
+    order: 3;
     width: clamp(200px, 80%, 300px);
     padding: 0.8rem 1.5rem;
     font-size: clamp(0.9rem, 3vw, 1.1rem);
@@ -1272,6 +1298,11 @@
     height: 18px;
     font-size: 11px;
   }
+  /* Remove any conflicting styles */
+  .hero-container > * {
+    float: none !important;
+    position: relative !important;
+  }
 }
 
 /* Mobile (320px - 479px) */
@@ -1279,11 +1310,13 @@
   .hero {
     gap: 1.2rem;
     padding: 1rem 0 0.5rem;
+    margin-top: 3rem;
   }
   
   .hero-container {
-    max-width: 22rem;
-    margin-bottom: 0.5rem;
+    gap: 1.2rem !important;
+    max-width: 95% !important;
+    padding: 0 0.75rem !important;
   }
   
   .hero-title {
@@ -1293,7 +1326,8 @@
   }
   
   .hero-text {
-    font-size: 1.6rem;
+    /* font-size: 1.6rem; */
+    font-size: clamp(1.3rem, 6vw, 1.6rem) !important;
     margin-bottom: 0.3rem;
     line-height: 1.25;
   }
@@ -1303,8 +1337,9 @@
   }
   
   .btn-primary {
-    max-width: 6rem;
-    padding: 0.7rem 1rem;
+    /* max-width: 6rem; */
+    width: clamp(180px, 85%, 280px) !important;
+    padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
     margin-top: 1rem;
   }
@@ -1413,7 +1448,7 @@
 }
 
 /* Small Mobile (below 320px) */
-@media screen and (max-width: 319px) {
+@media screen and (max-width: 374px) {
   .hero-container {
     max-width: 20rem;
     gap: 1rem;
@@ -1435,7 +1470,8 @@
   }
   
   .btn-primary {
-    width: 7rem;
+    /* width: 7rem; */
+    width: clamp(5rem, 90%, 7rem) !important;
     padding: 0.7rem 1rem;
     font-size: 0.9rem;
   }
@@ -1511,34 +1547,120 @@
 }
 
 /* Landscape orientation adjustments for mobile */
-@media screen and (max-width: 767px) and (orientation: landscape) {
-  .hero {
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  /* .hero {
     padding: 0.5rem 0;
+  } */
+  .hero {
+    padding: 1rem 0 !important;
+    margin-top: 3.5rem !important;
   }
-
   .hero-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 90% !important;
+    gap: 1.5rem !important;
+  }
+  .hero-content {
+    order: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  /* .hero-container::before {
+    content: '';
+    order: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  } */
+  /* .hero-container {
     gap: 1rem;
     max-width: 90%;
-  }
+  } */
   
-  .hero-title {
+  /* .hero-title {
     margin-top: 1rem;
     margin-bottom: 0.5rem;
+  } */
+  .hero-title {
+    order: 1 !important;
+    text-align: center !important;
+    margin-bottom: 0 !important;
   }
-  
   .hero-text {
+    font-size: clamp(1.4rem, 5.5vw, 1.8rem) !important;
+    margin-bottom: 0.3rem !important;
+    line-height: 1.3 !important;
+    display: block !important;
+    order: unset !important; /* Reset order */
+  }
+  /* .hero-text {
     font-size: 1.4rem;
     margin-bottom: 0.2rem;
-  }
+  } */
   
-  .mobile {
+  /* .mobile {
     max-width: clamp(200px, 50%, 280px);
     margin-top: 0.5rem;
+  } */
+  .mobile {
+    order: 2 !important;
+    max-width: clamp(250px, 70%, 350px) !important;
+    margin: 0 !important;
   }
-  
+  /* .mobile {
+    order: 2 !important;
+    max-width: clamp(250px, 70%, 350px) !important;
+    height: auto !important;
+    margin: 1.5rem 0;
+    flex: none !important;
+    align-self: center !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    animation: none !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+  } */
   .btn-primary {
-    margin-top: 1.5rem;
+    order: 3 !important;
+    width: clamp(200px, 80%, 300px) !important;
+    margin-top: 0 !important;
   }
+  /* .hero-title,
+  .btn-primary {
+    flex-basis: auto;
+  } */
+  /* .btn-primary {
+    order: 3 !important;
+    width: clamp(6rem, 50%, 8rem) !important;
+    max-width: 90% !important;
+    padding: 0.8rem 1.5rem !important;
+    font-size: clamp(0.9rem, 3vw, 1.1rem) !important;
+    margin: 0 !important;
+    flex: none !important;
+    align-self: center !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+  } */
+  /* .btn-primary {
+    margin-top: 1.5rem;
+  } */
   
   .hero-wrapper {
     height: 150vh;
@@ -1603,5 +1725,229 @@
   .quote-2 {
     color: #000;
     text-shadow: none;
+  }
+}
+
+/* ===== IPHONE DEVICE MODE SPECIFIC FIXES ===== */
+
+/* Base adjustments for all iPhone device modes */
+@media screen and (max-device-width: 428px) {
+  /* Ensure viewport uses full available height */
+  html, body {
+    height: 100vh;
+    height: 100svh; /* Use small viewport height for better iPhone support */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  /* Hero section adjustments for iPhone device modes */
+  .hero {
+    min-height: auto !important;
+    padding: 0.5rem 0 1rem 0 !important;
+    margin-top: 3rem !important; /* Adjust for mobile header */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+  }
+  
+  .hero-container {
+    width: 100% !important;
+    max-width: 90% !important;
+    padding: 0 1rem !important;
+    gap: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+  
+  /* Hero title - compact for iPhone */
+  .hero-title {
+    order: 1 !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .hero-text {
+    font-size: 1.3rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.2rem !important;
+    display: block !important;
+  }
+
+    /* Mobile image - smaller for iPhone */
+  .mobile {
+    order: 2 !important;
+    max-width: clamp(180px, 60%, 280px) !important;
+    height: auto !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  
+  /* Button - optimized for iPhone screens */
+  .btn-primary {
+    order: 3 !important;
+    width: clamp(160px, 75%, 250px) !important;
+    padding: 0.6rem 1rem !important;
+    font-size: 0.85rem !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+    white-space: nowrap !important;
+  }
+  
+}
+
+/* iPhone SE specific (375px x 667px) */
+@media screen and (device-width: 375px) and (device-height: 667px) {
+  .hero {
+    padding: 0.25rem 0 0.75rem 0 !important;
+    margin-top: 5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .hero-container {
+    gap: 0.8rem !important;
+    padding: 0 0.75rem !important;
+  }
+  
+  .hero-text {
+    font-size: 1.8rem !important;
+    margin-bottom: 0.1rem !important;
+  }
+  
+  .btn-primary {
+    width: clamp(5rem, 70%, 7rem) !important;
+    padding: 0.5rem 0.8rem !important;
+    font-size: 0.9rem !important;
+    margin: 2rem 0 !important;
+  }
+  
+  .mobile {
+    max-width: clamp(200px, 85%, 300px) !important;
+  }
+}
+
+/* iPhone 12/13/14 (390px x 844px) */
+@media screen and (device-width: 390px) and (device-height: 844px) {
+  .hero {
+    padding: 0.5rem 0 1rem 0 !important;
+    margin-top: 3rem !important;
+  }
+  
+  .hero-container {
+    gap: 1rem !important;
+  }
+  
+  .hero-text {
+    font-size: 1.4rem !important;
+  }
+  
+  .btn-primary {
+    width: clamp(170px, 75%, 260px) !important;
+    padding: 0.7rem 1.2rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .mobile {
+    max-width: clamp(200px, 65%, 300px) !important;
+  }
+}
+
+/* iPhone 12/13/14 Pro Max (428px x 926px) */
+@media screen and (device-width: 428px) and (device-height: 926px) {
+  .hero {
+    padding: 0.75rem 0 1.25rem 0 !important;
+    margin-top: 3.2rem !important;
+  }
+  
+  .hero-container {
+    gap: 1.2rem !important;
+  }
+  
+  .hero-text {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+  
+  .btn-primary {
+    width: clamp(180px, 80%, 280px) !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .mobile {
+    max-width: clamp(220px, 70%, 320px) !important;
+  }
+}
+
+/* Fix for Safari mobile viewport */
+@media screen and (max-device-width: 428px) {
+  .hero {
+    /* Use viewport units that account for Safari's dynamic UI */
+    min-height: auto !important;
+    max-height: 100vh !important;
+    max-height: 100dvh !important; /* Dynamic viewport height */
+  }
+  
+  /* Ensure content doesn't get cut off by Safari's bottom bar */
+  .hero-container {
+    padding-bottom: env(safe-area-inset-bottom, 1rem) !important;
+  }
+}
+
+/* Portrait orientation specific for iPhones */
+@media screen and (max-device-width: 428px) and (orientation: portrait) {
+  .hero {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+  
+  .hero-container {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+/* Landscape orientation for iPhones */
+@media screen and (max-device-width: 926px) and (orientation: landscape) and (max-device-height: 428px) {
+  .hero {
+    padding: 0.25rem 0 0.5rem 0 !important;
+    margin-top: 2.5rem !important;
+  }
+  
+  .hero-container {
+    gap: 0.5rem !important;
+    max-width: 95% !important;
+  }
+  
+  .hero-text {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.1rem !important;
+  }
+  
+  .btn-primary {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .mobile {
+    max-width: clamp(120px, 35%, 200px) !important;
   }
 }
