@@ -15,22 +15,33 @@
 
     <section class="hero content-container">
       <div class="hero-container">
-        <h1 class="hero-title">
-          <span class="hero-text">Your secure</span>
-          <span class="hero-text">and easy-to-use</span>
-          <span class="hero-text">personalized</span> 
-          <span class="hero-text">health portal</span>
-        </h1>
-        <a href="/register" class="button-basics btn-primary">
+        <!-- Desktop: Text content on left -->
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <span class="hero-text">Your secure</span>
+            <span class="hero-text">and easy-to-use</span>
+            <span class="hero-text">personalized</span> 
+            <span class="hero-text">health portal</span>
+          </h1>
+          <!-- Desktop button - hidden on mobile -->
+          <a href="/register" class="button-basics btn-primary desktop-only">
+            <div class="flex-horizontal">TRY IT OUT</div>
+          </a>
+        </div>
+        
+        <!-- Mobile image - appears after text on mobile, on right on desktop -->
+        <img
+          src="images/iphonelayered.png"
+          loading="lazy"
+          alt="Mobile app demonstration"
+          class="mobile"
+        />
+        
+        <!-- Mobile button - hidden on desktop, appears after image on mobile -->
+        <a href="/register" class="button-basics btn-primary mobile-only">
           <div class="flex-horizontal">TRY IT OUT</div>
         </a>
       </div>
-      <img
-        src="images/iphonelayered.png"
-        loading="lazy"
-        alt="Mobile app demonstration"
-        class="mobile"
-      />
     </section>
 
     <div class="wave-light-bg">
