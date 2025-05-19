@@ -4,6 +4,7 @@
   align-items: center;
   margin-top: var(--header-height-default);
   display: flex;
+  flex-direction: column; /* Changed to column to accommodate mobile button */
 }
 .hero-container {
   display: flex;
@@ -65,12 +66,6 @@
   animation: fadeSlideIn 1.1s ease forwards;
   animation-delay: 1.2s;
 }
-.mobile {
-  flex: 0 0 auto;
-  max-width: 35%;
-  height: auto;
-  order: 2;
-}
 .desktop-only {
   display: inline-flex;
 }
@@ -78,8 +73,8 @@
   display: none;
 }
 /* Mobile Phone Image Style */
-/* .mobile {
-  margin-top: 3rem;
+.mobile {
+  margin-top: 3.5rem;
   margin-bottom: auto;
   max-width: 35%;
   height: auto;
@@ -88,7 +83,11 @@
   animation: slideFromRight 1.1s ease-out forwards;
   animation-delay: 2.5s;
   visibility: hidden;
-} */
+  flex: 0 0 auto;
+  max-width: 35%;
+  height: auto;
+  order: 2;
+}
 
 /* Quote Containers */
 .quote-container-1 {
@@ -824,7 +823,7 @@
   }
   
   .mobile {
-    max-width: 40%;
+    max-width: 60%;
     margin-top: 3.5rem;
   }
   
@@ -1180,13 +1179,8 @@
 /* Tablet Portrait and below (768px) */
 @media screen and (max-width: 768px) {
   .hero {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    padding: 1rem 0 !important;
-    margin-top: 3rem !important;
-    min-height: auto !important;
+    padding: 1rem 0;
+    margin-top: 3rem;
   }
   .hero-container {
     display: flex;
@@ -1340,7 +1334,7 @@
     font-size: 11px;
   }
     /* Reset any animations for mobile */
-  .hero-title,
+  /* .hero-title,
   .hero-text,
   .mobile,
   .btn-primary {
@@ -1348,7 +1342,7 @@
     visibility: visible !important;
     transform: none !important;
     animation: none !important;
-  }
+  } */
   /* Remove any conflicting styles */
   .hero-container > * {
     float: none !important;
@@ -1389,6 +1383,9 @@
     max-width: 260px;
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
+  }
+  .desktop-only {
+    display: none;
   }
   
   .btn-primary {
@@ -1520,6 +1517,16 @@
   .mobile {
     max-width: clamp(200px, 80%, 280px) !important;
   }
+
+  .mobile-only {
+    width: 85%;
+    max-width: 260px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .desktop-only {
+    display: none;
+  }
   
   .btn-primary {
     width: clamp(160px, 90%, 240px) !important;
@@ -1599,7 +1606,6 @@
 
 /* Landscape orientation adjustments for mobile */
 @media screen and (max-width: 768px) and (orientation: landscape) {
-
   .hero {
     padding: 0.5rem 0 !important;
     margin-top: 2.5rem !important;
@@ -1627,6 +1633,9 @@
   }
   .mobile {
     max-width: 50%;
+  }
+  .mobile-only {
+    margin-top: 1rem;
   }
   .btn-primary {
     padding: 0.6rem 1rem !important;
@@ -1768,6 +1777,16 @@
     transform: none !important;
     animation: none !important;
   }
+
+  .mobile-only {
+    width: 85%;
+    max-width: 260px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .desktop-only {
+    display: none;
+  }
   
   /* Button - optimized for iPhone screens */
   .btn-primary {
@@ -1807,6 +1826,15 @@
   .mobile {
     max-width: 75% !important;
   }
+  .mobile-only {
+    width: 85%;
+    max-width: 260px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .desktop-only {
+    display: none;
+  }
 }
 
 /* iPhone 12/13/14 (390px x 844px) */
@@ -1832,6 +1860,15 @@
   
   .mobile {
     max-width: clamp(200px, 65%, 300px) !important;
+  }
+  .mobile-only {
+    width: 85%;
+    max-width: 260px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .desktop-only {
+    display: none;
   }
 }
 
@@ -1859,6 +1896,15 @@
   
   .mobile {
     max-width: clamp(220px, 70%, 320px) !important;
+  }
+  .mobile-only {
+    width: 85%;
+    max-width: 260px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .desktop-only {
+    display: none;
   }
 }
 
