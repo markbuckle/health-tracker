@@ -43,15 +43,11 @@
 
    /* Mobile-specific variables */
   --mobile-header-height-default: 3.5rem;
-  --mobile-header-height-scrolled: 3rem; /* Slightly larger for mobile when scrolled */
-
-  /* Logo sizes */
-  --logo-height-default: calc(var(--header-height-default) - 1rem);
-  --logo-height-scrolled: calc(var(--header-height-scrolled) - 0.8rem); /* Less reduction */
+  --mobile-header-height-scrolled: 2.8rem;
 
    /* Mobile logo sizes */
-  --mobile-logo-height-default: calc(var(--mobile-header-height-default) - 0.7rem);
-  --mobile-logo-height-scrolled: calc(var(--mobile-header-height-scrolled) - 0.5rem);
+  --mobile-logo-height-default: 2.5rem;
+  --mobile-logo-height-scrolled: 1.6rem;
 
   --footer-bg: #ffffff;
   --footer-text: #4a5568;
@@ -516,43 +512,127 @@ body.menu-open .hero {
 
 /* Media Queries */
 @media screen and (max-width: 768px) {
+  :root {
+    --header-height-default: 50px;
+    --header-height-scrolled: 44px;
+  }
+  /* Keep header at fixed position */
   .header {
-    height: var(--mobile-header-height-default);
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 50px !important;
+    z-index: 1000 !important;
+    transition: height 0.3s ease !important;
   }
   .header-container {
-    height: var(--mobile-header-height-default);
+    height: 50px !important;
+    max-height: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 15px !important;
+    transition: height 0.3s ease !important;
+  }
+  /* Logo block positioning */
+  .logo-block {
+    height: auto !important;
+    margin: 0 !important;
   }
   .logo-block img {
-    max-height: var(--mobile-logo-height-default);
+    max-height: 28px !important;
+    margin: 0 !important;
+    transform: none !important;
+    transition: max-height 0.3s ease !important;
   }
   .desktop-nav {
     display: none; /* Hide desktop navigation */
   }
   .hamburger-button {
-    display: block; /* Show hamburger button */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+  }
+  .hamburger-line {
+    display: block !important;
+    width: 22px !important;
+    height: 2px !important;
+    margin: 3px auto !important;
+    background-color: #333 !important;
+    transition: all 0.3s ease !important;
   }
   .header-container {
     justify-content: space-between;
     padding: 0 15px;
   }
   .header-scrolled {
-    height: var(--mobile-header-height-scrolled);
+    height: 44px !important; /* Slightly shorter but not too short */
   }
-  /* Ensure logo is visible */
-  .logo-block {
-    max-width: 140px;
-    margin-right: 0;
+  .header-container-scrolled {
+    height: 44px !important;
+    max-height: 44px !important;
   }
   .header-scrolled .logo-block img,
   .logo-scrolled {
-    max-height: var(--mobile-logo-height-scrolled) !important;
-    transform: scale(0.60) !important;
+    max-height: 24px !important; /* Slightly smaller but still visible */
+    transform: none !important; /* Remove transform */
   }
   .mobile-nav {
-    top: var(--mobile-header-height-default);
+    position: absolute !important;
+    top: 50px !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999 !important;
+    transition: top 0.3s ease !important;
+  }
+  .mobile-nav-links {
+    padding: 10px 0 !important;
   }
   .header-scrolled .mobile-nav {
-    top: var(--mobile-header-height-scrolled);
+    top: 44px !important; /* Match scrolled header height */
+  }
+  .hamburger-button {
+    padding: 8px;
+  }
+  .header-scrolled .hamburger-button {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .header-scrolled .hamburger-line {
+    width: 20px !important;
+  }
+  /* .hamburger-line {
+    width: 24px;
+    height: 2.5px;
+    margin: 4px 0;
+}*/
+  body {
+    padding-top: 50px !important;
+  }
+  .hero {
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+  }
+   /* Animation fixes */
+  .hamburger-button.open .hamburger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg) !important;
+  }
+  
+  .hamburger-button.open .hamburger-line:nth-child(2) {
+    opacity: 0 !important;
+  }
+  
+  .hamburger-button.open .hamburger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg) !important;
   }
 }
 
@@ -1841,7 +1921,7 @@ label[for="customBloodType"] {
     margin-left: 0;
     padding: 1rem;
   }
-    .content-container-2 {
+  .content-container-2 {
     width: 100% !important;
   }
   .btn-secondary {
