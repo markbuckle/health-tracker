@@ -49,20 +49,19 @@
       </div>
     </div>
 
-    <div class="hero-wrapper" id="scrollHero">
+    <div class="use-cases-section">
       <div class="content-container-2">
-        <h1 class="quote-3">Perfect for you if you are</h1>
+        <h2 class="quote-3">Perfect for you if you are</h2>
         
         <div class="use-cases-container">
           <div class="use-cases-navigation">
-            <div class="nav-indicator"></div>
-            <button class="nav-dot active" data-index="0"><span></span></button>
-            <button class="nav-dot" data-index="1"><span></span></button>
-            <button class="nav-dot" data-index="2"><span></span></button>
-            <button class="nav-dot" data-index="3"><span></span></button>
-            <button class="nav-dot" data-index="4"><span></span></button>
+            <button class="nav-dot active" data-index="0"></button>
+            <button class="nav-dot" data-index="1"></button>
+            <button class="nav-dot" data-index="2"></button>
+            <button class="nav-dot" data-index="3"></button>
+            <button class="nav-dot" data-index="4"></button>
           </div>
-        
+          
           <div class="use-cases-slider">
             <div class="use-case-card active" data-index="0">
               <div class="icon-circle">
@@ -101,7 +100,7 @@
                 </svg>
               </div>
               <h3>Searching for a diagnosis</h3>
-              <p class="hero-2-p">Document symptoms and track patterns. Use HealthLync as a tool to make visits with healthcare providers more effective.</p>
+              <p>Document symptoms and track patterns. Use HealthLync as a tool to make visits with healthcare providers more effective.</p>
             </div>
         
             <div class="use-case-card" data-index="4">
@@ -114,10 +113,20 @@
               <p>Monitor wellness metrics and lifestyle factors</p>
             </div>
           </div>
-        </div>
           
-            <!-- This spacer is critical - it creates the scroll space needed -->
-        <div class="scroll-spacer"></div>
+          <div class="slider-controls">
+            <button class="slider-prev" aria-label="Previous slide">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button class="slider-next" aria-label="Next slide">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -287,135 +296,142 @@
     </script>
     <script> // Hero scrolling animation
       document.addEventListener('DOMContentLoaded', function() {
-        // Safely initialize scroll feature only if elements exist
-        const initScrollAnimation = function() {
-          try {
-            // Get required elements
-            const heroSection = document.getElementById('scrollHero');
-            if (!heroSection) {
-              console.log('scrollHero element not found, skipping animation');
-              return;
-            }
-            
-            const cards = heroSection.querySelectorAll('.use-case-card');
-            const navDots = heroSection.querySelectorAll('.nav-dot');
-            
-            if (!cards.length || !navDots.length) {
-              console.log('Cards or navigation dots not found, skipping animation');
-              return;
-            }
-            
-            // Set initial card as active
-            cards.forEach((card, i) => {
-              if (i === 0) {
-                card.classList.add('active');
-                card.style.opacity = '1';
-                card.style.visibility = 'visible';
-              } else {
-                card.classList.remove('active');
-                card.style.opacity = '0';
-                card.style.visibility = 'hidden';
-              }
-            });
-            
-            // Set initial dot
-            navDots.forEach((dot, i) => {
-              dot.classList.toggle('active', i === 0);
-            });
-            
-            // Get measurements for trigger points
-            const heroTop = heroSection.offsetTop;
-            const viewportHeight = window.innerHeight;
-            const cardCount = cards.length;
-            
-            // Create trigger points
-            const triggerPoints = [];
-            for (let i = 0; i < cardCount; i++) {
-              triggerPoints.push(heroTop + (i * viewportHeight * 0.6));
-            }
-            
-            // Function to get active card index
-            function getActiveCardIndex() {
-              for (let i = 0; i < cards.length; i++) {
-                if (cards[i].classList.contains('active')) {
-                  return i;
-                }
-              }
-              return 0;
-            }
-            
-            // Scroll handler
-            function handleScroll() {
-              const scrollY = window.scrollY;
-              
-              // Find the appropriate card based on scroll position
-              let targetCard = 0;
-              for (let i = cardCount - 1; i >= 0; i--) {
-                if (scrollY >= triggerPoints[i]) {
-                  targetCard = i;
-                  break;
-                }
-              }
-              
-              // Only update if we need to change the active card
-              const currentActive = getActiveCardIndex();
-              if (targetCard !== currentActive) {
-                // Update cards
-                cards.forEach((card, i) => {
-                  if (i === targetCard) {
-                    card.classList.add('active');
-                    card.style.opacity = '1';
-                    card.style.visibility = 'visible';
-                  } else {
-                    card.classList.remove('active');
-                    card.style.opacity = '0';
-                    card.style.visibility = 'hidden';
-                  }
-                });
-                
-                // Update dots
-                navDots.forEach((dot, i) => {
-                  dot.classList.toggle('active', i === targetCard);
-                });
-              }
-            }
-            
-            // Add scroll listener
-            window.addEventListener('scroll', handleScroll, { passive: true });
-            
-            // Add click handlers to dots
-            navDots.forEach((dot) => {
-              dot.addEventListener('click', function() {
-                const index = parseInt(dot.getAttribute('data-index'), 10);
-                if (!isNaN(index) && index >= 0 && index < triggerPoints.length) {
-                  window.scrollTo({
-                    top: triggerPoints[index],
-                    behavior: 'smooth'
-                  });
-                }
-              });
-            });
-            
-            // Handle window resize
-            window.addEventListener('resize', function() {
-              // Recalculate trigger points
-              const newHeroTop = heroSection.offsetTop;
-              const newViewportHeight = window.innerHeight;
-              
-              for (let i = 0; i < cardCount; i++) {
-                triggerPoints[i] = newHeroTop + (i * newViewportHeight * 0.6);
-              }
-            }, { passive: true });
-            
-            console.log('Scroll animation initialized with optimized trigger points');
-          } catch (err) {
-            console.error('Error initializing scroll animation:', err);
-          }
-        };
-        
-        // Initialize with a small delay to ensure DOM is ready
-        setTimeout(initScrollAnimation, 300);
+        // Initialize the card slider
+        initCardSlider();
       });
+
+      function initCardSlider() {
+        const slider = document.querySelector('.use-cases-slider');
+        if (!slider) return; // Exit if slider doesn't exist on page
+        
+        const cards = slider.querySelectorAll('.use-case-card');
+        const navDots = document.querySelectorAll('.nav-dot');
+        const prevButton = document.querySelector('.slider-prev');
+        const nextButton = document.querySelector('.slider-next');
+        
+        let currentIndex = 0;
+        let autoplayInterval;
+        
+        // Function to show a specific card
+        function showCard(index) {
+          // Ensure index is within bounds
+          if (index < 0) index = cards.length - 1;
+          if (index >= cards.length) index = 0;
+          
+          currentIndex = index;
+          
+          // Update cards
+          cards.forEach((card, i) => {
+            card.classList.toggle('active', i === currentIndex);
+          });
+          
+          // Update navigation dots
+          navDots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+          });
+        }
+        
+        // Set up navigation dot clicks
+        navDots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            showCard(index);
+            resetAutoplay();
+          });
+        });
+        
+        // Set up next/prev buttons
+        if (prevButton) {
+          prevButton.addEventListener('click', () => {
+            showCard(currentIndex - 1);
+            resetAutoplay();
+          });
+        }
+        
+        if (nextButton) {
+          nextButton.addEventListener('click', () => {
+            showCard(currentIndex + 1);
+            resetAutoplay();
+          });
+        }
+        
+        // Function to start autoplay
+        function startAutoplay() {
+          stopAutoplay();
+          autoplayInterval = setInterval(() => {
+            showCard(currentIndex + 1);
+          }, 5000); // Change slide every 5 seconds
+        }
+        
+        // Function to stop autoplay
+        function stopAutoplay() {
+          if (autoplayInterval) {
+            clearInterval(autoplayInterval);
+          }
+        }
+        
+        // Function to reset autoplay (when user interacts)
+        function resetAutoplay() {
+          stopAutoplay();
+          startAutoplay();
+        }
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            showCard(currentIndex - 1);
+            resetAutoplay();
+          } else if (e.key === 'ArrowRight') {
+            showCard(currentIndex + 1);
+            resetAutoplay();
+          }
+        });
+        
+        // Start autoplay
+        startAutoplay();
+        
+        // Pause autoplay when user hovers over the slider
+        slider.addEventListener('mouseenter', stopAutoplay);
+        slider.addEventListener('mouseleave', startAutoplay);
+        
+        // Handle touch events for swiping
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        slider.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        slider.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          handleSwipe();
+        }, { passive: true });
+        
+        function handleSwipe() {
+          const swipeThreshold = 50; // Minimum swipe distance
+          
+          if (touchEndX < touchStartX - swipeThreshold) {
+            // Swipe left - go to next slide
+            showCard(currentIndex + 1);
+            resetAutoplay();
+          }
+          
+          if (touchEndX > touchStartX + swipeThreshold) {
+            // Swipe right - go to previous slide
+            showCard(currentIndex - 1);
+            resetAutoplay();
+          }
+        }
+        
+        // Initialize with the first card
+        showCard(0);
+      }
+
+      // Add this function to your existing main.js or where initialization happens
+      function initializeAll() {
+        initializeHeaderScroll();
+        initCardSlider();
+        // other initializations...
+      }
     </script>
     {{!-- <script>  // Debug panel for scroll animation (keep commented until needed)
       (function() {
