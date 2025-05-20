@@ -60,12 +60,12 @@
 .hero-2-p {
   text-align: center;
 }
-.desktop-only {
+/* .desktop-only {
   display: inline-flex;
 }
 .mobile-only {
   display: none;
-}
+} */
 /* Mobile Phone Image Style */
 .mobile {
   margin-top: 3.5rem;
@@ -1076,15 +1076,15 @@
     margin: 0 !important;
     flex-shrink: 0 !important;
   }
-    .desktop-only {
+  /* .desktop-only {
     display: inline-flex !important;
     visibility: visible !important;
-  }
+  } */
   
-  .mobile-only {
+  /* .mobile-only {
     display: none !important;
     visibility: hidden !important;
-  }
+  } */
 
   .btn-primary {
     margin-top: 0 !important;
@@ -1241,10 +1241,10 @@
     display: none !important;
     visibility: hidden !important;
   }
-  .mobile-only {
+  /* .mobile-only {
     display: inline-flex !important;
     visibility: visible !important;
-  }
+  } */
   .quote-container-1,
   .quote-container-2 {
     padding: 1.5rem 0.5rem;
@@ -1382,9 +1382,9 @@
     font-size: 0.9rem;
   }
 
-  .desktop-only {
+  /* .desktop-only {
     display: none;
-  }
+  } */
   
   .btn-primary {
     width: 7rem !important;
@@ -1530,9 +1530,9 @@
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
   }
-  .desktop-only {
+  /* .desktop-only {
     display: none;
-  }
+  } */
   
   .btn-primary {
     width: 5.5rem !important;
@@ -1755,9 +1755,9 @@
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
   }
-  .desktop-only {
+  /* .desktop-only {
     display: none;
-  }
+  } */
   .use-cases-container {
     margin-right: 1.5rem;
   }
@@ -1796,9 +1796,9 @@
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
   }
-  .desktop-only {
+  /* .desktop-only {
     display: none;
-  }
+  } */
 }
 
 /* iPhone 12/13/14 Pro Max (428px x 926px) */
@@ -1832,9 +1832,9 @@
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
   }
-  .desktop-only {
+  /* .desktop-only {
     display: none;
-  }
+  /* } */
 }
 
 /* Portrait orientation specific for iPhones */
