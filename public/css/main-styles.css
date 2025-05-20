@@ -554,8 +554,8 @@ body.menu-open .hero {
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    margin-right: 1.5rem !important;
+    padding-right: 0 !important;
     width: 40px !important;
     height: 40px !important;
     background: transparent !important;
@@ -599,9 +599,6 @@ body.menu-open .hero {
   }
   .header-scrolled .mobile-nav {
     top: 44px !important; /* Match scrolled header height */
-  }
-  .hamburger-button {
-    padding: 8px;
   }
   .header-scrolled .hamburger-button {
     width: 36px !important;
