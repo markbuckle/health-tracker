@@ -1654,9 +1654,9 @@ label[for="customBloodType"] {
 /* Tablet Portrait and below (768px and below) */
 @media screen and (max-width: 768px) {
   /* Hide desktop header, show mobile */
-  .header {
+  /* .header {
     display: none;
-  }
+  } */
   
   .mobile-header {
     display: block;

@@ -1,5 +1,5 @@
 .auth-buttons {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     margin: 0;
 }
 
@@ -61,14 +61,16 @@
 .heading {
   font-size: clamp(28px, 5vw, 36px); /* Responsive font size */
   /* justify-content: center; */
-  text-align: left;
+  justify-content: center;
   margin-top: 1rem;
+  margin-bottom: 0.3rem;
   font-family: "Poppins-Bold", sans-serif;
   color: rgba(2, 2, 2, 0.76);
 }
 .signup-heading {
- margin-top: 0.1rem;
- margin-bottom: 0.1rem;
+ margin-top: 0.2rem;
+ margin-bottom: 0.3rem;
+ justify-content: center;
  font-size: clamp(24px, 5vw, 30px); /* Responsive font size */
 }
 .subheading {

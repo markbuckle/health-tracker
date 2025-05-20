@@ -122,12 +122,19 @@ function toggleMenu() {
     
     // Check if menu exists before trying to modify it
     if (!menu) {
-      console.warn("Element with class 'mobile-menu' not found. Cannot toggle menu.");
-      return; // Exit the function early if menu doesn't exist
+        console.warn("Element with class 'mobile-menu' not found. Cannot toggle menu.");
+        return; // Exit the function early if menu doesn't exist
     }
     
+    // Toggle the mobile-menu-closed class
     menu.classList.toggle('mobile-menu-closed');
+    
+    // Log for debugging
+    console.log('Menu toggled. Classes:', menu.className);
 }
+
+// Make toggleMenu available globally for the onclick handler
+window.toggleMenu = toggleMenu;
 
 // ---------------- SIDEBAR - RESPONSIVE MOBILE -------------------- //
 
@@ -259,7 +266,7 @@ function initializeDashboard() {
 // ---------------- INITIALIZATION -------------------- //
 function initializeAll() {
   initializeHeaderScroll();
-  toggleMenu();
+//   toggleMenu();
   initializeDashboard();
   // Load charts if on reports page
   if (document.getElementById('biomarker-trend') && typeof Plotly !== 'undefined') {

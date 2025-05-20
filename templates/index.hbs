@@ -11,7 +11,6 @@
 
   <body class="home-body">
     {{> header pageTitle="Health Tracker"}} {{> feedbackWidget}}
-    {{> mobileHeader}}
 
     <section class="hero content-container">
       <div class="hero-container">
@@ -238,26 +237,12 @@
                 // First time seeing the title - play animations
                 title.style.visibility = "visible";
                 
-                // Make image visible for animations, but respect mobile-only/desktop-only classes
+                // Make image visible for animations
                 const mobileImage = document.querySelector(".mobile");
-                const desktopButton = document.querySelector(".btn-primary.desktop-only");
-                const mobileButton = document.querySelector(".btn-primary.mobile-only");
+                const button = document.querySelector(".btn-primary");
                 
                 if (mobileImage) mobileImage.style.visibility = "visible";
-                
-                // Only set visibility for buttons that should be visible on current screen size
-                if (window.innerWidth > 768) {
-                  // Desktop - show desktop button, hide mobile button
-                  if (desktopButton) desktopButton.style.visibility = "visible";
-                  if (mobileButton) mobileButton.style.display = "none";
-                } else {
-                  // Mobile - hide desktop button, show mobile button
-                  if (desktopButton) desktopButton.style.display = "none";
-                  if (mobileButton) {
-                    mobileButton.style.display = "inline-flex";
-                    mobileButton.style.visibility = "visible";
-                  }
-                }
+                if (button) button.style.visibility = "visible";
                 
                 animationsHavePlayed = true;
               } else if (entry.isIntersecting && animationsHavePlayed) {
@@ -272,30 +257,14 @@
                   el.style.visibility = "visible";
                 });
 
-                // Handle buttons based on screen size
-                const desktopButton = document.querySelector(".btn-primary.desktop-only");
-                const mobileButton = document.querySelector(".btn-primary.mobile-only");
-                
-                if (window.innerWidth > 768) {
-                  // Desktop
-                  if (desktopButton) {
-                    desktopButton.style.animation = "none";
-                    desktopButton.style.opacity = "1";
-                    desktopButton.style.transform = "none";
-                    desktopButton.style.visibility = "visible";
-                    desktopButton.style.display = "inline-flex";
-                  }
-                  if (mobileButton) mobileButton.style.display = "none";
-                } else {
-                  // Mobile
-                  if (mobileButton) {
-                    mobileButton.style.animation = "none";
-                    mobileButton.style.opacity = "1";
-                    mobileButton.style.transform = "none";
-                    mobileButton.style.visibility = "visible";
-                    mobileButton.style.display = "inline-flex";
-                  }
-                  if (desktopButton) desktopButton.style.display = "none";
+                // Handle button - remove animations and show
+                const button = document.querySelector(".btn-primary");
+                if (button) {
+                  button.style.animation = "none";
+                  button.style.opacity = "1";
+                  button.style.transform = "none";
+                  button.style.visibility = "visible";
+                  button.style.display = "inline-flex";
                 }
 
                 // Handle secure-text element specifically
@@ -313,21 +282,7 @@
 
         observer.observe(document.querySelector(".hero-title"));
         
-        // Add resize listener to handle screen size changes
-        window.addEventListener('resize', () => {
-          const desktopButton = document.querySelector(".btn-primary.desktop-only");
-          const mobileButton = document.querySelector(".btn-primary.mobile-only");
-          
-          if (window.innerWidth > 768) {
-            // Desktop
-            if (desktopButton) desktopButton.style.display = "inline-flex";
-            if (mobileButton) mobileButton.style.display = "none";
-          } else {
-            // Mobile
-            if (desktopButton) desktopButton.style.display = "none";
-            if (mobileButton) mobileButton.style.display = "inline-flex";
-          }
-        });
+        // Removed resize listener since we no longer need to handle mobile/desktop button switching
       });
     </script>
     <script> // Hero scrolling animation
