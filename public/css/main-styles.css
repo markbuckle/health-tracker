@@ -122,7 +122,8 @@ body {
   left: 0;
   right: 0;
   width: 100%;
-  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: height 0.3s ease;
+  /* transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
 }
 .heading {
   font-size: clamp(28px, 5vw, 36px); /* Responsive font size */
@@ -415,13 +416,13 @@ body {
 /* ----- Mobile Menu Version 2 ----- */
 /* Mobile Header Styles */
 .hamburger-button {
-  display: none; /* Hidden on desktop */
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: 10px;
   z-index: 1100;
-  margin-left: auto; /* Push to right side */
+  margin-left: auto;
 }
 
 .hamburger-line {
@@ -435,21 +436,49 @@ body {
 }
 
 .mobile-nav {
-  display: none; /* Hidden by default */
-  position: absolute;
-  top: var(--header-height-default);
+  position: absolute !important;
+  margin-top: 0 !important;
+  top: 100%;
   left: 0;
   width: 100%;
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 999;
-  transition: transform 0.3s ease;
-  transform: translateY(-100%);
+  transition: all 0.3s ease;
+  /* transition: transform 0.3s ease, top 0.3s ease, opacity 0.3s ease, visibility 0.3s ease; */
+  transform: translateY(0);
+  transform-origin: top;
+  /* transform: translateY(-100%); */
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
 }
 
 .mobile-nav.open {
-  display: block;
-  transform: translateY(0);
+  transform: scaleY(1);
+  /* transform: translateY(1); */
+  opacity: 1;
+  visibility: visible;
+  height: auto;
+  max-height: 80vh;
+  overflow: visible;
+}
+.header-scrolled .mobile-nav {
+  top: var(--header-height-scrolled) !important;
+}
+
+.hero {
+  transition: margin-top 0.3s ease;
+}
+
+body.menu-open {
+  position: relative;
+}
+
+body.menu-open .hero {
+  transition: margin-top 0.3s ease;
+  margin-top: var(--mobile-menu-height, 200px) !important;
 }
 
 .mobile-nav-links {
@@ -504,11 +533,11 @@ body {
   transform: translateY(-8px) rotate(-45deg);
 }
 
-/* Push content down when menu is open */
+/* Push content down when menu is open
 body.menu-open .hero {
-  padding-top: 230px; /* Adjust based on your menu height */
+  padding-top: 230px;
   transition: padding-top 0.3s ease;
-}
+} 
 
 /* Media Queries */
 @media screen and (max-width: 768px) {
@@ -518,9 +547,9 @@ body.menu-open .hero {
   }
   /* Keep header at fixed position */
   .header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
     width: 100% !important;
     height: 50px !important;
     z-index: 1000 !important;
@@ -586,13 +615,9 @@ body.menu-open .hero {
     max-height: 24px !important; /* Slightly smaller but still visible */
     transform: none !important; /* Remove transform */
   }
-  .mobile-nav {
-    position: absolute !important;
-    top: 50px !important;
-    left: 0 !important;
-    width: 100% !important;
-    z-index: 999 !important;
-    transition: top 0.3s ease !important;
+
+  .mobile-nav.open {
+    max-height: 70vh;
   }
   .mobile-nav-links {
     padding: 10px 0 !important;
@@ -613,11 +638,10 @@ body.menu-open .hero {
     margin: 4px 0;
 }*/
   body {
-    padding-top: 50px !important;
+    padding-top: 0 !important;
   }
   .hero {
     margin-top: 0 !important;
-    padding-top: 10px !important;
   }
    /* Animation fixes */
   .hamburger-button.open .hamburger-line:nth-child(1) {
@@ -649,6 +673,7 @@ body.menu-open .hero {
   .mobile-nav-buttons .auth-button {
     font-size: 14px;
     padding: 8px 0;
+    width: 6rem;
   }
 }
 
@@ -1174,6 +1199,7 @@ body.menu-open .hero {
   height: auto;
   overflow: hidden;
   z-index: 2;
+  margin-top: 2rem;
 }
 
 .wave-pattern svg {

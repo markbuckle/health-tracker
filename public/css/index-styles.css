@@ -889,7 +889,7 @@
 }
 
 /* Standard Desktop (1200px - 1399px) */
-@media screen and (min-width: 1200px) and (max-width: 1399px) {
+@media screen and (max-width: 1399px) {
   .hero-text {
     font-size: 2.5rem;
   }
@@ -944,7 +944,7 @@
 }
 
 /* Small Desktop / Large Laptop (992px - 1199px) */
-@media screen and (min-width: 992px) and (max-width: 1199px) {
+@media screen and (max-width: 1199px) {
   /* .hero-container {
     max-width: 28rem;
   } */
@@ -981,14 +981,17 @@
   }
   
   .hero-wrapper {
-    padding: 3rem 1.5rem;
-    margin-bottom: 250vh;
+    height: 120vh !important;
+    padding: 2rem 1rem;
+    margin-bottom: 100vh;
   }
-  
+  .scroll-spacer {
+    bottom: -200vh !important;
+  }
   .use-cases-container {
-    max-width: 850px;
-    min-height: 370px;
-    padding-left: 50px;
+    /* max-width: 850px; */
+    min-height: 320px;
+    /* padding-left: 50px; */
   }
   
   .use-cases-navigation {
@@ -1025,7 +1028,7 @@
 }
 
 /* Tablet Landscape (768px - 991px) */
-@media screen and (min-width: 769px) and (max-width: 991px) {
+@media screen and (max-width: 991px) {
   .hero {
     display: flex;
     justify-content: center;
