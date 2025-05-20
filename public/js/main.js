@@ -371,3 +371,87 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// ------- New Mobile Menu JS
+document.addEventListener('DOMContentLoaded', function() {
+  // Safely get elements with fallbacks
+  const hamburgerButton = document.getElementById('hamburger-button');
+  const mobileNav = document.getElementById('mobile-nav');
+  
+  // Only proceed if required elements exist
+  if (!hamburgerButton || !mobileNav) {
+    console.log('Mobile menu elements not found, skipping initialization');
+    return;
+  }
+  
+  // Toggle mobile menu function with error handling
+  function toggleMobileMenu(event) {
+    try {
+      // Prevent default if it's a link
+      if (event) event.preventDefault();
+      
+      // Toggle classes for animation
+      hamburgerButton.classList.toggle('open');
+      mobileNav.classList.toggle('open');
+      document.body.classList.toggle('menu-open');
+      
+      // Update ARIA attributes for accessibility
+      const isExpanded = hamburgerButton.classList.contains('open');
+      hamburgerButton.setAttribute('aria-expanded', isExpanded);
+      mobileNav.setAttribute('aria-hidden', !isExpanded);
+      
+      console.log('Mobile menu toggled:', isExpanded ? 'open' : 'closed');
+    } catch (err) {
+      console.error('Error toggling mobile menu:', err);
+    }
+  }
+  
+  // Safely add event listener
+  hamburgerButton.addEventListener('click', toggleMobileMenu);
+  
+  // Close menu when clicking navigation links
+  const menuLinks = mobileNav.querySelectorAll('a');
+  menuLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      // Small delay to allow the link to be followed
+      setTimeout(() => {
+        if (mobileNav.classList.contains('open')) {
+          toggleMobileMenu();
+        }
+      }, 100);
+    });
+  });
+  
+  // Close menu on window resize (if switching to desktop)
+  window.addEventListener('resize', function() {
+    try {
+      if (window.innerWidth > 768 && mobileNav.classList.contains('open')) {
+        hamburgerButton.classList.remove('open');
+        mobileNav.classList.remove('open');
+        document.body.classList.remove('menu-open');
+        
+        hamburgerButton.setAttribute('aria-expanded', 'false');
+        mobileNav.setAttribute('aria-hidden', 'true');
+      }
+    } catch (err) {
+      console.error('Error handling resize:', err);
+    }
+  });
+  
+  // Close menu when clicking outside
+  document.addEventListener('click', function(event) {
+    try {
+      // Only act if menu is open and click is outside header
+      if (!mobileNav.classList.contains('open')) return;
+      
+      const isClickInsideHeader = event.target.closest('#header');
+      if (!isClickInsideHeader) {
+        toggleMobileMenu();
+      }
+    } catch (err) {
+      console.error('Error handling document click:', err);
+    }
+  });
+  
+  console.log('Mobile navigation initialized successfully');
+});

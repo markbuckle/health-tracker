@@ -286,32 +286,26 @@
       });
     </script>
     <script> // Hero scrolling animation
-      (function() {
-        console.log("Initializing scroll animation with optimized trigger points");
-        
-        document.addEventListener('DOMContentLoaded', function() {
-          setTimeout(function() {
-            // Get the essential elements
+      document.addEventListener('DOMContentLoaded', function() {
+        // Safely initialize scroll feature only if elements exist
+        const initScrollAnimation = function() {
+          try {
+            // Get required elements
             const heroSection = document.getElementById('scrollHero');
-            const cards = heroSection?.querySelectorAll('.use-case-card');
-            const navDots = heroSection?.querySelectorAll('.nav-dot');
-            
-            // Verify essential elements exist
-            if (!heroSection || !cards || !cards.length || !navDots || !navDots.length) {
-              console.warn("Required elements for scroll animation not found");
+            if (!heroSection) {
+              console.log('scrollHero element not found, skipping animation');
               return;
             }
             
-            // Create the scroll-spacer if it doesn't exist
-            let scrollSpacer = heroSection.querySelector('.scroll-spacer');
-            if (!scrollSpacer) {
-              scrollSpacer = document.createElement('div');
-              scrollSpacer.className = 'scroll-spacer';
-              heroSection.appendChild(scrollSpacer);
-              console.log("Created scroll spacer element");
+            const cards = heroSection.querySelectorAll('.use-case-card');
+            const navDots = heroSection.querySelectorAll('.nav-dot');
+            
+            if (!cards.length || !navDots.length) {
+              console.log('Cards or navigation dots not found, skipping animation');
+              return;
             }
             
-            // Initialize first card as active
+            // Set initial card as active
             cards.forEach((card, i) => {
               if (i === 0) {
                 card.classList.add('active');
@@ -324,34 +318,37 @@
               }
             });
             
-            // Set initial nav dot state
+            // Set initial dot
             navDots.forEach((dot, i) => {
               dot.classList.toggle('active', i === 0);
             });
             
-            // ====== The core scroll animation logic ======
-            
-            // Calculate optimized trigger points
-            const cardCount = cards.length;
-            const viewportHeight = window.innerHeight;
+            // Get measurements for trigger points
             const heroTop = heroSection.offsetTop;
+            const viewportHeight = window.innerHeight;
+            const cardCount = cards.length;
             
-            // Create trigger points with 60% of viewport height per card
+            // Create trigger points
             const triggerPoints = [];
             for (let i = 0; i < cardCount; i++) {
               triggerPoints.push(heroTop + (i * viewportHeight * 0.6));
             }
             
-            // Helper function to get active card index
+            // Function to get active card index
             function getActiveCardIndex() {
-              return Array.from(cards).findIndex(card => card.classList.contains('active'));
+              for (let i = 0; i < cards.length; i++) {
+                if (cards[i].classList.contains('active')) {
+                  return i;
+                }
+              }
+              return 0;
             }
             
-            // Main scroll handler - controls which card is shown
-            window.addEventListener('scroll', function() {
+            // Scroll handler
+            function handleScroll() {
               const scrollY = window.scrollY;
               
-              // Find which card to show based on scroll position
+              // Find the appropriate card based on scroll position
               let targetCard = 0;
               for (let i = cardCount - 1; i >= 0; i--) {
                 if (scrollY >= triggerPoints[i]) {
@@ -360,7 +357,7 @@
                 }
               }
               
-              // Only update if target card is different from current active card
+              // Only update if we need to change the active card
               const currentActive = getActiveCardIndex();
               if (targetCard !== currentActive) {
                 // Update cards
@@ -376,39 +373,49 @@
                   }
                 });
                 
-                // Update nav dots
+                // Update dots
                 navDots.forEach((dot, i) => {
                   dot.classList.toggle('active', i === targetCard);
                 });
               }
-            }, { passive: true });
+            }
             
-            // Add click handlers to nav dots
-            navDots.forEach((dot, i) => {
+            // Add scroll listener
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            
+            // Add click handlers to dots
+            navDots.forEach((dot) => {
               dot.addEventListener('click', function() {
-                const index = parseInt(dot.getAttribute('data-index'));
-                // Scroll to trigger point for this card
-                window.scrollTo({
-                  top: triggerPoints[index],
-                  behavior: 'smooth'
-                });
+                const index = parseInt(dot.getAttribute('data-index'), 10);
+                if (!isNaN(index) && index >= 0 && index < triggerPoints.length) {
+                  window.scrollTo({
+                    top: triggerPoints[index],
+                    behavior: 'smooth'
+                  });
+                }
               });
             });
             
             // Handle window resize
             window.addEventListener('resize', function() {
+              // Recalculate trigger points
+              const newHeroTop = heroSection.offsetTop;
               const newViewportHeight = window.innerHeight;
               
-              // Recalculate trigger points
               for (let i = 0; i < cardCount; i++) {
-                triggerPoints[i] = heroTop + (i * newViewportHeight * 0.6);
+                triggerPoints[i] = newHeroTop + (i * newViewportHeight * 0.6);
               }
             }, { passive: true });
             
-            console.log("Scroll animation initialized with optimized trigger points");
-          }, 500); // Short delay to ensure DOM is ready
-        });
-      })();
+            console.log('Scroll animation initialized with optimized trigger points');
+          } catch (err) {
+            console.error('Error initializing scroll animation:', err);
+          }
+        };
+        
+        // Initialize with a small delay to ensure DOM is ready
+        setTimeout(initScrollAnimation, 300);
+      });
     </script>
     {{!-- <script>  // Debug panel for scroll animation (keep commented until needed)
       (function() {
