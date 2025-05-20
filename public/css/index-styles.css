@@ -11,25 +11,16 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 1rem;
   width: auto;
-  max-width: none;
+  max-width: 45rem;
   margin-bottom: 2rem;
 }
-/* .hero-container {
-  flex-flow: column;
-  display: flex;
-  align-items: center;
-  width: auto;
-  max-width: 27rem;
-  margin-bottom: 2rem;
-} */
 .hero-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 27rem;
-  flex: 1;
+  /* flex: 1; */
 }
 /* Hero title and animation styles */
 .hero-title {
@@ -65,6 +56,9 @@
   transform: translateY(-15px);
   animation: fadeSlideIn 1.1s ease forwards;
   animation-delay: 1.2s;
+}
+.hero-2-p {
+  text-align: center;
 }
 .desktop-only {
   display: inline-flex;
@@ -217,14 +211,14 @@
 
 /* ----- Animated Scroll Hero Section ----- */
 .hero-wrapper {
-  height: 150vh !important;
+  height: 175vh !important;
   position: sticky !important;
   top: 0 !important;
   z-index: 10 !important;
   background-color: #e0ecee;
   overflow: hidden !important;
   padding: 4rem 2rem;
-  margin-bottom: 275vh !important;
+  margin-bottom: 300vh !important;
 }
 
 .scroll-spacer {
@@ -244,6 +238,7 @@
   display: flex;
   max-width: 975px;
   margin: 0 auto;
+  margin-right: 3rem;
   min-height: 380px; /* Increased height */
   z-index: 3;
 }
@@ -511,6 +506,7 @@
   transform: scale(1.2); 
   animation: dissolveIn 1.1s ease-out forwards;
   animation-delay: 2.5s;
+  width: 10rem !important;
 }
 
 .btn-primary-scrolled {
@@ -814,7 +810,10 @@
 /* Large Desktop (1400px and above) */
 @media screen and (min-width: 1400px) {
   .hero-container {
-    max-width: 32rem;
+    max-width: 45rem;
+  }
+  .hero-content {
+    width: 22rem;
   }
   
   .hero-text {
@@ -872,7 +871,7 @@
   }
   
   .use-case-card {
-    padding: 3rem 2.5rem;
+    padding: 3rem 8rem;
     min-height: 400px;
   }
   
@@ -900,7 +899,7 @@
   }
   
   .btn-primary {
-    /* width: 350px; */
+    width: 8rem;
     padding: 1rem 2rem;
     font-size: 1.25rem;
   }
@@ -935,7 +934,7 @@
   }
   
   .use-case-card {
-    padding: 2.5rem 2rem;
+    padding: 2.5rem 4rem;
     min-height: 320px;
   }
   
@@ -946,9 +945,9 @@
 
 /* Small Desktop / Large Laptop (992px - 1199px) */
 @media screen and (min-width: 992px) and (max-width: 1199px) {
-  .hero-container {
+  /* .hero-container {
     max-width: 28rem;
-  }
+  } */
   
   .hero-text {
     font-size: 2.2rem;
@@ -1039,7 +1038,7 @@
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 3rem !important;
+    gap: 1rem !important;
     width: auto !important;
     max-width: none !important;
     margin-bottom: 2rem !important;
@@ -1048,7 +1047,7 @@
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    max-width: 27rem !important;
+    /* max-width: 27rem !important; */
     order: 1 !important;
   }
   .hero-title {
@@ -1077,7 +1076,16 @@
     margin: 0 !important;
     flex-shrink: 0 !important;
   }
+    .desktop-only {
+    display: inline-flex !important;
+    visibility: visible !important;
+  }
   
+  .mobile-only {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
   .btn-primary {
     margin-top: 0 !important;
     width: auto !important;
@@ -1196,7 +1204,7 @@
   .hero-content {
     width: 100%;
     order: 1;
-    margin-bottom: 0;
+    margin-top: 2rem;
   }
   
   .hero-title {
@@ -1214,6 +1222,7 @@
   }
   
   .mobile {
+    margin-top: 1rem;
     order: 2;
     max-width: 70%;
     flex: none;
@@ -1221,7 +1230,7 @@
   
   .btn-primary {
     order: 3 !important;
-    width: 80% !important;
+    width: 7rem !important;
     max-width: 300px !important;
     padding: 0.8rem 1.5rem !important;
     display: flex !important;
@@ -1229,14 +1238,12 @@
     justify-content: center !important;
   }
   .desktop-only {
-    display: none;
+    display: none !important;
+    visibility: hidden !important;
   }
   .mobile-only {
-    display: inline-flex;
-    order: 3;
-    width: 80%;
-    max-width: 300px;
-    margin: 0;
+    display: inline-flex !important;
+    visibility: visible !important;
   }
   .quote-container-1,
   .quote-container-2 {
@@ -1333,16 +1340,6 @@
     height: 18px;
     font-size: 11px;
   }
-    /* Reset any animations for mobile */
-  /* .hero-title,
-  .hero-text,
-  .mobile,
-  .btn-primary {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-    animation: none !important;
-  } */
   /* Remove any conflicting styles */
   .hero-container > * {
     float: none !important;
@@ -1384,12 +1381,13 @@
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
   }
+
   .desktop-only {
     display: none;
   }
   
   .btn-primary {
-    width: clamp(180px, 85%, 260px) !important;
+    width: 7rem !important;
     padding: 0.7rem 1.2rem !important;
     font-size: 0.9rem !important;
   }
@@ -1430,12 +1428,12 @@
     border-radius: 12px;
     box-shadow: -2px 4px 8px 1px #0003;
     margin-bottom: 0.5rem;
+    width: 95%;
   }
   
   .hero-wrapper {
-    height: 90vh;
-    padding: 1.5rem 0.5rem;
-    margin-bottom: 150vh;
+    height: 90vh !important;
+    margin-bottom: 180vh !important;
   }
   
   .use-cases-container {
@@ -1495,6 +1493,14 @@
   .nav-indicator {
     width: 1px;
   }
+  .feedback-toggle {
+    margin-right: 1.2rem;
+    margin-bottom: 0.2rem;
+  }
+  .feedback-toggle:active {
+    margin-right: 1.2rem;
+    margin-bottom: 0.2rem;
+  }
 }
 
 /* Small Mobile (below 320px) */
@@ -1529,7 +1535,7 @@
   }
   
   .btn-primary {
-    width: clamp(160px, 90%, 240px) !important;
+    width: 5.5rem !important;
     padding: 0.7rem 1rem !important;
     font-size: 0.85rem !important;
   }
@@ -1710,104 +1716,16 @@
 
 /* ===== IPHONE DEVICE MODE SPECIFIC FIXES ===== */
 
-/* Base adjustments for all iPhone device modes */
-@media screen and (max-device-width: 428px) {
-  /* Ensure viewport uses full available height */
-  html, body {
-    height: 100vh;
-    height: 100svh; /* Use small viewport height for better iPhone support */
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-  
-  /* Hero section adjustments for iPhone device modes */
-  .hero {
-    min-height: auto !important;
-    padding: 0.5rem 0 1rem 0 !important;
-    margin-top: 3rem !important; /* Adjust for mobile header */
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    box-sizing: border-box !important;
-  }
-  
-  .hero-container {
-    width: 100% !important;
-    max-width: 90% !important;
-    padding: 0 1rem !important;
-    gap: 1rem !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-  }
-  
-  /* Hero title - compact for iPhone */
-  .hero-title {
-    order: 1 !important;
-    width: 100% !important;
-    text-align: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 0.9rem !important;
-  }
-  
-  .hero-text {
-    font-size: 1.3rem !important;
-    line-height: 1.2 !important;
-    margin-bottom: 0.2rem !important;
-    display: block !important;
-  }
-
-    /* Mobile image - smaller for iPhone */
-  .mobile {
-    order: 2 !important;
-    max-width: clamp(180px, 60%, 280px) !important;
-    height: auto !important;
-    margin: 0 !important;
-    flex-shrink: 0 !important;
-    align-self: center !important;
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-    animation: none !important;
-  }
-
-  .mobile-only {
-    width: 85%;
-    max-width: 260px;
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
-  }
-  .desktop-only {
-    display: none;
-  }
-  
-  /* Button - optimized for iPhone screens */
-  .btn-primary {
-    order: 3 !important;
-    width: clamp(160px, 75%, 250px) !important;
-    padding: 0.6rem 1rem !important;
-    font-size: 0.85rem !important;
-    margin: 0 !important;
-    flex-shrink: 0 !important;
-    align-self: center !important;
-    white-space: nowrap !important;
-  }
-  
-}
-
 /* iPhone SE specific (375px x 667px) */
-@media screen and (device-width: 375px) and (device-height: 667px) {
+@media screen and (device-width: 375px) and (device-height: 896px) {
   .hero {
     padding: 0.25rem 0 0.75rem 0 !important;
     margin-top: 5rem !important;
     margin-bottom: 1rem !important;
+  }
+  .hero-wrapper {
+    height: 95vh !important;
+    margin-bottom: 260vh !important;
   }
   
   .hero-container {
@@ -1818,12 +1736,17 @@
   .hero-text {
     font-size: 1.8rem !important;
   }
+  .hero-title {
+    margin-bottom: 1rem !important;
+  }
   
   .btn-primary {
-    width: 85% !important;
-    max-width: 280px !important;
+    margin-top: 2rem !important;
+    width: 5.5rem !important;
+    max-width: 7rem !important;
   }
   .mobile {
+    margin-top: 1rem;
     max-width: 75% !important;
   }
   .mobile-only {
@@ -1834,6 +1757,12 @@
   }
   .desktop-only {
     display: none;
+  }
+  .use-cases-container {
+    margin-right: 1.5rem;
+  }
+  .demo-page-img {
+    width: 95%;
   }
 }
 
@@ -1853,7 +1782,7 @@
   }
   
   .btn-primary {
-    width: clamp(170px, 75%, 260px) !important;
+    width: 6rem !important;
     padding: 0.7rem 1.2rem !important;
     font-size: 0.9rem !important;
   }
@@ -1889,7 +1818,7 @@
   }
   
   .btn-primary {
-    width: clamp(180px, 80%, 280px) !important;
+    width: 6rem !important;
     padding: 0.75rem 1.5rem !important;
     font-size: 0.95rem !important;
   }
@@ -1905,21 +1834,6 @@
   }
   .desktop-only {
     display: none;
-  }
-}
-
-/* Fix for Safari mobile viewport */
-@media screen and (max-device-width: 428px) {
-  .hero {
-    /* Use viewport units that account for Safari's dynamic UI */
-    min-height: auto !important;
-    max-height: 100vh !important;
-    max-height: 100dvh !important; /* Dynamic viewport height */
-  }
-  
-  /* Ensure content doesn't get cut off by Safari's bottom bar */
-  .hero-container {
-    padding-bottom: env(safe-area-inset-bottom, 1rem) !important;
   }
 }
 

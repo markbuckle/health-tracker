@@ -36,12 +36,12 @@
           alt="Mobile app demonstration"
           class="mobile"
         />
-        
-        <!-- Mobile button - hidden on desktop, appears after image on mobile -->
-        <a href="/register" class="button-basics btn-primary mobile-only">
-          <div class="flex-horizontal">TRY IT OUT</div>
-        </a>
       </div>
+      
+      <!-- Mobile button - OUTSIDE container, only shows on mobile -->
+      <a href="/register" class="button-basics btn-primary mobile-only">
+        <div class="flex-horizontal">TRY IT OUT</div>
+      </a>
     </section>
 
     <div class="wave-light-bg">
@@ -50,75 +50,76 @@
       </div>
     </div>
 
-    <!-- New animated hero section -->
     <div class="hero-wrapper" id="scrollHero">
-      <h1 class="quote-3">Perfect for you if you are</h1>
-      
-      <div class="use-cases-container">
-        <div class="use-cases-navigation">
-          <div class="nav-indicator"></div>
-          <button class="nav-dot active" data-index="0"><span></span></button>
-          <button class="nav-dot" data-index="1"><span></span></button>
-          <button class="nav-dot" data-index="2"><span></span></button>
-          <button class="nav-dot" data-index="3"><span></span></button>
-          <button class="nav-dot" data-index="4"><span></span></button>
-        </div>
+      <div class="content-container-2">
+        <h1 class="quote-3">Perfect for you if you are</h1>
         
-        <div class="use-cases-slider">
-          <div class="use-case-card active" data-index="0">
-            <div class="icon-circle">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-              </svg>
-            </div>
-            <h3>Trying to be proactive with your health</h3>
-            <p>Pick up on out-of-range biomarkers and trends earlier</p>
+        <div class="use-cases-container">
+          <div class="use-cases-navigation">
+            <div class="nav-indicator"></div>
+            <button class="nav-dot active" data-index="0"><span></span></button>
+            <button class="nav-dot" data-index="1"><span></span></button>
+            <button class="nav-dot" data-index="2"><span></span></button>
+            <button class="nav-dot" data-index="3"><span></span></button>
+            <button class="nav-dot" data-index="4"><span></span></button>
           </div>
-          
-          <div class="use-case-card" data-index="1">
-            <div class="icon-circle">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z" />
-              </svg>
+        
+          <div class="use-cases-slider">
+            <div class="use-case-card active" data-index="0">
+              <div class="icon-circle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+                </svg>
+              </div>
+              <h3>Trying to be proactive with your health</h3>
+              <p>Our insights allow you to be proactive rather than reactive</p>
             </div>
-            <h3>Managing chronic conditions</h3>
-            <p>Track symptoms, medications, and progress over time</p>
-          </div>
-          
-          <div class="use-case-card" data-index="2">
-            <div class="icon-circle">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-              </svg>
+        
+            <div class="use-case-card" data-index="1">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z" />
+                </svg>
+              </div>
+              <h3>Managing chronic conditions</h3>
+              <p>Track symptoms, correlations, and progress over time</p>
             </div>
-            <h3>Caring for loved ones</h3>
-            <p>Helps reduce the burden of stressful researching</p>
-          </div>
-          
-          <div class="use-case-card" data-index="3">
-            <div class="icon-circle">
-              <svg viewBox="0 0 24 24">
-                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-              </svg>
+        
+            <div class="use-case-card" data-index="2">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </div>
+              <h3>Caring for loved ones</h3>
+              <p>Helps reduce the burden of stressful researching</p>
             </div>
-            <h3>Searching for a diagnosis</h3>
-            <p>Document symptoms and track patterns</p>
-          </div>
-          
-          <div class="use-case-card" data-index="4">
-            <div class="icon-circle">
-              <svg viewBox="0 0 24 24">
-                <path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z" />
-              </svg>
+        
+            <div class="use-case-card" data-index="3">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>
+              </div>
+              <h3>Searching for a diagnosis</h3>
+              <p class="hero-2-p">Document symptoms and track patterns. Use HealthLync as a tool to make visits with healthcare providers more effective.</p>
             </div>
-            <h3>Boosting overall health</h3>
-            <p>Monitor wellness metrics and lifestyle factors</p>
+        
+            <div class="use-case-card" data-index="4">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                  <path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z" />
+                </svg>
+              </div>
+              <h3>Boosting overall health</h3>
+              <p>Monitor wellness metrics and lifestyle factors</p>
+            </div>
           </div>
         </div>
+          
+            <!-- This spacer is critical - it creates the scroll space needed -->
+        <div class="scroll-spacer"></div>
       </div>
-  
-    <!-- This spacer is critical - it creates the scroll space needed -->
-      <div class="scroll-spacer"></div>
     </div>
 
     <div class="wave-light-bg">
@@ -237,9 +238,26 @@
                 // First time seeing the title - play animations
                 title.style.visibility = "visible";
                 
-                // Make image and button visible for animations to work
-                document.querySelector(".mobile").style.visibility = "visible";
-                document.querySelector(".btn-primary").style.visibility = "visible";
+                // Make image visible for animations, but respect mobile-only/desktop-only classes
+                const mobileImage = document.querySelector(".mobile");
+                const desktopButton = document.querySelector(".btn-primary.desktop-only");
+                const mobileButton = document.querySelector(".btn-primary.mobile-only");
+                
+                if (mobileImage) mobileImage.style.visibility = "visible";
+                
+                // Only set visibility for buttons that should be visible on current screen size
+                if (window.innerWidth > 768) {
+                  // Desktop - show desktop button, hide mobile button
+                  if (desktopButton) desktopButton.style.visibility = "visible";
+                  if (mobileButton) mobileButton.style.display = "none";
+                } else {
+                  // Mobile - hide desktop button, show mobile button
+                  if (desktopButton) desktopButton.style.display = "none";
+                  if (mobileButton) {
+                    mobileButton.style.display = "inline-flex";
+                    mobileButton.style.visibility = "visible";
+                  }
+                }
                 
                 animationsHavePlayed = true;
               } else if (entry.isIntersecting && animationsHavePlayed) {
@@ -247,17 +265,43 @@
                 title.style.visibility = "visible";
 
                 // Remove animations and show content immediately
-                document.querySelectorAll(".hero-text, .mobile, .btn-primary").forEach((el) => {
+                document.querySelectorAll(".hero-text, .mobile").forEach((el) => {
                   el.style.animation = "none";
                   el.style.opacity = "1";
                   el.style.transform = "none";
                   el.style.visibility = "visible";
                 });
 
+                // Handle buttons based on screen size
+                const desktopButton = document.querySelector(".btn-primary.desktop-only");
+                const mobileButton = document.querySelector(".btn-primary.mobile-only");
+                
+                if (window.innerWidth > 768) {
+                  // Desktop
+                  if (desktopButton) {
+                    desktopButton.style.animation = "none";
+                    desktopButton.style.opacity = "1";
+                    desktopButton.style.transform = "none";
+                    desktopButton.style.visibility = "visible";
+                    desktopButton.style.display = "inline-flex";
+                  }
+                  if (mobileButton) mobileButton.style.display = "none";
+                } else {
+                  // Mobile
+                  if (mobileButton) {
+                    mobileButton.style.animation = "none";
+                    mobileButton.style.opacity = "1";
+                    mobileButton.style.transform = "none";
+                    mobileButton.style.visibility = "visible";
+                    mobileButton.style.display = "inline-flex";
+                  }
+                  if (desktopButton) desktopButton.style.display = "none";
+                }
+
                 // Handle secure-text element specifically
                 const secureText = document.querySelector(".secure-text");
                 if (secureText) {
-                  secureText.style.color = "#5cb15d"; // Ensure color is applied when animations are skipped
+                  secureText.style.color = "#5cb15d";
                 }
               }
             });
@@ -268,6 +312,22 @@
         );
 
         observer.observe(document.querySelector(".hero-title"));
+        
+        // Add resize listener to handle screen size changes
+        window.addEventListener('resize', () => {
+          const desktopButton = document.querySelector(".btn-primary.desktop-only");
+          const mobileButton = document.querySelector(".btn-primary.mobile-only");
+          
+          if (window.innerWidth > 768) {
+            // Desktop
+            if (desktopButton) desktopButton.style.display = "inline-flex";
+            if (mobileButton) mobileButton.style.display = "none";
+          } else {
+            // Mobile
+            if (desktopButton) desktopButton.style.display = "none";
+            if (mobileButton) mobileButton.style.display = "inline-flex";
+          }
+        });
       });
     </script>
     <script> // Hero scrolling animation

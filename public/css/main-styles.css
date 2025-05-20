@@ -48,7 +48,7 @@
   --footer-hover: #4379ba;
   --footer-border: rgba(0, 0, 0, 0.08);
   --footer-card-bg: #f7fafc;
-  --footer-max-width: 84%;
+  --footer-max-width: 88%;
   --footer-padding: 2rem 2rem 3rem;
   --footer-shadow: 0 -4px 6px -1px rgba(255, 255, 255, 0.05);
   --footer-accent: #4379ba;
@@ -891,6 +891,13 @@ body {
   padding: 0 var(--spacing-sm);
 }
 
+.content-container-2 {
+  max-width: var(--content-width);
+  width: 70%;
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+}
+
 /* ----- Wave elements ----- */
 .wave-light-bg {
   background: #e0ecee;
@@ -1555,7 +1562,7 @@ label[for="customBloodType"] {
 /* Standard Desktop (1200px - 1399px) */
 @media screen and (min-width: 1200px) and (max-width: 1399px) {
   .content-container {
-    width: 75%;
+    width: 70%;
   }
   
   .center-header {
@@ -1646,7 +1653,9 @@ label[for="customBloodType"] {
     margin-left: 0;
     padding: 1rem;
   }
-  
+    .content-container-2 {
+    width: 100% !important;
+  }
   .btn-secondary {
     visibility: visible;
     width: 80%;
@@ -1770,8 +1779,8 @@ label[for="customBloodType"] {
   .mobile-menu-toggle {
     font-size: 1.3rem;
     padding: 0.25rem;
-    padding-right: 0.5rem;
-    margin-right: 1.3rem;
+    padding-right: 1.5rem;
+    margin-right: 2rem;
   }
 
   .mobile-menu .page-link {
@@ -1823,6 +1832,12 @@ label[for="customBloodType"] {
   
   .subheading-2 {
     font-size: 0.8rem;
+  }
+  .footer-container {
+    max-width: 100%;
+  }
+  .footer-column{
+    padding: 1.5rem 0.5rem;
   }
 }
 
