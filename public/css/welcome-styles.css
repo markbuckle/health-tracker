@@ -282,3 +282,98 @@
     position: relative !important;
     border-radius: 10px;
   }
+
+  /* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s forwards;
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 768px) {
+  .welcome-card {
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 12px;
+  }
+  
+  .feature-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .button-next, 
+  .button-skip {
+    max-width: none;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .dashboard-content {
+    padding: 60px 0 0;
+  }
+  
+  .steps-container2 {
+    padding: 0 0.5rem;
+  }
+  
+  .step-content {
+    padding: 1.25rem;
+  }
+  
+  .sidebar {
+    display: none;
+  }
+  
+  /* Fix for mobile tutorial elements */
+  .highlight-nav, 
+  .arrow {
+    z-index: 10; /* Below the fixed header but above content */
+  }
+}
+
+/* Small screen adjustments */
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 1.25rem;
+    margin: 0.75rem;
+  }
+  
+  .get-started-btn {
+    margin: 0.75rem 0;
+    width: 100%;
+  }
+}
+
+/* Fix for tutorial highlights and arrows on all screen sizes */
+.highlight-nav {
+  position: absolute;
+  background-color: rgba(92, 177, 93, 0.2);
+  border: 2px solid #5cb15d;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 90;
+  display: none;
+  animation: pulse 2s infinite;
+}
+
+.arrow {
+  position: absolute;
+  width: 80px;
+  height: 40px;
+  display: none;
+  z-index: 89;
+}
+
+/* Ensure body has position relative for absolute positioning */
+body {
+  position: relative;
+  min-height: 100vh;
+}

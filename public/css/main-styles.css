@@ -502,6 +502,10 @@ body.menu-open .hero-title {
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #f0f0f0;
+  transition: color 0.3s ease;
+  position: relative;
+  pointer-events: auto; /* Crucial - ensures hover works */
+  z-index: 10; /* Ensure links are above other elements */
 }
 .mobile-nav-link::after {
   content: '';
@@ -534,7 +538,7 @@ body.menu-open .hero-title {
   color: #5cb15d; /* Direct color instead of var() */
 }
 .mobile-nav .mobile-nav-link:hover::after {
-  width: 70%;
+  width: 40%;
   opacity: 1; /* Show underline on hover */
 }
 .mobile-nav-buttons {
@@ -708,8 +712,23 @@ body.menu-open .hero {
     padding: 8px 0;
     width: 6rem;
   }
+  .footer {
+    padding-top: 1rem !important;
+  }
   .header-logo-footer {
-    width: 40%;
+    width: 50%;
+  }
+  .footer-heading {
+    font-size: 1rem !important;
+  }
+  .footer-nav a {
+    font-size: 0.8rem !important;
+  }
+  .coming-soon {
+    font-size: 0.6rem !important;
+  }
+  .footer-bottom {
+    padding-top: 1.5rem !important;
   }
 }
 
@@ -2014,6 +2033,9 @@ label[for="customBloodType"] {
   
   .subheading-2 {
     font-size: 0.9rem;
+  }
+  .footer-tagline {
+    font-size: 0.8rem;
   }
 }
 

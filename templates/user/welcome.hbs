@@ -10,7 +10,7 @@
   </head>
 
   <body class="user-body">
-    {{> mobileHeader}}
+    {{> mobileUserHeader}}
 
     <div class="sidebar">
       <div class="sidebar-logo-wrapper">
@@ -110,6 +110,7 @@
         <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
       </svg>
     </div>
+
     <div class="arrow" id="arrowToUpload">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
         <path
@@ -121,6 +122,7 @@
         <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
       </svg>
     </div>
+
     <div class="arrow" id="arrowToReports">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
         <path
@@ -132,6 +134,7 @@
         <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
       </svg>
     </div>
+
     <div class="arrow" id="arrowToInsights">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
         <path
@@ -162,7 +165,7 @@
             <div class="feature-icon">📋</div>
             <div class="feature-title">Profile</div>
             <div class="feature-description">
-              Add your personal health details and family medical history
+              Add your personal health details and medical history
             </div>
           </div>
           <div class="feature-item" data-target="Upload">
@@ -297,7 +300,8 @@
       </div>
     </div>
 
-    <script>
+    <script src="js/main-user.js" defer type="module"></script>
+    <script> 
       document.addEventListener("DOMContentLoaded", () => {
         // DOM elements
         const getStartedBtn = document.getElementById("getStartedBtn");
@@ -636,5 +640,6 @@
         });
       });
     </script>
+
   </body>
 </html>
