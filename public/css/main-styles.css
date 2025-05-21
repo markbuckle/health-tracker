@@ -583,7 +583,7 @@ body.menu-open .hero {
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    margin-right: 1.5rem !important;
+    margin-right: 0 !important;
     padding-right: 0 !important;
     width: 40px !important;
     height: 40px !important;
@@ -1185,12 +1185,14 @@ body.menu-open .hero {
   max-width: var(--content-width);
   width: 70%;
   margin: 0 auto;
-  padding: 0 var(--spacing-sm);
+  /* padding: 0 var(--spacing-sm); */
 }
 
 /* ----- Wave elements ----- */
 .wave-light-bg {
   background: #e0ecee;
+  margin-top: 0; /* Remove any top margin */
+  padding-top: 0; /* Remove any top padding */
 }
 
 .wave-pattern {
@@ -1199,7 +1201,6 @@ body.menu-open .hero {
   height: auto;
   overflow: hidden;
   z-index: 2;
-  margin-top: 2rem;
 }
 
 .wave-pattern svg {

@@ -55,13 +55,13 @@
         
         <div class="use-cases-container">
           <!-- Navigation dots -->
-          <div class="use-cases-navigation">
-            <button class="nav-dot active" data-index="0" aria-label="Slide 1"></button>
-            <button class="nav-dot" data-index="1" aria-label="Slide 2"></button>
-            <button class="nav-dot" data-index="2" aria-label="Slide 3"></button>
-            <button class="nav-dot" data-index="3" aria-label="Slide 4"></button>
-            <button class="nav-dot" data-index="4" aria-label="Slide 5"></button>
-          </div>
+          {{!-- <div class="use-cases-navigation">
+            <button class="nav-dot active" data-index="0" aria-label="Slide 1" aria-selected="true"></button>
+            <button class="nav-dot" data-index="1" aria-label="Slide 2" aria-selected="false"></button>
+            <button class="nav-dot" data-index="2" aria-label="Slide 3" aria-selected="false"></button>
+            <button class="nav-dot" data-index="3" aria-label="Slide 4" aria-selected="false"></button>
+            <button class="nav-dot" data-index="4" aria-label="Slide 5" aria-selected="false"></button>
+          </div> --}}
           
           <!-- Card slider -->
           <div class="use-cases-slider">
@@ -298,11 +298,6 @@
       });
     </script>
     <script> // Hero scrolling animation
-      document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the card slider
-        initCardSlider();
-      });
-
       function initCardSlider() {
         const slider = document.querySelector('.use-cases-slider');
         if (!slider) return; // Exit if slider doesn't exist on page
@@ -326,11 +321,23 @@
           // Update cards
           cards.forEach((card, i) => {
             card.classList.toggle('active', i === currentIndex);
+            // Add smooth transition between cards
+            if (i === currentIndex) {
+              card.style.opacity = '1';
+              card.style.visibility = 'visible';
+              card.style.transform = 'translateX(0)';
+            } else {
+              card.style.opacity = '0';
+              card.style.visibility = 'hidden';
+              card.style.transform = 'translateX(50px)';
+            }
           });
           
           // Update navigation dots
           navDots.forEach((dot, i) => {
             dot.classList.toggle('active', i === currentIndex);
+            // Add ARIA attributes for accessibility
+            dot.setAttribute('aria-selected', i === currentIndex ? 'true' : 'false');
           });
         }
         
@@ -429,12 +436,10 @@
         showCard(0);
       }
 
-      // Add this function to your existing main.js or where initialization happens
-      function initializeAll() {
-        initializeHeaderScroll();
+      // Call this function on DOMContentLoaded in your initialization code
+      document.addEventListener('DOMContentLoaded', function() {
         initCardSlider();
-        // other initializations...
-      }
+      });
     </script>
     {{!-- <script>  // Debug panel for scroll animation (keep commented until needed)
       (function() {

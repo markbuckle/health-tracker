@@ -178,7 +178,6 @@
 }
 .quote-3 {
   text-align: center;
-  margin-bottom: 1.5rem;
   color: #333;
   font-size: 1.8rem;
   font-weight: 600;
@@ -201,17 +200,21 @@
 /* ----- Animated Scroll Hero Section ----- */
 .use-cases-section {
   background-color: #e0ecee;
-  padding: 3rem 0 5rem;
+  padding: 3rem 0 0; /* Remove bottom padding to eliminate gap */
   position: relative;
   overflow: hidden;
+  margin-bottom: 0; /* Ensure no margin at bottom */
 }
 
 /* Use Cases Container */
 .use-cases-container {
   position: relative;
   max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem 0;
+  margin: 0 auto 5rem; /* Add bottom margin to replace padding */
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Navigation Dots */
@@ -219,16 +222,20 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1.5rem;
-  gap: 12px;
+  gap: 6px;
+  z-index: 2;
 }
+
 .use-cases-slider {
   position: relative;
   height: 300px;
+  width: 80%;
   margin: 0 auto;
   max-width: 800px;
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(149, 175, 211, 0.12);
+  overflow: hidden;
 }
 
 /* Navigation Dots */
@@ -292,7 +299,7 @@
   width: 100%;
   height: 100%;
   background-color: white;
-  padding: 3rem 2.5rem;
+  padding: 3rem 2rem;
   border-radius: 16px;
   box-shadow: none;
   opacity: 0;
@@ -304,6 +311,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .use-case-card.active {
@@ -355,15 +363,17 @@
 /* Slider Controls */
 .slider-controls {
   position: absolute;
-  width: 100%;
+  width: 90%;
   top: 50%;
-  left: 0;
-  right: 0;
+  left: 5%;
+  right: 5%;
   transform: translateY(-50%);
   display: flex;
   justify-content: space-between;
   pointer-events: none;
   z-index: 10;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .slider-prev,
@@ -870,7 +880,6 @@
   
   .use-cases-container {
     max-width: 1000px;
-    padding-left: 60px;
   }
 
   .use-cases-navigation {
@@ -929,7 +938,6 @@
   
   .use-cases-container {
     max-width: 900px;
-    padding-left: 55px;
   }
 
   .use-cases-navigation {
@@ -1130,7 +1138,6 @@
   
   .quote-3 {
     font-size: 1.3rem;
-    margin-bottom: 1.5rem;
   }
   
   .demo-page-img {
@@ -1148,7 +1155,6 @@
   .use-cases-container {
     max-width: 700px;
     min-height: 350px;
-    padding-left: 45px;
   }
 
   .use-cases-navigation {
@@ -1200,7 +1206,14 @@
   .use-cases-section {
     padding: 2.5rem 0;
   }
-
+  .use-cases-container {
+    padding: 1rem 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .slider-controls {
+    width: 95%;
+    left: 2.5%;
+  }
   .hero {
     padding: 1rem 0;
     margin-top: 3rem;
@@ -1303,12 +1316,6 @@
     margin-bottom: 180vh;
   }
   
-  .use-cases-container {
-    max-width: 600px;
-    min-height: 320px;
-    padding-left: 40px; 
-  }
-  
   .use-cases-navigation {
     left: 5px;
     width: 25px;
@@ -1317,11 +1324,11 @@
   
   .use-cases-slider {
     height: 300px;
+    max-width: 75%;
   }
 
   .use-case-card {
-    padding: 1.8rem 1.2rem;
-    min-height: 260px;
+    padding: 2rem 1.5rem;
   }
   .slider-prev,
   .slider-next {
@@ -1374,7 +1381,7 @@
 }
 
 /* Mobile (320px - 479px) */
-@media screen and (max-width: 479px) {
+@media screen and (max-width: 480px) {
   .use-cases-section {
     padding: 2rem 0;
   }
@@ -1465,9 +1472,8 @@
   }
   
   .use-cases-container {
-    max-width: 100%;
-    min-height: 280px;
-    padding-left: 35px;
+    padding: 1rem;
+    margin-bottom: 2rem;
   }
 
   .use-cases-navigation {
@@ -1624,9 +1630,9 @@
     height: 25px;
   }
 
-  .use-cases-container {
+  /* .use-cases-container {
     padding-left: 32px;
-  }
+  } */
   
   .use-cases-navigation {
     height: 160px;
