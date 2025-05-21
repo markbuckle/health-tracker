@@ -502,8 +502,6 @@ body.menu-open .hero-title {
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #f0f0f0;
-  position: relative; /* Add position relative to support the ::after pseudo-element */
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .mobile-nav-link::after {
   content: '';
@@ -513,14 +511,32 @@ body.menu-open .hero-title {
   bottom: -4px;
   left: 50%;
   background-color: var(--green-primary);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(-50%);
 }
-
-.mobile-nav-link:hover {
-  color: #5cb15d;
+.mobile-nav .mobile-nav-link {
+  position: relative;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #627183; /* Match the desktop link color */
 }
-
+.mobile-nav .mobile-nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0; /* Changed from -4px to 0 to be visible within the element */
+  left: 50%;
+  background-color: #5cb15d; /* Using direct color instead of var() in case variable isn't defined */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+  opacity: 0; /* Start with invisible underline */
+}
+.mobile-nav .mobile-nav-link:hover {
+  color: #5cb15d; /* Direct color instead of var() */
+}
+.mobile-nav .mobile-nav-link:hover::after {
+  width: 70%;
+  opacity: 1; /* Show underline on hover */
+}
 .mobile-nav-buttons {
   display: flex;
   flex-direction: row;
