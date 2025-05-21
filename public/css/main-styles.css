@@ -481,6 +481,10 @@ body.menu-open .hero {
   margin-top: var(--mobile-menu-height, 200px) !important;
 }
 
+body.menu-open .hero-title {
+  margin-top: 2rem !important; /* Increase this value for more space */
+}
+
 .mobile-nav-links {
   display: flex;
   flex-direction: column;
@@ -498,7 +502,19 @@ body.menu-open .hero {
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #f0f0f0;
-  transition: color 0.3s ease;
+  position: relative; /* Add position relative to support the ::after pseudo-element */
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 50%;
+  background-color: var(--green-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
 }
 
 .mobile-nav-link:hover {
@@ -507,7 +523,8 @@ body.menu-open .hero {
 
 .mobile-nav-buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
   width: 100%;
   margin-top: 15px;
@@ -2262,5 +2279,30 @@ label[for="customBloodType"] {
   
   .mobile-menu .page-link {
     min-height: 2.5rem;
+  }
+}
+
+/* Improve touch interactions on mobile */
+/* @media (hover: hover) and (pointer: fine) { */
+  /* Only apply these effects on devices that can hover */
+  /* .mobile-nav-link:hover::after,
+  .mobile-nav-buttons .auth-button:hover {
+    /* Full hover effects */
+  /* } */
+/* } */ 
+
+@media (hover: none) and (pointer: coarse) {
+  /* On touch devices, add active states instead of hover */
+  .mobile-nav-link:active {
+    color: var(--green-primary);
+  }
+  
+  .mobile-nav-link:active::after {
+    width: 70%;
+  }
+  
+  .mobile-nav-buttons .auth-button:active {
+    opacity: 0.8;
+    transform: translateY(0);
   }
 }
