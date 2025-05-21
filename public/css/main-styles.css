@@ -620,7 +620,7 @@ body.menu-open .hero {
     max-height: 70vh;
   }
   .mobile-nav-links {
-    padding: 10px 0 !important;
+    padding: 2px 0 10px 0 !important;
   }
   .header-scrolled .mobile-nav {
     top: 44px !important; /* Match scrolled header height */
@@ -674,6 +674,9 @@ body.menu-open .hero {
     font-size: 14px;
     padding: 8px 0;
     width: 6rem;
+  }
+  .header-logo-footer {
+    width: 40%;
   }
 }
 

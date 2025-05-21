@@ -174,14 +174,15 @@
 
   .form-wrap {
     padding: 0.5rem;
-    min-height: calc(100vh - 80px);
+    min-height: calc(75vh - 40px);
+    inset: -10px;
   }
 
   .register-block {
     max-width: 100%;
     border-radius: 1rem;
     padding: 1rem;
-    margin: 0 2rem 0 2rem;
+    margin: 1.5rem 2rem 0 2rem;
     box-shadow: none;
   }
 
