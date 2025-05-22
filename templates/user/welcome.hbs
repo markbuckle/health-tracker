@@ -5,7 +5,9 @@
     <title>Welcome</title>
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
-    <link href="css/user-styles.css" rel="stylesheet" type="text/css" />
+    {{!-- <link href="css/main-header-footer-styles.css" rel="stylesheet" type="text/css" /> --}}
+    <link href="css/mobile-user-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/user-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/welcome-styles.css" rel="stylesheet" type="text/css" />
   </head>
 
@@ -302,343 +304,427 @@
 
     <script src="js/main-user.js" defer type="module"></script>
     <script> 
-      document.addEventListener("DOMContentLoaded", () => {
-        // DOM elements
-        const getStartedBtn = document.getElementById("getStartedBtn");
-        const welcomeCard = document.getElementById("welcomeCard");
-        const stepsContainer = document.querySelector(".steps-container2");
-        const progressBar = document.getElementById("progressBar");
-        const skipButtons = document.querySelectorAll(".button-skip");
+     // REPLACE YOUR CURRENT SCRIPT WITH THIS
+document.addEventListener("DOMContentLoaded", () => {
+  console.log('Welcome page script loading...');
+  
+  // MOBILE MENU FUNCTIONALITY FIRST
+  const hamburgerButton = document.getElementById('hamburger-button');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  
+  console.log('Mobile elements found:', {
+    hamburgerButton: !!hamburgerButton,
+    mobileMenu: !!mobileMenu
+  });
+  
+  // Mobile menu toggle function
+  function toggleMobileMenu() {
+    console.log('Toggling mobile menu...');
+    
+    if (!hamburgerButton || !mobileMenu) {
+      console.warn('Mobile menu elements not found');
+      return;
+    }
+    
+    // Toggle classes
+    hamburgerButton.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    
+    // Calculate menu height for content push
+    const isOpen = mobileMenu.classList.contains('open');
+    const menuHeight = isOpen ? mobileMenu.scrollHeight : 0;
+    
+    console.log('Menu state:', { isOpen, menuHeight });
+    
+    // Set CSS variable for content push
+    document.documentElement.style.setProperty('--mobile-menu-height', `${menuHeight}px`);
+    
+    // Toggle body class
+    document.body.classList.toggle('menu-open', isOpen);
+    
+    // Update ARIA attributes
+    hamburgerButton.setAttribute('aria-expanded', isOpen.toString());
+  }
+  
+  // Add hamburger button event listener
+  if (hamburgerButton) {
+    hamburgerButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMobileMenu();
+    });
+  }
+  
+  // Close menu when clicking navigation links
+  const mobileLinks = document.querySelectorAll('.mobile-menu .page-link');
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      console.log('Navigation link clicked, closing menu...');
+      if (mobileMenu && mobileMenu.classList.contains('open')) {
+        toggleMobileMenu();
+      }
+    });
+  });
+  
+  // Close menu on window resize
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768 && mobileMenu && mobileMenu.classList.contains('open')) {
+      console.log('Resizing to desktop, closing mobile menu...');
+      hamburgerButton.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      document.documentElement.style.setProperty('--mobile-menu-height', '0px');
+      hamburgerButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+  
+  // TUTORIAL FUNCTIONALITY
+  const getStartedBtn = document.getElementById("getStartedBtn");
+  const welcomeCard = document.getElementById("welcomeCard");
+  const stepsContainer = document.querySelector(".steps-container2");
+  const progressBar = document.getElementById("progressBar");
+  const skipButtons = document.querySelectorAll(".button-skip");
 
-        // Navigation elements
-        const profileLink = document.getElementById("Profile");
-        const uploadLink = document.getElementById("Upload");
-        const reportsLink = document.getElementById("Reports");
-        const insightsLink = document.getElementById("Insights");
+  // Navigation elements - check for both desktop and mobile versions
+  const profileLink = document.getElementById("Profile") || document.getElementById("Profile-mobile");
+  const uploadLink = document.getElementById("Upload") || document.getElementById("Upload-mobile");
+  const reportsLink = document.getElementById("Reports") || document.getElementById("Reports-mobile");
+  const insightsLink = document.getElementById("Insights") || document.getElementById("Insights-mobile");
 
-        // Direct DOM inspection for debugging
-        console.log("DIRECT DOM INSPECTION:");
-        console.log("Profile element:", profileLink);
-        console.log(
-          "Element tag name:",
-          profileLink ? profileLink.tagName : "Not found"
-        );
-        console.log(
-          "Element parent:",
-          profileLink ? profileLink.parentElement : "Not found"
-        );
+  // Highlight elements
+  const highlightProfile = document.getElementById("highlightProfile");
+  const highlightUpload = document.getElementById("highlightUpload");
+  const highlightReports = document.getElementById("highlightReports");
+  const highlightInsights = document.getElementById("highlightInsights");
 
-        // Check computed styles
-        if (profileLink) {
-          console.log(
-            "Computed position:",
-            window.getComputedStyle(profileLink).position
-          );
-          console.log(
-            "Computed z-index:",
-            window.getComputedStyle(profileLink).zIndex
-          );
-        }
+  // Arrow elements
+  const arrowToProfile = document.getElementById("arrowToProfile");
+  const arrowToUpload = document.getElementById("arrowToUpload");
+  const arrowToReports = document.getElementById("arrowToReports");
+  const arrowToInsights = document.getElementById("arrowToInsights");
 
-        // Highlight elements
-        const highlightProfile = document.getElementById("highlightProfile");
-        const highlightUpload = document.getElementById("highlightUpload");
-        const highlightReports = document.getElementById("highlightReports");
-        const highlightInsights = document.getElementById("highlightInsights");
+  // Step elements
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const step3 = document.getElementById("step3");
+  const step4 = document.getElementById("step4");
 
-        // Arrow elements
-        const arrowToProfile = document.getElementById("arrowToProfile");
-        const arrowToUpload = document.getElementById("arrowToUpload");
-        const arrowToReports = document.getElementById("arrowToReports");
-        const arrowToInsights = document.getElementById("arrowToInsights");
+  // Next buttons
+  const step1Next = document.getElementById("step1Next");
+  const step2Next = document.getElementById("step2Next");
+  const step3Next = document.getElementById("step3Next");
+  const step4Next = document.getElementById("step4Next");
 
-        // Step elements
-        const step1 = document.getElementById("step1");
-        const step2 = document.getElementById("step2");
-        const step3 = document.getElementById("step3");
-        const step4 = document.getElementById("step4");
+  // Current step tracker
+  let currentStep = 0;
+  const totalSteps = 4;
+  let tutorialActive = false;
 
-        // Next buttons
-        const step1Next = document.getElementById("step1Next");
-        const step2Next = document.getElementById("step2Next");
-        const step3Next = document.getElementById("step3Next");
-        const step4Next = document.getElementById("step4Next");
+  console.log('Tutorial elements found:', {
+    getStartedBtn: !!getStartedBtn,
+    welcomeCard: !!welcomeCard,
+    stepsContainer: !!stepsContainer,
+    profileLink: !!profileLink,
+    highlightProfile: !!highlightProfile,
+    arrowToProfile: !!arrowToProfile
+  });
 
-        // Current step tracker
-        let currentStep = 0;
-        const totalSteps = 4;
+  // Initialize features hover synchronization
+  function initializeFeatureHover() {
+    const featureItems = document.querySelectorAll(".feature-item");
+    
+    // Get all navigation links (both desktop and mobile)
+    const allProfileLinks = document.querySelectorAll("#Profile, #Profile-mobile");
+    const allUploadLinks = document.querySelectorAll("#Upload, #Upload-mobile");
+    const allReportsLinks = document.querySelectorAll("#Reports, #Reports-mobile");
+    const allInsightsLinks = document.querySelectorAll("#Insights, #Insights-mobile");
 
-        // Initialize features hover synchronization
-        function initializeFeatureHover() {
-          const featureItems = document.querySelectorAll(".feature-item");
-          console.log("Feature items found:", featureItems.length);
+    featureItems.forEach((item) => {
+      const target = item.getAttribute("data-target");
+      let targetLinks;
+      
+      switch(target) {
+        case "Profile":
+          targetLinks = allProfileLinks;
+          break;
+        case "Upload":
+          targetLinks = allUploadLinks;
+          break;
+        case "Reports":
+          targetLinks = allReportsLinks;
+          break;
+        case "Insights":
+          targetLinks = allInsightsLinks;
+          break;
+        default:
+          targetLinks = [];
+      }
 
-          const sidebarLinks = {
-            Profile: document.getElementById("Profile"),
-            Upload: document.getElementById("Upload"),
-            Reports: document.getElementById("Reports"),
-            Insights: document.getElementById("Insights"),
-          };
-
-          console.log("Sidebar links found:", {
-            Profile: !!sidebarLinks["Profile"],
-            Upload: !!sidebarLinks["Upload"],
-            Reports: !!sidebarLinks["Reports"],
-            Insights: !!sidebarLinks["Insights"],
-          });
-
-          featureItems.forEach((item) => {
-            // Get the target from data attribute
-            const target = item.getAttribute("data-target");
-            console.log(
-              "Feature item:",
-              item.querySelector(".feature-title")?.textContent,
-              "data-target:",
-              target
-            );
-
-            const sidebarLink = sidebarLinks[target];
-
-            if (sidebarLink) {
-              // When hovering over a feature item
-              item.addEventListener("mouseenter", () => {
-                // Set attribute on body
-                document.body.setAttribute(
-                  `data-${target.toLowerCase()}-hover`,
-                  "true"
-                );
-              });
-
-              // Mouseleave event
-              item.addEventListener("mouseleave", () => {
-                // Remove attribute from body
-                document.body.removeAttribute(
-                  `data-${target.toLowerCase()}-hover`
-                );
-              });
-
-              // Click event for testing
-              item.addEventListener("click", (e) => {
-                e.preventDefault(); // Prevent navigation
-
-                // Toggle text and visual style directly
-                const textSpan = sidebarLink.querySelector(
-                  ".page-link-text-span"
-                );
-                if (textSpan) {
-                  if (textSpan.textContent === "★ TOGGLED ★") {
-                    textSpan.textContent = target;
-                    sidebarLink.style.backgroundColor = "";
-                  } else {
-                    textSpan.textContent = "★ TOGGLED ★";
-                    sidebarLink.style.backgroundColor = "red";
-                  }
-                }
-              });
-            }
-          });
-        }
-
-        // Update progress bar
-        function updateProgress(step) {
-          const progress = (step / totalSteps) * 100;
-          progressBar.style.width = `${progress}%`;
-        }
-
-        // Position elements around a target
-        function positionElementAroundTarget(
-          element,
-          target,
-          position = "below"
-        ) {
-          if (!element || !target) return;
-
-          const targetRect = target.getBoundingClientRect();
-
-          switch (position) {
-            case "below":
-              element.style.top = `${targetRect.bottom + 10}px`;
-              element.style.left = `${
-                targetRect.left + targetRect.width / 2 - 40
-              }px`;
-              break;
-            case "above":
-              element.style.bottom = `${
-                window.innerHeight - targetRect.top + 10
-              }px`;
-              element.style.left = `${
-                targetRect.left + targetRect.width / 2 - 40
-              }px`;
-              break;
-            case "left":
-              element.style.right = `${
-                window.innerWidth - targetRect.left + 10
-              }px`;
-              element.style.top = `${
-                targetRect.top + targetRect.height / 2 - 20
-              }px`;
-              break;
-            case "right":
-              element.style.left = `${targetRect.right + 10}px`;
-              element.style.top = `${
-                targetRect.top + targetRect.height / 2 - 20
-              }px`;
-              break;
-          }
-        }
-
-        // Highlight a navigation item
-        function highlightNavItem(navItem, highlightEl, arrowEl) {
-          if (!navItem || !highlightEl) return;
-
-          const rect = navItem.getBoundingClientRect();
-
-          highlightEl.style.top = `${rect.top - 5}px`;
-          highlightEl.style.left = `${rect.left - 5}px`;
-          highlightEl.style.width = `${rect.width + 10}px`;
-          highlightEl.style.height = `${rect.height + 10}px`;
-          highlightEl.style.display = "block";
-
-          if (arrowEl) {
-            positionElementAroundTarget(arrowEl, navItem, "right");
-            arrowEl.style.display = "block";
-          }
-        }
-
-        // Clear all highlights
-        function clearHighlights() {
-          highlightProfile.style.display = "none";
-          highlightUpload.style.display = "none";
-          highlightReports.style.display = "none";
-          highlightInsights.style.display = "none";
-
-          arrowToProfile.style.display = "none";
-          arrowToUpload.style.display = "none";
-          arrowToReports.style.display = "none";
-          arrowToInsights.style.display = "none";
-        }
-
-        // Show a specific step
-        function showStep(stepNumber) {
-          // Hide all steps
-          step1.style.display = "none";
-          step2.style.display = "none";
-          step3.style.display = "none";
-          step4.style.display = "none";
-
-          // Clear highlights
-          clearHighlights();
-          clearHoverEffects();
-
-          // Show the current step
-          switch (stepNumber) {
-            case 1:
-              step1.style.display = "block";
-              highlightNavItem(profileLink, highlightProfile, arrowToProfile);
-              document.body.setAttribute("data-profile-hover", "true");
-              break;
-            case 2:
-              step2.style.display = "block";
-              highlightNavItem(uploadLink, highlightUpload, arrowToUpload);
-              document.body.setAttribute("data-upload-hover", "true");
-              break;
-            case 3:
-              step3.style.display = "block";
-              highlightNavItem(reportsLink, highlightReports, arrowToReports);
-              document.body.setAttribute("data-reports-hover", "true");
-              break;
-            case 4:
-              step4.style.display = "block";
-              highlightNavItem(
-                insightsLink,
-                highlightInsights,
-                arrowToInsights
-              );
-              document.body.setAttribute("data-insights-hover", "true");
-              break;
-          }
-
-          // Update progress
-          currentStep = stepNumber;
-          updateProgress(currentStep);
-        }
-
-        // Clear all hover effects
-        function clearHoverEffects() {
-          document.body.removeAttribute("data-profile-hover");
-          document.body.removeAttribute("data-upload-hover");
-          document.body.removeAttribute("data-reports-hover");
-          document.body.removeAttribute("data-insights-hover");
-        }
-
-        // Start tutorial
-        function startTutorial() {
-          welcomeCard.style.display = "none";
-          stepsContainer.style.display = "block";
-          showStep(1);
-        }
-
-        // Complete tutorial
-        function completeTutorial() {
-          stepsContainer.style.display = "none";
-          clearHighlights();
-
-          // Could redirect to a specific page or show a completion message
-          window.location.href = "/profile";
-        }
-
-        // Event listeners
-        getStartedBtn.addEventListener("click", startTutorial);
-
-        step1Next.addEventListener("click", () => showStep(2));
-        step2Next.addEventListener("click", () => showStep(3));
-        step3Next.addEventListener("click", () => showStep(4));
-        step4Next.addEventListener("click", completeTutorial);
-
-        // Skip buttons
-        skipButtons.forEach((button) => {
-          button.addEventListener("click", completeTutorial);
+      if (targetLinks.length > 0) {
+        item.addEventListener("mouseenter", () => {
+          document.body.setAttribute(`data-${target.toLowerCase()}-hover`, "true");
         });
 
-        // Navigation click handling
-        profileLink.addEventListener("click", (e) => {
-          if (currentStep === 1) {
-            e.preventDefault();
-            showStep(2);
-          }
+        item.addEventListener("mouseleave", () => {
+          document.body.removeAttribute(`data-${target.toLowerCase()}-hover`);
         });
 
-        uploadLink.addEventListener("click", (e) => {
-          if (currentStep === 2) {
-            e.preventDefault();
-            showStep(3);
+        item.addEventListener("click", () => {
+          const href = targetLinks[0]?.getAttribute("href");
+          if (href) {
+            window.location.href = href;
           }
         });
+      }
+    });
+  }
 
-        reportsLink.addEventListener("click", (e) => {
-          if (currentStep === 3) {
-            e.preventDefault();
-            showStep(4);
-          }
-        });
+  // Update progress bar
+  function updateProgress(step) {
+    if (progressBar) {
+      const progress = (step / totalSteps) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
+  }
 
-        insightsLink.addEventListener("click", (e) => {
-          if (currentStep === 4) {
-            e.preventDefault();
-            completeTutorial();
-          }
-        });
+  // Find the correct navigation item (desktop or mobile)
+  function findNavItem(desktopId, mobileId) {
+    const desktopItem = document.getElementById(desktopId);
+    const mobileItem = document.getElementById(mobileId);
+    
+    // Return the visible one based on screen size
+    if (window.innerWidth <= 768) {
+      return mobileItem || desktopItem;
+    } else {
+      return desktopItem || mobileItem;
+    }
+  }
 
-        // Initialize hover effects
-        initializeFeatureHover();
+  // Position elements around a target
+  function positionElementAroundTarget(element, target, position = "below") {
+    if (!element || !target) return;
 
-        // Handle window resize for positioning elements
-        window.addEventListener("resize", () => {
-          if (currentStep > 0) {
-            showStep(currentStep);
-          }
-        });
-      });
+    const targetRect = target.getBoundingClientRect();
+    const isMobile = window.innerWidth <= 768;
+
+    switch (position) {
+      case "below":
+        element.style.top = `${targetRect.bottom + 10}px`;
+        element.style.left = `${targetRect.left + targetRect.width / 2 - 40}px`;
+        break;
+      case "right":
+        if (isMobile) {
+          element.style.top = `${targetRect.bottom + 10}px`;
+          element.style.left = `${targetRect.left + targetRect.width / 2 - 40}px`;
+        } else {
+          element.style.left = `${targetRect.right + 10}px`;
+          element.style.top = `${targetRect.top + targetRect.height / 2 - 20}px`;
+        }
+        break;
+    }
+  }
+
+  // Highlight a navigation item
+  function highlightNavItem(navItem, highlightEl, arrowEl) {
+    if (!navItem || !highlightEl || !tutorialActive) return;
+
+    console.log('Highlighting nav item:', navItem.id || navItem.className);
+
+    const rect = navItem.getBoundingClientRect();
+
+    highlightEl.style.top = `${rect.top - 5}px`;
+    highlightEl.style.left = `${rect.left - 5}px`;
+    highlightEl.style.width = `${rect.width + 10}px`;
+    highlightEl.style.height = `${rect.height + 10}px`;
+    highlightEl.style.display = "block";
+
+    if (arrowEl) {
+      positionElementAroundTarget(arrowEl, navItem, "right");
+      arrowEl.style.display = "block";
+    }
+  }
+
+  // Clear all highlights
+  function clearHighlights() {
+    console.log('Clearing highlights...');
+    
+    if (highlightProfile) highlightProfile.style.display = "none";
+    if (highlightUpload) highlightUpload.style.display = "none";
+    if (highlightReports) highlightReports.style.display = "none";
+    if (highlightInsights) highlightInsights.style.display = "none";
+
+    if (arrowToProfile) arrowToProfile.style.display = "none";
+    if (arrowToUpload) arrowToUpload.style.display = "none";
+    if (arrowToReports) arrowToReports.style.display = "none";
+    if (arrowToInsights) arrowToInsights.style.display = "none";
+  }
+
+  // Clear all hover effects
+  function clearHoverEffects() {
+    document.body.removeAttribute("data-profile-hover");
+    document.body.removeAttribute("data-upload-hover");
+    document.body.removeAttribute("data-reports-hover");
+    document.body.removeAttribute("data-insights-hover");
+  }
+
+  // Show a specific step
+  function showStep(stepNumber) {
+    console.log('Showing step:', stepNumber);
+    
+    // Hide all steps
+    if (step1) step1.style.display = "none";
+    if (step2) step2.style.display = "none";
+    if (step3) step3.style.display = "none";
+    if (step4) step4.style.display = "none";
+
+    // Clear highlights and effects
+    clearHighlights();
+    clearHoverEffects();
+
+    // Show the current step and highlight appropriate nav item
+    switch (stepNumber) {
+      case 1:
+        if (step1) step1.style.display = "block";
+        const profileNavItem = findNavItem("Profile", "Profile-mobile");
+        highlightNavItem(profileNavItem, highlightProfile, arrowToProfile);
+        document.body.setAttribute("data-profile-hover", "true");
+        break;
+      case 2:
+        if (step2) step2.style.display = "block";
+        const uploadNavItem = findNavItem("Upload", "Upload-mobile");
+        highlightNavItem(uploadNavItem, highlightUpload, arrowToUpload);
+        document.body.setAttribute("data-upload-hover", "true");
+        break;
+      case 3:
+        if (step3) step3.style.display = "block";
+        const reportsNavItem = findNavItem("Reports", "Reports-mobile");
+        highlightNavItem(reportsNavItem, highlightReports, arrowToReports);
+        document.body.setAttribute("data-reports-hover", "true");
+        break;
+      case 4:
+        if (step4) step4.style.display = "block";
+        const insightsNavItem = findNavItem("Insights", "Insights-mobile");
+        highlightNavItem(insightsNavItem, highlightInsights, arrowToInsights);
+        document.body.setAttribute("data-insights-hover", "true");
+        break;
+    }
+
+    currentStep = stepNumber;
+    updateProgress(currentStep);
+  }
+
+  // Start tutorial
+  function startTutorial() {
+    console.log('Starting tutorial...');
+    tutorialActive = true;
+    
+    // Add tutorial-active class to body to show arrows/highlights
+    document.body.classList.add('tutorial-active');
+    
+    if (welcomeCard) welcomeCard.style.display = "none";
+    if (stepsContainer) stepsContainer.style.display = "block";
+    
+    showStep(1);
+  }
+
+  // Complete tutorial
+  function completeTutorial() {
+    console.log('Completing tutorial...');
+    tutorialActive = false;
+    
+    // Remove tutorial-active class to hide arrows/highlights
+    document.body.classList.remove('tutorial-active');
+    
+    if (stepsContainer) stepsContainer.style.display = "none";
+    clearHighlights();
+    clearHoverEffects();
+
+    // Redirect to profile page
+    window.location.href = "/profile";
+  }
+
+  // Event listeners
+  if (getStartedBtn) {
+    getStartedBtn.addEventListener("click", startTutorial);
+  }
+
+  if (step1Next) {
+    step1Next.addEventListener("click", () => showStep(2));
+  }
+  if (step2Next) {
+    step2Next.addEventListener("click", () => showStep(3));
+  }
+  if (step3Next) {
+    step3Next.addEventListener("click", () => showStep(4));
+  }
+  if (step4Next) {
+    step4Next.addEventListener("click", completeTutorial);
+  }
+
+  // Skip buttons
+  skipButtons.forEach((button) => {
+    button.addEventListener("click", completeTutorial);
+  });
+
+  // Navigation click handling
+  const allProfileLinks = document.querySelectorAll("#Profile, #Profile-mobile");
+  const allUploadLinks = document.querySelectorAll("#Upload, #Upload-mobile");
+  const allReportsLinks = document.querySelectorAll("#Reports, #Reports-mobile");
+  const allInsightsLinks = document.querySelectorAll("#Insights, #Insights-mobile");
+
+  allProfileLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      if (currentStep === 1 && tutorialActive) {
+        e.preventDefault();
+        showStep(2);
+      }
+    });
+  });
+
+  allUploadLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      if (currentStep === 2 && tutorialActive) {
+        e.preventDefault();
+        showStep(3);
+      }
+    });
+  });
+
+  allReportsLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      if (currentStep === 3 && tutorialActive) {
+        e.preventDefault();
+        showStep(4);
+      }
+    });
+  });
+
+  allInsightsLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      if (currentStep === 4 && tutorialActive) {
+        e.preventDefault();
+        completeTutorial();
+      }
+    });
+  });
+
+  // Initialize hover effects
+  initializeFeatureHover();
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    if (currentStep > 0 && tutorialActive) {
+      setTimeout(() => {
+        showStep(currentStep);
+      }, 100);
+    }
+  });
+
+  // ENSURE ARROWS AND HIGHLIGHTS ARE HIDDEN INITIALLY
+  clearHighlights();
+  
+  console.log('Welcome page script initialized');
+});
     </script>
 
   </body>

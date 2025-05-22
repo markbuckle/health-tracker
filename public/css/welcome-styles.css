@@ -120,8 +120,9 @@
     position: absolute;
     width: 80px;
     height: 40px;
-    display: none;
-    z-index: 99;
+    display: none !important; /* FORCE HIDE */
+    z-index: 89;
+    visibility: hidden !important; /* DOUBLE PROTECTION */
   }
   
   .arrow svg {
@@ -337,6 +338,14 @@
   .arrow {
     z-index: 10; /* Below the fixed header but above content */
   }
+  body.tutorial-active .arrow {
+    width: 60px;
+    height: 30px;
+  }
+  
+  body.tutorial-active .highlight-nav {
+    border-width: 1px;
+  }
 }
 
 /* Small screen adjustments */
@@ -360,11 +369,14 @@
   border-radius: 8px;
   pointer-events: none;
   z-index: 90;
-  display: none;
+  display: none !important; /* FORCE HIDE */
+  visibility: hidden !important; /* DOUBLE PROTECTION */
   animation: pulse 2s infinite;
 }
 
 .arrow {
+  display: none !important;
+  visibility: hidden !important;
   position: absolute;
   width: 80px;
   height: 40px;
@@ -376,4 +388,13 @@
 body {
   position: relative;
   min-height: 100vh;
+}
+body.tutorial-active .arrow {
+  display: block !important;
+  visibility: visible !important;
+}
+
+body.tutorial-active .highlight-nav {
+  display: block !important;
+  visibility: visible !important;
 }
