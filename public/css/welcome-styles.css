@@ -296,6 +296,9 @@
 
 /* Responsive layout adjustments */
 @media (max-width: 768px) {
+   .sidebar {
+    display: none !important;
+  }
   .welcome-card {
     padding: 1.5rem;
     margin: 1rem;
@@ -318,7 +321,8 @@
   }
   
   .dashboard-content {
-    padding: 60px 0 0;
+    margin-left: 0;
+    padding-top: 70px; /* Account for fixed mobile header */
   }
   
   .steps-container2 {

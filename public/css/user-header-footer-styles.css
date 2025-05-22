@@ -124,6 +124,9 @@ body.menu-open .dashboard-content {
 }
 
 @media (max-width: 768px) {
+  .mobile-header {
+    display: block !important;
+  }
   .sidebar {
     display: none;
   }
