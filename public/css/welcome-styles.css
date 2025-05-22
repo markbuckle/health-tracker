@@ -296,7 +296,7 @@
 
 /* Responsive layout adjustments */
 @media (max-width: 768px) {
-   .sidebar {
+  .sidebar {
     display: none !important;
   }
   .welcome-card {
@@ -373,14 +373,10 @@
   border-radius: 8px;
   pointer-events: none;
   z-index: 90;
-  display: none !important; /* FORCE HIDE */
-  visibility: hidden !important; /* DOUBLE PROTECTION */
   animation: pulse 2s infinite;
 }
 
 .arrow {
-  display: none !important;
-  visibility: hidden !important;
   position: absolute;
   width: 80px;
   height: 40px;

@@ -126,6 +126,14 @@ body.menu-open .dashboard-content {
 @media (max-width: 768px) {
   .mobile-header {
     display: block !important;
+    position: fixed !important;
+    z-index: 1000 !important;
+  }
+  .mobile-menu.open {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-height: 100vh !important;
   }
   .sidebar {
     display: none;
