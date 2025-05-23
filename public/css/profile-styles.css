@@ -513,49 +513,6 @@
   font-weight: bold;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-  .family-history-table-header,
-  .family-history-entry {
-    flex-direction: column;
-    padding: 10px 0;
-  }
-
-  .family-history-column {
-    padding: 6px 16px;
-  }
-
-  .family-history-table-header {
-    display: none; /* Hide headers on mobile */
-  }
-
-  .condition-column,
-  .relatives-column,
-  .notes-column,
-  .actions-column {
-    width: 100%;
-    min-width: auto;
-  }
-
-  .actions-column {
-    justify-content: flex-start;
-    padding-top: 10px;
-  }
-
-  /* Add mobile labels */
-  .relatives-column::before {
-    content: "Relatives: ";
-    font-weight: 600;
-    margin-right: 6px;
-  }
-
-  .notes-column::before {
-    content: "Notes: ";
-    font-weight: 600;
-    margin-right: 6px;
-  }
-}
-
 .entry-card {
   width: auto;
   background-color: #ffffff;
@@ -676,4 +633,102 @@
   content: "+";
   margin-right: 5px;
   font-size: 18px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .dashboard-content {
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    padding: 0px 1rem 2rem 1rem !important; /* Add top padding for fixed header */
+    transition: padding-top 0.3s ease-in-out;
+  }
+   /* Adjust for mobile menu when open */
+  body.menu-open .dashboard-content {
+    padding-top: calc(70px + var(--mobile-menu-height, 0px)) !important;
+  }
+  .header-container-2 {
+    margin: 0 1rem !important;
+    padding: 1rem 0.5rem !important;
+    margin-bottom: 1rem;
+  }
+  .in-page-menu {
+    margin-top: 0;
+  }
+  .w-inline-block {
+    width: auto;
+    max-width: 5rem;
+  }
+  .in-page-link {
+    min-width: 0 !important;
+    margin-right: 0.2em;
+  }
+  .text-block {
+    font-size: 8px;
+  }
+  /* Profile form sections spacing */
+  .profile-section {
+    margin-bottom: 2rem !important;
+    padding: 1.5rem 1rem !important;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+   /* Form groups spacing */
+  .form-group {
+    margin-bottom: 1.5rem !important;
+  }
+   /* Input field improvements */
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100% !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    border: 1px solid #e1e6f0;
+    border-radius: 8px;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    box-sizing: border-box;
+  }
+  .family-history-table-header,
+  .family-history-entry {
+    flex-direction: column;
+    padding: 10px 0;
+  }
+
+  .family-history-column {
+    padding: 6px 16px;
+  }
+
+  .family-history-table-header {
+    display: none; /* Hide headers on mobile */
+  }
+
+  .condition-column,
+  .relatives-column,
+  .notes-column,
+  .actions-column {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .actions-column {
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+
+  /* Add mobile labels */
+  .relatives-column::before {
+    content: "Relatives: ";
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  .notes-column::before {
+    content: "Notes: ";
+    font-weight: 600;
+    margin-right: 6px;
+  }
 }
