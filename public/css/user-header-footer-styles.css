@@ -79,12 +79,6 @@
   /* display: block !important; */
 }
 
-/* Push content down when menu is open */
-body.menu-open .dashboard-content {
-  padding-top: calc(60px + var(--mobile-menu-height, 0px));
-  transition: padding-top 0.4s ease-in-out;
-}
-
 .mobile-menu .page-link:last-child {
   border-bottom: none;
 }
@@ -188,7 +182,7 @@ body.menu-open .dashboard-content {
 }
 
 .page-link-text-span {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -255,5 +249,8 @@ body.menu-open .dashboard-content {
   .feature-overview {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+  .page-link-text-span {
+    font-size: 12px;
   }
 }

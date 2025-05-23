@@ -40,25 +40,6 @@
     font-family: "Poppins-Regular", sans-serif;
     display: flex;
   }
-  .edit-button-modal {
-    color: #000;
-    background-color: #ddd;
-    border-radius: 20px;
-    justify-content: center;
-    align-items: center;
-    width: auto;
-    max-width: 13rem;
-    margin: 10px 10px 15px;
-    margin-left: 0;
-    padding: 10px;
-    font-size: 12px;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .edit-button-modal:hover {
-    background-color: #b4e8b3;
-    border-radius: 20px;
-  }
   .button-text {
     font-family: "Poppins-Regular", sans-serif;
     font-size: 12px;
@@ -611,14 +592,19 @@
   background-color: #d1d1d1;
   background-color: #f5f7fa;
   border: 1px solid #d1d1d1;
+  width: auto !important;
+  max-width: 13rem !important;
   color: #333;
   padding: 0.25rem 0.5rem;
+  margin: 10px 10px 15px;
+  margin-left: 0;
   border-radius: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: "Poppins-Regular", sans-serif;
+  font-size: 10px;
+  text-decoration: none;
 }
-
 .edit-button-modal:hover {
   background-color: #e1f5e1;
   border: 0.25px solid #777;
@@ -644,8 +630,9 @@
     transition: padding-top 0.3s ease-in-out;
   }
    /* Adjust for mobile menu when open */
-  body.menu-open .dashboard-content {
-    padding-top: calc(70px + var(--mobile-menu-height, 0px)) !important;
+  body.menu-open .demo-header {
+    padding-top: calc(10px + var(--mobile-menu-height, 0px)) !important;
+    transition: padding-top 0.3s ease-in-out;
   }
   .header-container-2 {
     margin: 0 1rem !important;
@@ -677,6 +664,15 @@
    /* Form groups spacing */
   .form-group {
     margin-bottom: 1.5rem !important;
+  }
+  .edit-button-modal {
+    font-size: 9px;
+  }
+  .profile-intro-container {
+    display: block;
+  }
+  .profile-info-button {
+    margin: 0.1em;
   }
    /* Input field improvements */
   input[type="text"],

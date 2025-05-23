@@ -1053,7 +1053,7 @@
     margin-top: var(--header-height-default);
   }
   .use-cases-section {
-    padding: 3rem 0;
+    padding-top: 3rem;
   }
   .hero-container {
     display: flex !important;
@@ -1203,7 +1203,7 @@
 /* Tablet Portrait and below (768px) */
 @media screen and (max-width: 768px) {
   .use-cases-section {
-    padding: 2.5rem 0;
+    padding-top: 2rem;
   }
   .use-cases-container {
     padding: 1rem 1.5rem;
@@ -1219,19 +1219,18 @@
   }
   .hero-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: column !important;
     align-items: center;
-    justify-content: flex-start;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 1 !important;
     width: 100%;
-    max-width: 90%;
     margin: 0 auto;
     padding: 1rem 0;
   }
   .hero-content {
     width: 100%;
     order: 1;
-    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
   
   .hero-title {
@@ -1249,10 +1248,9 @@
   }
   
   .mobile {
-    margin-top: 1rem;
+    margin: 1rem auto;
     order: 2;
-    max-width: 70%;
-    flex: none;
+    max-width: 70% !important;
   }
   
   .btn-primary {
@@ -1345,7 +1343,7 @@
   .use-case-card p {
     font-size: 0.95rem;
   }
-   .use-case-card h3 {
+  .use-case-card h3 {
     font-size: 1.3rem;
     margin-bottom: 0.75rem;
   }
@@ -1377,12 +1375,15 @@
     position: relative !important;
     display: block !important;
   }
+  .mobile-nav.open {
+    margin-bottom: 1rem !important;
+  }
 }
 
 /* Mobile (320px - 479px) */
 @media screen and (max-width: 480px) {
   .use-cases-section {
-    padding: 2rem 0;
+    padding-top: 2rem;
   }
   .use-cases-slider {
     height: 340px;
@@ -1393,8 +1394,7 @@
   }
   
   .hero-container {
-    gap: 1.2rem;
-    padding: 0.5rem 0;
+    padding: 0 0.5rem;
   }
   
   .hero-title {
@@ -1410,7 +1410,7 @@
   }
   
   .mobile {
-    max-width: 75%;
+    max-width: 75% !important;
   }
 
   .mobile-only {
@@ -1424,6 +1424,10 @@
     width: 7rem !important;
     padding: 0.7rem 1.2rem !important;
     font-size: 0.9rem !important;
+  }
+  .btn-primary.mobile-only {
+    width: 80%;
+    max-width: 260px;
   }
   
   .quote-container-1,

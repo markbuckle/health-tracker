@@ -715,11 +715,6 @@ img,
   position: relative !important;
   z-index: 1 !important; /* Lower than hero-wrapper */
 }
-.dashboard-content {
-  margin-left: 10rem;
-  padding: 0 2rem 2rem 1.5rem;
-  transition: margin-left 0.3s ease-in-out;
-}
 .cms-notice {
   padding-bottom: 20px;
   font-family: "Poppin-Regular", sans-serif;

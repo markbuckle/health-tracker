@@ -432,14 +432,51 @@
                   <div class="recommendations-wrapper">
                     <div class="recommendations-header">
                       <h2 class="insights-title">Recommended Actions</h2>
+                      <p class="recommendations-subtitle">
+                        Personalized recommendations based on your health profile and lab data
+                      </p>
                     </div>
-                    <div class="recommendations-list">
-                      {{#each recommendations}}
-                      <div class="recommendation-item">
-                        <span class="recommendation-text">{{this}}</span>
+
+                    <!-- Debug information (you can remove this section once everything is working) -->
+                    <div class="debug-info">
+                      <p class="recommendation-count">Total recommendations: {{#if recommendations}}{{recommendations.length}}{{else}}0{{/if}}</p>
+                    </div>
+                    
+                    <!-- Recommendations list -->
+                    {{#if recommendations}}
+                      <div class="recommendations-list">
+                        {{#each recommendations as |recommendation|}}
+                          <div class="recommendation-item {{#if recommendation.priority}}{{recommendation.priority}}-priority{{/if}}">
+                            <div class="recommendation-text">
+                              {{#if recommendation.text}}
+                                {{recommendation.text}}
+                              {{else}}
+                                {{recommendation}}
+                              {{/if}}
+                            </div>
+                            {{#if recommendation.type}}
+                              <small class="recommendation-meta">
+                                {{#if (eq recommendation.type 'biomarker')}}🧪{{else}}👤{{/if}}
+                                {{#if (eq recommendation.type 'biomarker')}}Lab Test{{else}}Health Profile{{/if}}
+                                {{#if recommendation.priority}}• Priority: {{recommendation.priority}}{{/if}}
+                              </small>
+                            {{/if}}
+                          </div>
+                        {{/each}}
                       </div>
-                      {{/each}}
-                    </div>
+                    {{else}}
+                      <!-- No recommendations state -->
+                      <div class="no-recommendations">
+                        <div class="no-recommendations-icon">🎉</div>
+                        <p class="no-recommendations-title"><strong>Great job!</strong> You're on top of your health tracking.</p>
+                        <p class="no-recommendations-subtitle">Upload recent lab results or complete more profile sections to get additional personalized recommendations.</p>
+                        <div class="no-recommendations-actions">
+                          <a href="/upload" class="action-button upload-button">📁 Upload Labs</a>
+                          <a href="/profile" class="action-button profile-button">👤 Complete Profile</a>
+                        </div>
+                      </div>
+                    {{/if}}
+                    
                   </div>
                 </div>
               </div>
