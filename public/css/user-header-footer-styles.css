@@ -148,7 +148,7 @@ body.menu-open .dashboard-content {
   align-items: center;
   justify-content: center; /* Add this to center vertically */
   text-align: center;
-  /* padding: 8px 4px; */
+  padding: 8px 4px;
   border-bottom: 1px solid #f0f0f0;
   border-right: 1px solid #f0f0f0;
 }
@@ -161,8 +161,10 @@ body.menu-open .dashboard-content {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 12px 8px; /* Increase vertical padding for better alignment */
+  padding: 10px 8px; /* Increase vertical padding for better alignment */
+  text-decoration: none; /* Add this */
   border-right: 1px solid #f0f0f0;
+  color: #333;
 }
 
 /* .mobile-menu .page-link:nth-child(4),
@@ -180,9 +182,9 @@ body.menu-open .dashboard-content {
 
 .mobile-menu .page-link:nth-child(5) .nav-icon,
 .mobile-menu .page-link:nth-child(6) .nav-icon {
-  margin-right: 8px; /* Reduce from 8px to bring closer */
+  margin-right: 6px; /* Reduce from 8px to bring closer */
   margin-bottom: 0;
-  vertical-align: middle;
+  display: inline-block !important;
 }
 
 .page-link-text-span {
@@ -194,6 +196,13 @@ body.menu-open .dashboard-content {
 .mobile-menu .page-link:nth-child(6) .page-link-text-block {
   align-items: center;
   justify-content: flex-start;
+  margin: 0;
+}
+
+.mobile-menu .page-link:nth-child(5) .page-link-text-span,
+.mobile-menu .page-link:nth-child(6) .page-link-text-span {
+  font-size: 14px; /* Slightly larger for bottom row */
+  font-weight: 500;
 }
 
 /* Media queries for responsiveness */
