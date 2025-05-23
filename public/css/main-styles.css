@@ -1161,7 +1161,11 @@ label[for="customBloodType"] {
   /* .header {
     display: none;
   } */
-  
+  .page-link {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+  }
   .mobile-header {
     display: block;
   }
