@@ -634,6 +634,10 @@
     padding-top: calc(10px + var(--mobile-menu-height, 0px)) !important;
     transition: padding-top 0.3s ease-in-out;
   }
+  /* Adjust for mobile menu */
+  /* body.menu-open .dashboard-content {
+    padding-top: calc(var(--mobile-menu-height, 0px)) !important;
+  } */
   .header-container-2 {
     margin: 0 1rem !important;
     padding: 1rem 0.5rem !important;

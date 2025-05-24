@@ -36,17 +36,7 @@
     display: none;
     padding: 0;
   }
-  /* .w-tab-pane {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    will-change: opacity, transform;
-  }
-  .w-tab-pane {
-    opacity: 0;
-    transition: opacity 0.3s ease-out;
-    pointer-events: none;
-  } */
+
   .w--tab-active {
     display: block;
   }
@@ -279,13 +269,11 @@
     margin: auto;
     position: static;
   }
-  
   .dropdown-content-bottom {
     background-color: #fff;
     transition: max-height 0.3s ease-in-out;
     border-radius: 10px;
   }
-  
   .table-headers {
     background-color: #f8f9fb;
     border-radius: 8px;
@@ -319,10 +307,6 @@
     box-shadow: 0.5px 0.5px 15px 0 var(--box-shadow-1);
     border: 0.25px solid #615f5f7a;
   }
-  .table-headers._3-columns,
-  .biomarker-table-top._3-columns {
-    width: auto;
-  }
   .caption-large {
     color: #627183;
     letter-spacing: 0.5px;
@@ -342,9 +326,6 @@
     --is-expanded: 0;
     transition: none; /* Remove any transitions that could cause flickering */
   }
-  /* .biomarker-container.show .biomarker-bottom {
-      height: auto;
-  } */
   .biomarker-container-hover {
     contain: layout style;
     box-shadow: 1px 1px 5px #b1dee000;
@@ -381,17 +362,6 @@
     font-family: "Poppins-Regular", sans-serif;
     font-size: 14px;
   }
-  /* .biomarker-dropdown {
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    align-items: center;
-    width: 1.25em;
-    height: 1.25em;
-    margin: auto;
-    position: relative;
-    cursor: pointer;
-  } */
   .biomarker-dropdown {
     display: flex;
     flex-flow: column;
@@ -437,21 +407,6 @@
   .biomarker-textbox-container {
     padding: 20px 20px 30px;
   }
-  .biomarker-table-top {
-    grid-template-rows: auto;
-    grid-template-columns: 0.4fr 0.4fr 0.4fr 1fr;
-    align-items: center;
-    padding: 0 1rem;
-    font-size: 14px;
-    gap: 0;
-  }
-  .biomarker-table-top._3-columns {
-    grid-template-rows: 1fr;
-    grid-template-columns: 0.4fr 0.4fr 0.4fr 1fr;
-    width: auto;
-    margin: 0 auto;
-  }
-  
   /* .stripe-1 {
     background-color: #8dbbd6;
     width: 80%;

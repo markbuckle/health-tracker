@@ -771,16 +771,6 @@
     line-height: 1.4;
   }
   
-  @media (max-width: 768px) {
-    .biomarker-details {
-      grid-template-columns: 1fr;
-    }
-  
-    .biomarker-modal-content {
-      width: 95%;
-      margin: 10% auto;
-    }
-  }
   /* ---- Process PDFs in modal ----- */
   .loader-text1 {
     font-family: "Poppins-Regular", sans-serif;
@@ -921,4 +911,295 @@
   max-width: 450px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   border: 1px solid #e1e6f0;
+}
+
+/* Mobile Responsive Styles for Upload Page */
+@media screen and (max-width: 768px) {
+  
+  /* Main layout fixes */
+  .dashboard-content {
+    margin-top: 0 !important;
+    margin-left: 0 !important;
+    padding: 0px 1rem 2rem 1rem !important; /* Add top padding for fixed header */
+    /* padding-top: 70px !important; */
+    transition: padding-top 0.3s ease-in-out;
+  }
+   /* Adjust for mobile menu when open */
+  body.menu-open .demo-header {
+    padding-top: calc(10px + var(--mobile-menu-height, 0px)) !important;
+    transition: padding-top 0.3s ease-in-out;
+  }
+  /* Header section */
+  .header-container-2 {
+    margin-left: 0 !important;
+    padding: 1.1rem !important;
+  }
+  
+  /* Tab menu */
+  .in-page-menu {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0.5rem 0;
+  }
+  
+  .in-page-link {
+    min-width: auto !important;
+    margin-right: 0.25rem !important;
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+  }
+  
+  /* Content wrapper */
+  .dropdown-wrapper.user-content-bg {
+    margin: 0 !important;
+    border-radius: 8px;
+  }
+  
+  /* Upload section */
+  .div-block-9 {
+    padding: 1rem !important;
+    margin: 0 !important;
+  }
+  
+  .upload-page-text-1,
+  .upload-page-text-2 {
+    font-size: 14px !important;
+    margin: 0.5rem 0 !important;
+    line-height: 1.4;
+  }
+  
+  /* Info button flex fix */
+  .flex {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+  
+  .info-button {
+    flex-shrink: 0;
+    margin: 0 !important;
+  }
+  
+  /* File upload area */
+  .file-upload-container {
+    width: 100%;
+    margin: 1rem 0;
+  }
+  
+  .file-upload-area {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .upload-text {
+    font-size: 14px;
+  }
+  
+  .browse-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 14px;
+  }
+  
+  .file-limits {
+    font-size: 12px;
+    margin-top: 0.5rem;
+  }
+  
+  /* Process button */
+  .process-button {
+    width: auto;
+    margin: 1rem auto;
+    padding: 0.6rem 1.5rem;
+    display: block;
+  }
+  
+  /* File list adjustments */
+  .file-list-header {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    grid-template-columns: 2fr 1fr 1fr 40px 40px;
+    gap: 0.5rem;
+    font-size: 11px;
+  }
+  
+  .file-list-title {
+    font-size: 11px !important;
+  }
+  
+  .uploaded-documents-list {
+    margin: 0.5rem 0;
+  }
+  
+  .file-list-row {
+    padding: 0.75rem 1rem;
+    grid-template-columns: 2fr 1fr 1fr 40px 40px;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .file-name {
+    font-size: 13px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .file-name a {
+    font-size: 13px;
+  }
+  
+  .file-date,
+  .file-uploaded {
+    font-size: 11px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .file-actions {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+  }
+  
+  .edit-file-btn,
+  .delete-file-btn {
+    padding: 0.25rem;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 4px;
+  }
+  
+  .file-checkbox {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Bulk actions */
+  .bulk-actions {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+  }
+  
+  .delete-selected-btn {
+    padding: 0.6rem 1rem;
+    font-size: 14px;
+  }
+  
+  /* Lab results section */
+  .lab-result-card {
+    margin: 0.5rem 0;
+    padding: 1rem 1rem 0 1rem;
+  }
+  
+  .lab-result-header h5 {
+    font-size: 10px;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+  }
+  
+  .lab-result-dates {
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 10px;
+  }
+  
+  .lab-values {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
+  .lab-value {
+    padding: 0.5rem;
+  }
+  
+  .test-name {
+    font-size: 12px;
+  }
+  
+  .test-value {
+    font-size: 14px;
+  }
+  
+  .reference-range {
+    font-size: 11px;
+  }
+  
+  .button-container-2 {
+    flex-direction: row;
+    gap: 0.25rem;
+    margin-top: 0;
+    margin-bottom: 0.1em;
+  }
+  
+  .edit-biomarker-btn,
+  .delete-biomarker-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 11px;
+  }
+  
+  .edit-btn-text,
+  .delete-btn-text {
+    font-size: 10px;
+  }
+  
+  /* Modal fixes */
+  .biomarker-modal-content {
+    width: 95%;
+    margin: 5% auto;
+    margin-top: 4.2rem;
+    padding: 1rem;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  
+  .biomarker-details {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .form-group input {
+    font-size: 16px; /* Prevent iOS zoom */
+    padding: 0.6rem;
+  }
+  
+  /* Hide sidebar */
+  .sidebar {
+    display: none !important;
+  }
+  
+  /* Adjust for mobile menu */
+  /* body.menu-open .dashboard-content {
+    padding-top: calc(70px + var(--mobile-menu-height, 0px)) !important;
+  } */
+}
+
+/* Very small screens */
+@media screen and (max-width: 480px) {
+  .file-list-header,
+  .file-list-row {
+    grid-template-columns: 1.5fr 0.8fr 0.8fr 32px 32px;
+    gap: 0.25rem;
+    font-size: 10px;
+  }
+  
+  .file-name {
+    font-size: 12px !important;
+  }
+  
+  .file-date,
+  .file-uploaded {
+    font-size: 10px !important;
+  }
+  
+  .lab-values {
+    grid-template-columns: 1fr;
+  }
+  
+  .edit-file-btn,
+  .delete-file-btn {
+    min-width: 28px;
+    min-height: 28px;
+  }
 }

@@ -223,12 +223,15 @@
               {{#if user.files}} {{!-- Check if user has any files in mongoDB - see registerSchema --}}
               {{#each user.files}} {{!-- Loop through each files  --}}
               <div class="lab-result-card {{confidenceClass extractionMethod}}">
+                
                 <div class="lab-result-header">
                   <div class="lab-result-header-left">
                     <h5>{{originalName}}</h5>
-                    <div class="file-dates lab-result-dates">
-                      <span>Uploaded: {{formatDate uploadDate}}</span>
-                      <span>Test Date: {{formatDate testDate}}</span>
+                    <div class="file-dates">
+                      <div class="lab-result-date">
+                        <span>Uploaded: {{formatDate uploadDate}}</span>
+                        <span>Test Date: {{formatDate testDate}}</span>
+                      </div>
                       <button class="edit-file-btn"
                         onclick="event.stopPropagation(); showFileDetailsEdit('{{_id}}', '{{originalName}}', '{{uploadDate}}', '{{testDate}}')">
                         <span class="edit-icon2">✎</span>
