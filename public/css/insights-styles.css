@@ -669,7 +669,9 @@
     padding: 1.25rem;
     margin-bottom: 0.75rem;
   }
-  
+  .chart-label {
+    font-size: 10px !important;
+  }
   .recommendation-text {
     font-size: 0.95rem;
   }
@@ -1270,7 +1272,7 @@
 .lab-file-name {
   flex: 3;
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #333;
   /* word-break: break-word; /* Allow breaking long words */
   /* overflow-wrap: break-word; Handle long words better */
@@ -1378,38 +1380,6 @@
   font-family: "Poppins-Bold", sans-serif;
 }
 
-/* Responsive Styles */
-@media screen and (max-width: 768px) {
-  .labs-stats-container {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .lab-stat-box {
-    width: 100%;
-  }
-  
-  .lab-stat-number {
-    font-size: 2rem;
-  }
-  
-  .recent-lab-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .lab-stats {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .view-lab-link {
-    align-self: flex-end;
-    margin-top: 0.5rem;
-  }
-}
-
 .upload-button {
   background-color: #5cb15d;
 }
@@ -1428,10 +1398,10 @@
 
 /* Responsive design for action buttons */
 @media screen and (max-width: 768px) {
-    .dashboard-content {
+  .dashboard-content {
     margin-left: 0 !important;
     margin-top: 0 !important;
-    padding: 0px 1rem 2rem 1rem !important; /* Add top padding for fixed header */
+    padding: 0px 0.5rem 2rem 0.5rem !important; /* Add top padding for fixed header */
     transition: padding-top 0.3s ease-in-out;
   }
    /* Adjust for mobile menu when open */
@@ -1441,7 +1411,7 @@
   }
   .header-container-2 {
     margin: 0 1rem !important;
-    padding: 1rem 0.5rem !important;
+    padding: 1rem 0 !important;
     margin-bottom: 1rem;
   }
   .no-recommendations-actions {
@@ -1451,5 +1421,219 @@
   .action-button {
     width: 100%;
     max-width: 200px;
+  }
+  .heading2 {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Tab menu */
+  .in-page-menu {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0.5rem 0;
+  }
+  
+  .in-page-link {
+    min-width: auto !important;
+    margin-right: 0.25rem;
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  
+  /* Main content card */
+  .wellness-summary-card {
+    padding: 1rem 0.5rem !important;
+    margin: 0;
+    min-height: auto !important;
+  }
+  
+  /* Labs Summary adjustments */
+  .lab-status-card {
+    padding: 1rem 0.5rem !important;
+  }
+  
+  .labs-stats-container {
+    flex-direction: row !important;
+    gap: 0.25rem;
+    margin: 0.5rem 0;
+  }
+  
+  .lab-stat-box {
+    width: auto;
+    padding: 0.25rem;
+  }
+  .lab-stat-label {
+    font-size: 10px;
+  }
+  .lab-stat-number {
+    font-size: 2rem;
+  }
+  
+  /* Chart container */
+  .chart-container {
+    height: 100px; /* Reduce height */
+    gap: 0.5rem;
+  }
+  
+  /* Recent labs section */
+  .recent-lab-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .lab-file-name {
+    max-width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .lab-date {
+    font-size: 11px;
+  }
+  
+  .lab-stats {
+    flex-direction: row;
+    display: block;
+    gap: 0.5rem;
+  }
+  .lab-stat {
+    font-size: 10px;
+  }
+  .lab-bottom-align {
+    display: flex;
+  }
+  /* Wellness content (Scores tab) */
+  .wellness-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .wellness-categories {
+    max-width: 100%;
+  }
+  
+  .wellness-chart-container {
+    order: -1; /* Move chart to top */
+    align-items: center;
+  }
+  
+  .chart-wrapper {
+    width: 18rem;
+    height: 18rem;
+  }
+  
+  /* Insights header */
+  .insights-header {
+    margin-right: 0 !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .insights-title-wrapper {
+    width: 100%;
+  }
+  
+  /* Metric items */
+  .metric-item {
+    padding: 0.75rem;
+    font-size: 14px;
+  }
+  
+  .metric-name {
+    font-size: 12px;
+  }
+  
+  /* Recommendations */
+  .recommendations-wrapper {
+    padding: 1rem 0 0 0;
+  }
+  
+  .recommendation-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .recommendation-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  /* Chat container (Ask tab) */
+  .chat-container {
+    margin: 0.25rem 1rem 1rem 1rem; /* Reduce side margins */
+    height: calc(60vh - 100px); /* Reduce height */
+    min-height: 300px;
+  }
+  
+  .chat-messages {
+    padding-top: 0.5rem;
+  }
+  
+  .chat-input-container {
+    padding: 0.75rem;
+  }
+  
+  .chat-input {
+    padding: 0.5rem 0.75rem;
+    font-size: 14px;
+  }
+  
+  .chat-submit-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  /* Hide sidebar */
+  .sidebar {
+    display: none !important;
+  }
+
+  .labs-stats-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .lab-stat-number {
+    font-size: 2rem;
+  }
+  
+  .recent-lab-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .view-lab-link {
+    align-self: flex-end;
+    margin-top: 0.5rem;
+  }
+  .labs-title-wrapper {
+    margin-top: 0;
+  }
+  .insights-title {
+    font-size: 16px;
+  }
+  .chart-bar {
+    width: 15% !important;
+    max-height: 100px !important;
+  }
+}
+
+/* Very small screens */
+@media screen and (max-width: 480px) {  
+  
+  .chart-wrapper {
+    width: 15rem;
+    height: 15rem;
+  }
+  
+  .chat-container {
+    margin: 0.25rem 0.5rem 1rem 0.5rem;
+  }
+  
+  .in-page-link {
+    font-size: 10px;
+    padding: 6px 10px;
   }
 }

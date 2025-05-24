@@ -248,12 +248,14 @@
                           {{#each recentFiles}}
                             <div class="recent-lab-item">
                               <div class="lab-file-name">{{this.originalName}}</div>
-                              <div class="lab-date">{{formatDate this.testDate}}</div>
-                              <div class="lab-stats">
-                                <span class="lab-stat in-range">{{countInRange this.labValues}} in range</span>
-                                <span class="lab-stat out-of-range">{{countOutOfRange this.labValues}} out of range</span>
+                              <div class="lab-bottom-align">
+                                <div class="lab-date">{{formatDate this.testDate}}</div>
+                                <div class="lab-stats">
+                                  <span class="lab-stat in-range">{{countInRange this.labValues}} in range</span>
+                                  <span class="lab-stat out-of-range">{{countOutOfRange this.labValues}} out of range</span>
+                                </div>
+                                <a href="/upload?tab=Output" class="view-lab-link">View</a>
                               </div>
-                              <a href="/upload?tab=Output" class="view-lab-link">View</a>
                             </div>
                           {{/each}}
                         </div>
