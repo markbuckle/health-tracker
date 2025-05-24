@@ -1225,38 +1225,31 @@
   border-radius: 8px;
   transition: background-color 0.3s ease;
 }
-
 .lab-summary-action-btn:hover {
   background-color: #dcdddf;
 }
-
 .arrow-icon {
   display: inline-block;
   transition: transform 0.3s ease;
 }
-
 .lab-summary-action-btn:hover .arrow-icon {
   transform: translateX(4px);
 }
-
 /* Recent Labs Section */
 .recent-labs-section {
   margin: 1rem 0;
 }
-
 .recent-labs-title {
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 1.2rem;
   color: #333;
   margin-bottom: 1rem;
 }
-
 .recent-labs-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
-
 .recent-lab-item {
   display: flex;
   align-items: center;
@@ -1268,14 +1261,11 @@
   flex-wrap: wrap; /* Allow items to wrap on smaller screens */
   gap: 5rem; /* Add gap between wrapped items */
 }
-
 .lab-file-name {
   flex: 3;
   font-size: 0.8rem;
   font-weight: 600;
   color: #333;
-  /* word-break: break-word; /* Allow breaking long words */
-  /* overflow-wrap: break-word; Handle long words better */
   max-width: 40%; /* Limit maximum width */
   min-width: 150px; /* Ensure a minimum width */
   white-space: normal; /* Allow text to wrap */
@@ -1290,50 +1280,49 @@
   color: #666;
   font-size: 0.9rem;
   white-space: nowrap; /* Keep date on one line */
-  min-width: 100px; /* Ensure a minimum width */
+  /* min-width: 100px; */
+  flex-shrink: 0;
 }
-
 .lab-stats {
-  flex: 2;
   display: flex;
   gap: 0.75rem;
-  flex-wrap: wrap; /* Allow wrapping of status badges */
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
 }
-
 .lab-stat {
   font-size: 0.85rem;
   padding: 0.25rem 0.5rem;
   border-radius: 50px;
+  white-space: nowrap;
 }
-
 .lab-stat.in-range {
   background-color: rgba(92, 177, 93, 0.1);
   color: #5cb15d;
 }
-
 .lab-stat.out-of-range {
   background-color: rgba(216, 124, 97, 0.1);
   color: #d87c61;
 }
-
 .view-lab-link {
   color: #8e8f8f;
   text-decoration: none;
   font-weight: 500;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
 }
-
 .view-lab-link:hover {
   background-color: #dadada;
+  color: #666;
 }
-
 .no-recent-labs {
   text-align: center;
   padding: 2rem 1rem;
   color: #666;
 }
-
 .upload-labs-btn {
   display: inline-block;
   margin-top: 1rem;
@@ -1345,28 +1334,31 @@
   font-family: "Poppins-SemiBold", sans-serif;
   transition: background-color 0.3s ease;
 }
-
 .upload-labs-btn:hover {
   background-color: #949494ca;
   color: white;
 }
-
 .chart-bar[style*="height: 10px"] {
   background-color: #dbdbdb !important; /* Grey color for empty/zero bars */
 }
-
 /* Make sure empty state bars don't animate when they have 0 value */
 .empty-state .chart-bar[style*="height: 10px"] {
   animation: none;
 }
-
 /* Labs Info Modal Styles */
 .labs-info-modal {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease;
 }
-
+.lab-align {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
 .labs-info-modal.active {
   opacity: 1;
   visibility: visible;
@@ -1477,30 +1469,47 @@
   
   /* Recent labs section */
   .recent-lab-item {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 0.1px solid rgb(214, 213, 213);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
   
   .lab-file-name {
-    max-width: 100%;
-    font-size: 12px;
+    font-size: 0.9rem;
     font-weight: 600;
+    color: #333;
+    line-height: 1.3;
+    word-break: break-word;
   }
   .lab-date {
-    font-size: 11px;
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.8rem;
+    color: #666;
   }
-  
   .lab-stats {
-    flex-direction: row;
-    display: block;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
     gap: 0.5rem;
   }
   .lab-stat {
-    font-size: 10px;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
   }
-  .lab-bottom-align {
-    display: flex;
+  .lab-align {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    margin-top: 0;
   }
   /* Wellness content (Scores tab) */
   .wellness-content {
@@ -1605,8 +1614,10 @@
   }
   
   .view-lab-link {
-    align-self: flex-end;
-    margin-top: 0.5rem;
+    grid-column: 3;
+    grid-row: 1;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
   }
   .labs-title-wrapper {
     margin-top: 0;
@@ -1622,18 +1633,38 @@
 
 /* Very small screens */
 @media screen and (max-width: 480px) {  
-  
   .chart-wrapper {
     width: 15rem;
     height: 15rem;
   }
-  
   .chat-container {
     margin: 0.25rem 0.5rem 1rem 0.5rem;
   }
-  
   .in-page-link {
     font-size: 10px;
     padding: 6px 10px;
+  }
+  .lab-align {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .lab-date {
+    font-size: 0.75rem;
+  }
+  
+  .lab-stats {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .lab-stat {
+    font-size: 0.7rem;
+  }
+  
+  .view-lab-link {
+    align-self: flex-end;
+    font-size: 0.75rem;
   }
 }
