@@ -1200,7 +1200,13 @@ label[for="customBloodType"] {
     font-family: "Poppins-SemiBold", sans-serif;
     font-size: 1rem;
   }
-  
+  .register-block {
+    margin-top: 0 !important;
+    margin-bottom: 2rem !important;
+  }
+  .button-basics {
+    font-size: 0.8rem;
+  }
   /* Typography adjustments */
   .heading {
     font-size: 2rem;
