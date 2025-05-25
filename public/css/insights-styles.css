@@ -669,11 +669,15 @@
     padding: 1.25rem;
     margin-bottom: 0.75rem;
   }
+  .recommendations-header {
+    margin-bottom: 1rem;
+  }
   .chart-label {
     font-size: 10px !important;
   }
   .recommendation-text {
     font-size: 0.95rem;
+    margin-bottom: 0.5rem;
   }
   
   .recommendation-item small {
@@ -687,6 +691,28 @@
   
   .no-recommendations p {
     font-size: 1rem;
+  }
+  .recommendation-item small {
+    padding-top: 0;
+    margin-top: 0rem;
+  }
+  .chart-title {
+    margin-top: 1rem;
+    font-size: 16px;
+  }
+  .category-section {
+    padding: 0.25rem;
+  }
+  .category-header {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .ask-wrapper {
+    padding: 0 !important;
+    align-content: center;
+  }
+  .ask-title {
+    font-size: 18px;
   }
 }
 
@@ -1259,7 +1285,7 @@
   border: 0.1px solid rgb(214, 213, 213);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-  gap: 5rem; /* Add gap between wrapped items */
+  gap: 7rem; /* Add gap between wrapped items */
 }
 .lab-file-name {
   flex: 3;
@@ -1284,7 +1310,7 @@
   flex-shrink: 0;
 }
 .lab-stats {
-  display: flex;
+  display:contents;
   gap: 0.75rem;
   flex: 1;
   justify-content: center;
@@ -1355,7 +1381,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem;
   margin-top: 0.5rem;
   flex-wrap: wrap;
 }
@@ -1395,6 +1421,7 @@
     margin-top: 0 !important;
     padding: 0px 0.5rem 2rem 0.5rem !important; /* Add top padding for fixed header */
     transition: padding-top 0.3s ease-in-out;
+    max-width: 100%;
   }
    /* Adjust for mobile menu when open */
   body.menu-open .demo-header {
@@ -1402,9 +1429,9 @@
     transition: padding-top 0.3s ease-in-out;
   }
   .header-container-2 {
-    margin: 0 1rem !important;
-    padding: 1rem 0 !important;
-    margin-bottom: 1rem;
+    margin: 0 0.5rem !important;
+    padding: 0.5rem 0 0.25rem 0 !important;
+    margin-bottom: 0 !important; 
   }
   .no-recommendations-actions {
     flex-direction: column;
@@ -1434,7 +1461,7 @@
   
   /* Main content card */
   .wellness-summary-card {
-    padding: 1rem 0.5rem !important;
+    padding: 0.5rem 0.5rem 1rem 0.5rem !important;
     margin: 0;
     min-height: auto !important;
   }
@@ -1481,11 +1508,12 @@
   }
   
   .lab-file-name {
-    font-size: 0.9rem;
+    font-size: 12px;
     font-weight: 600;
     color: #333;
     line-height: 1.3;
-    word-break: break-word;
+    max-width: none;
+    /* word-break: break-word; */
   }
   .lab-date {
     grid-column: 1;
@@ -1504,17 +1532,15 @@
     padding: 0.2rem 0.4rem;
   }
   .lab-align {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-rows: auto auto;
-    gap: 0.5rem 1rem;
-    align-items: center;
+    align-content: space-between !important;
+    vertical-align: middle !important;
     margin-top: 0;
+    gap: 0.8rem;
   }
   /* Wellness content (Scores tab) */
   .wellness-content {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.5rem;
   }
   
   .wellness-categories {
@@ -1530,7 +1556,10 @@
     width: 18rem;
     height: 18rem;
   }
-  
+  .info-button {
+    margin: 0.25rem;
+    margin-top: 0;
+  }
   /* Insights header */
   .insights-header {
     margin-right: 0 !important;
@@ -1555,7 +1584,7 @@
   
   /* Recommendations */
   .recommendations-wrapper {
-    padding: 1rem 0 0 0;
+    padding: 0.25rem 0 0 0;
   }
   
   .recommendation-item {
@@ -1564,28 +1593,34 @@
   }
   
   .recommendation-text {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     line-height: 1.5;
+    text-align: justify;
   }
-  
+
   /* Chat container (Ask tab) */
   .chat-container {
-    margin: 0.25rem 1rem 1rem 1rem; /* Reduce side margins */
     height: calc(60vh - 100px); /* Reduce height */
     min-height: 300px;
+    margin: 0.25rem 0 1rem 0 !important;
   }
   
   .chat-messages {
     padding-top: 0.5rem;
   }
-  
+  .message-content {
+    margin: 0.25rem 0.5rem;
+  }
+  .message-content p {
+    font-size: 12px;
+  }
   .chat-input-container {
     padding: 0.75rem;
   }
   
   .chat-input {
     padding: 0.5rem 0.75rem;
-    font-size: 14px;
+    font-size: 12px;
   }
   
   .chat-submit-btn {
@@ -1629,26 +1664,26 @@
     width: 15% !important;
     max-height: 100px !important;
   }
+  .metric-value {
+    font-size: 11px !important;
+    text-align: end;
+  }
 }
 
 /* Very small screens */
 @media screen and (max-width: 480px) {  
-  .chart-wrapper {
+  /* .chart-wrapper {
     width: 15rem;
     height: 15rem;
-  }
-  .chat-container {
-    margin: 0.25rem 0.5rem 1rem 0.5rem;
-  }
+  } */
   .in-page-link {
     font-size: 10px;
     padding: 6px 10px;
   }
   .lab-align {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-direction: row;
+    align-items: center;
   }
   .lab-date {
     font-size: 0.75rem;
