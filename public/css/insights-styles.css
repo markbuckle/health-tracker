@@ -779,7 +779,7 @@
 /* -------- Insights RAG UI Styles --------- */
 
 /* Chat interface styles */
-.chat-container {
+/* .chat-container {
   display: flex;
   flex-direction: column;
   height: calc(70vh - 120px);
@@ -788,6 +788,17 @@
   border-radius: 12px;
   overflow: hidden;
   margin: 0.25rem 5rem 1rem 5rem;
+} */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(70vh - 120px);
+  min-height: 400px;
+  max-width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0.25rem auto 1rem auto; /* Center with auto margins */
+  width: calc(100% - 10rem); /* Reduce width to create equal spacing */
 }
 
 .chat-messages {
@@ -1600,9 +1611,10 @@
 
   /* Chat container (Ask tab) */
   .chat-container {
-    height: calc(60vh - 100px); /* Reduce height */
+    width: calc(100% - 2rem); /* Less margin reduction on mobile */
+    margin: 0.25rem auto 1rem auto; /* Keep centered */
+    height: calc(60vh - 100px);
     min-height: 300px;
-    margin: 0.25rem 0 1rem 0 !important;
   }
   
   .chat-messages {
@@ -1672,6 +1684,10 @@
 
 /* Very small screens */
 @media screen and (max-width: 480px) {  
+  .chat-container {
+    width: calc(100% - 1rem); /* Minimal margins on very small screens */
+    margin: 0.25rem auto 1rem auto;
+  }
   /* .chart-wrapper {
     width: 15rem;
     height: 15rem;
