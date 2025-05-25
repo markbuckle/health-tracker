@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>how-it-works</title>
     <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/main-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/how-it-works-styles.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body class="HIW-body">
     {{> header }}
+    {{> mobileHeader}}
+
     <main class="content-section">
         <h1 class="HIW-title" data-text="How it works">How it works</h1>
         <div class="hiw-subtitle">Take control of your health data with our simple four-step process</div>
@@ -76,15 +79,19 @@
             </div>
         </div>
     </main>
-    <section>
+
+    <section> <!-- Wave -->
         <div>
             <div class="wave-pattern">
                 {{> svg/wavePattern6}}
             </div>
         </div>
     </section>
+
     {{> footer}}
+
     <script src="js/main.js" defer type="module"></script>
+    <script src="js/main-mobile.js" defer type="module"></script>
 </body>
 
 </html>
