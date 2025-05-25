@@ -162,14 +162,16 @@
   outline: none;
   border-bottom-color: #00b300;
 }
+
+@media screen and (max-width: 768px) {
+  .authentication-logo img {
+    max-width: 40% !important;
+  }
+}
 /* Responsive adjustments for very small screens */
 @media screen and (max-width: 480px) {
   .authentication-logo {
     margin: 0.5rem 1rem;
-  }
-
-  .authentication-logo img {
-    max-width: 100px;
   }
 
   .form-wrap {

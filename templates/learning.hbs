@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Learning Center</title>
     <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/main-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/learning-styles.css" rel="stylesheet" type="text/css" />
   </head>
 
   <body class="home-body">
     {{> header pageTitle="Health Tracker"}}
+    {{> mobileHeader}}
 
     <section class="learning-center content-container">
       <div class="learning-header">
-        <h1 class="learning-title" data-text="Explore Health Podcasts">Explore Health Podcasts</h1>
+        <h1 class="learning-title" data-text="Explore Health Podcasts">Explore Podcasts</h1>
         <p class="learning-subtitle">
           Discover the latest health and wellness podcasts.
         </p>
@@ -186,7 +188,7 @@
       <div class="learning-section-divider"></div>
 
       <div class="learning-header">
-        <h2 class="learning-title">Health Books We Recommend</h2>
+        <h2 class="learning-title">Books We Recommend</h2>
         <p class="learning-subtitle">
           Educational resources to improve your understanding of health and
           wellness.
@@ -203,7 +205,7 @@
       </div>
     </section>
 
-    <div> 
+    <div> <!-- Wave -->
         <div class="wave-pattern">
           {{> svg/wavePattern7}}
         </div>
@@ -212,5 +214,6 @@
     {{> footer}}
     
     <script src="js/main.js" defer type="module"></script>
+    <script src="js/main-mobile.js" defer type="module"></script>
   </body>
 </html>

@@ -196,16 +196,32 @@
     margin-top: var(--mobile-menu-height, 200px);
   }
   .step-block {
-    padding-left: 0;
-    padding-top: 3rem;
+    position: relative; /* Positioning context for absolute positioning */
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0 1rem 2rem 1rem;
   }
   .step-number {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    position: absolute;
+    left: -0.75rem; /* Keep your horizontal positioning */
+    top: 50%; /* Position at 50% of the step-block height */
+    transform: translateY(-50%); /* Move up by 50% of its own height to center */
+    z-index: 10; /* Ensure it appears above the card */
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+  .step-title {
+    font-size: 16px;
   }
   .step-card {
-    padding: 1.5rem;
+    width: auto;
+    padding: 0.5rem !important;
+    margin: 0 0.5rem !important; /* Remove top margin since we're overlapping */
+  }
+  .step-content {
+    padding-left: 2rem !important;
   }
   .HIW-title::before {
     animation-duration: 3.5s; /* Slightly slower on mobile */
