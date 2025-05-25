@@ -76,13 +76,6 @@
   }
 }
 
-/* You might want to adjust these responsive styles if needed */
-@media screen and (max-width: 768px) {
-  .HIW-title::before {
-    animation-duration: 3.5s; /* Slightly slower on mobile */
-  }
-}
-
 /* For users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .HIW-title::before {
@@ -196,22 +189,26 @@
 @media screen and (max-width: 768px) {
   .content-section {
     width: 90%;
-    margin: 4rem auto;
+    margin: 2rem auto;
   }
-
+  body.menu-open .content-section {
+    transition: margin-top 0.3s ease;
+    margin-top: var(--mobile-menu-height, 200px);
+  }
   .step-block {
     padding-left: 0;
     padding-top: 3rem;
   }
-
   .step-number {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
   }
-  
   .step-card {
     padding: 1.5rem;
+  }
+  .HIW-title::before {
+    animation-duration: 3.5s; /* Slightly slower on mobile */
   }
 }
 
