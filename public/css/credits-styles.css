@@ -82,13 +82,6 @@
   }
 }
 
-/* You might want to adjust these responsive styles if needed */
-@media screen and (max-width: 768px) {
-  .credits-title::before {
-    animation-duration: 3.5s; /* Slightly slower on mobile */
-  }
-}
-
 /* For users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .credits-title::before {
@@ -142,7 +135,7 @@
 
 .step-card {
   flex: 1;
-  background-color: #535353;
+  background-color: #8d8d8d;
   border-radius: var(--card-radius);
   padding: 1px;
   position: relative;
@@ -207,23 +200,46 @@
 
 /* Mobile Styles */
 @media screen and (max-width: 768px) {
+  .credits-title::before {
+    animation-duration: 3.5s; /* Slightly slower on mobile */
+  }
   .content-section {
-    width: 90%;
-    margin: 4rem auto;
+    width: 90% !important;
+    margin: 2rem auto;
   }
-
+  body.menu-open .content-section {
+    transition: margin-top 0.3s ease;
+    margin-top: var(--mobile-menu-height, 200px);
+  }
   .step-block {
-    padding: 3rem 0;
+    padding: 1rem 0;
   }
-
   .step-number {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
   }
-  
   .step-card {
-    padding: 1.5rem;
+    padding: 0.35rem;
+  }
+  .steps-container {
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+  .step-title {
+    font-size: 17px;
+  }
+  .step-description {
+    font-size: 12px;
+  }
+  .credits-subtitle {
+    margin-bottom: 0.25rem;
+  }
+  .highlight {
+    font-size: 15px !important;
+  }
+  .highlight p {
+    font-size: 12px !important;
   }
 }
 
@@ -233,14 +249,9 @@
     width: 95%;
     padding: 0 10px;
   }
-  
   .step-number {
     width: 3rem;
     height: 3rem;
     font-size: 1.25rem;
-  }
-  
-  .step-card {
-    padding: 1.25rem;
   }
 }

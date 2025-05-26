@@ -6,10 +6,12 @@
     <title>Credits & Attributions</title>
     <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/credits-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/main-header-footer-styles.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body class="credits-body">
     {{> header }}
+    {{> mobileHeader}}
 
     <main class="content-section">
         <h1 class="credits-title" data-text="Credits & Attributions">Credits & Attributions</h1>
@@ -166,7 +168,7 @@
         </div>
     </main>
 
-    <section>
+    <section> {{!-- Wave --}}
         <div>
             <div class="wave-pattern">
                 {{> svg/wavePattern6}}
@@ -177,5 +179,6 @@
     {{> footer}}
 
     <script src="js/main.js" defer type="module"></script>
+    <script src="js/main-mobile.js" defer type="module"></script>
 </body>
 </html>
