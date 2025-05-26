@@ -578,6 +578,11 @@ body.menu-open .hero {
   .hamburger-button.open .hamburger-line:nth-child(3) {
     transform: translateY(-8px) rotate(-45deg) !important;
   }
+  body, body.menu-open {
+    transform: none !important;
+    position: static !important;
+    overflow-x: visible !important;
+  }
 }
 
 /* Very small screens */

@@ -781,12 +781,12 @@
 }
 /* Handle screen readers and accessibility */
 @media (prefers-reduced-motion: reduce) {
-  /* .feedback-widget,
+  .feedback-widget,
   .feedback-form-container,
   .feedback-close,
   .feedback-toggle {
     transition: none !important;
-  } */
+  }
   .use-case-card,
   .nav-dot,
   .slider-prev,
@@ -1297,29 +1297,9 @@
   .mobile-nav.open {
     margin-bottom: 1rem !important;
   }
-  .feedback-widget {
-    position: fixed !important;
-    bottom: 5px !important;
-    right: 30px !important;
-    z-index: 99999 !important;
-    transform: translateZ(0) !important;
-    backface-visibility: hidden !important;
-    will-change: auto !important;
-  }
-  .feedback-toggle {
-    position: absolute !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    pointer-events: auto !important;
-  }
-  .feedback-form-container {
-    margin-bottom: 4rem;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-  .feedback-widget.open .feedback-form-container {
-    margin-bottom: 3.5rem;
-  }
+  /* .feedback-form-container {
+    margin-right: 1.5rem !important;
+  } */
 }
 
 /* Mobile (320px - 479px) */
