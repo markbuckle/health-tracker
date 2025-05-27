@@ -370,6 +370,10 @@ body.tutorial-active .highlight-nav {
     margin-left: 0;
     padding-top: 70px; /* Account for fixed mobile header */
   }
+  body.menu-open .dashboard-content {
+    padding-top: calc(60px + var(--mobile-menu-height, 0px)) !important;
+    transition: padding-top 0.3s ease-in-out;
+  }
   .steps-container2 {
     padding: 0 0.5rem;
   }
