@@ -99,55 +99,6 @@
     <div class="highlight-nav" id="highlightReports"></div>
     <div class="highlight-nav" id="highlightInsights"></div>
 
-    <!-- Arrows -->
-    <div class="arrow" id="arrowToProfile">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
-        <path
-          d="M10,25 Q30,0 50,25 Q70,50 90,25"
-          stroke="#5cb15d"
-          stroke-width="3"
-          fill="none"
-        />
-        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
-      </svg>
-    </div>
-
-    <div class="arrow" id="arrowToUpload">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
-        <path
-          d="M10,25 Q30,0 50,25 Q70,50 90,25"
-          stroke="#5cb15d"
-          stroke-width="3"
-          fill="none"
-        />
-        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
-      </svg>
-    </div>
-
-    <div class="arrow" id="arrowToReports">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
-        <path
-          d="M10,25 Q30,0 50,25 Q70,50 90,25"
-          stroke="#5cb15d"
-          stroke-width="3"
-          fill="none"
-        />
-        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
-      </svg>
-    </div>
-
-    <div class="arrow" id="arrowToInsights">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
-        <path
-          d="M10,25 Q30,0 50,25 Q70,50 90,25"
-          stroke="#5cb15d"
-          stroke-width="3"
-          fill="none"
-        />
-        <polygon points="90,25 85,15 95,20" fill="#5cb15d" />
-      </svg>
-    </div>
-
     <div class="dashboard-content">
       <!-- Welcome card -->
       <div class="welcome-card" id="welcomeCard">
@@ -357,6 +308,27 @@
           arrowToProfile: !!arrowToProfile
         });
 
+        function ensureMobileMenuOpen() {
+          // MOBILE ONLY - no desktop impact
+          if (window.innerWidth <= 768 && tutorialActive) {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const hamburgerButton = document.getElementById('hamburger-button');
+            
+            if (mobileMenu && hamburgerButton && !mobileMenu.classList.contains('open')) {
+              // Open the mobile menu for tutorial
+              hamburgerButton.classList.add('open');
+              mobileMenu.classList.add('open');
+              
+              // Don't push content down during tutorial
+              document.body.classList.remove('menu-open');
+              
+              // Keep menu open during tutorial
+              mobileMenu.style.position = 'absolute';
+              mobileMenu.style.zIndex = '1600'; // Above tutorial elements
+            }
+          }
+        }
+
         // Initialize features hover synchronization
         function initializeFeatureHover() {
           const featureItems = document.querySelectorAll(".feature-item");
@@ -417,15 +389,35 @@
 
         // Find the correct navigation item (desktop or mobile)
         function findNavItem(desktopId, mobileId) {
+          const isMobile = window.innerWidth <= 768;
+          
+          // MOBILE ONLY CHANGES - desktop uses original logic unchanged
+          if (isMobile && tutorialActive) {
+            // During mobile tutorial, always use mobile menu items
+            const mobileItem = document.querySelector(`.mobile-menu .page-link:nth-child(${getMobileMenuIndex(desktopId)})`);
+            if (mobileItem) return mobileItem;
+          }
+          
+          // ORIGINAL DESKTOP LOGIC UNCHANGED
           const desktopItem = document.getElementById(desktopId);
           const mobileItem = document.getElementById(mobileId);
           
-          // Return the visible one based on screen size
-          if (window.innerWidth <= 768) {
+          if (isMobile) {
             return mobileItem || desktopItem;
           } else {
             return desktopItem || mobileItem;
           }
+        }
+
+        // Helper function to get mobile menu item index
+        function getMobileMenuIndex(itemName) {
+          const menuOrder = {
+            'Profile': 1,
+            'Upload': 2, 
+            'Reports': 3,
+            'Insights': 4
+          };
+          return menuOrder[itemName] || 1;
         }
 
         // Position elements around a target
@@ -499,6 +491,12 @@
         function showStep(stepNumber) {
           console.log('Showing step:', stepNumber);
           
+          // MOBILE ONLY - Ensure mobile menu is open on mobile during tutorial
+          if (window.innerWidth <= 768) {
+            ensureMobileMenuOpen();
+          }
+          
+          // EXISTING LOGIC UNCHANGED - works for both desktop and mobile
           // Hide all steps
           if (step1) step1.style.display = "none";
           if (step2) step2.style.display = "none";
@@ -514,25 +512,25 @@
             case 1:
               if (step1) step1.style.display = "block";
               const profileNavItem = findNavItem("Profile", "Profile-mobile");
-              highlightNavItem(profileNavItem, highlightProfile, arrowToProfile);
+              highlightNavItem(profileNavItem, highlightProfile);
               document.body.setAttribute("data-profile-hover", "true");
               break;
             case 2:
               if (step2) step2.style.display = "block";
               const uploadNavItem = findNavItem("Upload", "Upload-mobile");
-              highlightNavItem(uploadNavItem, highlightUpload, arrowToUpload);
+              highlightNavItem(uploadNavItem, highlightUpload);
               document.body.setAttribute("data-upload-hover", "true");
               break;
             case 3:
               if (step3) step3.style.display = "block";
               const reportsNavItem = findNavItem("Reports", "Reports-mobile");
-              highlightNavItem(reportsNavItem, highlightReports, arrowToReports);
+              highlightNavItem(reportsNavItem, highlightReports);
               document.body.setAttribute("data-reports-hover", "true");
               break;
             case 4:
               if (step4) step4.style.display = "block";
               const insightsNavItem = findNavItem("Insights", "Insights-mobile");
-              highlightNavItem(insightsNavItem, highlightInsights, arrowToInsights);
+              highlightNavItem(insightsNavItem, highlightInsights);
               document.body.setAttribute("data-insights-hover", "true");
               break;
           }
@@ -552,6 +550,11 @@
           if (welcomeCard) welcomeCard.style.display = "none";
           if (stepsContainer) stepsContainer.style.display = "block";
           
+          // MOBILE ONLY - Open mobile menu if on mobile
+          if (window.innerWidth <= 768) {
+            ensureMobileMenuOpen();
+          }
+          
           showStep(1);
         }
 
@@ -566,9 +569,33 @@
           if (stepsContainer) stepsContainer.style.display = "none";
           clearHighlights();
           clearHoverEffects();
+          
+          // MOBILE ONLY - Close mobile menu after tutorial
+          if (window.innerWidth <= 768) {
+            closeMobileMenuAfterTutorial();
+          }
 
           // Redirect to profile page
           window.location.href = "/profile";
+        }
+
+        // Function to close mobile menu when tutorial ends
+        function closeMobileMenuAfterTutorial() {
+          // MOBILE ONLY - no desktop impact
+          if (window.innerWidth <= 768) {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const hamburgerButton = document.getElementById('hamburger-button');
+            
+            if (mobileMenu && hamburgerButton) {
+              hamburgerButton.classList.remove('open');
+              mobileMenu.classList.remove('open');
+              document.body.classList.remove('menu-open');
+              
+              // Reset menu styles
+              mobileMenu.style.position = '';
+              mobileMenu.style.zIndex = '';
+            }
+          }
         }
 
         // Event listeners

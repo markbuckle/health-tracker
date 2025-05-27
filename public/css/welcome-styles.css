@@ -118,16 +118,17 @@
 /* Arrow styles */
 .arrow {
   position: absolute;
-  width: 80px;
-  height: 40px;
-  display: none !important; /* FORCE HIDE */
+  width: 100px;
+  height: 50px;
+  display: none !important;
   z-index: 89;
-  visibility: hidden !important; /* DOUBLE PROTECTION */
+  visibility: hidden !important;
 }
 
 .arrow svg {
   width: 100%;
   height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(92, 177, 93, 0.3));
 }
 
 /* Fade in animation */
@@ -287,7 +288,7 @@ body[data-insights-hover="true"] #Insights {
 /* Push content down when menu is open */
 body.menu-open .dashboard-content {
   padding-top: calc(60px + var(--mobile-menu-height, 0px));
-  transition: padding-top 0.4s ease-in-out;
+  transition: padding-top 0.3s ease;
 }
 
   /* Animations */
@@ -298,82 +299,6 @@ body.menu-open .dashboard-content {
 
 .fade-in {
   animation: fadeIn 0.8s forwards;
-}
-
-/* Responsive layout adjustments */
-@media (max-width: 768px) {
-  .get-started-btn {
-    margin: 0.75rem 0;
-    width: 12rem;
-  }
-
-  .sidebar {
-    display: none !important;
-  }
-  .welcome-card {
-    padding: 1.5rem;
-    margin: 1rem;
-    border-radius: 12px;
-  }
-  
-  .feature-overview {
-    grid-template-columns: 1fr;
-  }
-  
-  .actions {
-    flex-direction: column;
-  }
-  
-  .button-next, 
-  .button-skip {
-    max-width: none;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .dashboard-content {
-    margin-left: 0;
-    padding-top: 70px; /* Account for fixed mobile header */
-  }
-  
-  .steps-container2 {
-    padding: 0 0.5rem;
-  }
-  
-  .step-content {
-    padding: 1.25rem;
-  }
-  
-  .sidebar {
-    display: none;
-  }
-  
-  /* Fix for mobile tutorial elements */
-  .highlight-nav, 
-  .arrow {
-    z-index: 10; /* Below the fixed header but above content */
-  }
-  body.tutorial-active .arrow {
-    width: 60px;
-    height: 30px;
-  }
-  
-  body.tutorial-active .highlight-nav {
-    border-width: 1px;
-  }
-}
-
-/* Small screen adjustments */
-@media (max-width: 480px) {
-  .welcome-card {
-    padding: 1.25rem;
-    margin: 0.75rem;
-  }
-  
-  .get-started-btn {
-    margin: 0.75rem 0;
-    width: 10rem;
-  }
 }
 
 /* Fix for tutorial highlights and arrows on all screen sizes */
@@ -387,14 +312,6 @@ body.menu-open .dashboard-content {
   animation: pulse 2s infinite;
 }
 
-.arrow {
-  position: absolute;
-  width: 80px;
-  height: 40px;
-  display: none;
-  z-index: 89;
-}
-
 /* Ensure body has position relative for absolute positioning */
 body {
   position: relative;
@@ -403,9 +320,126 @@ body {
 body.tutorial-active .arrow {
   display: block !important;
   visibility: visible !important;
+  animation: arrowFloat 2s ease-in-out infinite;
 }
 
 body.tutorial-active .highlight-nav {
   display: block !important;
   visibility: visible !important;
+}
+
+@keyframes arrowFloat {
+  0%, 100% { 
+    transform: translateY(0px);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 768px) {
+  .get-started-btn {
+    margin: 0.75rem 0;
+    padding: 0.5rem 0.35rem;
+    width: 8rem;
+  }
+  .sidebar {
+    display: none !important;
+  }
+  .welcome-card {
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 12px;
+  }
+  .feature-overview {
+    grid-template-columns: 1fr;
+  }
+  .actions {
+    flex-direction: column;
+  }
+  .button-next, 
+  .button-skip {
+    max-width: none;
+    width: 100%;
+    text-align: center;
+  }
+  .dashboard-content {
+    margin-left: 0;
+    padding-top: 70px; /* Account for fixed mobile header */
+  }
+  .steps-container2 {
+    padding: 0 0.5rem;
+  }
+  .step-content {
+    padding: 1.25rem;
+  }
+  .sidebar {
+    display: none;
+  }
+  .highlight-nav, 
+  .arrow {
+    z-index: 10; /* Below the fixed header but above content */
+  }
+  body.tutorial-active .arrow {
+    width: 60px;
+    height: 30px;
+  }
+  body.tutorial-active .highlight-nav {
+    border-width: 1px;
+  }
+  .welcome-title {
+    font-size: 22px;
+    margin-top: 0.5rem;
+  }
+  .welcome-subtitle {
+    font-size: 16px;
+    margin: 0.5rem 0;
+  }
+  .feature-item {
+    padding: 1rem;
+  }
+  .feature-icon {
+    margin-bottom: 0;
+  }
+   body.tutorial-active .mobile-menu.open {
+    position: absolute !important;
+    z-index: 1600 !important; /* Above tutorial highlights */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+  }
+  body.tutorial-active.menu-open .dashboard-content {
+    padding-top: 70px !important; /* Just account for header, not menu height */
+  }
+  body.tutorial-active .highlight-nav {
+    z-index: 1650 !important; /* Above mobile menu */
+  }
+  body.tutorial-active .mobile-menu .page-link {
+    position: relative;
+    z-index: 1610;
+  }
+  body.tutorial-active .mobile-menu.open {
+    pointer-events: none; /* Prevent accidental clicks */
+  }
+  body.tutorial-active .step-container,
+  body.tutorial-active .button-next,
+  body.tutorial-active .button-skip {
+    pointer-events: auto;
+    z-index: 1700;
+    position: relative;
+  }
+}
+
+/* Small screen adjustments */
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 1.25rem;
+    margin: 0.75rem;
+  }
+  
+  /* .get-started-btn {
+    margin: 0.75rem 0;
+    width: 10rem;
+  } */
 }
