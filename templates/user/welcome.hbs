@@ -445,7 +445,7 @@
         }
 
         // Highlight a navigation item
-        function highlightNavItem(navItem, highlightEl, arrowEl) {
+        function highlightNavItem(navItem, highlightEl) {
           if (!navItem || !highlightEl || !tutorialActive) return;
 
           console.log('Highlighting nav item:', navItem.id || navItem.className);
@@ -456,35 +456,51 @@
           highlightEl.style.left = `${rect.left - 5}px`;
           highlightEl.style.width = `${rect.width + 10}px`;
           highlightEl.style.height = `${rect.height + 10}px`;
-          highlightEl.style.display = "block";
-
-          if (arrowEl) {
-            positionElementAroundTarget(arrowEl, navItem, "right");
-            arrowEl.style.display = "block";
-          }
+          
+          // Use class-based showing instead of direct style
+          highlightEl.classList.add('show');
         }
 
         // Clear all highlights
         function clearHighlights() {
           console.log('Clearing highlights...');
           
-          if (highlightProfile) highlightProfile.style.display = "none";
-          if (highlightUpload) highlightUpload.style.display = "none";
-          if (highlightReports) highlightReports.style.display = "none";
-          if (highlightInsights) highlightInsights.style.display = "none";
-
-          if (arrowToProfile) arrowToProfile.style.display = "none";
-          if (arrowToUpload) arrowToUpload.style.display = "none";
-          if (arrowToReports) arrowToReports.style.display = "none";
-          if (arrowToInsights) arrowToInsights.style.display = "none";
+          // Remove show class from all highlight elements
+          const allHighlights = [highlightProfile, highlightUpload, highlightReports, highlightInsights];
+          
+          allHighlights.forEach(highlight => {
+            if (highlight) {
+              highlight.classList.remove('show');
+              // Also set display none as backup
+              highlight.style.display = "none";
+              highlight.style.visibility = "hidden";
+            }
+          });
+          
+          // Clear arrows as backup (even though disabled)
+          const allArrows = [arrowToProfile, arrowToUpload, arrowToReports, arrowToInsights];
+          
+          allArrows.forEach(arrow => {
+            if (arrow) {
+              arrow.style.display = "none";
+              arrow.style.visibility = "hidden";
+            }
+          });
         }
 
         // Clear all hover effects
         function clearHoverEffects() {
-          document.body.removeAttribute("data-profile-hover");
-          document.body.removeAttribute("data-upload-hover");
-          document.body.removeAttribute("data-reports-hover");
-          document.body.removeAttribute("data-insights-hover");
+          // Remove all hover attributes
+          const hoverAttributes = [
+            "data-profile-hover",
+            "data-upload-hover", 
+            "data-reports-hover",
+            "data-insights-hover"
+          ];
+          
+          hoverAttributes.forEach(attr => {
+            document.body.removeAttribute(attr);
+          });
         }
 
         // Show a specific step

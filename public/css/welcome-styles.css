@@ -98,9 +98,15 @@
   border: 2px solid #5cb15d;
   border-radius: 8px;
   pointer-events: none;
-  z-index: 100;
-  display: none;
+  z-index: 90;
+  display: none !important; /* Force hidden by default */
+  visibility: hidden !important;
   animation: pulse 2s infinite;
+}
+
+body.tutorial-active .highlight-nav.show {
+  display: block !important;
+  visibility: visible !important;
 }
 
 @keyframes pulse {
@@ -383,13 +389,8 @@ body.tutorial-active .highlight-nav {
   .sidebar {
     display: none;
   }
-  .highlight-nav, 
-  .arrow {
+  .highlight-nav {
     z-index: 10; /* Below the fixed header but above content */
-  }
-  body.tutorial-active .arrow {
-    width: 60px;
-    height: 30px;
   }
   body.tutorial-active .highlight-nav {
     border-width: 1px;
@@ -408,13 +409,16 @@ body.tutorial-active .highlight-nav {
   .feature-icon {
     margin-bottom: 0;
   }
-   body.tutorial-active .mobile-menu.open {
+  body.tutorial-active .mobile-menu.open {
     position: absolute !important;
     z-index: 1600 !important; /* Above tutorial highlights */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
   }
-  body.tutorial-active.menu-open .dashboard-content {
-    padding-top: 70px !important; /* Just account for header, not menu height */
+  /* body.tutorial-active .mobile-menu.open .step-container {
+    padding-top: 100px !important;
+  } */
+  body.tutorial-active .steps-container2 {
+    padding-top: 75px !important;
   }
   body.tutorial-active .highlight-nav {
     z-index: 1650 !important; /* Above mobile menu */
@@ -432,6 +436,11 @@ body.tutorial-active .highlight-nav {
     pointer-events: auto;
     z-index: 1700;
     position: relative;
+  }
+  body.tutorial-active .highlight-nav.show {
+    z-index: 1650 !important;
+    display: block !important;
+    visibility: visible !important;
   }
 }
 
