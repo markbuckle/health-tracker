@@ -512,6 +512,7 @@
                             </p>
                           </div>
                         </div>
+                        <div class="chatbot-resize-handle"></div>
                       </div>
 
                       <!-- Input area -->
@@ -542,7 +543,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="chatbot-resize-handle"></div>
                 </div>
               </div>
             </div>
@@ -1210,13 +1210,15 @@
     <script> // chat-messages size adjuster
       function initializeChatbotCardResize() {
         const chatbotCard = document.querySelector('.chatbot-card');
+        const chatMessages = document.getElementById('chat-messages');
         const resizeHandle = document.querySelector('.chatbot-resize-handle');
         
-        if (!chatbotCard || !resizeHandle) return;
+        if (!chatbotCard || !chatMessages || !resizeHandle) return;
         
         let isResizing = false;
         let startY = 0;
-        let startHeight = 0;
+        let startChatHeight = 0;
+        let startCardHeight = 0;
         
         // Mouse events for desktop
         resizeHandle.addEventListener('mousedown', initResize);
@@ -1231,7 +1233,8 @@
         function initResize(e) {
           isResizing = true;
           startY = e.clientY;
-          startHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
+          startChatHeight = parseInt(window.getComputedStyle(chatMessages).height, 10);
+          startCardHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
           document.body.style.userSelect = 'none';
           e.preventDefault();
         }
@@ -1239,7 +1242,8 @@
         function initResizeTouch(e) {
           isResizing = true;
           startY = e.touches[0].clientY;
-          startHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
+          startChatHeight = parseInt(window.getComputedStyle(chatMessages).height, 10);
+          startCardHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
           document.body.style.userSelect = 'none';
           e.preventDefault();
         }
@@ -1249,15 +1253,21 @@
           
           const currentY = e.clientY;
           const diff = currentY - startY;
-          const newHeight = startHeight + diff;
+          const newChatHeight = startChatHeight + diff;
+          const newCardHeight = startCardHeight + diff;
           
-          // Set min and max heights for the entire card
-          const minHeight = window.innerWidth <= 768 ? 400 : 500;
-          const maxHeight = Math.min(window.innerHeight * 0.9, 1200);
+          // Set min and max heights
+          const minChatHeight = window.innerWidth <= 768 ? 200 : 300;
+          const maxChatHeight = Math.min(window.innerHeight * 0.6, 600);
           
-          if (newHeight >= minHeight && newHeight <= maxHeight) {
-            chatbotCard.style.height = newHeight + 'px';
-            chatbotCard.style.minHeight = 'auto'; // Override min-height when manually resized
+          if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
+            // Resize chat-messages directly
+            chatMessages.style.height = newChatHeight + 'px';
+            chatMessages.style.flex = 'none';
+            
+            // Resize chatbot-card indirectly
+            chatbotCard.style.height = newCardHeight + 'px';
+            chatbotCard.style.minHeight = 'auto';
           }
         }
         
@@ -1266,14 +1276,18 @@
           
           const currentY = e.touches[0].clientY;
           const diff = currentY - startY;
-          const newHeight = startHeight + diff;
+          const newChatHeight = startChatHeight + diff;
+          const newCardHeight = startCardHeight + diff;
           
           // Slightly smaller limits for mobile
-          const minHeight = 350;
-          const maxHeight = Math.min(window.innerHeight * 0.8, 800);
+          const minChatHeight = 150;
+          const maxChatHeight = Math.min(window.innerHeight * 0.5, 400);
           
-          if (newHeight >= minHeight && newHeight <= maxHeight) {
-            chatbotCard.style.height = newHeight + 'px';
+          if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
+            chatMessages.style.height = newChatHeight + 'px';
+            chatMessages.style.flex = 'none';
+            
+            chatbotCard.style.height = newCardHeight + 'px';
             chatbotCard.style.minHeight = 'auto';
           }
           

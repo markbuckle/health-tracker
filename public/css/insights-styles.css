@@ -705,7 +705,7 @@
     margin-bottom: 0.5rem;
   }
   .ask-header {
-    margin-top: 0.2rem;
+    margin-top: 0.75rem;
   }
   .ask-wrapper {
     padding: 0 !important;
@@ -806,6 +806,7 @@
   border: 0.1px solid rgb(214, 213, 213);
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
+  position: relative;
 }
 
 .chat-message {
@@ -1476,8 +1477,6 @@
   .heading2 {
     font-size: 1.5rem !important;
   }
-  
-  /* Tab menu */
   .in-page-menu {
     flex-wrap: wrap;
     gap: 0.25rem;
@@ -1667,6 +1666,9 @@
   .metric-value {
     font-size: 11px !important;
     text-align: end;
+  }
+  .chatbot-card {
+    padding: 0 0.5rem 1rem 0.5rem;
   }
   .chatbot-resize-handle {
     width: 24px;
