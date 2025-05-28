@@ -309,22 +309,25 @@
         });
 
         function ensureMobileMenuOpen() {
-          // MOBILE ONLY - no desktop impact
           if (window.innerWidth <= 768 && tutorialActive) {
             const mobileMenu = document.querySelector('.mobile-menu');
             const hamburgerButton = document.getElementById('hamburger-button');
             
-            if (mobileMenu && hamburgerButton && !mobileMenu.classList.contains('open')) {
-              // Open the mobile menu for tutorial
+            if (mobileMenu && hamburgerButton) {
+              // Force menu open
               hamburgerButton.classList.add('open');
               mobileMenu.classList.add('open');
               
-              // Don't push content down during tutorial
+              // Prevent content push-down
               document.body.classList.remove('menu-open');
               
-              // Keep menu open during tutorial
+              // Style for tutorial
               mobileMenu.style.position = 'absolute';
-              mobileMenu.style.zIndex = '1600'; // Above tutorial elements
+              mobileMenu.style.zIndex = '1600';
+              mobileMenu.style.maxHeight = '140px'; // Match your CSS
+              mobileMenu.style.opacity = '1';
+              mobileMenu.style.visibility = 'visible';
+              mobileMenu.style.display = 'grid'; // Match your mobile menu display
             }
           }
         }
@@ -391,11 +394,22 @@
         function findNavItem(desktopId, mobileId) {
           const isMobile = window.innerWidth <= 768;
           
-          // MOBILE ONLY CHANGES - desktop uses original logic unchanged
           if (isMobile && tutorialActive) {
-            // During mobile tutorial, always use mobile menu items
-            const mobileItem = document.querySelector(`.mobile-menu .page-link:nth-child(${getMobileMenuIndex(desktopId)})`);
-            if (mobileItem) return mobileItem;
+            // For mobile tutorial, directly target mobile menu items by their structure
+            const mobileMenu = document.querySelector('.mobile-menu');
+            if (mobileMenu) {
+              // Map desktop IDs to mobile menu item positions
+              switch(desktopId) {
+                case 'Profile':
+                  return mobileMenu.querySelector('.page-link:nth-child(1)'); // First item
+                case 'Upload':
+                  return mobileMenu.querySelector('.page-link:nth-child(2)'); // Second item  
+                case 'Reports':
+                  return mobileMenu.querySelector('.page-link:nth-child(3)'); // Third item
+                case 'Insights':
+                  return mobileMenu.querySelector('.page-link:nth-child(4)'); // Fourth item
+              }
+            }
           }
           
           // ORIGINAL DESKTOP LOGIC UNCHANGED
@@ -451,13 +465,17 @@
           console.log('Highlighting nav item:', navItem.id || navItem.className);
 
           const rect = navItem.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
-          highlightEl.style.top = `${rect.top - 5}px`;
-          highlightEl.style.left = `${rect.left - 5}px`;
+          // Position relative to document, not viewport
+          highlightEl.style.position = 'absolute';
+          highlightEl.style.top = `${rect.top + scrollTop - 5}px`;
+          highlightEl.style.left = `${rect.left + scrollLeft - 5}px`;
           highlightEl.style.width = `${rect.width + 10}px`;
           highlightEl.style.height = `${rect.height + 10}px`;
           
-          // Use class-based showing instead of direct style
+          // Use class-based showing
           highlightEl.classList.add('show');
         }
 
@@ -465,25 +483,14 @@
         function clearHighlights() {
           console.log('Clearing highlights...');
           
-          // Remove show class from all highlight elements
+          // Remove show class and hide all highlight elements
           const allHighlights = [highlightProfile, highlightUpload, highlightReports, highlightInsights];
           
           allHighlights.forEach(highlight => {
             if (highlight) {
               highlight.classList.remove('show');
-              // Also set display none as backup
               highlight.style.display = "none";
               highlight.style.visibility = "hidden";
-            }
-          });
-          
-          // Clear arrows as backup (even though disabled)
-          const allArrows = [arrowToProfile, arrowToUpload, arrowToReports, arrowToInsights];
-          
-          allArrows.forEach(arrow => {
-            if (arrow) {
-              arrow.style.display = "none";
-              arrow.style.visibility = "hidden";
             }
           });
         }
@@ -597,7 +604,6 @@
 
         // Function to close mobile menu when tutorial ends
         function closeMobileMenuAfterTutorial() {
-          // MOBILE ONLY - no desktop impact
           if (window.innerWidth <= 768) {
             const mobileMenu = document.querySelector('.mobile-menu');
             const hamburgerButton = document.getElementById('hamburger-button');
@@ -607,9 +613,13 @@
               mobileMenu.classList.remove('open');
               document.body.classList.remove('menu-open');
               
-              // Reset menu styles
+              // Reset all styles
               mobileMenu.style.position = '';
               mobileMenu.style.zIndex = '';
+              mobileMenu.style.maxHeight = '';
+              mobileMenu.style.opacity = '';
+              mobileMenu.style.visibility = '';
+              mobileMenu.style.display = '';
             }
           }
         }
