@@ -679,16 +679,13 @@
     font-size: 0.95rem;
     margin-bottom: 0.5rem;
   }
-  
   .recommendation-item small {
     font-size: 0.8rem;
     padding: 0.2rem 0.6rem;
   }
-  
   .no-recommendations {
     padding: 2rem 1rem;
   }
-  
   .no-recommendations p {
     font-size: 1rem;
   }
@@ -707,12 +704,21 @@
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
+  .ask-header {
+    margin-top: 0.2rem;
+  }
   .ask-wrapper {
     padding: 0 !important;
     align-content: center;
   }
   .ask-title {
     font-size: 18px;
+  }
+  .recommendations-subtitle {
+    font-size: 13px;
+  }
+  .recommendations-list {
+    gap: 0rem;
   }
 }
 
@@ -778,17 +784,6 @@
 }
 /* -------- Insights RAG UI Styles --------- */
 
-/* Chat interface styles */
-/* .chat-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(70vh - 120px);
-  min-height: 400px;
-  max-width: 90%;
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 0.25rem 5rem 1rem 5rem;
-} */
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -1424,6 +1419,32 @@
 .profile-button:hover {
   background-color: #1e88e5;
 }
+.chatbot-card {
+  background: white;
+  border-radius: 10px;
+  padding: 0rem 1.5rem 1.5rem 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 80vh;
+  position: relative;
+  resize: none;
+}
+.chatbot-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, transparent 0%, transparent 30%, #cbd5e0 30%, #cbd5e0 50%, transparent 50%, transparent 80%, #cbd5e0 80%);
+  cursor: nw-resize;
+  z-index: 10;
+  border-bottom-right-radius: 10px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+.chatbot-resize-handle:hover {
+  opacity: 1;
+  background: linear-gradient(135deg, transparent 0%, transparent 30%, #a0aec0 30%, #a0aec0 50%, transparent 50%, transparent 80%, #a0aec0 80%);
+}
 
 /* Responsive design for action buttons */
 @media screen and (max-width: 768px) {
@@ -1462,32 +1483,28 @@
     gap: 0.25rem;
     margin: 0.5rem 0;
   }
-  
   .in-page-link {
     min-width: auto !important;
     margin-right: 0.25rem;
     padding: 8px 12px;
     font-size: 11px;
   }
-  
-  /* Main content card */
   .wellness-summary-card {
     padding: 0.5rem 0.5rem 1rem 0.5rem !important;
     margin: 0;
     min-height: auto !important;
   }
-  
-  /* Labs Summary adjustments */
+  .labs-summary-header {
+    margin-top: 0.2rem;
+  }
   .lab-status-card {
     padding: 1rem 0.5rem !important;
   }
-  
   .labs-stats-container {
     flex-direction: row !important;
     gap: 0.25rem;
     margin: 0.5rem 0;
   }
-  
   .lab-stat-box {
     width: auto;
     padding: 0.25rem;
@@ -1498,14 +1515,10 @@
   .lab-stat-number {
     font-size: 2rem;
   }
-  
-  /* Chart container */
   .chart-container {
     height: 100px; /* Reduce height */
     gap: 0.5rem;
   }
-  
-  /* Recent labs section */
   .recent-lab-item {
     display: flex;
     flex-direction: column;
@@ -1517,7 +1530,6 @@
     gap: 0.75rem;
     margin-bottom: 0.75rem;
   }
-  
   .lab-file-name {
     font-size: 12px;
     font-weight: 600;
@@ -1548,21 +1560,17 @@
     margin-top: 0;
     gap: 0.8rem;
   }
-  /* Wellness content (Scores tab) */
   .wellness-content {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
   .wellness-categories {
     max-width: 100%;
   }
-  
   .wellness-chart-container {
     order: -1; /* Move chart to top */
     align-items: center;
   }
-  
   .chart-wrapper {
     width: 18rem;
     height: 18rem;
@@ -1571,52 +1579,40 @@
     margin: 0.25rem;
     margin-top: 0;
   }
-  /* Insights header */
   .insights-header {
     margin-right: 0 !important;
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
   .insights-title-wrapper {
     width: 100%;
   }
-  
-  /* Metric items */
   .metric-item {
     padding: 0.75rem;
     font-size: 14px;
   }
-  
   .metric-name {
     font-size: 12px;
   }
-  
-  /* Recommendations */
   .recommendations-wrapper {
     padding: 0.25rem 0 0 0;
   }
-  
   .recommendation-item {
     padding: 1rem;
     margin-bottom: 1rem;
   }
-  
   .recommendation-text {
     font-size: 0.8rem;
     line-height: 1.5;
     text-align: justify;
   }
-
-  /* Chat container (Ask tab) */
   .chat-container {
     width: calc(100% - 2rem); /* Less margin reduction on mobile */
     margin: 0.25rem auto 1rem auto; /* Keep centered */
     height: calc(60vh - 100px);
     min-height: 300px;
   }
-  
   .chat-messages {
     padding-top: 0.5rem;
   }
@@ -1629,37 +1625,29 @@
   .chat-input-container {
     padding: 0.75rem;
   }
-  
   .chat-input {
     padding: 0.5rem 0.75rem;
     font-size: 12px;
   }
-  
   .chat-submit-btn {
     width: 36px;
     height: 36px;
   }
-  
-  /* Hide sidebar */
   .sidebar {
     display: none !important;
   }
-
   .labs-stats-container {
     flex-direction: column;
     align-items: center;
   }
-  
   .lab-stat-number {
     font-size: 2rem;
   }
-  
   .recent-lab-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
   .view-lab-link {
     grid-column: 3;
     grid-row: 1;
@@ -1680,9 +1668,12 @@
     font-size: 11px !important;
     text-align: end;
   }
+  .chatbot-resize-handle {
+    width: 24px;
+    height: 24px;
+  }
 }
 
-/* Very small screens */
 @media screen and (max-width: 480px) {  
   .chat-container {
     width: calc(100% - 1rem); /* Minimal margins on very small screens */
