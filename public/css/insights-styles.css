@@ -787,8 +787,8 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(70vh - 120px);
-  min-height: 400px;
+  /* height: calc(70vh - 120px); */
+  min-height: 350px;
   max-width: 100%;
   border-radius: 12px;
   overflow: hidden;
@@ -807,6 +807,7 @@
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
   position: relative;
+  z-index: 25;
 }
 
 .chat-message {
@@ -1421,13 +1422,14 @@
   background-color: #1e88e5;
 }
 .chatbot-card {
-  background: white;
+  background: rgb(155, 155, 155);
   border-radius: 10px;
   padding: 0rem 1.5rem 1.5rem 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-height: 80vh;
+  /* min-height: 80vh; */
   position: relative;
   resize: none;
+  z-index: 15;
 }
 .chatbot-resize-handle {
   position: absolute;
@@ -1437,7 +1439,7 @@
   height: 20px;
   background: linear-gradient(135deg, transparent 0%, transparent 30%, #cbd5e0 30%, #cbd5e0 50%, transparent 50%, transparent 80%, #cbd5e0 80%);
   cursor: nw-resize;
-  z-index: 10;
+  z-index: 20;
   border-bottom-right-radius: 10px;
   opacity: 0.7;
   transition: opacity 0.2s ease;
@@ -1609,7 +1611,7 @@
   .chat-container {
     width: calc(100% - 2rem); /* Less margin reduction on mobile */
     margin: 0.25rem auto 1rem auto; /* Keep centered */
-    height: calc(60vh - 100px);
+    /* height: calc(60vh - 100px); */
     min-height: 300px;
   }
   .chat-messages {
@@ -1623,6 +1625,7 @@
   }
   .chat-input-container {
     padding: 0.75rem;
+    z-index: 15 !important;
   }
   .chat-input {
     padding: 0.5rem 0.75rem;
@@ -1673,6 +1676,7 @@
   .chatbot-resize-handle {
     width: 24px;
     height: 24px;
+    z-index: 25 !important;
   }
 }
 

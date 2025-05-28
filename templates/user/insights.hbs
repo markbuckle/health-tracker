@@ -1258,7 +1258,7 @@
           
           // Set min and max heights
           const minChatHeight = window.innerWidth <= 768 ? 200 : 300;
-          const maxChatHeight = Math.min(window.innerHeight * 0.6, 600);
+          const maxChatHeight = Math.min(window.innerHeight * 0.6, 500);
           
           if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
             // Resize chat-messages directly
@@ -1281,7 +1281,7 @@
           
           // Slightly smaller limits for mobile
           const minChatHeight = 150;
-          const maxChatHeight = Math.min(window.innerHeight * 0.5, 400);
+          const maxChatHeight = Math.min(window.innerHeight * 0.5, 450);
           
           if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
             chatMessages.style.height = newChatHeight + 'px';
