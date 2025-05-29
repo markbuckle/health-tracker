@@ -565,6 +565,12 @@
 .subheading {
   color: #777;
 }
+
+@media screen and (max-width: 991px) {
+  .header-container-3 {
+    width: auto;
+  }
+}
 /* Responsive adjustments */
 @media screen and (max-width: 767px) {
   .dashboard-content {

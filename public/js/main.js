@@ -17,6 +17,11 @@ function initializeHeaderScroll() {
   let scrollTimer = null; // For debouncing
 
   function handleScroll() {
+    // Only disable on mobile (767px and below), allow on tablets
+    if (window.innerWidth <= 767) {
+      return;
+    }
+    
     const scrollPosition = window.scrollY;
     
     // Clear any existing timers
@@ -27,11 +32,19 @@ function initializeHeaderScroll() {
       // Determine scroll direction
       const scrollingDown = scrollPosition > lastScrollTop;
       
+      // Ensure header stays at top
+      header.style.top = '0px';
+      header.style.transform = 'translateY(0)';
+      
       // Apply or remove classes based on scroll position and direction
       if (scrollPosition > 50) {
         // Apply scrolled state
         header.classList.add('header-scrolled');
         headerContainer.classList.add('header-container-scrolled');
+        
+        // Ensure header stays in position
+        header.style.top = '0px';
+        header.style.transform = 'translateY(0)';
         
         // Add a slight delay when scrolling up for smoother transition
         if (!scrollingDown) {
@@ -47,6 +60,10 @@ function initializeHeaderScroll() {
         // Return to normal state
         header.classList.remove('header-scrolled');
         headerContainer.classList.remove('header-container-scrolled');
+        
+        // Ensure header stays in position
+        header.style.top = '0px';
+        header.style.transform = 'translateY(0)';
         
         // Add a slight delay when scrolling down for smoother transition
         if (scrollingDown) {
@@ -70,6 +87,23 @@ function initializeHeaderScroll() {
   
   // Run once on initialization to set the correct initial state
   handleScroll();
+  
+  // Add resize listener to handle screen size changes
+  window.addEventListener('resize', () => {
+    if (window.innerWidth <= 767) {
+      // Remove all scroll classes on mobile
+      header.classList.remove('header-scrolled');
+      headerContainer.classList.remove('header-container-scrolled');
+      logo.classList.remove('logo-scrolled');
+      // Reset positioning
+      header.style.top = '0px';
+      header.style.transform = 'translateY(0)';
+    } else {
+      // Ensure proper positioning on larger screens
+      header.style.top = '0px';
+      header.style.transform = 'translateY(0)';
+    }
+  });
 }
 
 // Initialize when DOM is loaded

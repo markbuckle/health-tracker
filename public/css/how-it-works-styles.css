@@ -14,7 +14,7 @@
 }
 .content-section {
   margin: 7rem auto;
-  width: 70%;
+  width: 60%;
   max-width: 100%;
   padding: 0 20px;
   text-align: center;
@@ -157,11 +157,12 @@
 /* Tablet Styles */
 @media screen and (max-width: 1024px) {
   .content-section {
-    width: 85%;
+    width: 75%;
     margin: 5rem auto;
   }
   .step-block {
     padding-left: 4rem;
+    padding-right: 3rem;
   }
   .step-number {
     width: 3.5rem;

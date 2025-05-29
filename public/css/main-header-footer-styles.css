@@ -4,7 +4,7 @@
   height: var(--header-height-default);
   z-index: 100;
   position: fixed;
-  top: 0;
+  top: 0 !important;
   left: 0;
   right: 0;
   width: 100%;
@@ -30,6 +30,7 @@
   box-sizing: border-box;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  position: relative;
 }
 .subheading {
   font-size: clamp(16px, 4vw, 22px); /* Responsive font size */
@@ -113,6 +114,7 @@
 }
 .header-scrolled {
   height: var(--header-height-scrolled);
+  top: 0 !important;
 }
 .header-container-scrolled {
   height: var(--header-height-scrolled);
@@ -405,14 +407,64 @@ body.menu-open .hero-title {
 
 /* Tablet Landscape (768px - 991px) */
 @media screen and (max-width: 991px) {
+  :root {
+    --header-height-default: 3.5rem;
+    --header-height-scrolled: 2.1rem; /* Don't make it too small on tablets */
+  }
+  .header {
+    position: fixed !important;
+    top: 0 !important;
+    min-height: var(--header-height-default) !important; /* Ensure minimum height */
+  }
+  .header-container {
+    height: var(--header-height-default) !important; /* Ensure container has minimum height */
+  }
+  .header-scrolled {
+    height: var(--header-height-scrolled);
+    min-height: var(--header-height-scrolled);
+    top: 0 !important;
+  }
+  .header-container-scrolled {
+    height: var(--header-height-scrolled) !important; /* Keep original height */
+  }
+  .logo-block {
+    height: auto;
+    display: flex;
+    align-items: center;
+  }
+  .logo-block img {
+    max-height: calc(var(--header-height-default) - 1rem);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .header-scrolled .logo-block img,
+  .logo-scrolled {
+    max-height: calc(var(--header-height-scrolled) - 0.8rem);
+    transform: scale(0.95); /* Slight scale instead of aggressive scaling */
+  }
   /* .header-scrolled {
     height: 50px;
   }
   .header-container-scrolled {
     height: 50px;
   } */
+  .center-header {
+    gap: 1.5rem;
+  }
+  .header-links {
+    font-size: 11px;
+    padding: 0.25rem 0.5rem;
+  }
   .authentication-block {
     margin-right: 1.5rem;
+  }
+  .auth-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  .header-container-scrolled .auth-button {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    transform: scale(0.98); /* Gentle scaling */
   }
   .mobile-nav-buttons .auth-button {
     width: 6rem;
@@ -770,9 +822,7 @@ body.menu-open .hero-title {
   border-color: transparent;
 }
 
-/* @media screen and (max-width: 991px) {
-  
-} */
+
 /* Standard mobile (400px - 599px) */
 @media screen and (min-width: 400px) and (max-width: 599px) {
   .mobile-header-container {
