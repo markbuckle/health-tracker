@@ -87,7 +87,7 @@
     width: auto;
   }
   /* Responsive adjustments */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .dashboard-content {
     margin-left: 0 !important;
     margin-top: 0 !important;

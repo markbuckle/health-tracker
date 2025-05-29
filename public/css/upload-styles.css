@@ -917,7 +917,7 @@
 }
 
 /* Mobile Responsive Styles for Upload Page */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .dashboard-content {
     margin-top: 0 !important;
     margin-left: 0 !important;

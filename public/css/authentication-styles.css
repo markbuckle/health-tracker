@@ -163,7 +163,18 @@
   border-bottom-color: #00b300;
 }
 
-@media screen and (max-width: 768px) {
+/* Tablet Landscape (768px - 991px) */
+@media screen and (max-width: 991px) {
+  .authentication-logo img {
+    max-width: 30% !important;
+  }
+  .register-block {
+    max-width: 50% !important;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 767px) {
   .authentication-logo img {
     max-width: 40% !important;
   }
@@ -202,7 +213,7 @@
 }
 
 /* Responsive adjustments for tablets */
-@media screen and (min-width: 481px) and (max-width: 768px) {
+@media screen and (min-width: 481px) and (max-width: 767px) {
   .register-block {
     max-width: 90%;
     padding: 1.5rem;

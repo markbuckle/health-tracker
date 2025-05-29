@@ -204,8 +204,7 @@
   font-weight: 500;
 }
 
-/* Media queries for responsiveness */
-@media (min-width: 769px) {
+
   .mobile-header {
     display: none;
   }
@@ -213,9 +212,8 @@
   body.menu-open .dashboard-content {
     padding-top: 0;
   }
-}
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .mobile-header {
     display: block !important;
     position: fixed !important;

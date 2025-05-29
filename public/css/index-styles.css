@@ -503,12 +503,10 @@
   position: relative !important;
   z-index: 11 !important;
 }
-
 .wave-light-bg:first-of-type {
   position: relative !important;
   z-index: 20 !important;
 }
-
 /* -------------- feedback-widget.css ------------- */
 .feedback-widget {
   position: fixed;
@@ -964,7 +962,8 @@
     justify-content: center !important;
     gap: 0rem !important;
     width: 100% !important;
-    margin-bottom: 2rem !important;
+    margin-bottom: 1rem !important;
+    padding: 0 !important;
   }
   .hero-content {
     display: flex !important;
@@ -975,10 +974,13 @@
   }
   .hero-title {
     margin-bottom: 2rem !important;
+    margin-top: 2rem !important;
     text-align: center !important;
+    line-height: 0.5;
+    letter-spacing: -0.01em;
   }
   .hero-text {
-    font-size: 2rem;
+    font-size: 1.6rem;
     margin-bottom: 0.5rem;
   }
   .hero-text-section {
@@ -992,13 +994,16 @@
     order: 2 !important;
     max-width: 38% !important;
     height: auto !important;
-    margin-top: 4rem !important;
+    margin-top: 3rem !important;
     flex-shrink: 0 !important;
   }
   .btn-primary {
     margin-top: 0 !important;
+    margin-bottom: 2rem !important;
     width: auto !important;
     max-width: none !important;
+    font-size: 1rem;
+    padding: 0.6rem 1.4rem;
   }
   .quote-container-1,
   .quote-container-2 {
@@ -1034,7 +1039,7 @@
   }
   .use-cases-container {
     max-width: 700px;
-    min-height: 350px;
+    margin-bottom: 1rem !important;
   }
   .use-cases-navigation {
     left: 8px;
@@ -1072,8 +1077,8 @@
   }
 }
 
-/* Tablet Portrait and below (768px) */
-@media screen and (max-width: 768px) {
+/* Large Mobile (767px) */
+@media screen and (max-width: 767px) {
   .use-cases-section {
     padding-top: 2rem;
   }

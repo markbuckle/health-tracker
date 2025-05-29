@@ -16,35 +16,29 @@
   transition: background-color 0.2s ease;
   vertical-align: middle;
 }
-
 .info-button:hover {
   background-color: #22583582;
   transform: scale(1.05);
 }
-
 .modal-wrapper-1 {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease;
 }
-
 .modal-wrapper-1.active {
   opacity: 1;
   visibility: visible;
   display: flex;
 }
-
 .modal-card {
   max-width: 40rem;
   line-height: 1.6;
 }
-
 .modal-card p {
   margin-bottom: 1rem;
   color: #4b5563;
   font-family: "Poppins-Regular", sans-serif;
 }
-
 .header-container-3-spacing {
   display: flex;
 }
@@ -57,31 +51,15 @@
   margin: 1rem;
   text-align: justify;
 }
-/* --- wellness modal ---- */
 .wellness-metrics {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   /* max-height: 80vh; */
 }
-
-/* .score-circle {
-  width: 60px;
-  height: 60px;
-  border: 2px dashed #63b1f1;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-family: "Poppins-SemiBold", sans-serif;
-  margin: 20px;
-} */
-
 .metrics-section {
   padding: 20px;
 }
-
 .metrics-heading {
   font-family: "Poppins-Regular", sans-serif;
   font-size: 16px;
@@ -90,13 +68,11 @@
   padding-bottom: 5px;
   border-bottom: 1px solid #eee;
 }
-
 .metrics-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 .metric-item {
   display: flex;
   align-items: center;
@@ -109,28 +85,23 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .metric-item:hover {
   background: #f5f5f5;
 }
-
 .metric-status {
   color: #dc3545;
   margin-left: auto;
   margin-right: 10px;
 }
-
 .metric-arrow {
   color: #666;
 }
-
 .metrics-footer {
   padding: 15px;
   background: #f8f9fa;
   border-top: 1px solid #eee;
   margin: auto 1rem;
 }
-
 .metrics-footer small {
   display: block;
   color: #666;
@@ -364,39 +335,19 @@
   stroke-width: 8;
   stroke-linecap: round;
 }
-
-@media (max-width: 1024px) {
-  .wellness-content {
-    flex-direction: column;
-  }
-
-  .wellness-categories {
-    max-width: 100%;
-  }
-
-  .wellness-chart-container {
-    order: -1; /* Move chart to top on mobile */
-    padding-top: 0;
-  }
-}
-
 .chart-section {
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .chart-section:hover .circle.prevention {
   stroke: #e67e3b; /* Darker orange */
 }
-
 .chart-section:hover .circle.monitoring {
   stroke: #71b871; /* Darker teal */
 }
-
 .chart-section:hover .circle.risk {
   stroke: #e6c200; /* Darker yellow */
 }
-
 .chart-tooltip {
   position: absolute;
   background: rgba(0, 0, 0, 0.8);
@@ -410,8 +361,6 @@
   z-index: 10;
   white-space: nowrap;
 }
-
-/* Actions tab styling */
 .recommendations-wrapper {
   padding: 1.3rem 1rem 0 0;
 }
@@ -423,11 +372,9 @@
   flex-direction: column;
   gap: 1.25rem;
 }
-
 .recommendation-count {
   margin-bottom: 1rem;
 }
-
 .recommendation-item {
   padding: 1.5rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 100%);
@@ -438,7 +385,6 @@
   position: relative;
   overflow: hidden;
 }
-
 .recommendation-item::before {
   content: '';
   position: absolute;
@@ -449,39 +395,31 @@
   background: #e2e8f0;
   transition: all 0.3s ease;
 }
-
 .recommendation-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   border-color: #cbd5e0;
 }
-
 .recommendation-item:hover::before {
   width: 6px;
 }
-
 .recommendation-item.high-priority::before {
   background: linear-gradient(180deg, #dc3545 0%, #c82333 100%);
 }
-
 .recommendation-item.high-priority {
   background: linear-gradient(135deg, #fff5f5 0%, #f8f9fb 100%);
   border-color: #fed7d7;
 }
-
 .recommendation-item.medium-priority::before {
   background: linear-gradient(180deg, #ffc107 0%, #e0a800 100%);
 }
-
 .recommendation-item.medium-priority {
   background: linear-gradient(135deg, #fffbf0 0%, #f8f9fb 100%);
   border-color: #ffeaa7;
 }
-
 .recommendation-item.low-priority::before {
   background: linear-gradient(180deg, #6c757d 0%, #495057 100%);
 }
-
 .recommendation-text {
   font-size: 1rem;
   color: #2d3748;
@@ -490,14 +428,12 @@
   margin: 0 0 0.75rem 0;
   font-weight: 400;
 }
-
 .recommendations-subtitle {
   color: #718096;
   font-size: 0.9rem;
   margin-top: 0.5rem;
   margin-bottom: 0;
 }
-
 .recommendation-meta {
   display: inline-flex;
   align-items: center;
@@ -510,7 +446,6 @@
   border-radius: 20px;
   margin-top: 0.5rem;
 }
-
 .recommendation-item small {
   display: inline-flex;
   align-items: center;
@@ -523,23 +458,18 @@
   border-radius: 20px;
   margin-top: 0.5rem;
 }
-
 .recommendation-item.high-priority small {
   background: rgba(220, 53, 69, 0.1);
   color: #c53030;
 }
-
 .recommendation-item.medium-priority small {
   background: rgba(255, 193, 7, 0.1);
   color: #d69e2e;
 }
-
 .recommendation-item.low-priority small {
   background: rgba(108, 117, 125, 0.1);
   color: #718096;
 } 
-
-/* No recommendations styling */
 .no-recommendations {
   text-align: center;
   padding: 3rem 2rem;
@@ -547,7 +477,6 @@
   border-radius: 12px;
   border: 2px dashed #cbd5e0;
 }
-
 .no-recommendations-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
@@ -558,14 +487,12 @@
   margin-bottom: 1rem;
   font-family: "Poppins-Regular", sans-serif;
 }
-
 .no-recommendations p {
   color: #4a5568;
   font-size: 1.1rem;
   margin-bottom: 1rem;
   font-family: "Poppins-Regular", sans-serif;
 }
-
 .no-recommendations-subtitle {
   color: #4a5568;
   font-size: 1rem;
@@ -573,7 +500,6 @@
   opacity: 0.8;
   font-family: "Poppins-Regular", sans-serif;
 }
-
 .no-recommendations-actions {
   margin-top: 1.5rem;
   display: flex;
@@ -581,32 +507,26 @@
   justify-content: center;
   flex-wrap: wrap;
 }
-
 .no-recommendations p:last-child {
   margin-bottom: 0;
   font-size: 1rem;
   opacity: 0.8;
 }
-/* Debug info styling (you can remove this later) */
 .recommendations-wrapper [style*="background: #f0f0f0"] {
   background: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 100%) !important;
   border: 1px solid #cbd5e0;
   border-radius: 8px;
   font-family: "Poppins-Regular", sans-serif;
 }
-
 .recommendations-wrapper [style*="background: #f0f0f0"] strong {
   color: #2d3748;
   font-family: "Poppins-SemiBold", sans-serif;
 }
-
 .recommendations-wrapper [style*="background: #f0f0f0"] p {
   color: #4a5568;
   margin: 0.5rem 0;
   font-size: 0.9rem;
 }
-
-/* Animation effects */
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -617,19 +537,15 @@
     transform: translateY(0);
   }
 }
-
 .recommendation-item {
   animation: slideInUp 0.4s ease-out;
 }
-
-/* Stagger the animation for multiple items */
 .recommendation-item:nth-child(1) { animation-delay: 0.1s; }
 .recommendation-item:nth-child(2) { animation-delay: 0.2s; }
 .recommendation-item:nth-child(3) { animation-delay: 0.3s; }
 .recommendation-item:nth-child(4) { animation-delay: 0.4s; }
 .recommendation-item:nth-child(5) { animation-delay: 0.5s; }
 
-/* Icons for different types */
 .recommendation-item::after {
   content: '';
   position: absolute;
@@ -640,8 +556,6 @@
   background-size: 24px 24px;
   opacity: 0.6;
 }
-
-/* Type-specific icons using CSS */
 .recommendation-item small::before {
   content: '';
   display: inline-block;
@@ -650,98 +564,14 @@
   border-radius: 50%;
   margin-right: 0.5rem;
 }
-
 .recommendation-item.high-priority small::before {
   background: #dc3545;
 }
-
 .recommendation-item.medium-priority small::before {
   background: #ffc107;
 }
-
 .recommendation-item.low-priority small::before {
   background: #6c757d;
-}
-
-/* Responsive design */
-@media screen and (max-width: 768px) {
-  .recommendation-item {
-    padding: 1.25rem;
-    margin-bottom: 0.75rem;
-  }
-  .recommendations-header {
-    margin-bottom: 1rem;
-  }
-  .chart-label {
-    font-size: 10px !important;
-  }
-  .recommendation-text {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-  }
-  .recommendation-item small {
-    font-size: 0.8rem;
-    padding: 0.2rem 0.6rem;
-  }
-  .no-recommendations {
-    padding: 2rem 1rem;
-  }
-  .no-recommendations p {
-    font-size: 1rem;
-  }
-  .recommendation-item small {
-    padding-top: 0;
-    margin-top: 0rem;
-  }
-  .chart-title {
-    margin-top: 1rem;
-    font-size: 16px;
-  }
-  .category-section {
-    padding: 0.25rem;
-  }
-  .category-header {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-  .ask-header {
-    margin-top: 0.75rem;
-  }
-  .ask-wrapper {
-    padding: 0 !important;
-    align-content: center;
-  }
-  .ask-title {
-    font-size: 18px;
-  }
-  .recommendations-subtitle {
-    font-size: 13px;
-  }
-  .recommendations-list {
-    gap: 0rem;
-  }
-}
-
-/* Dark mode support (if you plan to add it later) */
-@media (prefers-color-scheme: dark) {
-  .recommendation-item {
-    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-    border-color: #4a5568;
-    color: #e2e8f0;
-  }
-  
-  .recommendation-text {
-    color: #e2e8f0;
-  }
-  
-  .no-recommendations {
-    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-    border-color: #4a5568;
-  }
-  
-  .no-recommendations p {
-    color: #cbd5e0;
-  }
 }
 .ask-wrapper {
   padding: 0.5rem 1rem 0 0;
@@ -768,7 +598,6 @@
 .category-score {
   margin-right: 0.75rem;
 }
-
 .no-data-message {
   text-align: center;
   padding: 30px;
@@ -776,14 +605,12 @@
   border-radius: 8px;
   margin-bottom: 20px;
 }
-
 .no-data-message p {
   font-size: 16px;
   color: #555;
   margin-bottom: 15px;
 }
 /* -------- Insights RAG UI Styles --------- */
-
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -795,7 +622,6 @@
   margin: 0.25rem auto 1rem auto; /* Center with auto margins */
   width: calc(100% - 10rem); /* Reduce width to create equal spacing */
 }
-
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -809,62 +635,51 @@
   position: relative;
   z-index: 25;
 }
-
 .chat-message {
   display: flex;
   max-width: 90%;
   animation: fadeIn 0.3s ease-in-out;
 }
-
 .user-message {
   align-self: flex-end;
 }
-
 .assistant-message {
   align-self: flex-start;
 }
-
 .system-message {
   align-self: center;
   max-width: 95%;
 }
-
 .message-content {
   padding: 0.5rem 1rem;
   margin: 0.5rem 1rem;
   border-radius: 18px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
-
 .user-message .message-content {
   background-color: #b9d2f4df;
   color: black;
   border-bottom-right-radius: 4px;
 }
-
 .assistant-message .message-content {
   background-color: #e9f8eb;
   color: #333;
   border-bottom-left-radius: 4px;
 }
-
 .system-message .message-content {
   background-color: #b2d8b8;
   color: #333;
   border-radius: 12px;
   font-weight: 500;
 }
-
 .message-content p {
   margin: 0;
   line-height: 1.5;
   font-family: "Poppins-Regular", sans-serif;
 }
-
 .message-content p + p {
   margin-top: 0.5rem;
 }
-
 .chat-input-container {
   display: flex;
   background-color: white;
@@ -872,7 +687,6 @@
   padding: 1rem 0;
   align-items: flex-end;
 }
-
 .chat-input {
   flex: 1;
   border: none;
@@ -887,12 +701,10 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
-
 .chat-input:focus {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   background-color: white;
 }
-
 .chat-submit-btn {
   background-color: #5cb15d;
   color: white;
@@ -908,18 +720,14 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
-
 .chat-submit-btn:hover {
   background-color: #46953f;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 .chat-submit-btn:active {
   transform: translateY(0);
 }
-
-/* Loading indicator */
 .typing-indicator {
   display: flex;
   align-items: center;
@@ -931,7 +739,6 @@
   margin-top: 0.5rem;
   margin-left: 0.5rem;
 }
-
 .typing-indicator span {
   height: 8px;
   width: 8px;
@@ -941,20 +748,16 @@
   margin-right: 5px;
   animation: typing 1.4s infinite ease-in-out;
 }
-
 .typing-indicator span:nth-child(1) {
   animation-delay: 0s;
 }
-
 .typing-indicator span:nth-child(2) {
   animation-delay: 0.2s;
 }
-
 .typing-indicator span:nth-child(3) {
   animation-delay: 0.4s;
   margin-right: 0;
 }
-
 @keyframes typing {
   0%,
   60%,
@@ -965,7 +768,6 @@
     transform: translateY(-8px);
   }
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -976,8 +778,6 @@
     transform: translateY(0);
   }
 }
-
-/* Scrollbar styling */
 .chat-messages::-webkit-scrollbar {
   width: 6px;
 }
@@ -985,16 +785,13 @@
 .chat-messages::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .chat-messages::-webkit-scrollbar-thumb {
   background-color: #dadce0;
   border-radius: 6px;
 }
-
 .chat-messages::-webkit-scrollbar-thumb:hover {
   background-color: #babbbd;
 }
-
 #chatInfoModal .modal-card {
   max-height: 80vh; /* Limit height to 80% of viewport height */
   overflow-y: auto; /* Enable vertical scrolling */
@@ -1013,42 +810,34 @@
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
 }
-
 .source-item:last-child {
   margin-bottom: 0;
 }
-
 .source-title {
   font-weight: 500;
   color: #4379ba;
 }
-
 .source-similarity {
   color: #666;
   font-size: 0.8rem;
 }
-
-/* ------------ Labs Summary Styles -----------  */
 .labs-summary-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
 }
-
 .labs-title-wrapper {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 1rem;
 }
-
 .lab-summary-container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-
 .lab-status-card {
   background-color: #ffffff;
   border-radius: 12px;
@@ -1056,14 +845,12 @@
   padding: 1.5rem 10rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-
 .lab-status-title {
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 1.2rem;
   color: #333;
   margin-bottom: 1.5rem;
 }
-
 .labs-stats-container {
   display: flex;
   align-items: flex-end;
@@ -1071,7 +858,6 @@
   gap: 2rem;
   /* margin: 1rem 3rem 1.5rem 3rem; */
 }
-
 .lab-stat-box {
   flex: 1;
   text-align: center;
@@ -1080,7 +866,6 @@
   flex-direction: column;
   align-items: center;
 }
-
 .lab-stat-number {
   font-family: "Poppins-Bold", sans-serif;
   font-size: 2.5rem;
@@ -1089,21 +874,17 @@
   align-items: center;
   justify-content: center;
 }
-
 .count-number {
   transition: all 0.3s ease;
 }
-
 .lab-stat-label {
   font-family: "Poppins-Regular", sans-serif;
   font-size: 0.9rem;
   color: #666;
 }
-
 .lab-stats-chart {
   margin: 1.5rem 0;
 }
-
 .chart-container {
   display: flex;
   align-items: flex-end;
@@ -1112,7 +893,6 @@
   gap: 2rem;
   margin-bottom: 10px;
 }
-
 .chart-bar {
   border-radius: 5px 5px 0 0;
   display: flex;
@@ -1121,11 +901,9 @@
   padding-top: 10px;
   transition: height 1s ease;
 }
-
 .chart-bar.in-range {
   background-color: #dbdbdb;
 }
-
 .chart-bar.improving {
   background-color:  #dbdbdb;
 }
@@ -1135,7 +913,6 @@
 .chart-bar.declining {
   background-color: #dbdbdb;
 }
-
 .lab-stat-number.in-range {
   color: #7db17f;
 }
@@ -1148,30 +925,24 @@
 .lab-stat-number.declining {
   color: #d76f6f;
 }
-/* Colors for non-empty bars - directly target height styles */
 .chart-bar.in-range:not([style*="height: 10px"]) {
   background-color: #7db17f !important; /* Green */
 }
-
 .chart-bar.improving:not([style*="height: 10px"]) {
   background-color: #9ed3a0 !important; /* Light green */
 }
-
 .chart-bar.out-of-range:not([style*="height: 10px"]) {
   background-color: #d76f6f !important; /* Red */
 }
-
 .chart-bar.declining:not([style*="height: 10px"]) {
   background-color: #e98b8b !important; /* Light red */
 }
 .out-of-range-text {
   color: #d76f6f;
 }
-
 .improving-text {
   color: #7db17f;
 }
-
 .lab-stat-number.declining {
   color: #d76f6f;
 }
@@ -1185,7 +956,6 @@
   transform: translateX(-50%);
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
-
 .chart-labels {
   display: flex;
   justify-content: space-between;
@@ -1399,26 +1169,21 @@
   visibility: visible;
   display: flex;
 }
-
 .zero-value {
   position: absolute;
   top: -25px;
   font-size: 1.25rem;
   font-family: "Poppins-Bold", sans-serif;
 }
-
 .upload-button {
   background-color: #5cb15d;
 }
-
 .upload-button:hover {
   background-color: #46953f;
 }
-
 .profile-button {
   background-color: #63b1f1;
 }
-
 .profile-button:hover {
   background-color: #1e88e5;
 }
@@ -1449,9 +1214,20 @@
   opacity: 1;
   background: linear-gradient(135deg, transparent 0%, transparent 30%, #a0aec0 30%, #a0aec0 50%, transparent 50%, transparent 80%, #a0aec0 80%);
 }
-
+@media (max-width: 1024px) {
+  .wellness-content {
+    flex-direction: column;
+  }
+  .wellness-categories {
+    max-width: 100%;
+  }
+  .wellness-chart-container {
+    order: -1; /* Move chart to top on mobile */
+    padding-top: 0;
+  }
+}
 /* Responsive design for action buttons */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
   .dashboard-content {
     margin-left: 0 !important;
     margin-top: 0 !important;
@@ -1686,6 +1462,61 @@
     height: 20px;
     width: 20px;
   }
+    .recommendation-item {
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .recommendations-header {
+    margin-bottom: 1rem;
+  }
+  .chart-label {
+    font-size: 10px !important;
+  }
+  .recommendation-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  .recommendation-item small {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+  }
+  .no-recommendations {
+    padding: 2rem 1rem;
+  }
+  .no-recommendations p {
+    font-size: 1rem;
+  }
+  .recommendation-item small {
+    padding-top: 0;
+    margin-top: 0rem;
+  }
+  .chart-title {
+    margin-top: 1rem;
+    font-size: 16px;
+  }
+  .category-section {
+    padding: 0.25rem;
+  }
+  .category-header {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .ask-header {
+    margin-top: 0.75rem;
+  }
+  .ask-wrapper {
+    padding: 0 !important;
+    align-content: center;
+  }
+  .ask-title {
+    font-size: 18px;
+  }
+  .recommendations-subtitle {
+    font-size: 13px;
+  }
+  .recommendations-list {
+    gap: 0rem;
+  }
 }
 
 @media screen and (max-width: 480px) {  
@@ -1693,10 +1524,6 @@
     width: calc(100% - 1rem); /* Minimal margins on very small screens */
     margin: 0.25rem auto 1rem auto;
   }
-  /* .chart-wrapper {
-    width: 15rem;
-    height: 15rem;
-  } */
   .in-page-link {
     font-size: 10px;
     padding: 6px 10px;
@@ -1709,18 +1536,33 @@
   .lab-date {
     font-size: 0.75rem;
   }
-  
   .lab-stats {
     width: 100%;
     justify-content: flex-start;
   }
-  
   .lab-stat {
     font-size: 0.7rem;
   }
-  
   .view-lab-link {
     align-self: flex-end;
     font-size: 0.75rem;
+  }
+}
+/* Dark mode support (if you plan to add it later) */
+@media (prefers-color-scheme: dark) {
+  .recommendation-item {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+  .recommendation-text {
+    color: #e2e8f0;
+  }
+  .no-recommendations {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border-color: #4a5568;
+  }
+  .no-recommendations p {
+    color: #cbd5e0;
   }
 }

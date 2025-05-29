@@ -60,16 +60,6 @@
     background-position: 200% 0;
   }
 }
-@media screen and (max-width: 768px) {
-  .learning-title::before {
-    animation-duration: 3.5s; /* Slightly slower on mobile */
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .learning-title::before {
-    animation: none;
-  }
-}
 .learning-subtitle {
   font-family: "Poppins-Regular", sans-serif;
   font-size: clamp(14px, 3vw, 18px);
@@ -230,95 +220,101 @@
 .amazon-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233a9ea3' d='M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595.178-.068.315-.14.41-.09.09.11.06.226-.087.35-2.743 2.328-6.973 3.52-12.683 3.52-4.707 0-8.866-1.74-12.477-5.22-.214-.154-.32-.28-.32-.38 0-.1.072-.219.315-.379zm20.055-2.882c-.185 0-.315.022-.39.067-.075.045-.075.09 0 .135.185.135.39.27.615.405.225.135.435.225.63.27.195.045.3-.045.315-.27 0-.315-.315-.607-.945-.607zM12 9c1.38 0 2.5 1.12 2.5 2.5S13.38 14 12 14s-2.5-1.12-2.5-2.5S10.62 9 12 9z'/%3E%3C/svg%3E");
 }
-
 .goodreads-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233a9ea3' d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16c-.169 1.958-.896 3.728-2.182 5.312-.597.734-1.322 1.361-2.175 1.881-.853.52-1.851.78-2.994.78-.773 0-1.467-.12-2.084-.36-.616-.24-1.136-.578-1.558-1.014-.422-.436-.74-.954-.952-1.554-.213-.6-.32-1.257-.32-1.973 0-.796.118-1.54.355-2.23.237-.69.578-1.29 1.024-1.801.446-.51.99-.909 1.632-1.197.642-.288 1.376-.432 2.202-.432 1.307 0 2.412.353 3.315 1.059.903.706 1.354 1.672 1.354 2.898 0 .316-.02.62-.061.914z'/%3E%3C/svg%3E");
 }
-
 .web-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233a9ea3' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E");
 }
   
-  /* Media Queries */
-  @media screen and (max-width: 768px) {
-    .content-container {
-      width: 90%;
-      margin: 2rem auto;
-    }
-    body.menu-open .content-container {
-      transition: margin-top 0.3s ease;
-      margin-top: var(--mobile-menu-height, 200px);
-    }
-    .learning-subtitle {
-      font-size: 13px;
-    }
-    .learning-center {
-      margin-top: 0;
-      padding: 0 1rem;
-    }
-    .learning-header {
-      padding-top: 1rem;
-      margin-bottom: 1rem;
-    }
-    .podcast-title{
-      margin-bottom: 0;
-    }
-    .podcast-content {
-      flex-direction: column;
-    }
-    .podcast-image-container {
-      margin-right: 0;
-      margin-bottom: 15px;
-    }
-    .podcast-links {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .podcast-link {
-      font-size: 13px;
-    }
-    .view-link {
-      margin-left: 0;
-    }
-    .coming-soon-message {
-      width: auto;
-    }
-    .books-container {
-      margin-top: 0;
-    }
-    .learning-section-divider{
-      margin: 1rem 0;
-    }
+/* Media Queries */
+@media screen and (max-width: 767px) {
+  .content-container {
+    width: 90%;
+    margin: 2rem auto;
   }
-  
-  @media screen and (max-width: 480px) {
-    .learning-title {
-      font-size: 28px;
-    }
-  
-    .podcast-image-container {
-      flex: 0 0 80px;
-    }
-  
-    .podcast-image {
-      width: 80px;
-      height: 80px;
-    }
-  
-    .podcast-title {
-      font-size: 18px;
-    }
-  
-    .podcast-description {
-      font-size: 13px;
-    }
-  
-    .podcast-link {
-      font-size: 12px;
-    }
-    .platform-icon {
-      width: 16px;
-      height: 16px;
-    }
+  body.menu-open .content-container {
+    transition: margin-top 0.3s ease;
+    margin-top: var(--mobile-menu-height, 200px);
   }
+  .learning-subtitle {
+    font-size: 13px;
+  }
+  .learning-center {
+    margin-top: 0;
+    padding: 0 1rem;
+  }
+  .learning-header {
+    padding-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .podcast-title{
+    margin-bottom: 0;
+  }
+  .podcast-content {
+    flex-direction: column;
+  }
+  .podcast-image-container {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+  .podcast-links {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .podcast-link {
+    font-size: 13px;
+  }
+  .view-link {
+    margin-left: 0;
+  }
+  .coming-soon-message {
+    width: auto;
+  }
+  .books-container {
+    margin-top: 0;
+  }
+  .learning-section-divider{
+    margin: 1rem 0;
+  }
+  .learning-title::before {
+    animation-duration: 3.5s; /* Slightly slower on mobile */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .learning-title {
+    font-size: 28px;
+  }
+
+  .podcast-image-container {
+    flex: 0 0 80px;
+  }
+
+  .podcast-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .podcast-title {
+    font-size: 18px;
+  }
+
+  .podcast-description {
+    font-size: 13px;
+  }
+
+  .podcast-link {
+    font-size: 12px;
+  }
+  .platform-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .learning-title::before {
+    animation: none;
+  }
+}

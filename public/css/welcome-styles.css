@@ -1,10 +1,8 @@
 /* ------------- Welcome Page styles --------------- */
-
 .step-container {
     display: none;
     animation: fadeIn 0.5s ease;
   }
-  
 .welcome-step-number {
   background-color: var(--grey-primary);
   color: white;
@@ -20,7 +18,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-right: 1rem;
 }
-
 .step-content {
   background-color: white;
   border-radius: 12px;
@@ -28,7 +25,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.5s ease;
 }
-
 .step-title {
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 1.25rem;
@@ -37,14 +33,12 @@
   display: flex;
   align-items: center;
 }
-
 .step-description {
   font-family: "Poppins-Regular", sans-serif;
   font-size: 1rem;
   color: #4a4a4a;
   line-height: 1.6;
 }
-
 .highlight {
   background-color: rgba(92, 177, 93, 0.1);
   border-left: 3px solid #5cb15d;
@@ -52,13 +46,11 @@
   margin: 1rem 0;
   border-radius: 0 8px 8px 0;
 }
-
 .actions {
   display: flex;
   margin-top: 1.5rem;
   gap: 12px;
 }
-
 .button-next {
   background-color: #5cb15d;
   color: white;
@@ -69,13 +61,11 @@
   font-family: "Poppins-Regular", sans-serif;
   transition: all 0.3s ease;
 }
-
 .button-next:hover {
   background-color: #46953f;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 .button-skip {
   background-color: transparent;
   color: #666;
@@ -86,12 +76,9 @@
   font-family: "Poppins-Regular", sans-serif;
   transition: all 0.3s ease;
 }
-
 .button-skip:hover {
   background-color: #f5f5f5;
 }
-
-/* Navigation highlight effect */
 .highlight-nav {
   position: absolute;
   background-color: rgba(92, 177, 93, 0.2);
@@ -108,7 +95,6 @@
   height: 0;
   transition: opacity 0.3s ease;
 }
-
 body.tutorial-active .highlight-nav.show {
   display: block !important;
   visibility: visible !important;
@@ -119,7 +105,6 @@ body.tutorial-active .highlight-nav:not(.show) {
   visibility: hidden !important;
   opacity: 0;
 }
-
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(92, 177, 93, 0.4);
@@ -131,7 +116,6 @@ body.tutorial-active .highlight-nav:not(.show) {
     box-shadow: 0 0 0 0 rgba(92, 177, 93, 0);
   }
 }
-
 /* Arrow styles */
 .arrow {
   position: absolute;
@@ -141,13 +125,11 @@ body.tutorial-active .highlight-nav:not(.show) {
   z-index: 89;
   visibility: hidden !important;
 }
-
 .arrow svg {
   width: 100%;
   height: 100%;
   filter: drop-shadow(0 2px 4px rgba(92, 177, 93, 0.3));
 }
-
 /* Fade in animation */
 @keyframes fadeInUp {
   from {
@@ -159,12 +141,9 @@ body.tutorial-active .highlight-nav:not(.show) {
     transform: translateY(0);
   }
 }
-
 .fade-in {
   animation: fadeInUp 0.8s forwards;
 }
-
-/* Progress bar */
 .progress-container {
   width: 100%;
   background-color: #f1f1f1;
@@ -174,15 +153,12 @@ body.tutorial-active .highlight-nav:not(.show) {
   height: 4px;
   overflow: hidden;
 }
-
 .progress-bar {
   height: 4px;
   background-color: #5cb15d;
   width: 0%;
   transition: width 0.6s ease;
 }
-
-/* Welcome card */
 .welcome-card {
   background-color: white;
   border-radius: 16px;
@@ -190,23 +166,19 @@ body.tutorial-active .highlight-nav:not(.show) {
   margin: 2rem 1rem;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
-
 .welcome-header {
   text-align: center;
   margin-bottom: 2rem;
 }
-
 .welcome-title {
   font-size: 2rem;
   color: #5cb15d;
   margin-bottom: 0.5rem;
 }
-
 .welcome-subtitle {
   font-size: 1.1rem;
   color: #666;
 }
-
 .get-started-btn {
   display: inline-block;
   background-color: #77c778;
@@ -220,7 +192,6 @@ body.tutorial-active .highlight-nav:not(.show) {
   box-shadow: 0 4px 10px rgba(92, 177, 93, 0.3);
   transition: all 0.3s ease;
 }
-
 .get-started-btn:hover {
   background-color: #46953f;
   box-shadow: 0 6px 15px rgba(92, 177, 93, 0.4);
@@ -228,7 +199,6 @@ body.tutorial-active .highlight-nav:not(.show) {
   color: #fff;
   font-size: 1rem;
 }
-
 /* Feature overview */
 .feature-overview {
   display: grid;
@@ -236,7 +206,6 @@ body.tutorial-active .highlight-nav:not(.show) {
   gap: 1.5rem;
   margin-top: 2rem;
 }
-
 .feature-item {
   background-color: #f9f9f9;
   border-radius: 12px;
@@ -244,35 +213,29 @@ body.tutorial-active .highlight-nav:not(.show) {
   text-align: center;
   transition: all 0.3s ease;
 }
-
 .feature-item:hover {
   /* transform: translateY(-5px); */
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid var(--green-primary);
   cursor: pointer;
 }
-
 .feature-icon {
   font-size: 2rem;
   color: #5cb15d;
   margin-bottom: 1rem;
 }
-
 .feature-title {
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
 }
-
 .feature-description {
   font-size: 0.9rem;
   color: #666;
 }
-
 .steps-container2 {
   display: none;
 }
-
 /* Force override for sidebar links when hovering on features */
 body[data-profile-hover="true"] #Profile {
   background-color: #bcdcbe !important;
@@ -280,28 +243,24 @@ body[data-profile-hover="true"] #Profile {
   position: relative !important;
   border-radius: 10px;
 }
-
 body[data-upload-hover="true"] #Upload {
   background-color: #bcdcbe !important;
   z-index: 10000 !important;
   position: relative !important;
   border-radius: 10px;
 }
-
 body[data-reports-hover="true"] #Reports {
   background-color: #bcdcbe !important;
   z-index: 10000 !important;
   position: relative !important;
   border-radius: 10px;
 }
-
 body[data-insights-hover="true"] #Insights {
   background-color: #bcdcbe !important;
   z-index: 10000 !important;
   position: relative !important;
   border-radius: 10px;
 }
-
 /* Push content down when menu is open */
 body.menu-open .dashboard-content {
   padding-top: calc(60px + var(--mobile-menu-height, 0px));
@@ -328,8 +287,6 @@ body.menu-open .dashboard-content {
   z-index: 90;
   animation: pulse 2s infinite;
 }
-
-/* Ensure body has position relative for absolute positioning */
 body {
   position: relative;
   min-height: 100vh;
@@ -339,12 +296,10 @@ body.tutorial-active .arrow {
   visibility: visible !important;
   animation: arrowFloat 2s ease-in-out infinite;
 }
-
 body.tutorial-active .highlight-nav {
   display: block !important;
   visibility: visible !important;
 }
-
 @keyframes arrowFloat {
   0%, 100% { 
     transform: translateY(0px);
@@ -357,7 +312,7 @@ body.tutorial-active .highlight-nav {
 }
 
 /* Responsive layout adjustments */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .get-started-btn {
     margin: 0.75rem 0;
     padding: 0.5rem 0.35rem;
@@ -458,9 +413,6 @@ body.tutorial-active .highlight-nav {
     display: block !important;
     visibility: visible !important;
   }
-   /* body.tutorial-active.menu-open .dashboard-content {
-    padding-top: 70px !important;
-  } */
 }
 
 /* Small screen adjustments */
@@ -469,9 +421,4 @@ body.tutorial-active .highlight-nav {
     padding: 1.25rem;
     margin: 0.75rem;
   }
-  
-  /* .get-started-btn {
-    margin: 0.75rem 0;
-    width: 10rem;
-  } */
 }

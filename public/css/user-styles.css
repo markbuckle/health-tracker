@@ -480,13 +480,11 @@
     min-height: 400px;
     position: relative;
   }
-  
   .w-tab-pane .html-embed.chart > div {
     height: 100% !important;
     width: 100% !important;
     position: absolute;
   }
-  
   .w-embed:before,
   .w-embed:after {
     content: " ";
