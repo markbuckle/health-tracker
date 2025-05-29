@@ -30,7 +30,7 @@
 }
 
 .header-logo {
-  height: 40px;
+  height: 30px;
   width: auto;
 }
 
@@ -52,7 +52,7 @@
 /* Mobile Menu - Updated for full width and push down content */
 .mobile-menu {
   position: fixed;
-  top: 60px;
+  top: 50px;
   left: 0;
   width: 100%;
   background-color: #fff;
@@ -131,7 +131,11 @@
 .mobile-menu-toggle.open .hamburger-line:nth-child(3) {
   transform: translateY(-9px) rotate(-45deg);
 }
-
+.mobile-menu .page-link:nth-child(1),
+.mobile-menu .page-link:nth-child(2),
+.mobile-menu .page-link:nth-child(3) {
+ border-right: 1px solid #f0f0f0;
+}
 .mobile-menu .page-link:nth-child(1), /* Profile */
 .mobile-menu .page-link:nth-child(2), /* Upload */
 .mobile-menu .page-link:nth-child(3), /* Reports */
@@ -144,9 +148,10 @@
   text-align: center;
   padding: 8px 4px;
   border-bottom: 1px solid #f0f0f0;
+}
+.mobile-menu .page-link:nth-child(5) {
   border-right: 1px solid #f0f0f0;
 }
-
 .mobile-menu .page-link:nth-child(5), /* Help */
 .mobile-menu .page-link:nth-child(6)  /* Logout */ {
   grid-row: 2;
@@ -157,7 +162,7 @@
   justify-content: center;
   padding: 10px 8px; /* Increase vertical padding for better alignment */
   text-decoration: none; /* Add this */
-  border-right: 1px solid #f0f0f0;
+  /* border-right: 1px solid #f0f0f0; */
   color: #333;
 }
 
@@ -222,35 +227,44 @@
   .mobile-menu-toggle {
     height: 16px;
   }
-  /* .mobile-menu.open {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    max-height: 100vh !important;
-  } */
+  .mobile-menu.open {
+    padding: 0 !important;
+  }
   .sidebar {
     display: none;
   }
-  
   .dashboard-content {
     margin-left: 0;
     padding-top: 60px;
   }
-  
   .welcome-card {
     margin: 1rem;
     padding: 1.5rem;
   }
-  
   .welcome-title {
     font-size: 1.5rem;
   }
-  
   .feature-overview {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+  .page-link {
+    margin-top: 0;
+  }
   .page-link-text-span {
-    font-size: 12px;
+    font-size: 13px !important;
+    margin: 0 0.45rem;
+  }
+  .nav-icon {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .page-link-text-block {
+    justify-content: center !important;
+    flex: none;
+  }
+  .mobile-menu .page-link:nth-child(5), 
+  .mobile-menu .page-link:nth-child(6) {
+    text-align: center;
   }
 }

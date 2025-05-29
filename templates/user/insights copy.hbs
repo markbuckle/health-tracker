@@ -486,7 +486,7 @@
 
               <!-- Ask Tab -->
               <div data-w-tab="Ask" class="w-tab-pane">
-                <div class="chatbot-card">
+                <div class="wellness-summary-card">
                   <div class="ask-wrapper">
                     <div class="ask-header">
                       <h2 class="ask-title">Ask Reed</h2>
@@ -512,7 +512,6 @@
                             </p>
                           </div>
                         </div>
-                        <div class="chatbot-resize-handle"></div>
                       </div>
 
                       <!-- Input area -->
@@ -874,12 +873,12 @@
           const typingDiv = document.createElement("div");
           typingDiv.className = "chat-message assistant-message typing";
           typingDiv.innerHTML = `
-            <div class="typing-indicator">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          `;
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    `;
           chatMessages.appendChild(typingDiv);
           chatMessages.scrollTop = chatMessages.scrollHeight;
         }
@@ -950,25 +949,25 @@
           modal.id = "chatInfoModal";
           modal.className = "modal-wrapper modal-wrapper-1 active";
           modal.innerHTML = `
-            <div class="modal-background"></div>
-            <div class="modal-card">
-              <div class="modal-header">
-                <a class="modal-return-button w-inline-block w--current" aria-current="page">
-                  {{> svg/backArrow}}
-                </a>
-                <h1 class="modal-button">About Reed</h1>
-              </div>
-              <div class="modal-description">
-                <p>Reed is your health knowledge assistant powered by retrieval-augmented generation (RAG). Reed only provides information based on trusted health resources in our database.</p>
-                <p>Unlike generic AI chatbots, Reed doesn't make things up - it will only answer with information it can find in reliable sources.</p>
-                <p>Note that Reed is currently in early development with a limited knowledge base. We're using free embeddings and a lightweight model, which can often leave a disappointing response quality. As we expand our database and upgrade to premium services, you can expect significantly improved accuracy and more comprehensive answers.</p>
-                ${sourcesHTML}
-              </div>
-              <div class="modal-footer">
-                <a class="cancel-button cancel-space">Close</a>
-              </div>
-            </div>
-          `;
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <div class="modal-header">
+          <a class="modal-return-button w-inline-block w--current" aria-current="page">
+            {{> svg/backArrow}}
+          </a>
+          <h1 class="modal-button">About Reed</h1>
+        </div>
+        <div class="modal-description">
+          <p>Reed is your health knowledge assistant powered by retrieval-augmented generation (RAG). Reed only provides information based on trusted health resources in our database.</p>
+          <p>Unlike generic AI chatbots, Reed doesn't make things up - it will only answer with information it can find in reliable sources.</p>
+          <p>Note that Reed is currently in early development with a limited knowledge base. We're using free embeddings and a lightweight model, which can often leave a disappointing response quality. As we expand our database and upgrade to premium services, you can expect significantly improved accuracy and more comprehensive answers.</p>
+          ${sourcesHTML}
+        </div>
+        <div class="modal-footer">
+          <a class="cancel-button cancel-space">Close</a>
+        </div>
+      </div>
+    `;
 
           document.body.appendChild(modal);
 
@@ -983,7 +982,6 @@
             .querySelector(".modal-return-button")
             .addEventListener("click", () => modal.remove());
         }
-        initializeChatbotCardResize();
       });
     </script>
     <script> // Labs Summary JavaScript
@@ -1206,101 +1204,6 @@
           });
         });
       });
-    </script>
-    <script> // chat-messages size adjuster
-      function initializeChatbotCardResize() {
-        const chatbotCard = document.querySelector('.chatbot-card');
-        const chatMessages = document.getElementById('chat-messages');
-        const resizeHandle = document.querySelector('.chatbot-resize-handle');
-        
-        if (!chatbotCard || !chatMessages || !resizeHandle) return;
-        
-        let isResizing = false;
-        let startY = 0;
-        let startChatHeight = 0;
-        let startCardHeight = 0;
-        
-        // Mouse events for desktop
-        resizeHandle.addEventListener('mousedown', initResize);
-        document.addEventListener('mousemove', doResize);
-        document.addEventListener('mouseup', stopResize);
-        
-        // Touch events for mobile
-        resizeHandle.addEventListener('touchstart', initResizeTouch, { passive: false });
-        document.addEventListener('touchmove', doResizeTouch, { passive: false });
-        document.addEventListener('touchend', stopResize);
-        
-        function initResize(e) {
-          isResizing = true;
-          startY = e.clientY;
-          startChatHeight = parseInt(window.getComputedStyle(chatMessages).height, 10);
-          startCardHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
-          document.body.style.userSelect = 'none';
-          e.preventDefault();
-        }
-        
-        function initResizeTouch(e) {
-          isResizing = true;
-          startY = e.touches[0].clientY;
-          startChatHeight = parseInt(window.getComputedStyle(chatMessages).height, 10);
-          startCardHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
-          document.body.style.userSelect = 'none';
-          e.preventDefault();
-        }
-        
-        function doResize(e) {
-          if (!isResizing) return;
-          
-          const currentY = e.clientY;
-          const diff = currentY - startY;
-          const newChatHeight = startChatHeight + diff;
-          const newCardHeight = startCardHeight + diff;
-          
-          // Set min and max heights
-          const minChatHeight = window.innerWidth <= 768 ? 180 : 150;
-          const maxChatHeight = window.innerWidth <= 768 
-            ? Math.min(window.innerHeight * 0.6, 500)    // Mobile
-            : Math.min(window.innerHeight * 0.6, 600);  // Desktop 
-          
-          if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
-            // Resize chat-messages directly
-            chatMessages.style.height = newChatHeight + 'px';
-            chatMessages.style.flex = 'none';
-            
-            // Resize chatbot-card indirectly
-            chatbotCard.style.height = newCardHeight + 'px';
-            chatbotCard.style.minHeight = 'auto';
-          }
-        }
-        
-        function doResizeTouch(e) {
-          if (!isResizing) return;
-          
-          const currentY = e.touches[0].clientY;
-          const diff = currentY - startY;
-          const newChatHeight = startChatHeight + diff;
-          const newCardHeight = startCardHeight + diff;
-          
-          // Slightly smaller limits for mobile
-          const minChatHeight = 140;
-          const maxChatHeight = Math.min(window.innerHeight * 0.55, 500);
-          
-          if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
-            chatMessages.style.height = newChatHeight + 'px';
-            chatMessages.style.flex = 'none';
-            
-            chatbotCard.style.height = newCardHeight + 'px';
-            chatbotCard.style.minHeight = 'auto';
-          }
-          
-          e.preventDefault();
-        }
-        
-        function stopResize() {
-          isResizing = false;
-          document.body.style.userSelect = '';
-        }
-      }
     </script>
   </body>
 </html>

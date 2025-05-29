@@ -956,6 +956,10 @@ hbs.registerHelper('getKeys', function(obj) {
   return obj ? Object.keys(obj) : [];
 });
 
+hbs.registerHelper('typeof', function(value) {
+  return typeof value;
+});
+
 // Helper function to calculate biomarker summary
 function calculateBiomarkerSummary(files, biomarkers) {
   // Add defensive check at the beginning

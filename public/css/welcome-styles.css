@@ -106,11 +106,18 @@
   left: 0;
   width: 0;
   height: 0;
+  transition: opacity 0.3s ease;
 }
 
 body.tutorial-active .highlight-nav.show {
   display: block !important;
   visibility: visible !important;
+  opacity: 1;
+}
+body.tutorial-active .highlight-nav:not(.show) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0;
 }
 
 @keyframes pulse {

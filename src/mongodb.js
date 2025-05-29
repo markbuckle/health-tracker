@@ -83,18 +83,27 @@ const lifestyleSchema = new mongoose.Schema(
 
 const medsAndSupsSchema = new mongoose.Schema(
   {
-    medicine: {
+    type: {
       type: String,
-      default: null,
+      enum: ["Medication", "Supplement"],
+      required: true
     },
-    supplement: {
+    name: {
       type: String,
-      default: null,
+      required: true
     },
-    medsAndSupsNotes: {
+    dosage: {
       type: String,
-      default: null,
+      default: null
     },
+    frequency: {
+      type: String,
+      default: null
+    },
+    notes: {
+      type: String,
+      default: null
+    }
   },
   { _id: true }
 );

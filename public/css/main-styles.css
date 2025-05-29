@@ -1006,6 +1006,18 @@ label[for="customBloodType"] {
   text-decoration: underline;
 }
 
+.simple-info-modal {
+  display: none; 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  background-color: rgba(0,0,0,0.5); 
+  z-index: 1000; 
+  padding-left: 160px;
+}
+
 /* ----- Button Touch Device Optimizations ----- */
 @media (hover: none) {
   .button-basics:active,
@@ -1085,17 +1097,24 @@ label[for="customBloodType"] {
     font-size: 1rem;
   }
 }
-
 /* Standard Desktop (1200px - 1399px) */
 @media screen and (min-width: 1200px) and (max-width: 1399px) {
+  .quote-1 {
+    font-size: 2rem;
+  }
+  .quote-2 {
+    font-size: 1.4rem;
+    max-width: 80%;
+  }
+  .use-cases-container {
+    max-width: 900px;
+  }
   .content-container {
     width: 70%;
   }
-  
   .center-header {
     gap: 2rem;
   }
-  
   .header-links {
     font-size: 13px;
   }
@@ -1106,15 +1125,12 @@ label[for="customBloodType"] {
   .content-container {
     width: 85%;
   }
-  
   .center-header {
     gap: 1.5rem;
   }
-  
   .header-links {
     font-size: 12px;
   }
-  
   .auth-button {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
@@ -1126,25 +1142,20 @@ label[for="customBloodType"] {
   .content-container {
     width: 90%;
   }
-  
   .header-container {
     padding: 0 1rem;
   }
-  
   .center-header {
     gap: 1rem;
   }
-  
   .header-links {
     font-size: 11px;
     padding: 0.25rem 0.5rem;
   }
-  
   .auth-button {
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
   }
-  
   .logo-block {
     margin-right: 1rem;
   }
@@ -1152,10 +1163,6 @@ label[for="customBloodType"] {
 
 /* Tablet Portrait and below (768px and below) */
 @media screen and (max-width: 768px) {
-  /* Hide desktop header, show mobile */
-  /* .header {
-    display: none;
-  } */
   .page-link {
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -1164,22 +1171,17 @@ label[for="customBloodType"] {
   .mobile-header {
     display: block;
   }
-  
   .content-container {
     width: 95%;
     padding: 0 1rem;
   }
-  
-  /* Sidebar adjustments */
   .sidebar {
     display: none;
   }
-  
   .dashboard-content {
     margin-left: 0;
     padding: 0 1rem;
   }
-  
   .header-container-2 {
     margin-left: 0;
     padding: 1rem;
@@ -1211,95 +1213,76 @@ label[for="customBloodType"] {
   .heading {
     font-size: 2rem;
   }
-  
   .heading2 {
     font-size: 1.75rem;
-    margin-top: 4rem;
+    margin-top: 3.5rem;
   }
-  
   .subheading {
     font-size: 1.1rem;
   }
-  
   .subheading-2 {
     font-size: 0.9rem;
   }
   .footer-tagline {
     font-size: 0.8rem;
   }
-}
-
-/* Large Mobile (600px - 767px) */
-@media screen and (min-width: 600px) and (max-width: 767px) {
   .mobile-header-container {
     padding: 0.75rem 1.5rem;
     height: 3.5rem;
   }
-
   .mobile-header-logo .header-logo {
     max-height: 2rem;
     max-width: 100px;
   }
-
   .mobile-menu-toggle {
     font-size: 1.5rem;
     padding: 0.4rem;
   }
-  
   .header-logo {
     max-height: 2rem;
   }
-  
   .mobile-menu {
     width: 300px;
   }
-  
-  /* .btn-primary, */
   .btn-secondary {
     width: 85%;
     max-width: 280px;
   }
+  .modal-button {
+    font-size: 20px;
+  }
+  .modal-card {
+    margin-top: 3rem;
+  }
+  .modal-form {
+    margin: 0.25rem;
+  }
+  .blood-type-modal {
+    padding: 0;
+  }
+  .blood-type-modal .modal-card {
+    max-width: none;
+  }
 }
 
-/* Standard mobile (400px - 599px) */
-@media screen and (min-width: 400px) and (max-width: 599px) {
+/* Standard mobile */
+@media screen and (max-width: 480px) {
   .mobile-header-container {
     padding: 0.6rem 1.2rem;
     height: 3.2rem;
   }
-  
   .mobile-header-logo .header-logo {
     max-height: 1.8rem;
     max-width: 90px;
   }
-  
   .mobile-menu-toggle {
     font-size: 1.4rem;
     padding: 0.3rem;
   }
-  
   .mobile-menu {
     width: 280px;
   }
-  
   .mobile-menu .page-link {
     padding: 0.8rem 1.2rem;
-  }
-}
-
-/* Standard Desktop (1200px - 1399px) */
-@media screen and (min-width: 1200px) and (max-width: 1399px) {
-  
-  .quote-1 {
-    font-size: 2rem;
-  }
-  
-  .quote-2 {
-    font-size: 1.4rem;
-    max-width: 80%;
-  }
-  
-  .use-cases-container {
-    max-width: 900px;
   }
 }

@@ -189,34 +189,61 @@ function runPaddleOCR(filePath) {
     const command = `python ${scriptPath} "${filePath}"`;
     
     console.log(`Running command: ${command}`);
+
+    let totalPages = 1;
+    let currentPage = 0;
+    let estimatedTimePerPage = 30000; // 30 seconds per page estimate
+    let startTime = Date.now();
+    let progressInterval;
     
-    exec(command, { maxBuffer: 5 * 1024 * 1024 }, (error, stdout, stderr) => {
+    const process = exec(command, { maxBuffer: 5 * 1024 * 1024 }, (error, stdout, stderr) => {
+      // Clear the progress interval when done
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
+
       if (error) {
         console.error(`PaddleOCR error: ${error.message}`);
         console.error(`stderr: ${stderr}`);
         reject(error);
         return;
       }
-      
+        
       // Process stderr for page tracking information
       if (stderr) {
         const stderrLines = stderr.split('\n');
-        let totalPages = 1;
         
         stderrLines.forEach(line => {
           if (line.startsWith('TOTAL_PAGES:')) {
             totalPages = parseInt(line.split(':')[1]);
             console.log(`Processing document with ${totalPages} pages`);
+            
+            // Start estimated progress tracking
+            progressInterval = setInterval(() => {
+              const elapsedTime = Date.now() - startTime;
+              const estimatedCurrentPage = Math.min(
+                Math.floor(elapsedTime / estimatedTimePerPage) + 1,
+                totalPages
+              );
+              
+              if (estimatedCurrentPage > currentPage && estimatedCurrentPage <= totalPages) {
+                currentPage = estimatedCurrentPage;
+                console.log(`Processing page ${currentPage} of ${totalPages} (estimated)`);
+              }
+            }, 2000); // Update every 2 seconds
+            
           } else if (line.startsWith('CURRENT_PAGE:')) {
-            const currentPage = parseInt(line.split(':')[1]);
-            console.log(`Processing page ${currentPage} of ${totalPages}`);
+            const actualPage = parseInt(line.split(':')[1]);
+            currentPage = actualPage;
+            console.log(`Processing page ${actualPage} of ${totalPages}`);
           } else if (line.trim() && !line.startsWith('TOTAL_PAGES:') && !line.startsWith('CURRENT_PAGE:')) {
-            // Log other stderr messages as warnings
             console.warn(`PaddleOCR warnings: ${line}`);
-          }
-        });
-      }
-      
+        }
+    });
+  }
+  
+      // Send final completion message
+      console.log(`Completed processing ${totalPages} pages`);
       resolve(stdout.trim());
     });
   });
