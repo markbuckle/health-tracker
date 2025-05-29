@@ -86,6 +86,31 @@
   .biomarker-table-top._3-columns {
     width: auto;
   }
+
+@media screen and (max-width: 991px) {
+  .dashboard-content {
+    margin-right: 1rem;
+  }
+  .subheading-2 {
+    font-size: 15px;
+    margin-right: 0.5rem;
+  }
+  .biomarker-table-top._3-columns {
+    height: 4rem;
+  }
+  .biomarker-textbox-container {
+    padding: 1rem 1rem 1.5rem;
+  }
+  .html-embed {
+    padding: 0;
+    width: 65% !important;
+  }
+  .w-col-6 {
+    width: 35%;
+  }
+}
+
+
   /* Responsive adjustments */
 @media screen and (max-width: 767px) {
   .dashboard-content {

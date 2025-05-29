@@ -916,6 +916,18 @@
   margin-bottom: 0.5rem;
 }
 
+@media screen and (max-width: 991px) {
+  .lab-result-card {
+    padding: 0.5rem 0.5rem 0 0.5rem;
+  }
+  .subheading-2 {
+    margin-right: 0.5rem;
+  }
+  .file-upload-area {
+    margin: 0 1rem;
+  }
+}
+
 /* Mobile Responsive Styles for Upload Page */
 @media screen and (max-width: 767px) {
   .dashboard-content {

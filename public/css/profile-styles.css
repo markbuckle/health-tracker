@@ -570,6 +570,36 @@
   .header-container-3 {
     width: auto;
   }
+  .family-history-container {
+    max-width: auto;
+    margin: 0 0.5rem 1rem 0.5rem;
+  }
+  .family-history-entry {
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+  .family-history-column {
+    padding: 10px 6px;
+  }
+  .condition-column {
+    min-width: 110px;
+  }
+  .relatives-column {
+    min-width: 80px;
+  }
+  .notes-column {
+    min-width: 190px;
+  }
+  .actions-column {
+    min-width: 150px;
+  }
+  .history-info {
+    max-width: 40%;
+    margin-bottom: 1.5rem;
+  }
+  .entry-card {
+    margin: 0.5rem 0;
+  }
 }
 /* Responsive adjustments */
 @media screen and (max-width: 767px) {

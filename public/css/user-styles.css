@@ -670,6 +670,9 @@
     .welcome-card {
       margin-top: 10% !important;
     }
+    .user-content-bg{
+      margin-right: 1rem;
+    }
   }
 
   /* @media (max-width: 767px) {

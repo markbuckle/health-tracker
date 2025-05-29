@@ -1168,8 +1168,17 @@ label[for="customBloodType"] {
   }
   .dashboard-container {
     margin-left: 1rem;
-    margin-right: 1rem;
     margin-top: 1rem;
+  }
+  .modal-button {
+    font-size: 26px;
+    font-weight: 600;
+  }
+  .modal-description {
+    font-size: 18px;
+  }
+  .blood-type-modal {
+    margin-left: 6rem;
   }
 }
 
