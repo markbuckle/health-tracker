@@ -101,12 +101,16 @@
   .biomarker-textbox-container {
     padding: 1rem 1rem 1.5rem;
   }
-  .html-embed {
-    padding: 0;
-    width: 65% !important;
+  .columns {
+    flex-direction: row;
   }
-  .w-col-6 {
-    width: 35%;
+  .html-embed.chart {
+    width: 65% !important;
+    flex: 0 0 65%;
+  }
+  .w-col-6:has(.biomarker-textbox-container) {
+    width: 35% !important;
+    flex: 0 0 35%;
   }
 }
 
