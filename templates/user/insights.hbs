@@ -552,7 +552,7 @@
     </div>
 
     {{!-- Wellness Info Modal--}}
-    <div class="modal-wrapper modal-wrapper-1">
+    <div class="modal-wrapper wellness-info">
       <div class="modal-background"></div>
       <div class="modal-card">
         <div class="modal-header">
@@ -663,7 +663,7 @@
 
       // Info button modal
       document.querySelector(".info-button").addEventListener("click", () => {
-        document.querySelector(".modal-wrapper-1").classList.add("active");
+        document.querySelector(".wellness-info").classList.add("active");
       });
 
       // Wellness metrics modal
@@ -680,7 +680,7 @@
         .forEach((element) => {
           element.addEventListener("click", () => {
             document
-              .querySelectorAll(".modal-wrapper-1, .modal-wrapper-6")
+              .querySelectorAll(".wellness-info, .modal-wrapper-6")
               .forEach((modal) => {
                 modal.classList.remove("active");
               });
@@ -691,7 +691,7 @@
       document.querySelectorAll(".modal-return-button").forEach((button) => {
         button.addEventListener("click", () => {
           document
-            .querySelectorAll(".modal-wrapper-1, .modal-wrapper-6")
+            .querySelectorAll(".wellness-info, .modal-wrapper-6")
             .forEach((modal) => {
               modal.classList.remove("active");
             });
@@ -948,7 +948,7 @@
           // Show modal with chat info and sources
           const modal = document.createElement("div");
           modal.id = "chatInfoModal";
-          modal.className = "modal-wrapper modal-wrapper-1 active";
+          modal.className = "modal-wrapper wellness-info active";
           modal.innerHTML = `
             <div class="modal-background"></div>
             <div class="modal-card">
@@ -1257,9 +1257,9 @@
           const newCardHeight = startCardHeight + diff;
           
           // Set min and max heights
-          const minChatHeight = window.innerWidth <= 768 ? 180 : 150;
-          const maxChatHeight = window.innerWidth <= 768 
-            ? Math.min(window.innerHeight * 0.6, 500)    // Mobile
+          const minChatHeight = window.innerWidth <= 1024 ? 250 : 150;
+          const maxChatHeight = window.innerWidth <= 1024 
+            ? Math.min(window.innerHeight * 0.8, 800)    // Mobile
             : Math.min(window.innerHeight * 0.6, 600);  // Desktop 
           
           if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {

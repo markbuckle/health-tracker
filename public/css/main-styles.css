@@ -1203,6 +1203,9 @@ label[for="customBloodType"] {
     margin-left: 0;
     padding: 0 1rem;
   }
+  .dashboard-container {
+   margin: 0 !important; 
+  }
   .header-container-2 {
     margin-left: 0;
     padding: 1rem;

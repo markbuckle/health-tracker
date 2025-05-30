@@ -101,8 +101,9 @@
   .biomarker-textbox-container {
     padding: 1rem 1rem 1.5rem;
   }
-  .columns {
+  .biomarker-bottom .columns {
     flex-direction: row !important;
+    align-items: flex-start;
   }
   .html-embed.chart {
     width: 100% !important;
@@ -118,6 +119,9 @@
     flex: 0 0 30% !important;
     max-width: 30% !important;
   }
+  .columns.w-row { 
+    flex-wrap: nowrap;
+  }
 }
 
 
@@ -126,6 +130,7 @@
   .dashboard-content {
     margin-left: 0 !important;
     margin-top: 0 !important;
+    margin-right: 0 !important;
     padding: 0px 0.5rem 1rem 0.5rem !important; /* Add top padding for fixed header */
     transition: padding-top 0.3s ease-in-out;
   }
@@ -171,6 +176,9 @@
   .columns {
     flex-flow: column;
   }
+  .columns.w-row { 
+    flex-wrap: wrap;
+  }
   .w-col-6  {
     width: 100%;
   }
@@ -187,5 +195,10 @@
   }
   .in-page-menu {
     gap: 0.2rem;
+  }
+  .w-col-6:has(.html-embed.chart) {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
   }
 }
