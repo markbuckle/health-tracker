@@ -346,8 +346,8 @@ body.tutorial-active .highlight-nav {
     text-align: center;
   }
   .dashboard-content {
-    margin-left: 0;
-    padding-top: 70px; /* Account for fixed mobile header */
+    margin-left: 0 !important;
+    padding-top: 3.5rem !important; /* Account for fixed mobile header */
   }
   body.menu-open .dashboard-content {
     padding-top: calc(60px + var(--mobile-menu-height, 0px)) !important;

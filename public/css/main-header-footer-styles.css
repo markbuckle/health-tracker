@@ -610,6 +610,12 @@ body.menu-open .hero-title {
     position: static !important;
     overflow-x: visible !important;
   }
+  .footer-columns {
+    display: block !important;
+  }
+  .footer-column {
+    margin: 0.5rem 0 !important;
+  }
 }
 
 /* Very small screens */

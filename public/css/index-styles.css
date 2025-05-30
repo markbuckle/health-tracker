@@ -973,7 +973,7 @@
     order: 1 !important;
   }
   .hero-title {
-    margin-bottom: 2rem !important;
+    margin-bottom: 1rem !important;
     margin-top: 2rem !important;
     text-align: center !important;
     line-height: 0.5;
@@ -994,7 +994,7 @@
     order: 2 !important;
     max-width: 38% !important;
     height: auto !important;
-    margin-top: 3rem !important;
+    margin-top: 2rem !important;
     flex-shrink: 0 !important;
   }
   .btn-primary {
@@ -1122,7 +1122,7 @@
     display: block !important;
   }
   .mobile {
-    margin: 1rem auto;
+    margin: 0.5rem auto;
     order: 2;
     max-width: 70% !important;
   }

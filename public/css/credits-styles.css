@@ -14,10 +14,11 @@
 }
 .content-section {
   margin: 7rem auto;
-  width: 70%;
-  max-width: 100%;
+  max-width: 70%;
   padding: 0 20px;
   text-align: center;
+  justify-content: center;
+  align-items: center;
 }
 .credits-title {
   font-family: "Poppins-Bold", sans-serif;
@@ -88,6 +89,8 @@
   font-family: "Poppins-Regular", sans-serif;
   font-size: clamp(16px, 2vw, 18px);
   margin-bottom: 3rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
 }
 .steps-container {
   display: flex;
@@ -100,6 +103,7 @@
   position: relative;
   display: flex;
   padding: 0 2rem 0 2rem; /* Make space for the step number */
+  justify-content: center;
   /* min-height: 160px; */
 }
 .step-number {
@@ -131,6 +135,7 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 750px;
 }
 .step-card:hover {
   transform: translateY(-3px);
@@ -168,12 +173,14 @@
 
 /* Mobile Styles */
 @media screen and (max-width: 767px) {
+
   .credits-title::before {
     animation-duration: 3.5s; /* Slightly slower on mobile */
   }
   .content-section {
     width: 90% !important;
-    margin: 2rem auto;
+    margin: 2rem 1rem !important;
+    max-width:fit-content;
   }
   body.menu-open .content-section {
     transition: margin-top 0.3s ease;
@@ -214,8 +221,11 @@
 /* Small Mobile Styles */
 @media screen and (max-width: 480px) {
   .content-section {
-    width: 95%;
+    width: 95% !important;
     padding: 0 10px;
+  }
+  .credits-title {
+    font-size: 25px;
   }
   .step-number {
     width: 3rem;

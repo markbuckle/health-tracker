@@ -4,6 +4,7 @@
   margin-bottom: 50px;
   min-height: 70vh;
   padding-top: 2rem;
+  max-width: 750px;
 }
 .learning-header {
   text-align: center;

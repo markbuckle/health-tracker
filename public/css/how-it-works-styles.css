@@ -14,10 +14,9 @@
 }
 .content-section {
   margin: 7rem auto;
-  width: 60%;
-  max-width: 100%;
   padding: 0 20px;
   text-align: center;
+  justify-content: center;
 }
 .HIW-title {
   font-family: "Poppins-Bold", sans-serif;
@@ -90,6 +89,7 @@
   gap: 3.5rem;
   margin-top: 2rem;
   position: relative;
+  max-width: 800px;
 }
 .step-block {
   position: relative;
@@ -126,6 +126,7 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-width: 60%;
 }
 .step-card:hover {
   transform: translateY(-3px);

@@ -1280,9 +1280,8 @@
     transition: padding-top 0.3s ease-in-out;
   }
   .header-container-2 {
-    margin: 0 0.5rem !important;
-    padding: 0.5rem 0 0.25rem 0 !important;
-    margin-bottom: 0 !important; 
+    margin-left: 0 !important;
+    padding: 1.1rem !important;
   }
   .no-recommendations-actions {
     flex-direction: column;
@@ -1556,6 +1555,12 @@
   }
   .recommendations-list {
     gap: 0rem;
+  }
+  .wellness-info {
+    margin-left: 0;
+  }
+  .modal-description {
+    font-size: 15px; 
   }
 }
 

@@ -675,6 +675,8 @@
     }
   }
 
-  /* @media (max-width: 767px) {
-
-  } */
+@media screen and (max-width: 767px) {
+    .user-content-bg {
+      margin-right: 0;
+    }
+  }

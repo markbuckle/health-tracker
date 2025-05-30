@@ -1239,7 +1239,7 @@ label[for="customBloodType"] {
   }
   .heading2 {
     font-size: 1.75rem;
-    margin-top: 3.5rem;
+    margin-top: 2.5rem;
   }
   .subheading {
     font-size: 1.1rem;
@@ -1283,6 +1283,7 @@ label[for="customBloodType"] {
   }
   .blood-type-modal {
     padding: 0;
+    margin-left: 0;
   }
   .blood-type-modal .modal-card {
     max-width: none;
