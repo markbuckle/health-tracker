@@ -1256,11 +1256,22 @@
           const newChatHeight = startChatHeight + diff;
           const newCardHeight = startCardHeight + diff;
           
-          // Set min and max heights
-          const minChatHeight = window.innerWidth <= 1024 ? 250 : 150;
-          const maxChatHeight = window.innerWidth <= 1024 
-            ? Math.min(window.innerHeight * 0.8, 800)    // Mobile
-            : Math.min(window.innerHeight * 0.6, 600);  // Desktop 
+          // Set min and max heights with separate tablet handling
+          let minChatHeight, maxChatHeight;
+
+          if (window.innerWidth <= 767) {
+            // Mobile (≤767px)
+            minChatHeight = 120;
+            maxChatHeight = Math.min(window.innerHeight * 0.6, 600);
+          } else if (window.innerWidth <= 1024) {
+            // Tablet (768px-1024px)
+            minChatHeight = 170;
+            maxChatHeight = Math.min(window.innerHeight * 0.69, 775);
+          } else {
+            // Desktop (>1024px)
+            minChatHeight = 110;
+            maxChatHeight = Math.min(window.innerHeight * 0.8, 1000);
+          }
           
           if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
             // Resize chat-messages directly
@@ -1281,9 +1292,22 @@
           const newChatHeight = startChatHeight + diff;
           const newCardHeight = startCardHeight + diff;
           
-          // Slightly smaller limits for mobile
-          const minChatHeight = 140;
-          const maxChatHeight = Math.min(window.innerHeight * 0.55, 500);
+          // Set min and max heights with separate tablet handling (same as doResize)
+          let minChatHeight, maxChatHeight;
+
+          if (window.innerWidth <= 767) {
+            // Mobile (≤767px)
+            minChatHeight = 120;
+            maxChatHeight = Math.min(window.innerHeight * 0.6, 600);
+          } else if (window.innerWidth <= 1024) {
+            // Tablet (768px-1024px)
+            minChatHeight = 170;
+            maxChatHeight = Math.min(window.innerHeight * 0.69, 775); // Same as your doResize
+          } else {
+            // Desktop (>1024px)
+            minChatHeight = 300;
+            maxChatHeight = Math.min(window.innerHeight * 0.8, 1000);
+          }
           
           if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
             chatMessages.style.height = newChatHeight + 'px';
