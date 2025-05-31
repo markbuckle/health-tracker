@@ -190,54 +190,6 @@
 
     <script src="js/main.js" defer type="module"></script>
     <script src="js/main-mobile.js" defer type="module"></script>
-    <script> // animated hero section (floating dots)
-      function createDots() {
-        const container = document.getElementById("floatingDots");
-        
-        // Check if container exists before trying to append to it
-        if (!container) {
-          console.warn("Element with ID 'floatingDots' not found. Skipping dot creation.");
-          return; // Exit the function early if container doesn't exist
-        }
-        
-        const dotCount = 20;
-
-        for (let i = 0; i < dotCount; i++) {
-          const dot = document.createElement("div");
-          dot.className = "dot";
-
-          // Random size between 5 and 20px
-          const size = Math.random() * 15 + 5;
-          dot.style.width = `${size}px`;
-          dot.style.height = `${size}px`;
-
-          // Random starting position
-          dot.style.left = `${Math.random() * 100}%`;
-          dot.style.top = `${Math.random() * 100}%`;
-
-          // Random animation duration between 15 and 30 seconds
-          dot.style.animationDuration = `${Math.random() * 15 + 15}s`;
-
-          // Random delay
-          dot.style.animationDelay = `${Math.random() * -30}s`;
-
-          container.appendChild(dot);
-        }
-      }
-
-      // Add hover effect to use cases
-      document.querySelectorAll(".use-case").forEach((card) => {
-        card.addEventListener("mouseenter", () => {
-          card.querySelector(".icon-circle").style.transform =
-            "translateX(-50%) scale(1.1)";
-        });
-
-        card.addEventListener("mouseleave", () => {
-          card.querySelector(".icon-circle").style.transform =
-            "translateX(-50%) scale(1)";
-        });
-      });
-    </script>
     <script> // Animation handling
       document.addEventListener("DOMContentLoaded", () => {
         // Flag to track if animations have played during this session

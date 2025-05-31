@@ -54,14 +54,53 @@
   font-family: "Poppins-Regular", sans-serif;
   font-size: 16px;
 }
-.meds-info {
+.monitoring-info {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-left: 1.5rem;
+  margin-right: 1.5rem;
   margin-bottom: 1rem;
   padding: 5px 0 5px 0;
   font-family: "Poppins-Regular", sans-serif;
   font-size: 16px;
+}
+.monitoring-entry.entry-card {
+  flex: 0 1 calc(50% - 0.5rem); /* Takes up roughly half width minus gap */
+  min-width: 280px; /* Minimum width before wrapping */
+  max-width: 600px; /* Maximum width to prevent cards from getting too wide */
+}
+.lifestyle-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 5px 0 5px 0;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 16px;
+}
+.lifestyle-entry.entry-card {
+  flex: 0 1 calc(50% - 0.5rem); /* Takes up roughly half width minus gap */
+  min-width: 280px; /* Minimum width before wrapping */
+  max-width: 600px; /* Maximum width to prevent cards from getting too wide */
+}
+.meds-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 5px 0 5px 0;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 16px;
+}
+.medsandsups-entry.entry-card {
+  flex: 0 1 calc(50% - 0.5rem); /* Takes up roughly half width minus gap */
+  min-width: 280px; /* Minimum width before wrapping */
+  max-width: 600px; /* Maximum width to prevent cards from getting too wide */
 }
 .back-icon {
   color: #57585b;
@@ -615,7 +654,37 @@
     min-height: 44px; /* Touch-friendly minimum height */
     padding: 0.75rem;
   }
-}
+  .monitoring-info {
+    gap: 0.1rem;
+    margin-bottom: 0.5rem;
+    padding: 0;
+  }
+  .monitoring-entry.entry-card {
+    flex: 1;
+    min-width: 400px; /* Minimum width before wrapping */
+    max-width: 700px; /* Maximum width to prevent cards from getting too wide */
+  }
+  .lifestyle-info {
+    gap: 0.1rem;
+    margin-bottom: 0.5rem;
+    padding: 0;
+  }
+  .lifestyle-entry.entry-card {
+    flex: 1;
+    min-width: 400px; /* Minimum width before wrapping */
+    max-width: 700px; /* Maximum width to prevent cards from getting too wide */
+  }
+  .meds-info {
+    gap: 0.1rem;
+    margin-bottom: 0.5rem;
+    padding: 0;
+  }
+  .medsandsups-entry.entry-card {
+    flex: 1;
+    min-width: 400px; /* Minimum width before wrapping */
+    max-width: 700px; /* Maximum width to prevent cards from getting too wide */
+  }
+  }
 /* Responsive adjustments */
 @media screen and (max-width: 767px) {
   .dashboard-content {
@@ -633,9 +702,8 @@
     padding-top: calc(var(--mobile-menu-height, 0px)) !important;
   } */
   .header-container-2 {
-    margin: 0 1rem !important;
-    padding: 1rem 0rem !important;
-    margin-bottom: 1rem;
+    margin-left: 0 !important;
+    padding: 1.1rem !important;
   }
   .in-page-menu {
     margin-top: 0;
@@ -751,5 +819,17 @@
     height: 24px !important;
     width: 80% !important;
     max-width: 250px !important;
+  }
+  .monitoring-entry.entry-card {
+    max-width: 400px;
+    min-width: 300px;
+  }
+  .lifestyle-entry.entry-card {
+    max-width: 400px;
+    min-width: 300px;
+  }
+  .medsandsups-entry.entry-card {
+    max-width: 400px;
+    min-width: 300px;
   }
 }

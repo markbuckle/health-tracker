@@ -140,6 +140,7 @@
     background-color: white;
     border-radius: 10px;
     border: 0.1px solid #d8d8d8a7;
+    max-width: 1200px;
   }
   .dropdown-content-top {
     background-color: #fff;
