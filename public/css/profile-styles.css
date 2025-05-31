@@ -54,6 +54,15 @@
   font-family: "Poppins-Regular", sans-serif;
   font-size: 16px;
 }
+.meds-info {
+  display: flex;
+  gap: 1rem;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 5px 0 5px 0;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 16px;
+}
 .back-icon {
   color: #57585b;
   padding: 4px;
@@ -600,6 +609,12 @@
   .entry-card {
     margin: 0.5rem 0;
   }
+  .form-text-field select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    height: auto;
+    min-height: 44px; /* Touch-friendly minimum height */
+    padding: 0.75rem;
+  }
 }
 /* Responsive adjustments */
 @media screen and (max-width: 767px) {
@@ -725,5 +740,16 @@
   }
   .entry-row {
     font-size: 14px;
+  }
+  .form-text-field select {
+    width: 80% !important;
+    max-width: 250px !important;
+  }
+  .dropdown-option {
+    font-size: 12px !important;
+    padding: 3px 6px !important;
+    height: 24px !important;
+    width: 80% !important;
+    max-width: 250px !important;
   }
 }

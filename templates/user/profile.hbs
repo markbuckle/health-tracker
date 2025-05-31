@@ -272,7 +272,7 @@
                 <div class="header-container-3">
                   <h1 class="username-heading">Medications & Supplements</h1>
                 </div>
-                <div class="history-info">
+                <div class="meds-info">
                   {{#if profile.medsandsups.length}}
                     {{#each profile.medsandsups}}
                       <div class="medsandsups-entry entry-card">
@@ -549,9 +549,9 @@
 
         <label for="medSupType" class="field-label">Type</label>
         <select class="form-text-field" name="medSupType" id="medSupType" required>
-          <option value="">Select type...</option>
-          <option value="Medication">Medication</option>
-          <option value="Supplement">Supplement</option>
+          <option value="" class="dropdown-option">Select type...</option>
+          <option value="Medication" class="dropdown-option">Medication</option>
+          <option value="Supplement" class="dropdown-option">Supplement</option>
         </select>
 
         <label for="name" class="field-label">Name</label>

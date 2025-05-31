@@ -1125,6 +1125,13 @@
           });
         });
 
+         // Close modal handlers
+        document.querySelectorAll('.wellness-info .modal-background, .wellness-info .cancel-button, .wellness-info .modal-return-button').forEach(element => {
+          element.addEventListener('click', () => {
+            document.querySelector('.wellness-info').classList.remove('active');
+          });
+        });
+
         // Run animation on initial load if the Labs Summary tab is active
         if (labSummaryTab.classList.contains('w--tab-active')) {
           setTimeout(animateLabStats, 300);
