@@ -946,6 +946,16 @@
 
 /* Tablet Landscape (768px - 991px) */
 @media screen and (max-width: 991px) {
+  /* .home-body .header {
+    position: fixed !important;
+    top: 0 !important;
+    transform: none !important;
+  }
+  .home-body .feedback-widget {
+    position: fixed !important;
+    bottom: 5px !important;
+    right: 10px !important;
+  } */
   .hero {
     display: flex;
     justify-content: center;
@@ -1074,6 +1084,13 @@
     width: 20px;
     height: 20px;
     font-size: 12px;
+  }
+  .feedback-widget {
+    position: fixed !important;
+    bottom: 5px !important;
+    right: 35px !important;
+    z-index: 99999 !important;
+    transform: translateZ(0) !important;
   }
 }
 
@@ -1237,7 +1254,7 @@
   .feedback-widget {
     position: fixed !important;
     bottom: 5px !important;
-    right: 30px !important;
+    right: 5px !important;
     z-index: 99999 !important;
     transform: translateZ(0) !important;
     backface-visibility: hidden !important;
@@ -1403,6 +1420,15 @@
     margin-right: 1.2rem;
     margin-bottom: 0.2rem;
   } */
+  .feedback-widget {
+    position: fixed !important;
+    bottom: 5px !important;
+    right: 30px !important;
+    z-index: 99999 !important;
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    will-change: auto !important;
+  }
 }
 
 /* Small Mobile (below 320px) */
