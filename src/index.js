@@ -1854,13 +1854,13 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 200 * 1024 * 1024, // 200MB limit
-  },
-});
+// const upload = multer({
+//   storage: storage,
+//   fileFilter: fileFilter,
+//   limits: {
+//     fileSize: 200 * 1024 * 1024, // 200MB limit
+//   },
+// });
 
 // This import will automatically use whichever OCR implementation is configured
 const { extractFromPDF } = require('./parsers');
