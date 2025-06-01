@@ -12,6 +12,7 @@ const MongoStore = require("connect-mongo");
 const templatePath = path.join(__dirname, "../templates");
 const publicPath = path.join(__dirname, "../public");
 const multer = require("multer");
+const { upload, processUploadedFile, multerErrorHandler, isVercel } = require('./multerConfig');
 const fs = require("fs");
 require("dotenv").config();
 // const EventEmitter = require('events'); // for the processing files modal
@@ -1888,56 +1889,25 @@ app.post(
       const uploadedFiles = [];
       const totalFiles = req.files.length;
 
+      console.log(`Processing ${totalFiles} files in ${isVercel ? 'Vercel' : 'local'} environment`);
+
       for (let fileIndex = 0; fileIndex < req.files.length; fileIndex++) {
         console.log(`Processing file ${fileIndex + 1} of ${totalFiles}`);
 
         const file = req.files[fileIndex];
+        
         try {
-          // Extract lab values and date based on file type
-          // const extension = path.extname(file.path).toLowerCase();
-          // const extractedData = ['.jpg', '.jpeg', '.png'].includes(extension) 
-          //   ? await extractFromImage(file.path)
-          //   : await extractFromPDF(file.path);
-
-          // New unified parser can handle both PDFs and images
-          const extractedData = await extractFromPDF(file.path);
-
-          console.log("Extracted data:", {
-            numLabValues: Object.keys(extractedData).length,
-            testDate: extractedData.testDate,
-            sampleLabValues: Object.keys(extractedData).slice(0, 3),
-          });
-
-          const fileObject = {
-            filename: file.filename,
-            originalName: file.originalname,
-            path: file.path,
-            size: file.size,
-            mimetype: file.mimetype,
-            uploadDate: new Date(),
-            testDate: extractedData.testDate
-              ? new Date(extractedData.testDate)
-              : null,
-            labValues: extractedData.labValues || {},
-            extractionMethod: "paddleocr",
-            // extractionMethod: "tesseract",
-            processingErrors: [],
-          };
-
-          console.log("Final file object:", {
-            filename: fileObject.filename,
-            hasLabValues: !!fileObject.labValues,
-            labValueCount: Object.keys(fileObject.labValues || {}).length,
-            testDate: fileObject.testDate,
-          });
-
+          // Use the hybrid processing function
+          const fileObject = await processUploadedFile(file, extractFromPDF);
           uploadedFiles.push(fileObject);
+
         } catch (error) {
           console.error(`Error processing file ${file.originalname}:`, error);
+          
           uploadedFiles.push({
-            filename: file.filename,
+            filename: file.filename || file.originalname,
             originalName: file.originalname,
-            path: file.path,
+            path: isVercel ? null : (file.path || null),
             size: file.size,
             mimetype: file.mimetype,
             uploadDate: new Date(),
@@ -1949,6 +1919,7 @@ app.post(
         }
       }
 
+      // Save to database
       if (!user.files) {
         user.files = [];
       }
@@ -1959,17 +1930,23 @@ app.post(
       await user.save();
       console.log("Files saved successfully");
 
+      // Return success response with environment info
       res.json({
         success: true,
         message: "Files uploaded and processed successfully",
         files: uploadedFiles,
+        environment: isVercel ? 'production' : 'development',
+        processedCount: uploadedFiles.filter(f => f.extractionMethod !== 'failed').length,
+        failedCount: uploadedFiles.filter(f => f.extractionMethod === 'failed').length
       });
+
     } catch (error) {
       console.error("File upload error:", error);
       res.status(500).json({
         success: false,
         message: "Error processing files",
         error: error.message,
+        environment: isVercel ? 'production' : 'development'
       });
     }
   }
@@ -2014,22 +1991,8 @@ app.post("/delete-selected-files", checkAuth, async (req, res) => {
   }
 });
 
-// Error handler for multer errors
-app.use((error, req, res, next) => {
-  if (error instanceof multer.MulterError) {
-    if (error.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({
-        success: false,
-        message: "File is too large. Maximum size is 200MB.",
-      });
-    }
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-  next(error);
-});
+// Use the enhanced error handler
+app.use(multerErrorHandler);
 
 app.post("/delete-file", checkAuth, async (req, res) => {
   try {
