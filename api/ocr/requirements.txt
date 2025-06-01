@@ -1,5 +1,2 @@
-paddlepaddle==2.6.2
 paddleocr==2.7.0.3
-Pillow>=9.0.0
-opencv-python-headless==4.8.1.78
-PyMuPDF>=1.23.0
+PyMuPDF==1.23.26
