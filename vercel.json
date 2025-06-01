@@ -12,6 +12,10 @@
             "src": "api/**/*.js", 
             "use": "@vercel/node" 
         },
+        {
+            "src": "api/ocr/process.py",
+            "use": "@vercel/python"
+        },
         { 
             "src": "public/**/*", 
             "use": "@vercel/static", 
@@ -20,6 +24,18 @@
             } 
         }
     ],
+    "functions": {
+        "api/ocr/process.py": {
+            "runtime": "python3.9",
+            "maxDuration": 60
+        },
+        "src/index.js": {
+            "maxDuration": 30
+        },
+        "api/**/*.js": {
+            "maxDuration": 30
+        }
+    },
     "rewrites": [
         {
             "source": "/api/(.*)",
