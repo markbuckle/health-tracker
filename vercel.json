@@ -20,14 +20,14 @@
             } 
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api/(.*)",
-            "dest": "/api/$1"
+            "source": "/api/(.*)",
+            "destination": "/api/$1"
         },
         {
-            "src": "/(.*)",
-            "dest": "/src/index.js"
+            "source": "/(.*)",
+            "destination": "/src/index.js"
         }
     ],
     "headers": [
