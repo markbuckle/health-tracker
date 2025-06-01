@@ -31,6 +31,23 @@ function detectDocumentType(filePath) {
 function preprocessImage(inputPath, outputPath) {
   return new Promise((resolve, reject) => {
     // Create destination directory if it doesn't exist
+    // const dir = path.dirname(outputPath);
+    // if (!fs.existsSync(dir)) {
+    //   fs.mkdirSync(dir, { recursive: true });
+    // }
+
+    // ✅ Ensure output directory is in /tmp/ for Vercel
+    const isVercel = process.env.VERCEL || process.env.NOW_REGION;
+    
+    if (isVercel) {
+      // For Vercel, ensure we're using /tmp/
+      const dir = path.dirname(outputPath);
+      if (!dir.startsWith('/tmp/')) {
+        const fileName = path.basename(outputPath);
+        outputPath = path.join('/tmp/', fileName);
+      }
+    }
+    
     const dir = path.dirname(outputPath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -57,7 +74,19 @@ async function extractFromPDF(filePath) {
     console.log(`Processing PDF file: ${filePath}`);
     
     // Create a temp directory for extracted images
-    const tempDir = path.join(__dirname, 'temp');
+    // const tempDir = path.join(__dirname, 'temp');
+    // if (!fs.existsSync(tempDir)) {
+    //   fs.mkdirSync(tempDir, { recursive: true });
+    // }
+
+    // ✅ Fixed code - use /tmp/ in serverless environment
+    const isVercel = process.env.VERCEL || process.env.NOW_REGION;
+
+    // Create a temp directory in the appropriate location
+    const tempDir = isVercel 
+      ? '/tmp/paddle-ocr-temp' 
+      : path.join(__dirname, 'temp');
+
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }
