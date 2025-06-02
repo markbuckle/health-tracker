@@ -1,13 +1,36 @@
 {
     "version": 2,
-    "functions": {
-        "src/index.js": {
-            "maxDuration": 300
+    "builds": [
+        { 
+            "src": "src/index.js", 
+            "use": "@vercel/node", 
+            "config": { 
+                "includeFiles": ["package.json", "package-lock.json"],
+                "maxDuration": 30
+            } 
         },
-        "api/**/*.js": {
-            "maxDuration": 60
+        { 
+            "src": "api/**/*.js", 
+            "use": "@vercel/node",
+            "config": {
+                "maxDuration": 30
+            }
+        },
+        {
+            "src": "api/ocr/process.py",
+            "use": "@vercel/python",
+            "config": {
+                "maxDuration": 60
+            }
+        },
+        { 
+            "src": "public/**/*", 
+            "use": "@vercel/static", 
+            "config": { 
+                "includeFiles": ["package.json", "package-lock.json"] 
+            } 
         }
-    },
+    ],
     "rewrites": [
         {
             "source": "/api/(.*)",
@@ -18,9 +41,15 @@
             "destination": "/src/index.js"
         }
     ],
-    "env": {
-        "OCR_IMPLEMENTATION": "External",
-        "PADDLEOCR_SERVICE_URL": "@paddleocr_service_url",
-        "PADDLEOCR_API_KEY": "@paddleocr_api_key"
-    }
+    "headers": [
+        {
+            "source": "/public/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
+        }
+    ]
 }
