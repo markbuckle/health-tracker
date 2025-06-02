@@ -3,21 +3,25 @@
     "builds": [
         { 
             "src": "src/index.js", 
-            "use": "@vercel/node"
+            "use": "@vercel/node",
+            "config": {
+                "maxLambdaSize": "50mb"
+            }
         },
         { 
             "src": "api/**/*.js", 
             "use": "@vercel/node"
-        },
-        {
-            "src": "api/ocr/Dockerfile",
-            "use": "@vercel/docker"
         },
         { 
             "src": "public/**/*", 
             "use": "@vercel/static"
         }
     ],
+    "functions": {
+        "src/index.js": {
+            "maxDuration": 300
+        }
+    },
     "rewrites": [
         {
             "source": "/api/(.*)",
@@ -27,5 +31,10 @@
             "source": "/(.*)",
             "destination": "/src/index.js"
         }
-    ]
+    ],
+    "env": {
+        "OCR_IMPLEMENTATION": "External",
+        "PADDLEOCR_SERVICE_URL": "@paddleocr_service_url",
+        "PADDLEOCR_API_KEY": "@paddleocr_api_key"
+    }
 }
