@@ -1216,6 +1216,91 @@
   opacity: 1;
   background: linear-gradient(135deg, transparent 0%, transparent 30%, #a0aec0 30%, #a0aec0 50%, transparent 50%, transparent 80%, #a0aec0 80%);
 }
+
+/* Ask Tab Notification Styles */
+.ask-tab-notification {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 0;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease-in-out;
+}
+
+.ask-tab-notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.notification-container {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border: 1px solid #ffc107;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+  position: relative;
+  box-sizing: border-box;
+  margin-right: 2rem;
+  max-width: 800px;
+}
+
+.notification-icon {
+  color: #856404;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #856404;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.notification-message {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.875rem;
+  color: #856404;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: #856404;
+  cursor: pointer;
+  padding: 0.25rem;
+  margin: -0.25rem -0.25rem -0.25rem 0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.notification-close:hover {
+  background-color: rgba(133, 100, 4, 0.1);
+}
+
+.notification-close:focus {
+  outline: 2px solid #856404;
+  outline-offset: 2px;
+}
+.header-container-2 {
+  display: block;
+}
+
 @media (max-width: 1024px) {
   .wellness-summary-card {
     padding: 0 1rem 1rem 1rem;
@@ -1263,6 +1348,12 @@
   }
   .ask-wrapper {
     padding-right: 0;
+  }
+  .ask-tab-notification {
+    margin-top: 0.75rem;
+  }
+  .notification-container {
+    padding: 0.875rem 1rem;
   }
 }
 /* Responsive design for action buttons */
@@ -1561,6 +1652,23 @@
   }
   .modal-description {
     font-size: 15px; 
+  }
+  .ask-tab-notification {
+    margin-top: 0.5rem;
+  }
+  
+  .notification-container {
+    padding: 0.75rem 0.875rem;
+    gap: 0.5rem;
+    margin-right: 0rem;
+  }
+  
+  .notification-title {
+    font-size: 0.875rem;
+  }
+  
+  .notification-message {
+    font-size: 0.8rem;
   }
 }
 

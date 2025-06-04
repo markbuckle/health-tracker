@@ -104,6 +104,30 @@
           <h3 class="subheading"></h3>
           <div class="spacer-block"></div>
         </div>
+        <!-- Ask Tab Notification - Hidden by default -->
+        <div id="askTabNotification" class="ask-tab-notification" style="display: none;">
+          <div class="notification-container">
+            <div class="notification-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">Reed is Temporarily Unavailable</div>
+              <div class="notification-message">
+                Our AI health assistant is currently experiencing technical difficulties in the production environment. We're working to restore full functionality soon. Thank you for your patience!
+              </div>
+            </div>
+            <button class="notification-close" aria-label="Close notification">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1332,6 +1356,117 @@
           document.body.style.userSelect = '';
         }
       }
+    </script>
+    <script> // Notification
+      (function() {
+        'use strict';
+        
+        function initNotification() {
+          try {
+            const askTabNotification = document.getElementById('askTabNotification');
+            const tabLinks = document.querySelectorAll('.in-page-link');
+            const closeButton = document.querySelector('.notification-close');
+            
+            if (!askTabNotification || tabLinks.length === 0) {
+              return;
+            }
+            
+            // Check if notification was previously dismissed
+            const notificationDismissed = localStorage.getItem('askTabNotificationDismissed');
+            
+            function showNotification() {
+              if (notificationDismissed) return;
+              
+              askTabNotification.style.display = 'block';
+              askTabNotification.style.opacity = '0';
+              askTabNotification.style.transform = 'translateY(-10px)';
+              askTabNotification.style.transition = 'all 0.3s ease';
+              
+              setTimeout(() => {
+                askTabNotification.style.opacity = '1';
+                askTabNotification.style.transform = 'translateY(0)';
+              }, 50);
+            }
+            
+            function hideNotification() {
+              askTabNotification.style.opacity = '0';
+              askTabNotification.style.transform = 'translateY(-10px)';
+              
+              setTimeout(() => {
+                askTabNotification.style.display = 'none';
+              }, 300);
+            }
+            
+            function dismissNotification() {
+              hideNotification();
+              localStorage.setItem('askTabNotificationDismissed', 'true');
+            }
+            
+            function checkActiveTab() {
+              const activeTab = document.querySelector('.in-page-link.w--current');
+              
+              if (activeTab && activeTab.getAttribute('data-w-tab') === 'Ask') {
+                showNotification();
+              } else {
+                hideNotification();
+              }
+            }
+            
+            // IMPORTANT: Don't interfere with existing tab system
+            // Just listen for tab clicks, don't modify classes
+            tabLinks.forEach((link) => {
+              link.addEventListener('click', function() {
+                // Let the existing tab system handle the class changes
+                // Just check after a delay
+                setTimeout(checkActiveTab, 200);
+              });
+            });
+            
+            // Also observe for class changes made by existing tab system
+            const observer = new MutationObserver(function(mutations) {
+              mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && 
+                    mutation.attributeName === 'class' && 
+                    mutation.target.classList.contains('in-page-link')) {
+                  setTimeout(checkActiveTab, 50);
+                }
+              });
+            });
+            
+            // Observe all tab links for class changes
+            tabLinks.forEach(link => {
+              observer.observe(link, { attributes: true });
+            });
+            
+            // Close button functionality
+            if (closeButton) {
+              closeButton.addEventListener('click', dismissNotification);
+            }
+            
+            // Note: Auto-hide timer removed - notification only dismisses when user clicks X
+            
+            // Check initial state
+            setTimeout(checkActiveTab, 500); // Delay to let page fully load
+            
+            // Clear dismissed state for testing (remove this line in production)
+            localStorage.removeItem('askTabNotificationDismissed');
+            
+          } catch (error) {
+            console.error('Notification script error:', error);
+          }
+        }
+        
+        // Multiple initialization points to ensure it runs
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initNotification);
+        } else {
+          initNotification();
+        }
+        
+        // Backup initialization
+        setTimeout(initNotification, 1000);
+        
+      })();
     </script>
   </body>
 </html>
