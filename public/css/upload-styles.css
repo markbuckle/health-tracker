@@ -1181,7 +1181,7 @@
     padding: 0.6rem;
   }
   .sidebar {
-    display: none !important;
+    display: none;
   }
 }
 

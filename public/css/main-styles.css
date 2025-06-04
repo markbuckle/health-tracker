@@ -1139,6 +1139,9 @@ label[for="customBloodType"] {
 
 /* Tablet Landscape (768px - 991px) */
 @media screen and (max-width: 991px) {
+  .mobile-header {
+    display: none !important;
+  }
   .sidebar {
     width: 9rem;
   }

@@ -662,7 +662,6 @@
     padding: 0;
   }
 
-
   @media screen and (max-width: 991px) {
     .dashboard-content {
       margin-left: 9rem !important;
@@ -678,6 +677,6 @@
 
 @media screen and (max-width: 767px) {
     .user-content-bg {
-      margin-right: 0;
+      margin-right: 0 !important;
     }
   }
