@@ -1169,9 +1169,13 @@ label[for="customBloodType"] {
   .logo-block {
     margin-right: 1rem;
   }
-  .dashboard-container {
+  /* .dashboard-container {
     margin-left: 1rem;
     margin-top: 1rem;
+  } */
+  .dashboard-container {
+    margin-left: 0;
+    margin-top: 0;
   }
   .modal-button {
     font-size: 26px;

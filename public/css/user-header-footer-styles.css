@@ -218,8 +218,11 @@ body.menu-open .dashboard-content {
     margin-left: 9rem !important;
     padding: 0 1rem !important;
   }
-  .user-content-bg {
+  /* .user-content-bg {
     margin-right: 1rem;
+  } */
+    .user-content-bg {
+    margin-right: 0;
   }
   .mobile-header {
     display: none; /* Force sidebar hidden */
@@ -228,10 +231,10 @@ body.menu-open .dashboard-content {
 
 @media (max-width: 767px) {
   .sidebar {
-    display: none; /* Force sidebar hidden */
+    display: none !important; /* Force sidebar hidden */
   }
   .mobile-header {
-    display: block;
+    display: block !important;
     position: fixed;
     z-index: 1000;
   }
