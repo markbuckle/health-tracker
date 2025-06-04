@@ -435,7 +435,6 @@
 .lab-result-header-left {
   flex: 1;
 }
-
 .lab-result-dates {
   display: flex;
   gap: 1rem;
@@ -570,7 +569,6 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
   }
-  
   .biomarker-modal-content {
     position: relative;
     background-color: #fff;
@@ -581,37 +579,31 @@
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
-  
   .biomarker-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
   }
-  
   .close-modal {
     font-size: 24px;
     cursor: pointer;
     color: #666;
   }
-  
   .close-modal:hover {
     color: #000;
   }
-  
   .biomarker-details {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 20px;
   }
-  
   .biomarker-info,
   .biomarker-source {
     padding: 15px;
     background-color: #f8f9fa;
     border-radius: 6px;
   }
-  
   .lab-value {
     display: flex;
     justify-content: space-between;
@@ -625,16 +617,13 @@
     transform: scale(1.0);
     transition: all 0.2s ease;
   }
-  
   .lab-value-content {
     flex: 1;
     padding: 10px;
   }
-  
   .button-container-2 {
     display: flex;
   }
-  
   .edit-biomarker-btn {
     background: #f3f4f6;
     border: 1px solid #e5e7eb;
@@ -643,13 +632,11 @@
     padding: 3px 8px;
     transition: all 0.2s ease;
   }
-  
   .edit-btn-content {
     display: flex;
     align-items: center;
     gap: 6px;
   }
-  
   .edit-btn-text {
     font-family: "Poppins-Regular", sans-serif;
     font-size: 12px;
@@ -664,30 +651,25 @@
     margin-left: 8px; /* Space between Edit and Delete buttons */
     transition: all 0.2s ease;
   }
-  
   .delete-btn-content {
     display: flex;
     align-items: center;
     gap: 6px;
   }
-  
   .delete-btn-text {
     font-family: "Poppins-Regular", sans-serif;
     font-size: 12px;
     color: #6b7280;
   }
-  
   /* Hover effects */
   .edit-biomarker-btn:hover {
     background-color: #699670;
     border-color: #699670;
     transform: translateY(-1px);
   }
-  
   .edit-biomarker-btn:hover svg {
     stroke: white;
   }
-  
   .edit-biomarker-btn:hover .edit-btn-text {
     color: white;
   }
@@ -696,11 +678,9 @@
     border-color: #dc2626;
     transform: translateY(-1px);
   }
-  
   .delete-biomarker-btn:hover svg {
     stroke: white;
   }
-  
   .delete-biomarker-btn:hover .delete-btn-text {
     color: white;
   }
@@ -708,33 +688,28 @@
   .edit-biomarker-btn:active {
     transform: translateY(0);
   }
-  
   .delete-biomarker-btn:active {
     transform: translateY(0);
   }
   .form-group {
     margin-bottom: 0.5rem;
   }
-  
   .form-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
   }
-  
   .form-group input {
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
   }
-  
   .form-actions {
     display: flex;
     gap: 10px;
     margin-top: 20px;
   }
-  
   .save-btn,
   .mark-incorrect-btn {
     padding: 8px 16px;
@@ -743,17 +718,14 @@
     cursor: pointer;
     transition: background-color 0.2s;
   }
-  
   .save-btn {
     background-color: #699670;
     color: white;
   }
-  
   .mark-incorrect-btn {
     background-color: #dc3545;
     color: white;
   }
-  
   #sourceImageContainer {
     margin-top: 10px;
     max-height: 300px;
@@ -786,7 +758,6 @@
     margin-bottom: 8px;
     font-family: "Poppins-Regular", sans-serif;
   }
-  
   .loader-subtext {
     font-family: "Poppins-Regular", sans-serif;
     color: #64748b;
@@ -813,7 +784,6 @@
     justify-content: center;
     align-items: center;
   }
-  
   .loader-container {
     background: white;
     padding: 2rem;
@@ -823,7 +793,6 @@
     max-width: 90%;
     width: 300px;
   }
-  
   .loader-spinner {
     width: 40px;
     height: 40px;
@@ -842,7 +811,6 @@
       transform: rotate(360deg);
     }
   }
-  
   #documentStatus {
     font-size: 0.9rem;
     color: #4b5563;
@@ -853,7 +821,6 @@
     color: #4b5563;
     margin: 8px 0;
   }
-  
   .loader-subtext {
     font-family: "Poppins-Regular", sans-serif;
     color: #64748b;
@@ -866,7 +833,6 @@
   margin: 1.5rem 0 1rem 0;
   width: 100%;
 }
-
 .progress-bar {
   width: 100%;
   height: 10px;
@@ -876,7 +842,6 @@
   margin-bottom: 0.5rem;
   border: 1px solid #e0e0e0;
 }
-
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #4caf50, #66bb6a);
@@ -885,7 +850,6 @@
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
 }
-
 .progress-text {
   font-size: 0.9rem;
   color: #555;
@@ -902,7 +866,6 @@
   min-height: 1.2rem;
   font-family: "Poppins-Regular", sans-serif;
 }
-
 .loader-container {
   background-color: white;
   padding: 2.5rem;
@@ -916,6 +879,79 @@
   margin-bottom: 0.5rem;
 }
 
+/* Notification styles */
+.ocr-status-notification {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  margin: 16px 0 24px 0;
+  margin-left: 11.5rem;
+  margin-right: 2rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-left: 4px solid #f39c12;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  font-family: "Poppins-Regular", sans-serif;
+  max-width: 1200px;
+}
+.notification-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: #d68910;
+  margin-top: 2px;
+}
+.notification-content {
+  flex: 1;
+}
+.notification-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #b7650a;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.notification-message {
+  font-size: 13px;
+  color: #85650a;
+  line-height: 1.5;
+  margin: 0;
+}
+.notification-dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: #b7650a;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-top: -2px;
+}
+.notification-dismiss:hover {
+  background-color: rgba(183, 101, 10, 0.1);
+  color: #85650a;
+}
+.notification-dismiss:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
+}
+/* Animation for dismissal */
+.ocr-status-notification.dismissing {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+/* Hidden state */
+.ocr-status-notification.hidden {
+  display: none;
+}
+
 @media screen and (max-width: 991px) {
   .lab-result-card {
     padding: 0.5rem 0.5rem 0 0.5rem;
@@ -925,6 +961,27 @@
   }
   .file-upload-area {
     margin: 0 1rem;
+  }
+  .ocr-status-notification {
+    padding: 14px 16px;
+    margin: 12px 0 20px 0;
+    margin-left: 10rem;
+    margin-right: 1rem;
+    gap: 10px;
+  }
+  .notification-title {
+    font-size: 13px;
+  }
+  .notification-message {
+    font-size: 12px;
+  }
+  .notification-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .notification-dismiss svg {
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -1147,4 +1204,17 @@
     min-width: 28px;
     min-height: 28px;
   } */
+   .ocr-status-notification {
+    padding: 12px 14px;
+    margin: 0 0.5rem;
+    margin-bottom: 0.5rem;
+    gap: 8px;
+  }
+  .notification-title {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+  .notification-message {
+    font-size: 11px;
+  }
 }
