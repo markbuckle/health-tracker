@@ -672,6 +672,7 @@ body.menu-open .hero-title {
   position: relative;
   overflow: hidden;
   box-shadow: var(--footer-shadow);
+  margin-top: -3px;
 }
 .footer-container {
   max-width: var(--footer-max-width);
