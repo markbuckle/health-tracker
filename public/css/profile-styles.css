@@ -353,6 +353,7 @@
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: 20px;
   margin-left: 1rem;
+  margin-right: 0.5rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
   vertical-align: middle;
@@ -707,7 +708,6 @@
   }
   .in-page-menu {
     margin-top: 0;
-    flex-wrap: nowrap;
   }
   .w-inline-block {
     width: auto;
@@ -716,6 +716,8 @@
   .in-page-link {
     min-width: 0 !important;
     margin-right: 0.2em;
+    margin-top: 0.3em;
+    flex-wrap: nowrap !important;
   }
   .text-block {
     font-size: 9px;
