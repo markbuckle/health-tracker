@@ -1088,7 +1088,7 @@
   .feedback-widget {
     position: fixed !important;
     bottom: 5px !important;
-    right: 35px !important;
+    right: 5px !important;
     z-index: 99999 !important;
     transform: translateZ(0) !important;
   }
@@ -1423,7 +1423,7 @@
   .feedback-widget {
     position: fixed !important;
     bottom: 5px !important;
-    right: 30px !important;
+    right: 5px !important;
     z-index: 99999 !important;
     transform: translateZ(0) !important;
     backface-visibility: hidden !important;

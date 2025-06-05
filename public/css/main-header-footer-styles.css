@@ -455,7 +455,7 @@ body.menu-open .hero-title {
     padding: 0.25rem 0.5rem;
   }
   .authentication-block {
-    margin-right: 1.5rem;
+    margin-right: 0.5rem;
   }
   .auth-button {
     padding: 0.4rem 0.8rem;
@@ -608,7 +608,7 @@ body.menu-open .hero-title {
   body, body.menu-open {
     transform: none !important;
     position: static !important;
-    overflow-x: visible !important;
+    /* overflow-x: visible !important; */
   }
   .footer-columns {
     display: block !important;

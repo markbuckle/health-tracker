@@ -90,7 +90,13 @@ body {
   margin: 0;
   padding: 0;
 }
-
+html {
+  overscroll-behavior: none;
+}
+html, body {
+  /* background-color: #ffffff; Set to white instead of blue */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
 /* ----- Headings and subheadings ---- */
 
 /* ----- Backgrounds ----- */
@@ -101,6 +107,7 @@ body {
 
 .login-register-body {
   background-color: #7ebcf347;
+  /* background-color: #ffffff; */
   min-height: 100vh;
   margin: 0;
   padding: 0;
