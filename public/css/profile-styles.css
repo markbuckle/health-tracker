@@ -707,6 +707,7 @@
   }
   .in-page-menu {
     margin-top: 0;
+    flex-wrap: nowrap;
   }
   .w-inline-block {
     width: auto;
