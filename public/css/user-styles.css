@@ -14,7 +14,8 @@
   }
   .w-tab-link {
     position: relative;
-    display: inline-block;
+    /* display: inline-block; */
+    display: flex;
     vertical-align: top;
     text-decoration: none;
     padding: 9px 30px;
