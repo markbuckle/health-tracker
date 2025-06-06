@@ -714,13 +714,15 @@
     max-width: 5.2rem;
   }
   .in-page-link {
-    min-width: 0 !important;
     margin-right: 0.2em;
     margin-top: 0.3em;
     flex-wrap: nowrap !important;
+    max-width: 4.6rem;
+    justify-content: center;
   }
   .text-block {
-    font-size: 9px;
+    font-size: 8.5px;
+    text-wrap: nowrap;
   }
   .profile-section {
     margin-bottom: 2rem !important;
