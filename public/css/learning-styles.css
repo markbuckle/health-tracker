@@ -12,7 +12,10 @@
   max-width: 750px;
 }
 .learning-header {
+  display: block;
   text-align: center;
+  align-items: center;
+  justify-self: center;
   padding-top: 2rem;
   margin-bottom: 3rem;
 }
@@ -71,6 +74,8 @@
   font-size: clamp(14px, 3vw, 18px);
   color: #64748b;
   margin-top: 0.5rem;
+  text-align: center;
+  justify-self: center;
 }
 .learning-subtitle-header {
   font-family: "Poppins-SemiBold", sans-serif;
@@ -181,6 +186,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  justify-self: center;
   margin: 1rem 0 1rem 0;
 }
 .books-card {
@@ -249,9 +255,7 @@
 /* Media Queries */
 @media screen and (max-width: 767px) {
   .content-container {
-    width: 90%;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    margin: 2rem 0;
   }
   body.menu-open .content-container {
     transition: margin-top 0.3s ease;
@@ -303,27 +307,34 @@
 }
 
 @media screen and (max-width: 480px) {
+  .content-container {
+    padding: 0;
+  }
   .learning-title {
     font-size: 28px;
   }
-
+  .learning-subtitle {
+    max-width: 60%;
+  }
+  .podcast-container {
+    max-width: 90%;
+  }
+  .books-container {
+    max-width: 90%;
+  }
   .podcast-image-container {
     flex: 0 0 80px;
   }
-
   .podcast-image {
     width: 80px;
     height: 80px;
   }
-
   .podcast-title {
     font-size: 18px;
   }
-
   .podcast-description {
     font-size: 13px;
   }
-
   .podcast-link {
     font-size: 12px;
   }
