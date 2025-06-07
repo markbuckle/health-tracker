@@ -101,7 +101,8 @@ html, body {
 
 /* ----- Backgrounds ----- */
 .home-body {
-  background-color: #b3d6ff;
+  /* background-color: #b3d6ff; */
+  background-color: #ffffff;
   margin: 0;
 }
 
@@ -422,10 +423,15 @@ html, body {
 
 /* ----- Content container ----- */
 .content-container {
+  display: flex;
   max-width: var(--content-width);
-  width: 60%;
+  /* width: 60%; */
   margin: 0 auto;
   padding: 0 var(--spacing-sm);
+  justify-content: center;
+}
+.inner-content-container {
+  width: 70%;
 }
 
 .content-container-2 {
@@ -722,6 +728,7 @@ img,
   background-color: #b3d6ff;
   position: relative !important;
   z-index: 1 !important; /* Lower than hero-wrapper */
+  margin-top: -1px;
 }
 .cms-notice {
   padding-bottom: 20px;
@@ -1091,7 +1098,6 @@ label[for="customBloodType"] {
 /* Large Desktop (1400px and above) */
 @media screen and (min-width: 1400px) {
   .content-container {
-    width: 70%;
     max-width: 800px;
   }
   
@@ -1118,7 +1124,7 @@ label[for="customBloodType"] {
     max-width: 900px;
   }
   .content-container {
-    width: 70%;
+    /* width: 70%; */
   }
   .center-header {
     gap: 2rem;
@@ -1131,7 +1137,7 @@ label[for="customBloodType"] {
 /* Small Desktop / Large Laptop (992px - 1199px) */
 @media screen and (min-width: 992px) and (max-width: 1199px) {
   .content-container {
-    width: 85%;
+    /* width: 85%; */
   }
   .center-header {
     gap: 1.5rem;
@@ -1154,7 +1160,7 @@ label[for="customBloodType"] {
     width: 9rem;
   }
   .content-container {
-    width: 90%;
+    /* width: 90%; */
   }
   .header-container {
     padding: 0 1rem;
@@ -1208,7 +1214,7 @@ label[for="customBloodType"] {
     display: block;
   }
   .content-container {
-    width: 95%;
+    /* width: 95%; */
     padding: 0 1rem;
   }
   .sidebar {

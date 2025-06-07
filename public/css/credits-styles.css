@@ -173,18 +173,17 @@
 
 /* Mobile Styles */
 @media screen and (max-width: 767px) {
-
   .credits-title::before {
     animation-duration: 3.5s; /* Slightly slower on mobile */
   }
   .content-section {
-    width: 90% !important;
-    margin: 2rem 1rem !important;
-    max-width:fit-content;
+    width: 100% !important;
+    margin: 1rem auto !important;
+    max-width: fit-content;
   }
   body.menu-open .content-section {
-    transition: margin-top 0.3s ease;
-    margin-top: var(--mobile-menu-height, 200px);
+    transition: margin-top 0.3s ease !important;
+    margin-top: var(--mobile-menu-height, 200px) !important;
   }
   .step-block {
     padding: 1rem 0;
@@ -221,8 +220,8 @@
 /* Small Mobile Styles */
 @media screen and (max-width: 480px) {
   .content-section {
-    width: 95% !important;
-    padding: 0 10px;
+    width: 100% !important;
+    padding: 0 5px;
   }
   .credits-title {
     font-size: 25px;

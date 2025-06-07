@@ -335,7 +335,7 @@ body.menu-open {
 }
 body.menu-open .hero {
   transition: margin-top 0.3s ease;
-  margin-top: var(--mobile-menu-height, 200px) !important;
+  margin-top: 5rem !important;
 }
 body.menu-open .hero-title {
   margin-top: 2rem !important; /* Increase this value for more space */

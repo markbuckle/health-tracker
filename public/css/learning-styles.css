@@ -1,4 +1,9 @@
 /* ------------- learning center styles ------------- */
+.content-container {
+  display: block;
+  background-color: #b3d6ff;
+  width: 100%;
+}
 .learning-center {
   margin-top: 2rem;
   margin-bottom: 50px;
@@ -230,7 +235,7 @@
 /* Tablet Styles */
 @media screen and (max-width: 1024px) {
   .content-container {
-    width: 70%;
+    /* width: 70%; */
     margin: 5rem auto;
   }
   .learning-center {
@@ -246,6 +251,7 @@
   .content-container {
     width: 90%;
     margin: 2rem auto;
+    padding: 0 1rem;
   }
   body.menu-open .content-container {
     transition: margin-top 0.3s ease;
@@ -256,7 +262,6 @@
   }
   .learning-center {
     margin-top: 0;
-    padding: 0 1rem;
   }
   .learning-header {
     padding-top: 1rem;

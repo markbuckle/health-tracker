@@ -5,6 +5,8 @@
   margin-top: var(--header-height-default);
   display: flex;
   flex-direction: column; /* Changed to column to accommodate mobile button */
+  background-color: #b3d6ff;
+
 }
 .hero-container {
   display: flex;
@@ -1285,8 +1287,8 @@
     height: 340px;
   } */
   .hero {
-    padding: 0.5rem 0 !important;
-    margin-top: 3rem !important;
+    padding: 3rem 0 !important;
+    /* margin-top: 3rem !important; */
   }
   .hero-container {
     padding: 0 0.5rem;
