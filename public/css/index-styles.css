@@ -176,6 +176,13 @@
   box-shadow: -4px 10px 16px 5px #0003;
 }
 /* ----- Animated Scroll Hero Section ----- */
+.slider-content-container {
+  display: block;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+  justify-content: center;
+}
 .use-cases-section {
   /* background: linear-gradient(135deg, #e0ecee 0%, #b3d6ff 100%); */
   background-color: #e0ecee;
@@ -222,7 +229,7 @@
 }
 .slider-container {
   position: relative;
-  max-width: 100%;
+  max-width: 70%;
   margin: 0 auto;
 }
 .slider-wrapper {
@@ -453,6 +460,7 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   z-index: 10;
+  margin: 0 1rem;
 }
 .nav-button:hover {
   background: rgba(255, 255, 255, 1);
@@ -529,7 +537,7 @@
     text-align: center;
     margin-top: 4rem;
     padding: 3rem 2rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: #e0ecee;
     border-radius: 20px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
