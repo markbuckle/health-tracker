@@ -574,13 +574,13 @@ body.menu-open .hero-title {
     top: auto !important;
     left: auto !important;
     width: 100% !important;
-    height: 50px !important;
+    height: 60px !important;
     z-index: 1000 !important;
     transition: height 0.3s ease !important;
   }
   .header-container {
-    height: 50px !important;
-    max-height: 50px !important;
+    height: 60px !important;
+    max-height: 60px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
@@ -593,7 +593,7 @@ body.menu-open .hero-title {
     margin: 0 !important;
   }
   .logo-block img {
-    max-height: 28px !important;
+    max-height: 35px !important;
     margin: 0 !important;
     transform: none !important;
     transition: max-height 0.3s ease !important;
@@ -648,7 +648,7 @@ body.menu-open .hero-title {
     max-height: 70vh;
   }
   .mobile-nav-links {
-    padding: 2px 0 10px 0 !important;
+    padding: 0 0 10px 0 !important;
   }
   .header-scrolled .mobile-nav {
     top: 44px !important; /* Match scrolled header height */
