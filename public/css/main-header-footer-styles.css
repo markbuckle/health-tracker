@@ -352,8 +352,9 @@ body.menu-open .hero-title {
   justify-content: center;
   align-items: center;
   width: 100%;
+  position: relative;
   gap: 0;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
  /* Separator */
 .mobile-nav-links-horizontal::after {
@@ -710,11 +711,11 @@ body.menu-open .hero-title {
     padding: 10px 0;
   }
   .mobile-nav-links-horizontal {
-    gap: 0.5rem;
+    gap: 0;
   }
   .mobile-nav-links-horizontal .mobile-nav-link {
     padding: 10px 16px;
-    max-width: 110px;
+    max-width: 90px;
   }
   .mobile-nav-links-horizontal::after {
     font-size: 13px;
@@ -741,6 +742,9 @@ body.menu-open .hero-title {
   }
   .footer-bottom {
     padding-top: 1.5rem !important;
+  }
+  .learning {
+    padding-left: 35px !important;
   }
 }
 
