@@ -52,87 +52,140 @@
     </div>
 
     <div class="use-cases-section">
-      <div class="content-container-2">
-        <h2 class="quote-3">Perfect for you if you are</h2>
-        
-        <div class="use-cases-container">
-          <!-- Navigation dots -->
-          {{!-- <div class="use-cases-navigation">
-            <button class="nav-dot active" data-index="0" aria-label="Slide 1" aria-selected="true"></button>
-            <button class="nav-dot" data-index="1" aria-label="Slide 2" aria-selected="false"></button>
-            <button class="nav-dot" data-index="2" aria-label="Slide 3" aria-selected="false"></button>
-            <button class="nav-dot" data-index="3" aria-label="Slide 4" aria-selected="false"></button>
-            <button class="nav-dot" data-index="4" aria-label="Slide 5" aria-selected="false"></button>
-          </div> --}}
-          
-          <!-- Card slider -->
-          <div class="use-cases-slider">
-            <div class="use-case-card active" data-index="0">
-              <div class="icon-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-                </svg>
-              </div>
-              <h3>Trying to be proactive with your health</h3>
-              <p>Our insights allow you to be proactive rather than reactive</p>
+        <div class="content-container">
+            <div class="section-header">
+                <h2 class="section-title">Perfect for you if you are</h2>
+                <p class="section-subtitle">Discover how our platform can transform your health journey with personalized insights and proactive care</p>
             </div>
-        
-            <div class="use-case-card" data-index="1">
-              <div class="icon-circle">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z" />
-                </svg>
-              </div>
-              <h3>Managing chronic conditions</h3>
-              <p>Track symptoms, correlations, and progress over time</p>
+            
+            <div class="slider-container">
+                <div class="slider-wrapper">
+                    <div class="slider-track" id="sliderTrack">
+                        <!-- Slide 1 -->
+                        <div class="slide">
+                            <div class="use-case-card">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+                                    </svg>
+                                </div>
+                                <h3 class="card-title">Trying to be proactive with your health</h3>
+                                <p class="card-description">Our insights allow you to be proactive rather than reactive</p>
+                                <ul class="card-features">
+                                    <li>Early warning systems</li>
+                                    <li>Personalized recommendations</li>
+                                    <li>Preventive care guidance</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2 -->
+                        <div class="slide">
+                            <div class="use-case-card">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z" />
+                                    </svg>
+                                </div>
+                                <h3 class="card-title">Managing chronic conditions</h3>
+                                <p class="card-description">Track symptoms, correlations, and progress over time</p>
+                                <ul class="card-features">
+                                    <li>Symptom tracking</li>
+                                    <li>Progress monitoring</li>
+                                    <li>Treatment optimization</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3 -->
+                        <div class="slide">
+                            <div class="use-case-card">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                </div>
+                                <h3 class="card-title">Caring for loved ones</h3>
+                                <p class="card-description">Helps reduce the burden of stressful researching</p>
+                                <ul class="card-features">
+                                    <li>Family health tracking</li>
+                                    <li>Research assistance</li>
+                                    <li>Care coordination</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Slide 4 -->
+                        <div class="slide">
+                            <div class="use-case-card">
+                                <div class="card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5q0-2.725 1.888-4.612T9.5 3q2.725 0 4.612 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5q0-1.875-1.312-3.188T9.5 5Q7.625 5 6.312 6.312T5 9.5q0 1.875 1.312 3.188T9.5 14"/>
+                                    </svg>
+                                </div>
+                                <h3 class="card-title">Searching for a diagnosis</h3>
+                                <p class="card-description">Document symptoms and track patterns to make healthcare visits more effective</p>
+                                <ul class="card-features">
+                                    <li>Symptom documentation</li>
+                                    <li>Pattern recognition</li>
+                                    <li>Healthcare preparation</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Slide 5 -->
+                        <div class="slide">
+                            <div class="use-case-card">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z" />
+                                    </svg>
+                                </div>
+                                <h3 class="card-title">Boosting overall health</h3>
+                                <p class="card-description">Monitor wellness metrics and lifestyle factors</p>
+                                <ul class="card-features">
+                                    <li>Wellness tracking</li>
+                                    <li>Lifestyle optimization</li>
+                                    <li>Health goal achievement</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button class="nav-button prev" id="prevBtn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M15 18l-6-6 6-6v12z"/>
+                        </svg>
+                    </button>
+                    <button class="nav-button next" id="nextBtn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 6l6 6-6 6V6z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Touch indicator for mobile -->
+                    <div class="touch-indicator">
+                        Swipe to explore more →
+                    </div>
+                </div>
+
+                <!-- Pagination Dots -->
+                <div class="pagination" id="pagination">
+                    <button class="pagination-dot active" data-slide="0"></button>
+                    <button class="pagination-dot" data-slide="1"></button>
+                    <button class="pagination-dot" data-slide="2"></button>
+                    <button class="pagination-dot" data-slide="3"></button>
+                    <button class="pagination-dot" data-slide="4"></button>
+                </div>
             </div>
-        
-            <div class="use-case-card" data-index="2">
-              <div class="icon-circle">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                </svg>
-              </div>
-              <h3>Caring for loved ones</h3>
-              <p>Helps reduce the burden of stressful researching</p>
+
+            <div class="cta-section">
+                <h3 class="cta-title">Ready to transform your health journey?</h3>
+                <p class="cta-description">Join thousands of users who have already taken control of their health with our comprehensive platform</p>
+                <a href="/register" class="cta-button">Get Started Today</a>
             </div>
-        
-            <div class="use-case-card" data-index="3">
-              <div class="icon-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <path d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5q0-2.725 1.888-4.612T9.5 3q2.725 0 4.612 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5q0-1.875-1.312-3.188T9.5 5Q7.625 5 6.312 6.312T5 9.5q0 1.875 1.312 3.188T9.5 14"/>
-                </svg>
-              </div>
-              <h3>Searching for a diagnosis</h3>
-              <p>Document symptoms and track patterns to make healthcare visits more effective</p>
-            </div>
-        
-            <div class="use-case-card" data-index="4">
-              <div class="icon-circle">
-                <svg viewBox="0 0 24 24">
-                  <path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z" />
-                </svg>
-              </div>
-              <h3>Boosting overall health</h3>
-              <p>Monitor wellness metrics and lifestyle factors</p>
-            </div>
-          </div>
-          
-          <!-- Previous/Next controls -->
-          <div class="slider-controls">
-            <button class="slider-prev" aria-label="Previous slide">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-            </button>
-            <button class="slider-next" aria-label="Next slide">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="wave-light-bg">
@@ -255,148 +308,237 @@
       });
     </script>
     <script> // Hero scrolling animation
-      function initCardSlider() {
-        const slider = document.querySelector('.use-cases-slider');
-        if (!slider) return; // Exit if slider doesn't exist on page
-        
-        const cards = slider.querySelectorAll('.use-case-card');
-        const navDots = document.querySelectorAll('.nav-dot');
-        const prevButton = document.querySelector('.slider-prev');
-        const nextButton = document.querySelector('.slider-next');
-        
-        let currentIndex = 0;
-        let autoplayInterval;
-        
-        // Function to show a specific card
-        function showCard(index) {
-          // Ensure index is within bounds
-          if (index < 0) index = cards.length - 1;
-          if (index >= cards.length) index = 0;
-          
-          currentIndex = index;
-          
-          // Update cards
-          cards.forEach((card, i) => {
-            card.classList.toggle('active', i === currentIndex);
-            // Add smooth transition between cards
-            if (i === currentIndex) {
-              card.style.opacity = '1';
-              card.style.visibility = 'visible';
-              card.style.transform = 'translateX(0)';
-            } else {
-              card.style.opacity = '0';
-              card.style.visibility = 'hidden';
-              card.style.transform = 'translateX(50px)';
+      class ModernSlider {
+            constructor() {
+                this.sliderTrack = document.getElementById('sliderTrack');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.pagination = document.getElementById('pagination');
+                this.paginationDots = this.pagination.querySelectorAll('.pagination-dot');
+                
+                this.currentSlide = 0;
+                this.totalSlides = 5;
+                this.isTransitioning = false;
+                
+                // Touch handling
+                this.startX = 0;
+                this.startY = 0;
+                this.distX = 0;
+                this.distY = 0;
+                this.threshold = 100; // Minimum distance for swipe
+                this.restraint = 100; // Maximum distance allowed in perpendicular direction
+                this.allowedTime = 300; // Maximum time allowed to travel distance
+                this.startTime = 0;
+                
+                this.init();
             }
-          });
-          
-          // Update navigation dots
-          navDots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentIndex);
-            // Add ARIA attributes for accessibility
-            dot.setAttribute('aria-selected', i === currentIndex ? 'true' : 'false');
-          });
+            
+            init() {
+                this.updateSlider();
+                this.addEventListeners();
+                
+                // Auto-play functionality (optional)
+                this.startAutoPlay();
+            }
+            
+            addEventListeners() {
+                // Button navigation
+                this.prevBtn.addEventListener('click', () => this.goToPrevSlide());
+                this.nextBtn.addEventListener('click', () => this.goToNextSlide());
+                
+                // Pagination dots
+                this.paginationDots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => this.goToSlide(index));
+                });
+                
+                // Touch events for mobile swiping
+                this.sliderTrack.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: true });
+                this.sliderTrack.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+                this.sliderTrack.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: true });
+                
+                // Mouse events for desktop dragging
+                this.sliderTrack.addEventListener('mousedown', (e) => this.handleMouseStart(e));
+                this.sliderTrack.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.sliderTrack.addEventListener('mouseup', (e) => this.handleMouseEnd(e));
+                this.sliderTrack.addEventListener('mouseleave', (e) => this.handleMouseEnd(e));
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.goToPrevSlide();
+                    if (e.key === 'ArrowRight') this.goToNextSlide();
+                });
+                
+                // Pause auto-play on hover
+                this.sliderTrack.addEventListener('mouseenter', () => this.pauseAutoPlay());
+                this.sliderTrack.addEventListener('mouseleave', () => this.startAutoPlay());
+            }
+            
+            handleTouchStart(e) {
+                this.startX = e.touches[0].clientX;
+                this.startY = e.touches[0].clientY;
+                this.startTime = new Date().getTime();
+                this.pauseAutoPlay();
+            }
+            
+            handleTouchMove(e) {
+                if (e.touches.length > 1) return; // Ignore multi-touch
+                
+                this.distX = e.touches[0].clientX - this.startX;
+                this.distY = e.touches[0].clientY - this.startY;
+                
+                // Prevent scrolling when swiping horizontally
+                if (Math.abs(this.distX) > Math.abs(this.distY)) {
+                    e.preventDefault();
+                }
+            }
+            
+            handleTouchEnd(e) {
+                const elapsedTime = new Date().getTime() - this.startTime;
+                
+                if (elapsedTime <= this.allowedTime) {
+                    if (Math.abs(this.distX) >= this.threshold && Math.abs(this.distY) <= this.restraint) {
+                        if (this.distX > 0) {
+                            this.goToPrevSlide();
+                        } else {
+                            this.goToNextSlide();
+                        }
+                    }
+                }
+                
+                this.startAutoPlay();
+            }
+            
+            handleMouseStart(e) {
+                if (window.innerWidth > 768) return; // Only enable on mobile-sized screens
+                this.startX = e.clientX;
+                this.startY = e.clientY;
+                this.startTime = new Date().getTime();
+                this.sliderTrack.style.cursor = 'grabbing';
+                this.pauseAutoPlay();
+            }
+            
+            handleMouseMove(e) {
+                if (window.innerWidth > 768) return;
+                if (this.startX === 0) return;
+                
+                this.distX = e.clientX - this.startX;
+                this.distY = e.clientY - this.startY;
+            }
+            
+            handleMouseEnd(e) {
+                if (window.innerWidth > 768) return;
+                if (this.startX === 0) return;
+                
+                const elapsedTime = new Date().getTime() - this.startTime;
+                
+                if (elapsedTime <= this.allowedTime) {
+                    if (Math.abs(this.distX) >= this.threshold && Math.abs(this.distY) <= this.restraint) {
+                        if (this.distX > 0) {
+                            this.goToPrevSlide();
+                        } else {
+                            this.goToNextSlide();
+                        }
+                    }
+                }
+                
+                this.sliderTrack.style.cursor = 'grab';
+                this.startX = 0;
+                this.startAutoPlay();
+            }
+            
+            goToPrevSlide() {
+                if (this.isTransitioning) return;
+                this.currentSlide = this.currentSlide === 0 ? this.totalSlides - 1 : this.currentSlide - 1;
+                this.updateSlider();
+            }
+            
+            goToNextSlide() {
+                if (this.isTransitioning) return;
+                this.currentSlide = this.currentSlide === this.totalSlides - 1 ? 0 : this.currentSlide + 1;
+                this.updateSlider();
+            }
+            
+            goToSlide(slideIndex) {
+                if (this.isTransitioning || slideIndex === this.currentSlide) return;
+                this.currentSlide = slideIndex;
+                this.updateSlider();
+            }
+            
+            updateSlider() {
+                this.isTransitioning = true;
+                
+                // Update slider position
+                const translateX = -this.currentSlide * 100;
+                this.sliderTrack.style.transform = `translateX(${translateX}%)`;
+                
+                // Update pagination dots
+                this.paginationDots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === this.currentSlide);
+                });
+                
+                // Update navigation buttons
+                this.prevBtn.disabled = false;
+                this.nextBtn.disabled = false;
+                
+                // Re-enable transitioning after animation completes
+                setTimeout(() => {
+                    this.isTransitioning = false;
+                }, 500);
+                
+                // Trigger card animations for the current slide
+                this.animateCurrentSlideCards();
+            }
+            
+            animateCurrentSlideCards() {
+                const currentSlideElement = this.sliderTrack.children[this.currentSlide];
+                const cards = currentSlideElement.querySelectorAll('.use-case-card');
+                
+                // Reset animations
+                cards.forEach(card => {
+                    card.style.animation = 'none';
+                    card.offsetHeight; // Trigger reflow
+                });
+                
+                // Re-apply animations with delay
+                setTimeout(() => {
+                    cards.forEach((card, index) => {
+                        card.style.animation = `slideInUp 0.6s ease forwards`;
+                        card.style.animationDelay = `${0.1 * (index + 1)}s`;
+                    });
+                }, 50);
+            }
+            
+            startAutoPlay() {
+                this.pauseAutoPlay(); // Clear any existing interval
+                this.autoPlayInterval = setInterval(() => {
+                    this.goToNextSlide();
+                }, 5000); // Change slide every 5 seconds
+            }
+            
+            pauseAutoPlay() {
+                if (this.autoPlayInterval) {
+                    clearInterval(this.autoPlayInterval);
+                    this.autoPlayInterval = null;
+                }
+            }
         }
         
-        // Set up navigation dot clicks
-        navDots.forEach((dot, index) => {
-          dot.addEventListener('click', () => {
-            showCard(index);
-            resetAutoplay();
-          });
+        // Initialize the slider when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ModernSlider();
         });
         
-        // Set up next/prev buttons
-        if (prevButton) {
-          prevButton.addEventListener('click', () => {
-            showCard(currentIndex - 1);
-            resetAutoplay();
-          });
-        }
-        
-        if (nextButton) {
-          nextButton.addEventListener('click', () => {
-            showCard(currentIndex + 1);
-            resetAutoplay();
-          });
-        }
-        
-        // Function to start autoplay
-        function startAutoplay() {
-          stopAutoplay();
-          autoplayInterval = setInterval(() => {
-            showCard(currentIndex + 1);
-          }, 5000); // Change slide every 5 seconds
-        }
-        
-        // Function to stop autoplay
-        function stopAutoplay() {
-          if (autoplayInterval) {
-            clearInterval(autoplayInterval);
-          }
-        }
-        
-        // Function to reset autoplay (when user interacts)
-        function resetAutoplay() {
-          stopAutoplay();
-          startAutoplay();
-        }
-        
-        // Add keyboard navigation
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'ArrowLeft') {
-            showCard(currentIndex - 1);
-            resetAutoplay();
-          } else if (e.key === 'ArrowRight') {
-            showCard(currentIndex + 1);
-            resetAutoplay();
-          }
+        // Pause auto-play when page is not visible
+        document.addEventListener('visibilitychange', () => {
+            const slider = window.modernSlider;
+            if (slider) {
+                if (document.hidden) {
+                    slider.pauseAutoPlay();
+                } else {
+                    slider.startAutoPlay();
+                }
+            }
         });
-        
-        // Start autoplay
-        startAutoplay();
-        
-        // Pause autoplay when user hovers over the slider
-        slider.addEventListener('mouseenter', stopAutoplay);
-        slider.addEventListener('mouseleave', startAutoplay);
-        
-        // Handle touch events for swiping
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        slider.addEventListener('touchstart', (e) => {
-          touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-        
-        slider.addEventListener('touchend', (e) => {
-          touchEndX = e.changedTouches[0].screenX;
-          handleSwipe();
-        }, { passive: true });
-        
-        function handleSwipe() {
-          const swipeThreshold = 50; // Minimum swipe distance
-          
-          if (touchEndX < touchStartX - swipeThreshold) {
-            // Swipe left - go to next slide
-            showCard(currentIndex + 1);
-            resetAutoplay();
-          }
-          
-          if (touchEndX > touchStartX + swipeThreshold) {
-            // Swipe right - go to previous slide
-            showCard(currentIndex - 1);
-            resetAutoplay();
-          }
-        }
-        
-        // Initialize with the first card
-        showCard(0);
-      }
-
-      // Call this function on DOMContentLoaded in your initialization code
-     document.addEventListener('DOMContentLoaded', function() {
-      initCardSlider();
-     });
     </script>
     {{!-- <script>  // Debug panel for scroll animation (keep commented until needed)
       (function() {

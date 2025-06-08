@@ -1096,16 +1096,11 @@ label[for="customBloodType"] {
 /* ===== ENHANCED MEDIA QUERIES FOR MAIN-STYLES.CSS ===== */
 
 /* Large Desktop (1400px and above) */
-@media screen and (min-width: 1400px) {
-  .content-container {
-    max-width: 800px;
-  }
-  
+@media screen and (min-width: 1400px) {  
   .header-links {
     font-size: 14px;
     gap: 2.5rem;
   }
-  
   .auth-button {
     padding: 0.6rem 1.5rem;
     font-size: 1rem;
