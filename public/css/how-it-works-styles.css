@@ -231,7 +231,14 @@
 @media screen and (max-width: 480px) {
   .content-section {
     width: 100%;
-    padding: 0 5px;
+    padding: 0;
+  }
+  .inner-content-section {
+    width: 85%;
+  }
+  .hiw-subtitle {
+    width: 80%;
+    justify-self: center;
   }
   .step-number {
     width: 3rem;

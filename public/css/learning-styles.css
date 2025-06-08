@@ -321,6 +321,7 @@
   }
   .learning-subtitle {
     max-width: 60%;
+    font-size: clamp(16px, 2vw, 18px);
   }
   .podcast-container {
     max-width: 90%;
