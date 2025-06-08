@@ -346,6 +346,45 @@ body.menu-open .hero-title {
   align-items: center;
   padding: 15px;
 }
+.mobile-nav-links-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 0;
+  margin-bottom: 15px;
+}
+ /* Separator */
+.mobile-nav-links-horizontal::after {
+  content: '|';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #627183;
+  font-size: 14px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 5;
+}
+.mobile-nav-links-horizontal .mobile-nav-link {
+  color: #627183;
+  text-decoration: none;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 20px;
+  flex: 1;
+  max-width: 120px;
+  text-align: center;
+  border-bottom: none; /* Remove border since they're side by side */
+  transition: color 0.3s ease;
+  position: relative;
+  pointer-events: auto;
+  z-index: 10;
+  white-space: nowrap; /* Prevent text wrapping */
+}
 .mobile-nav-link {
   color: #627183;
   text-decoration: none;
@@ -401,8 +440,27 @@ body.menu-open .hero-title {
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 15px;
+  margin-top: 0;
   gap: 10px;
+}
+.mobile-nav-links-horizontal .mobile-nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #5cb15d;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+  opacity: 0;
+}
+.mobile-nav-links-horizontal .mobile-nav-link:hover {
+  color: #5cb15d;
+}
+.mobile-nav-links-horizontal .mobile-nav-link:hover::after {
+  width: 80%;
+  opacity: 1;
 }
 .mobile-nav-buttons .auth-button {
   width: 80%;
@@ -650,6 +708,16 @@ body.menu-open .hero-title {
   .mobile-nav-link {
     font-size: 14px;
     padding: 10px 0;
+  }
+  .mobile-nav-links-horizontal {
+    gap: 0.5rem;
+  }
+  .mobile-nav-links-horizontal .mobile-nav-link {
+    padding: 10px 16px;
+    max-width: 110px;
+  }
+  .mobile-nav-links-horizontal::after {
+    font-size: 13px;
   }
   .mobile-nav-buttons .auth-button {
     font-size: 14px;
