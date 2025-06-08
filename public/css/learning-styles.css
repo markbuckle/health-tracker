@@ -69,7 +69,8 @@
     background-position: 200% 0;
   }
 }
-.learning-subtitle {
+.learning-subtitle,
+.learning-subtitle2 {
   font-family: "Poppins-Regular", sans-serif;
   font-size: clamp(14px, 3vw, 18px);
   color: #64748b;
@@ -269,7 +270,11 @@
   }
   .learning-header {
     padding-top: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+  }
+  .learning-subtitle2 {
+    padding-bottom: 0;
+    margin-bottom: -1px;
   }
   .podcast-title{
     margin-bottom: 0;
@@ -309,6 +314,7 @@
 @media screen and (max-width: 480px) {
   .content-container {
     padding: 0;
+    margin-bottom: 0;
   }
   .learning-title {
     font-size: 28px;
@@ -324,10 +330,13 @@
   }
   .podcast-image-container {
     flex: 0 0 80px;
+    display: flex;
+    justify-content: center;
   }
   .podcast-image {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
+    justify-self: center;
   }
   .podcast-title {
     font-size: 18px;

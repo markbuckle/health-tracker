@@ -5,7 +5,7 @@
   --primary-color: #4a90e2;
 }
 .credits-body {
-  background-color: #d7d7d7d7;
+  background-color: #ffffff;
   min-height: 100vh;
   margin: 0;
   padding: 0;
@@ -13,9 +13,9 @@
   flex-direction: column;
 }
 .content-section {
-  margin: 7rem auto;
-  max-width: 70%;
-  padding: 0 20px;
+  background-color: #d7d7d7d7;
+  margin-top: 3.5rem;
+  padding-top: 2rem;
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -95,14 +95,15 @@
 .steps-container {
   display: flex;
   flex-direction: column;
+  justify-self: center;
   gap: 3.5rem;
   margin-top: 2rem;
   position: relative;
+  max-width: 70%;
 }
 .step-block {
   position: relative;
   display: flex;
-  padding: 0 2rem 0 2rem; /* Make space for the step number */
   justify-content: center;
   /* min-height: 160px; */
 }
@@ -170,7 +171,22 @@
     padding: 1rem;
     border-radius: 8px;
 }
-
+.last-updated {
+  text-align: center; 
+  margin: 1rem 0;
+  font-size: 0.9rem; 
+  color: #8f8f8f;
+  font-family: "Poppins-Regular", sans-serif;
+}
+.wave-pattern {
+  margin-top: -1px;
+}
+@media screen and (max-width: 1024px) {
+  .credits-subtitle {
+    max-width: 43%;
+    justify-self: center;
+  }
+}
 /* Mobile Styles */
 @media screen and (max-width: 767px) {
   .credits-title::before {
@@ -221,14 +237,33 @@
 @media screen and (max-width: 480px) {
   .content-section {
     width: 100% !important;
-    padding: 0 5px;
+    padding-top: 1rem;
+    margin-top: 0 !important;
   }
   .credits-title {
     font-size: 25px;
+  }
+  .credits-subtitle {
+    font-size: 13px;
+    max-width: 73%;
+  }
+  .content-section {
+    margin-bottom: 0 !important;
+  }
+  .steps-container {
+    max-width: 90%;
+    justify-self: center;
+  }
+  .step-content {
+    padding: 1rem;
   }
   .step-number {
     width: 3rem;
     height: 3rem;
     font-size: 1.25rem;
+  }
+  .last-updated {
+    margin-bottom: 0 !important;
+    font-size: 12px;
   }
 }
