@@ -460,6 +460,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 .pagination-dot::before {
   content: '';
