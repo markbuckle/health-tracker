@@ -20,9 +20,12 @@
   text-align: center;
   align-items: center;
   background-color: #dceee3;
+  display: block;
 }
 .inner-content-section {
   width: 70%;
+  margin: 0 auto;
+  display: block;
 }
 .HIW-title {
   font-family: "Poppins-Bold", sans-serif;
@@ -96,6 +99,8 @@
   margin-top: 2rem;
   position: relative;
   max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .step-block {
   position: relative;
