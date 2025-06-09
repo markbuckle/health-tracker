@@ -95,7 +95,6 @@
 .steps-container {
   display: flex;
   flex-direction: column;
-  justify-self: center;
   gap: 3.5rem;
   margin-top: 2rem;
   position: relative;
@@ -184,7 +183,6 @@
 @media screen and (max-width: 1024px) {
   .credits-subtitle {
     max-width: 43%;
-    justify-self: center;
   }
 }
 /* Mobile Styles */
@@ -195,7 +193,11 @@
   .content-section {
     width: 100% !important;
     margin: 1rem auto !important;
-    max-width: fit-content;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem; /* Add some padding */
   }
   body.menu-open .content-section {
     transition: margin-top 0.3s ease !important;
@@ -203,33 +205,65 @@
   }
   .step-block {
     padding: 1rem 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .step-number {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    position: relative; /* Changed from absolute for better mobile flow */
+    margin-bottom: 1rem;
   }
   .step-card {
     padding: 0.35rem;
+    width: 100%;
+    margin: 0 auto; /* Center the card */
+  }
+  .step-content {
+    width: 100%;
   }
   .steps-container {
-    margin-top: 1rem;
+    margin: 1rem auto; /* Center with margin instead of justify-self */
     gap: 1rem;
+    max-width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .step-title {
     font-size: 17px;
+    text-align: center; /* Center titles on mobile */
   }
   .step-description {
     font-size: 12px;
   }
+  .tech-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important; /* Single column on mobile */
+    gap: 1rem !important;
+    margin-top: 1rem !important;
+  }
   .credits-subtitle {
-    margin-bottom: 0.25rem;
+    margin: 0 auto 0.25rem auto; /* Center with margin */
+    width: 90%; /* Increased for better mobile fit */
+    text-align: center;
   }
   .highlight {
     font-size: 15px !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+    text-align: left;
   }
   .highlight p {
     font-size: 12px !important;
+  }
+  .last-updated {
+    margin: 1rem auto 0 auto !important;
+    text-align: center;
+    width: 100%;
   }
 }
 
@@ -237,33 +271,74 @@
 @media screen and (max-width: 480px) {
   .content-section {
     width: 100% !important;
-    padding-top: 1rem;
-    margin-top: 0 !important;
+    padding: 1rem 0;
+    margin: 0 auto !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .credits-title {
     font-size: 25px;
   }
   .credits-subtitle {
     font-size: 13px;
-    max-width: 73%;
+    max-width: 90%; /* Increased from 73% */
+    margin: 0 auto;
+    text-align: center;
   }
   .content-section {
     margin-bottom: 0 !important;
   }
   .steps-container {
-    max-width: 90%;
-    justify-self: center;
+    max-width: 90%; /* Increased from 90% */
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .step-content {
-    padding: 1rem;
+    padding: 1rem 0.5rem;
+    width: 95%;
   }
   .step-number {
     width: 3rem;
     height: 3rem;
     font-size: 1.25rem;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+  .step-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  .step-card {
+    width: 97%;
+    margin: 0 auto;
+  }
+  .tech-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    margin-top: 1rem !important;
+  }
+  .highlight {
+    padding: 0.75rem !important;
+    margin: 0 !important;
+  }
+  .highlight strong {
+    font-size: 14px;
+  }
+  .highlight p {
+    font-size: 11px !important;
+    margin: 0.25rem 0;
   }
   .last-updated {
-    margin-bottom: 0 !important;
+    margin: 0 auto 0 auto !important;
     font-size: 12px;
+    text-align: center;
+    width: 100%;
   }
 }

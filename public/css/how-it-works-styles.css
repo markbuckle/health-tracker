@@ -23,7 +23,6 @@
 }
 .inner-content-section {
   width: 70%;
-  justify-self: center;
 }
 .HIW-title {
   font-family: "Poppins-Bold", sans-serif;
@@ -184,15 +183,30 @@
 /* Mobile Styles */
 @media screen and (max-width: 767px) {
   .content-section {
-    width: 90%;
+    width: 100%;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* This replaces justify-self */
   }
   body.menu-open .content-section {
     transition: margin-top 0.3s ease;
     margin-top: var(--mobile-menu-height, 200px);
   }
   .inner-content-section {
-    width: 80%;
+    width: 90%; /* Increased from 80% for better mobile fit */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto; /* Fallback centering */
+  }
+  .steps-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem auto; /* Changed from justify-self to margin auto */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .step-block {
     position: relative; /* Positioning context for absolute positioning */
@@ -215,7 +229,7 @@
     font-size: 16px;
   }
   .step-card {
-    width: auto;
+    width: 100%;
     padding: 0.5rem !important;
     margin: 0 0.5rem !important; /* Remove top margin since we're overlapping */
   }
@@ -224,6 +238,11 @@
   }
   .HIW-title::before {
     animation-duration: 3.5s; /* Slightly slower on mobile */
+  }
+  .hiw-subtitle {
+    width: 90%; /* Increased from 80% */
+    margin: 0 auto 0.25rem auto; /* Center with margin instead of justify-self */
+    text-align: center;
   }
 }
 
@@ -238,7 +257,6 @@
   }
   .hiw-subtitle {
     width: 80%;
-    justify-self: center;
   }
   .step-number {
     width: 3rem;
