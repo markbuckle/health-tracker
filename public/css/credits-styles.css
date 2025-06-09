@@ -184,7 +184,9 @@
 }
 @media screen and (max-width: 1024px) {
   .credits-subtitle {
-    max-width: 43%;
+    max-width: 43%; /* Increased from 43% */
+    margin: 0 auto; /* Center with margin instead of justify-self */
+    text-align: center;
   }
 }
 /* Mobile Styles */

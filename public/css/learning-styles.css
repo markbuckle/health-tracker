@@ -244,13 +244,17 @@
 @media screen and (max-width: 1024px) {
   .content-container {
     /* width: 70%; */
-    margin: 5rem auto;
+    margin: 3.5rem auto 0 auto;
   }
   .learning-center {
     padding-top: 0;
   }
   .learning-header {
     padding-top: 0rem;
+  }
+  .podcast-container,
+  .books-container {
+    max-width: 650px;
   }
 }
   
