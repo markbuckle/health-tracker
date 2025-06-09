@@ -309,8 +309,8 @@
   background: #f2f4f3;
   backdrop-filter: blur(10px);
   border-radius: 50%;
-  width: 240px;
-  height: 240px;
+  width: 275px;
+  height: 275px;
   padding: 0.5rem;
   position: relative;
   overflow: hidden;
@@ -372,7 +372,7 @@
   transform: scale(1.1);
 }
 .card-title {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #333;
   margin-top: 0.4rem;
@@ -467,8 +467,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
   background: transparent;
   border-radius: 50%;
   transition: all 0.3s ease;
@@ -1006,7 +1004,7 @@
 }
 
 /* Tablet Landscape (768px - 991px) */
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 1024px) {
   .hero {
     display: flex;
     justify-content: center;
@@ -1112,7 +1110,7 @@
     max-width: 500px;
   }
   .slider-container {
-    max-width: 70%;
+    max-width: 68%;
   }
   .slider-wrapper {
     margin: 0 50px;
@@ -1155,8 +1153,8 @@
     margin-top: 1rem;
   }
   .pagination-dot {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
   }
   .touch-indicator {
     display: block;
@@ -1322,18 +1320,14 @@
     gap: 8px;
     margin-top: 1rem;
   }
-  .pagination-dot {
-    width: 10px;
-    height: 10px;
-  }
   .touch-indicator {
     display: block;
     font-size: 0.7rem;
     bottom: 0.75rem;
   }
   .pagination-dot {
-    width: 16px;
-    height: 16px;
+    width: 11px;
+    height: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1629,10 +1623,8 @@
     height: 12px;
   }
   .pagination-dot {
-    width: 6px;
-    height: 6px;
-    min-width: 20px;
-    min-height: 20px;
+    width: 8px;
+    height: 8px;
   }
   .touch-indicator {
     font-size: 0.6rem;
