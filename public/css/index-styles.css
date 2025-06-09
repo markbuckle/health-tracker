@@ -475,7 +475,7 @@
 }
 .pagination-dot.active {
   background: #5cb15d;
-  transform: scale(1.2);
+  /* transform: scale(1.2); */
 }
 .pagination-dot.active::before {
   background: rgba(255, 255, 255, 0.3);
