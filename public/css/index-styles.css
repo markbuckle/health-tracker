@@ -6,7 +6,6 @@
   display: flex;
   flex-direction: column; /* Changed to column to accommodate mobile button */
   background-color: #b3d6ff;
-
 }
 .hero-container {
   display: flex;
@@ -650,7 +649,6 @@
 .wave-light-bg, .dashboard-img, footer {
   position: relative !important;
   z-index: 11 !important;
-  margin-top: -2px;
 }
 .wave-light-bg:first-of-type {
   position: relative !important;
@@ -955,6 +953,7 @@
     width: 8rem;
     padding: 1rem 2rem;
     font-size: 1.25rem;
+    margin-top: 0.75rem;
   }
   .quote-1 {
     font-size: 2rem;
@@ -1012,6 +1011,7 @@
     justify-content: center;
     align-items: center;
     margin-top: var(--header-height-default);
+    margin-bottom: -1px;
   }
   .use-cases-section {
     padding-top: 3rem 0;
@@ -1545,6 +1545,9 @@
     gap: 1rem !important;
     padding: 0 0.5rem !important;
   }
+  .content-container {
+    margin-bottom: -1px !important;
+  }
   .hero-title {
     font-size: 0.9rem;
     margin-top: 1rem;
@@ -1645,7 +1648,7 @@
 @media screen and (max-width: 768px) and (orientation: landscape) {
   .hero {
     padding: 0.5rem 0 !important;
-    margin-top: 2.5rem !important;
+    /* margin-top: 2.5rem !important; */
   }
   .hero-container {
     gap: 1rem;
@@ -1663,13 +1666,15 @@
     text-align: center !important;
     margin: 0 !important;
     padding: 0 !important;
+    padding-top: 2rem !important;
   }
   .hero-text {
     font-size: clamp(1.2rem, 4vw, 1.6rem) !important;
     margin-bottom: 0.2rem !important;
   }
   .mobile {
-    max-width: 50%;
+    max-width: 50% !important;
+    margin-top: 0 !important;
   }
   .mobile-only {
     margin-top: 1rem;
