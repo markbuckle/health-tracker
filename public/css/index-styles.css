@@ -1176,6 +1176,7 @@
   .use-cases-section {
     padding: 2rem 0;
   }
+
   .use-cases-container {
     max-width: none;
     margin: 0 auto 2rem;
@@ -1373,6 +1374,9 @@
     padding: 3rem 0 !important;
     /* margin-top: 3rem !important; */
   }
+  .content-container {
+    margin-bottom: -5px !important;
+  }
   .hero-container {
     padding: 0 0.5rem;
   }
@@ -1511,8 +1515,8 @@
     margin-top: 0.25rem;
   }
   .pagination-dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
   }
   .touch-indicator {
     font-size: 0.65rem;
@@ -1546,7 +1550,7 @@
     padding: 0 0.5rem !important;
   }
   .content-container {
-    margin-bottom: -1px !important;
+    margin-bottom: -5px !important;
   }
   .hero-title {
     font-size: 0.9rem;
@@ -1636,8 +1640,7 @@
     height: 12px;
   }
   .pagination-dot {
-    width: 10px;
-    height: 10px;
+    width: 6px;
   }
   .touch-indicator {
     font-size: 0.6rem;
