@@ -1016,7 +1016,7 @@
     justify-content: center;
     align-items: center;
     margin-top: var(--header-height-default);
-    margin-bottom: -2px !important;
+    margin-bottom: -1px !important;
   }
   .use-cases-section {
     padding-top: 3rem 0;
@@ -1204,7 +1204,7 @@
   .hero-content {
     width: 100%;
     order: 1;
-    margin-bottom: 1.4rem;
+    margin-bottom: 0.25rem;
   }
   .hero-title {
     order: 1 !important;
@@ -1219,7 +1219,7 @@
     display: block !important;
   }
   .mobile {
-    margin: 0.5rem auto;
+    margin: 0.5rem auto !important;
     order: 2;
     max-width: 70% !important;
   }
