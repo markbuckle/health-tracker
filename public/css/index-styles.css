@@ -1123,8 +1123,8 @@
     margin: 0 50px;
   }
   .use-case-card {
-    width: 220px;
-    height: 220px;
+    width: 230px;
+    height: 230px;
     padding: 1rem;
   }
   .card-icon {
@@ -1290,8 +1290,8 @@
     padding: 1.5rem 0;
   }
   .use-case-card {
-    width: 200px;
-    height: 200px;
+    width: 210px;
+    height: 210px;
     padding: 0.75rem;
   }
   .card-icon {
@@ -1614,12 +1614,12 @@
     font-size: 0.85rem;
   }
   .slider-wrapper {
-    margin: 0 30px;
+    margin: 0;
   }
   .use-case-card {
-    width: 160px;
-    height: 160px;
-    padding: 0.4rem;
+    width: 170px;
+    height: 170px;
+    padding: 0.5rem;
   }
   .card-icon {
     width: 30px;
@@ -1639,6 +1639,7 @@
     font-size: 0.6rem;
     margin-top: 0.2rem;
     max-width: 90%;
+    -webkit-line-clamp: 3;
   }
   .nav-button {
     width: 32px;
