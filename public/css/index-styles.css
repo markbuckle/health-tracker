@@ -4,8 +4,12 @@
   align-items: center;
   margin-top: var(--header-height-default);
   display: flex;
+  gap: 0 !important;
   flex-direction: column; /* Changed to column to accommodate mobile button */
   background-color: #b3d6ff;
+}
+.content-container {
+  gap: 0 !important;
 }
 .hero-container {
   display: flex;
@@ -15,7 +19,7 @@
   gap: 1rem;
   width: auto;
   max-width: 45rem;
-  margin-bottom: 2rem;
+  padding-bottom: 2rem;
 }
 .hero-content {
   display: flex;
@@ -653,6 +657,7 @@
 .wave-light-bg:first-of-type {
   position: relative !important;
   z-index: 20 !important;
+  margin-top: -1px;
 }
 /* -------------- feedback-widget.css ------------- */
 .feedback-widget {
@@ -1011,7 +1016,7 @@
     justify-content: center;
     align-items: center;
     margin-top: var(--header-height-default);
-    margin-bottom: 0 !important;
+    margin-bottom: -2px !important;
   }
   .use-cases-section {
     padding-top: 3rem 0;
@@ -1021,10 +1026,10 @@
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 0rem !important;
+    /* gap: 0 !important; */
     width: 100% !important;
-    margin-bottom: 1rem !important;
     padding: 0 !important;
+    padding-bottom: 1rem !important;
   }
   .hero-content {
     display: flex !important;
@@ -1184,6 +1189,7 @@
   .hero {
     padding: 1rem 0;
     margin-top: 3rem;
+    margin-bottom: -1px !important;
   }
   .hero-container {
     display: flex;
@@ -1372,11 +1378,11 @@
   .hero {
     padding: 3rem 0 !important;
     /* margin-top: 3rem !important; */
-    margin-bottom: 0 !important;
+    margin-bottom: -1px !important;
   }
-  .content-container {
+  /* .content-container {
     margin-bottom: -5px !important;
-  }
+  } */
   .hero-container {
     padding: 0 0.5rem;
   }
@@ -1545,13 +1551,16 @@
 
 /* Small Mobile (below 320px) */
 @media screen and (max-width: 319px) {
+  .hero {
+    margin-bottom: -1px;
+  }
   .hero-container {
     gap: 1rem !important;
     padding: 0 0.5rem !important;
   }
-  .content-container {
+  /* .content-container {
     margin-bottom: -5px !important;
-  }
+  } */
   .hero-title {
     font-size: 0.9rem;
     margin-top: 1rem;
