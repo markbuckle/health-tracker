@@ -1521,8 +1521,8 @@
     margin-top: 0.25rem;
   }
   .pagination-dot {
-    width: 6px;
-    height: 10px;
+    width: 6px !important;
+    height: 12px !important;
   }
   .touch-indicator {
     font-size: 0.65rem;
