@@ -1,12 +1,18 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const FormData = require('form-data');
+const fetch = require('node-fetch');
 
 // Detect if running on Vercel (serverless environment)
 const isVercel = process.env.VERCEL || process.env.NOW_REGION;
 const isDevelopment = process.env.NODE_ENV === 'development';
 
+// OCR Service URL - your Digital Ocean droplet
+const OCR_SERVICE_URL = process.env.OCR_SERVICE_URL || 'http://147.182.149.140:8000';
+
 console.log(`Environment: ${isVercel ? 'Vercel Production' : 'Local Development'}`);
+console.log(`OCR Service: ${OCR_SERVICE_URL}`);
 
 // Configure storage based on environment
 let storage;
@@ -55,58 +61,94 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: isVercel ? 100 * 1024 * 1024 : 200 * 1024 * 1024, // 100MB on Vercel, 200MB locally
-    files: isVercel ? 8 : 20, // Limit concurrent files on Vercel
+    fileSize: isVercel ? 50 * 1024 * 1024 : 200 * 1024 * 1024, // 50MB on Vercel, 200MB locally
+    files: isVercel ? 5 : 20, // Limit concurrent files on Vercel
     fieldSize: 10 * 1024 * 1024, // 10MB for form fields
   },
 });
 
-// Helper function to handle file processing in both environments
+// Helper function to process files using OCR service
 async function processUploadedFile(file, extractFromPDF) {
-  let filePath;
   let tempFilePath = null;
   
   try {
+    console.log(`Processing file: ${file.originalname} using OCR service`);
+    
+    // Prepare file for OCR service
+    let fileBuffer;
+    let filePath;
+    
     if (isVercel) {
-      // Memory storage: Create temporary file from buffer
+      // Memory storage: use buffer directly
+      fileBuffer = file.buffer;
+      
+      // Create temporary file for form data
       tempFilePath = `/tmp/${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
       fs.writeFileSync(tempFilePath, file.buffer);
       filePath = tempFilePath;
-      
-      console.log(`Created temp file for processing: ${tempFilePath}`);
     } else {
-      // Disk storage: Use the file path directly
+      // Disk storage: use the file path directly
       filePath = file.path;
-      console.log(`Processing file from disk: ${filePath}`);
+      fileBuffer = fs.readFileSync(file.path);
     }
     
-    // Process the file (same for both environments)
-    const extractedData = await extractFromPDF(filePath);
+    // Send file to OCR service
+    const ocrResult = await callOCRService(fileBuffer, file.originalname, file.mimetype);
     
-    console.log("Extracted data:", {
-      numLabValues: Object.keys(extractedData.labValues || {}).length,
-      testDate: extractedData.testDate,
+    console.log("OCR processing completed:", {
+      success: ocrResult.success,
+      textLength: ocrResult.text ? ocrResult.text.length : 0,
+      labValuesCount: ocrResult.lab_values ? Object.keys(ocrResult.lab_values).length : 0
     });
     
-    // Create file object for database (adjusted for environment)
+    // Convert OCR result to expected format
+    const extractedData = {
+      labValues: ocrResult.lab_values || {},
+      testDate: ocrResult.test_date ? new Date(ocrResult.test_date) : new Date()
+    };
+    
+    // Create file object for database
     const fileObject = {
-      filename: file.filename || file.originalname, // filename exists in disk storage
+      filename: file.filename || file.originalname,
       originalName: file.originalname,
-      path: isVercel ? null : file.path, // Don't store path for memory storage
+      path: isVercel ? null : file.path,
       size: file.size,
       mimetype: file.mimetype,
       uploadDate: new Date(),
-      testDate: extractedData.testDate ? new Date(extractedData.testDate) : null,
-      labValues: extractedData.labValues || {},
-      extractionMethod: "paddleocr",
-      processingErrors: [],
+      testDate: extractedData.testDate,
+      labValues: extractedData.labValues,
+      extractionMethod: "digital_ocean_ocr",
+      processingErrors: ocrResult.success ? [] : [ocrResult.error || 'OCR processing failed'],
+      ocrResponse: {
+        service: 'digital_ocean',
+        textLength: ocrResult.text ? ocrResult.text.length : 0,
+        processedAt: new Date().toISOString()
+      }
     };
     
     return fileObject;
     
   } catch (error) {
     console.error(`Error processing file ${file.originalname}:`, error);
-    throw error;
+    
+    // Return file object with error info
+    return {
+      filename: file.filename || file.originalname,
+      originalName: file.originalname,
+      path: isVercel ? null : (file.path || null),
+      size: file.size,
+      mimetype: file.mimetype,
+      uploadDate: new Date(),
+      testDate: new Date(),
+      labValues: {},
+      extractionMethod: "digital_ocean_ocr_failed",
+      processingErrors: [error.message],
+      ocrResponse: {
+        service: 'digital_ocean',
+        error: error.message,
+        processedAt: new Date().toISOString()
+      }
+    };
   } finally {
     // Clean up temporary file if created
     if (tempFilePath && fs.existsSync(tempFilePath)) {
@@ -120,6 +162,73 @@ async function processUploadedFile(file, extractFromPDF) {
   }
 }
 
+// Function to call the OCR service
+async function callOCRService(fileBuffer, filename, mimetype) {
+  try {
+    // Create form data
+    const formData = new FormData();
+    formData.append('file', fileBuffer, {
+      filename: filename,
+      contentType: mimetype,
+    });
+    formData.append('parse', 'true'); // Request parsing, not just text extraction
+    
+    console.log(`Calling OCR service: ${OCR_SERVICE_URL}/parse`);
+    
+    // Call the OCR service
+    const response = await fetch(`${OCR_SERVICE_URL}/parse`, {
+      method: 'POST',
+      body: formData,
+      headers: formData.getHeaders(),
+      timeout: 120000, // 2 minute timeout
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`OCR service returned ${response.status}: ${errorText}`);
+    }
+    
+    const result = await response.json();
+    return result;
+    
+  } catch (error) {
+    console.error('OCR service call failed:', error);
+    
+    if (error.code === 'ECONNREFUSED') {
+      throw new Error('OCR service is not available');
+    } else if (error.message.includes('timeout')) {
+      throw new Error('OCR processing timed out');
+    } else {
+      throw error;
+    }
+  }
+}
+
+// Test OCR service connectivity
+async function testOCRService() {
+  try {
+    console.log(`Testing OCR service connectivity: ${OCR_SERVICE_URL}/health`);
+    const response = await fetch(`${OCR_SERVICE_URL}/health`, {
+      timeout: 10000 // 10 second timeout for health check
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      console.log('OCR service is healthy:', result);
+      return true;
+    } else {
+      console.error('OCR service health check failed:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('OCR service connectivity test failed:', error.message);
+    return false;
+  }
+}
+
+// Test connectivity on startup
+testOCRService();
+
 // Error handler for multer errors (enhanced for both environments)
 const multerErrorHandler = (error, req, res, next) => {
   if (error instanceof multer.MulterError) {
@@ -127,14 +236,14 @@ const multerErrorHandler = (error, req, res, next) => {
     
     switch (error.code) {
       case "LIMIT_FILE_SIZE":
-        const maxSize = isVercel ? "100MB" : "200MB";
+        const maxSize = isVercel ? "50MB" : "200MB";
         return res.status(400).json({
           success: false,
           message: `File is too large. Maximum size is ${maxSize}.`,
           errorCode: 'FILE_TOO_LARGE'
         });
       case "LIMIT_FILE_COUNT":
-        const maxFiles = isVercel ? "8" : "20";
+        const maxFiles = isVercel ? "5" : "20";
         return res.status(400).json({
           success: false,
           message: `Too many files. Maximum is ${maxFiles} files per upload.`,
@@ -173,5 +282,6 @@ module.exports = {
   processUploadedFile,
   multerErrorHandler,
   isVercel,
-  isDevelopment
+  isDevelopment,
+  testOCRService
 };
