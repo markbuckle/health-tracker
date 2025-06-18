@@ -1,18 +1,43 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const FormData = require('form-data');
-const fetch = require('node-fetch');
 
 // Detect if running on Vercel (serverless environment)
 const isVercel = process.env.VERCEL || process.env.NOW_REGION;
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-// OCR Service URL - your Digital Ocean droplet
-const OCR_SERVICE_URL = process.env.OCR_SERVICE_URL || 'http://147.182.149.140:8000';
+// Check if we're running locally (has local parsers available)
+const isLocalEnvironment = !isVercel && fs.existsSync(path.join(__dirname, './parsers'));
 
 console.log(`Environment: ${isVercel ? 'Vercel Production' : 'Local Development'}`);
-console.log(`OCR Service: ${OCR_SERVICE_URL}`);
+console.log(`OCR Method: ${isLocalEnvironment ? 'Local PaddleOCR' : 'External OCR Service'}`);
+
+// OCR Service URL for production - your Digital Ocean droplet
+const OCR_SERVICE_URL = process.env.OCR_SERVICE_URL || 'http://147.182.149.140:8000';
+
+// Import local parser only if available
+let localExtractFromPDF = null;
+if (isLocalEnvironment) {
+  try {
+    const localParser = require('./parsers');
+    localExtractFromPDF = localParser.extractFromPDF;
+    console.log('Local OCR parser loaded successfully');
+  } catch (error) {
+    console.log('Local OCR parser not available, will use external service');
+  }
+}
+
+// Import external OCR dependencies only if needed
+let FormData, fetch;
+if (!isLocalEnvironment) {
+  try {
+    FormData = require('form-data');
+    fetch = require('node-fetch');
+    console.log('External OCR dependencies loaded');
+  } catch (error) {
+    console.error('External OCR dependencies not available:', error);
+  }
+}
 
 // Configure storage based on environment
 let storage;
@@ -61,22 +86,91 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: isVercel ? 50 * 1024 * 1024 : 200 * 1024 * 1024, // 50MB on Vercel, 200MB locally
-    files: isVercel ? 5 : 20, // Limit concurrent files on Vercel
+    fileSize: isLocalEnvironment ? 200 * 1024 * 1024 : 50 * 1024 * 1024, // 200MB local, 50MB production
+    files: isLocalEnvironment ? 20 : 5, // More files allowed locally
     fieldSize: 10 * 1024 * 1024, // 10MB for form fields
   },
 });
 
-// Helper function to process files using OCR service
+// Helper function to process files using appropriate method
 async function processUploadedFile(file, extractFromPDF) {
+  if (isLocalEnvironment && localExtractFromPDF) {
+    // Use local processing
+    return await processWithLocalOCR(file, localExtractFromPDF);
+  } else {
+    // Use external OCR service
+    return await processWithExternalOCR(file);
+  }
+}
+
+// Local OCR processing (original method)
+async function processWithLocalOCR(file, extractFromPDF) {
   let tempFilePath = null;
   
   try {
-    console.log(`Processing file: ${file.originalname} using OCR service`);
+    console.log(`Processing file locally: ${file.originalname}`);
+    
+    let filePath;
+    
+    if (isVercel) {
+      // Memory storage: Create temporary file from buffer
+      tempFilePath = `/tmp/${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+      fs.writeFileSync(tempFilePath, file.buffer);
+      filePath = tempFilePath;
+    } else {
+      // Disk storage: Use the file path directly
+      filePath = file.path;
+    }
+    
+    // Process the file with local OCR
+    const extractedData = await extractFromPDF(filePath);
+    
+    console.log("Local OCR extracted data:", {
+      numLabValues: Object.keys(extractedData.labValues || {}).length,
+      testDate: extractedData.testDate,
+    });
+    
+    // Create file object for database
+    const fileObject = {
+      filename: file.filename || file.originalname,
+      originalName: file.originalname,
+      path: isVercel ? null : file.path,
+      size: file.size,
+      mimetype: file.mimetype,
+      uploadDate: new Date(),
+      testDate: extractedData.testDate ? new Date(extractedData.testDate) : null,
+      labValues: extractedData.labValues || {},
+      extractionMethod: "local_paddleocr",
+      processingErrors: [],
+    };
+    
+    return fileObject;
+    
+  } catch (error) {
+    console.error(`Error processing file locally ${file.originalname}:`, error);
+    throw error;
+  } finally {
+    // Clean up temporary file if created
+    if (tempFilePath && fs.existsSync(tempFilePath)) {
+      try {
+        fs.unlinkSync(tempFilePath);
+        console.log(`Cleaned up temp file: ${tempFilePath}`);
+      } catch (cleanupError) {
+        console.warn(`Warning: Could not clean up temp file ${tempFilePath}:`, cleanupError.message);
+      }
+    }
+  }
+}
+
+// External OCR processing (for production)
+async function processWithExternalOCR(file) {
+  let tempFilePath = null;
+  
+  try {
+    console.log(`Processing file with external OCR: ${file.originalname}`);
     
     // Prepare file for OCR service
     let fileBuffer;
-    let filePath;
     
     if (isVercel) {
       // Memory storage: use buffer directly
@@ -85,17 +179,15 @@ async function processUploadedFile(file, extractFromPDF) {
       // Create temporary file for form data
       tempFilePath = `/tmp/${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
       fs.writeFileSync(tempFilePath, file.buffer);
-      filePath = tempFilePath;
     } else {
-      // Disk storage: use the file path directly
-      filePath = file.path;
+      // Disk storage: read the file
       fileBuffer = fs.readFileSync(file.path);
     }
     
     // Send file to OCR service
-    const ocrResult = await callOCRService(fileBuffer, file.originalname, file.mimetype);
+    const ocrResult = await callExternalOCRService(fileBuffer, file.originalname, file.mimetype);
     
-    console.log("OCR processing completed:", {
+    console.log("External OCR processing completed:", {
       success: ocrResult.success,
       textLength: ocrResult.text ? ocrResult.text.length : 0,
       labValuesCount: ocrResult.lab_values ? Object.keys(ocrResult.lab_values).length : 0
@@ -117,7 +209,7 @@ async function processUploadedFile(file, extractFromPDF) {
       uploadDate: new Date(),
       testDate: extractedData.testDate,
       labValues: extractedData.labValues,
-      extractionMethod: "digital_ocean_ocr",
+      extractionMethod: "external_ocr_service",
       processingErrors: ocrResult.success ? [] : [ocrResult.error || 'OCR processing failed'],
       ocrResponse: {
         service: 'digital_ocean',
@@ -129,7 +221,7 @@ async function processUploadedFile(file, extractFromPDF) {
     return fileObject;
     
   } catch (error) {
-    console.error(`Error processing file ${file.originalname}:`, error);
+    console.error(`Error processing file with external OCR ${file.originalname}:`, error);
     
     // Return file object with error info
     return {
@@ -141,7 +233,7 @@ async function processUploadedFile(file, extractFromPDF) {
       uploadDate: new Date(),
       testDate: new Date(),
       labValues: {},
-      extractionMethod: "digital_ocean_ocr_failed",
+      extractionMethod: "external_ocr_failed",
       processingErrors: [error.message],
       ocrResponse: {
         service: 'digital_ocean',
@@ -162,9 +254,13 @@ async function processUploadedFile(file, extractFromPDF) {
   }
 }
 
-// Function to call the OCR service
-async function callOCRService(fileBuffer, filename, mimetype) {
+// Function to call the external OCR service
+async function callExternalOCRService(fileBuffer, filename, mimetype) {
   try {
+    if (!FormData || !fetch) {
+      throw new Error('External OCR dependencies not available');
+    }
+
     // Create form data
     const formData = new FormData();
     formData.append('file', fileBuffer, {
@@ -173,7 +269,7 @@ async function callOCRService(fileBuffer, filename, mimetype) {
     });
     formData.append('parse', 'true'); // Request parsing, not just text extraction
     
-    console.log(`Calling OCR service: ${OCR_SERVICE_URL}/parse`);
+    console.log(`Calling external OCR service: ${OCR_SERVICE_URL}/parse`);
     
     // Call the OCR service
     const response = await fetch(`${OCR_SERVICE_URL}/parse`, {
@@ -192,10 +288,10 @@ async function callOCRService(fileBuffer, filename, mimetype) {
     return result;
     
   } catch (error) {
-    console.error('OCR service call failed:', error);
+    console.error('External OCR service call failed:', error);
     
     if (error.code === 'ECONNREFUSED') {
-      throw new Error('OCR service is not available');
+      throw new Error('External OCR service is not available');
     } else if (error.message.includes('timeout')) {
       throw new Error('OCR processing timed out');
     } else {
@@ -204,24 +300,32 @@ async function callOCRService(fileBuffer, filename, mimetype) {
   }
 }
 
-// Test OCR service connectivity
+// Test connectivity based on environment
 async function testOCRService() {
-  try {
-    console.log(`Testing OCR service connectivity: ${OCR_SERVICE_URL}/health`);
-    const response = await fetch(`${OCR_SERVICE_URL}/health`, {
-      timeout: 10000 // 10 second timeout for health check
-    });
-    
-    if (response.ok) {
-      const result = await response.json();
-      console.log('OCR service is healthy:', result);
-      return true;
-    } else {
-      console.error('OCR service health check failed:', response.status);
+  if (isLocalEnvironment && localExtractFromPDF) {
+    console.log('Local OCR parser is available');
+    return true;
+  } else if (!isLocalEnvironment && fetch) {
+    try {
+      console.log(`Testing external OCR service connectivity: ${OCR_SERVICE_URL}/health`);
+      const response = await fetch(`${OCR_SERVICE_URL}/health`, {
+        timeout: 10000 // 10 second timeout for health check
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('External OCR service is healthy:', result);
+        return true;
+      } else {
+        console.error('External OCR service health check failed:', response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error('External OCR service connectivity test failed:', error.message);
       return false;
     }
-  } catch (error) {
-    console.error('OCR service connectivity test failed:', error.message);
+  } else {
+    console.warn('No OCR method available');
     return false;
   }
 }
@@ -236,14 +340,14 @@ const multerErrorHandler = (error, req, res, next) => {
     
     switch (error.code) {
       case "LIMIT_FILE_SIZE":
-        const maxSize = isVercel ? "50MB" : "200MB";
+        const maxSize = isLocalEnvironment ? "200MB" : "50MB";
         return res.status(400).json({
           success: false,
           message: `File is too large. Maximum size is ${maxSize}.`,
           errorCode: 'FILE_TOO_LARGE'
         });
       case "LIMIT_FILE_COUNT":
-        const maxFiles = isVercel ? "5" : "20";
+        const maxFiles = isLocalEnvironment ? "20" : "5";
         return res.status(400).json({
           success: false,
           message: `Too many files. Maximum is ${maxFiles} files per upload.`,
@@ -283,5 +387,6 @@ module.exports = {
   multerErrorHandler,
   isVercel,
   isDevelopment,
+  isLocalEnvironment,
   testOCRService
 };
