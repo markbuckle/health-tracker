@@ -13,8 +13,9 @@
   flex-direction: column;
 }
 .content-section {
-  margin: var(--header-height-default) 0;
+  margin: 0;
   padding: 0 20px;
+  padding-top: var(--header-height-default);
   padding-bottom: 3rem;
   margin-bottom: 0 !important;
   text-align: center;
@@ -169,7 +170,8 @@
 /* Tablet Styles */
 @media screen and (max-width: 1024px) {
   .content-section {
-    margin: var(--header-height-default) 0;
+    margin: 0;
+    padding-top: var(--header-height-default);
   }
   .inner-content-section {
     width: 85%;

@@ -2,7 +2,7 @@
 .hero {
   justify-content: center;
   align-items: center;
-  margin-top: var(--header-height-default);
+  padding-top: var(--header-height-default);
   display: flex;
   gap: 0 !important;
   flex-direction: column; /* Changed to column to accommodate mobile button */
@@ -392,7 +392,7 @@
   margin-bottom: 0rem;
   text-align: center;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  /* -webkit-line-clamp: 3; */
   -webkit-box-orient: vertical;
   overflow: hidden;
   max-width: 70%;
@@ -1015,7 +1015,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: var(--header-height-default);
+    padding-top: var(--header-height-default);
     margin-bottom: -1px !important;
   }
   .use-cases-section {

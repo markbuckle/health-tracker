@@ -5,16 +5,16 @@
   width: 100%;
 }
 .learning-center {
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
   min-height: 70vh;
-  padding-top: 2rem;
+  padding-top: var(--header-height-default);
+  /* padding-top: 2rem; */
   display: block;
 }
 .learning-header {
   display: block;
   text-align: center;
   align-items: center;
-  padding-top: 2rem;
 }
 .learning-title {
   font-family: "Poppins-Bold", sans-serif;
@@ -244,10 +244,10 @@
 @media screen and (max-width: 1024px) {
   .content-container {
     /* width: 70%; */
-    margin: 3.5rem auto 0 auto;
+    margin: 0 auto;
   }
   .learning-center {
-    padding-top: 0;
+    padding-top: var(--header-height-default);
   }
   .learning-header {
     padding-top: 0rem;
