@@ -105,7 +105,7 @@ async function processUploadedFile(file, extractFromPDF) {
       filePath = tempFilePath;
       
       console.log(`Created temp file for processing: ${tempFilePath}`);
-      console.log(`Production environment: OCR processing disabled`);
+      console.log(`Vercel environment: OCR processing disabled`);
     } else {
       // Disk storage: Use the file path directly
       filePath = file.path;
@@ -116,7 +116,7 @@ async function processUploadedFile(file, extractFromPDF) {
     let extractedData;
     if (isVercel) {
       // In production, skip OCR processing but still save the file
-      console.log('Production: Skipping OCR, saving file metadata only');
+      console.log('Vercel: Skipping OCR, saving file metadata only');
       extractedData = {
         labValues: {},
         testDate: new Date(),

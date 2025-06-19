@@ -67,26 +67,26 @@ try {
     };
 }
 
-// src/parsers/index.js - Updated with explicit error handling
+// src/parsers/index.js - Updated with unique variable names
 
 require('dotenv').config();
 
-// Detect environment
-const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
-const selectedImplementation = process.env.OCR_IMPLEMENTATION || 'PaddleOCR';
-const hasExternalOCRService = process.env.OCR_SERVICE_URL && !isProduction;
+// Detect environment - using unique variable names
+const isProductionMode = process.env.NODE_ENV === 'production' || process.env.VERCEL;
+const ocrImplementation = process.env.OCR_IMPLEMENTATION || 'PaddleOCR';
+const externalOcrServiceEnabled = process.env.OCR_SERVICE_URL && !isProductionMode;
 
-console.log(`Environment: ${isProduction ? 'Production' : 'Development'}`);
-console.log(`OCR Implementation: ${selectedImplementation}`);
-console.log(`External OCR Service: ${hasExternalOCRService ? 'Enabled' : 'Disabled'}`);
+console.log(`Environment: ${isProductionMode ? 'Production' : 'Development'}`);
+console.log(`OCR Implementation: ${ocrImplementation}`);
+console.log(`External OCR Service: ${externalOcrServiceEnabled ? 'Enabled' : 'Disabled'}`);
 
-let parserModule;
+let ocrParserModule;
 
 try {
-    if (isProduction) {
+    if (isProductionMode) {
         console.log('Production environment detected - OCR processing disabled');
         // In production, clearly indicate OCR is disabled
-        parserModule = {
+        ocrParserModule = {
             extractFromPDF: async (filePath) => {
                 console.log('Production: OCR processing disabled, saving file metadata only');
                 return {
@@ -99,11 +99,11 @@ try {
             extractTestDate: (text) => new Date(),
             interpretConfidence: (confidence) => 'disabled'
         };
-    } else if (hasExternalOCRService) {
+    } else if (externalOcrServiceEnabled) {
         console.log('Development: Attempting to use external OCR service');
         // Try to use external OCR service
         try {
-            parserModule = require('./ExternalOCR/labParser');
+            ocrParserModule = require('./ExternalOCR/labParser');
             console.log('Successfully loaded external OCR service');
         } catch (err) {
             console.error('External OCR service failed to load:', err.message);
@@ -111,20 +111,20 @@ try {
         }
     } else {
         // Development environment - use only the specified implementation
-        console.log(`Development: Loading ${selectedImplementation} implementation`);
+        console.log(`Development: Loading ${ocrImplementation} implementation`);
         
-        if (selectedImplementation === 'PaddleOCR') {
-            parserModule = require('./PaddleOCR/labParser');
+        if (ocrImplementation === 'PaddleOCR') {
+            ocrParserModule = require('./PaddleOCR/labParser');
             console.log('Successfully loaded PaddleOCR implementation');
         } else {
-            throw new Error(`Unsupported OCR implementation: ${selectedImplementation}. Only PaddleOCR is currently supported.`);
+            throw new Error(`Unsupported OCR implementation: ${ocrImplementation}. Only PaddleOCR is currently supported.`);
         }
     }
 } catch (error) {
     console.error(`OCR implementation failed to load:`, error.message);
     
     // Don't fall back - provide clear error messaging
-    parserModule = {
+    ocrParserModule = {
         extractFromPDF: async (filePath) => {
             const errorMessage = `OCR failed to initialize: ${error.message}`;
             console.error(errorMessage);
@@ -149,7 +149,7 @@ try {
 // Export functions with clear error states
 async function extractFromPDF(filePath) {
     try {
-        return await parserModule.extractFromPDF(filePath);
+        return await ocrParserModule.extractFromPDF(filePath);
     } catch (error) {
         console.error('Error in extractFromPDF:', error.message);
         return {
@@ -162,7 +162,7 @@ async function extractFromPDF(filePath) {
 
 function parseLabValues(text) {
     try {
-        return parserModule.parseLabValues(text);
+        return ocrParserModule.parseLabValues(text);
     } catch (error) {
         console.error('Error in parseLabValues:', error.message);
         return {};
@@ -171,7 +171,7 @@ function parseLabValues(text) {
 
 function extractTestDate(text) {
     try {
-        return parserModule.extractTestDate(text);
+        return ocrParserModule.extractTestDate(text);
     } catch (error) {
         console.error('Error in extractTestDate:', error.message);
         return new Date();
@@ -180,7 +180,7 @@ function extractTestDate(text) {
 
 function interpretConfidence(confidence) {
     try {
-        return parserModule.interpretConfidence(confidence);
+        return ocrParserModule.interpretConfidence(confidence);
     } catch (error) {
         console.error('Error in interpretConfidence:', error.message);
         return 'error';
@@ -192,5 +192,5 @@ module.exports = {
     parseLabValues,
     extractTestDate,
     interpretConfidence,
-    implementation: isProduction ? 'production-fallback' : selectedImplementation
+    implementation: isProductionMode ? 'production-fallback' : ocrImplementation
 };
