@@ -92,14 +92,76 @@ const upload = multer({
   },
 });
 
-// Helper function to process files using appropriate method
+// Helper function to handle file processing in both environments
 async function processUploadedFile(file, extractFromPDF) {
-  if (isLocalEnvironment && localExtractFromPDF) {
-    // Use local processing
-    return await processWithLocalOCR(file, localExtractFromPDF);
-  } else {
-    // Use external OCR service
-    return await processWithExternalOCR(file);
+  let filePath;
+  let tempFilePath = null;
+  
+  try {
+    if (isVercel) {
+      // Memory storage: Create temporary file from buffer
+      tempFilePath = `/tmp/${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+      fs.writeFileSync(tempFilePath, file.buffer);
+      filePath = tempFilePath;
+      
+      console.log(`Created temp file for processing: ${tempFilePath}`);
+      console.log(`Production environment: OCR processing disabled`);
+    } else {
+      // Disk storage: Use the file path directly
+      filePath = file.path;
+      console.log(`Processing file from disk: ${filePath}`);
+    }
+    
+    // Process the file
+    let extractedData;
+    if (isVercel) {
+      // In production, skip OCR processing but still save the file
+      console.log('Production: Skipping OCR, saving file metadata only');
+      extractedData = {
+        labValues: {},
+        testDate: new Date(),
+        processingErrors: ['OCR processing is currently disabled in production environment']
+      };
+    } else {
+      // In development, use full OCR processing
+      extractedData = await extractFromPDF(filePath);
+    }
+    
+    console.log("Extracted data:", {
+      numLabValues: Object.keys(extractedData.labValues || {}).length,
+      testDate: extractedData.testDate,
+      hasErrors: !!(extractedData.processingErrors && extractedData.processingErrors.length > 0)
+    });
+    
+    // Create file object for database
+    const fileObject = {
+      filename: file.filename || file.originalname,
+      originalName: file.originalname,
+      path: isVercel ? null : (file.path || null),
+      size: file.size,
+      mimetype: file.mimetype,
+      uploadDate: new Date(),
+      testDate: extractedData.testDate ? new Date(extractedData.testDate) : null,
+      labValues: extractedData.labValues || {},
+      extractionMethod: "paddleocr",
+      processingErrors: extractedData.processingErrors || []
+    };
+    
+    return fileObject;
+    
+  } catch (error) {
+    console.error(`Error processing file ${file.originalname}:`, error);
+    throw error;
+  } finally {
+    // Clean up temporary file if created
+    if (tempFilePath && fs.existsSync(tempFilePath)) {
+      try {
+        fs.unlinkSync(tempFilePath);
+        console.log(`Cleaned up temp file: ${tempFilePath}`);
+      } catch (cleanupError) {
+        console.warn(`Warning: Could not clean up temp file ${tempFilePath}:`, cleanupError.message);
+      }
+    }
   }
 }
 
