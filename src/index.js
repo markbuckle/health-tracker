@@ -2028,48 +2028,99 @@ app.post("/delete-selected-files", checkAuth, async (req, res) => {
 // Use the enhanced error handler
 app.use(multerErrorHandler);
 
+// production version
 app.post("/delete-file", checkAuth, async (req, res) => {
   try {
     const { fileId } = req.body;
     const user = await registerCollection.findById(req.user._id);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ 
+        success: false, 
+        message: "User not found" 
+      });
     }
 
     // Find the file to get its filename
     const fileToDelete = user.files.id(fileId);
     if (!fileToDelete) {
-      return res
-        .status(404)
-        .json({ success: false, message: "File not found" });
+      return res.status(404).json({ 
+        success: false, 
+        message: "File not found" 
+      });
     }
 
-    // Delete the physical file
-    const filePath = path.join(
-      __dirname,
-      "../public/uploads",
-      fileToDelete.filename
-    );
-    fs.unlink(filePath, (err) => {
-      if (err && err.code !== "ENOENT") {
-        console.error("Error deleting file:", err);
-      }
-    });
+    // Only try to delete physical files in local environment
+    if (!isVercel && fileToDelete.path) {
+      const filePath = path.join(__dirname, "../public/uploads", fileToDelete.filename);
+      fs.unlink(filePath, (err) => {
+        if (err && err.code !== "ENOENT") {
+          console.error(`Error deleting file ${fileToDelete.filename}:`, err);
+        } else {
+          console.log(`Successfully deleted file: ${fileToDelete.filename}`);
+        }
+      });
+    } else {
+      console.log(`Skipping physical file deletion in Vercel environment`);
+    }
 
-    // Remove file from user's files array
+    // Remove file from user's files array (this always works)
     user.files.pull(fileId);
-
     await user.save();
 
     res.json({ success: true });
   } catch (error) {
     console.error("Error deleting file:", error);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
   }
 });
+
+// local version
+// app.post("/delete-file", checkAuth, async (req, res) => {
+//   try {
+//     const { fileId } = req.body;
+//     const user = await registerCollection.findById(req.user._id);
+
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "User not found" });
+//     }
+
+//     // Find the file to get its filename
+//     const fileToDelete = user.files.id(fileId);
+//     if (!fileToDelete) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "File not found" });
+//     }
+
+//     // Delete the physical file
+//     const filePath = path.join(
+//       __dirname,
+//       "../public/uploads",
+//       fileToDelete.filename
+//     );
+//     fs.unlink(filePath, (err) => {
+//       if (err && err.code !== "ENOENT") {
+//         console.error("Error deleting file:", err);
+//       }
+//     });
+
+//     // Remove file from user's files array
+//     user.files.pull(fileId);
+
+//     await user.save();
+
+//     res.json({ success: true });
+//   } catch (error) {
+//     console.error("Error deleting file:", error);
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// });
 
 app.post("/update-biomarker", checkAuth, async (req, res) => {
   try {
