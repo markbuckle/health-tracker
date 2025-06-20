@@ -838,6 +838,40 @@ app.get("/insights", checkAuth, async (req, res) => {
   }
 });
 
+// Test endpoint for database connections
+app.get("/api/test-connections", async (req, res) => {
+  const results = {
+    mongodb: { status: 'unknown' },
+    postgresql: { status: 'unknown' }
+  };
+  
+  // Test MongoDB
+  try {
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState === 1) {
+      results.mongodb.status = 'connected';
+    } else {
+      results.mongodb.status = 'disconnected';
+    }
+  } catch (error) {
+    results.mongodb.status = 'error';
+    results.mongodb.error = error.message;
+  }
+  
+  // Test PostgreSQL
+  try {
+    const { testConnection } = require('./db/pgConnector');
+    const pgResult = await testConnection();
+    results.postgresql.status = 'connected';
+    results.postgresql.info = pgResult;
+  } catch (error) {
+    results.postgresql.status = 'error';
+    results.postgresql.error = error.message;
+  }
+  
+  res.json(results);
+});
+
 // Helper to check if recommendation is biomarker-related
 hbs.registerHelper('isBiomarkerRecommendation', function(recommendation) {
   // Handle both new structured format and legacy string format

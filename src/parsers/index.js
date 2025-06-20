@@ -1,127 +1,120 @@
-/**
- * OCR Parser Factory
- * 
- * This module provides a way to select between different OCR implementations
- * based on configuration or environment variables.
- */
+// src/parsers/index.js - Debug version with explicit logging
+
 require('dotenv').config();
 
-// Get the selected OCR implementation from environment variables
-const selectedImplementation = process.env.OCR_IMPLEMENTATION || 'PyTesseract';
+// Debug environment variables
+console.log('=== OCR Parser Debug Info ===');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('VERCEL:', process.env.VERCEL);
+console.log('OCR_IMPLEMENTATION:', process.env.OCR_IMPLEMENTATION);
+console.log('OCR_SERVICE_URL:', process.env.OCR_SERVICE_URL);
+console.log('================================');
 
-// Import implementations directly (not dynamically) for Vercel compatibility
-let parserModule;
+(function() {
+    // Use an IIFE to isolate variables
+    const isProductionMode = process.env.NODE_ENV === 'production' || process.env.VERCEL;
+    const ocrImplementation = process.env.OCR_IMPLEMENTATION || 'PaddleOCR';
+    const hasOcrServiceUrl = !!process.env.OCR_SERVICE_URL;
+    const externalOcrServiceEnabled = hasOcrServiceUrl && !isProductionMode;
 
-try {
-    console.log(`Attempting to load ${selectedImplementation} OCR implementation`);
-    
-    if (selectedImplementation === 'PaddleOCR') {
-        // Direct import for PaddleOCR
-        parserModule = require('./PaddleOCR/labParser');
-        console.log('Successfully loaded PaddleOCR implementation');
-    } else if (selectedImplementation === 'PyTesseract') {
-        // Direct import for PyTesseract
-        parserModule = require('./PyTesseract/labParser');
-        console.log('Successfully loaded PyTesseract implementation');
-    } else {
-        throw new Error(`Unknown OCR implementation: ${selectedImplementation}`);
-    }
-} catch (error) {
-    console.error(`Failed to load ${selectedImplementation} implementation:`, error.message);
-    
-    // Try to fall back to a working implementation
+    console.log(`OCR Parser - Environment: ${isProductionMode ? 'Production' : 'Development'}`);
+    console.log(`OCR Parser - Implementation: ${ocrImplementation}`);
+    console.log(`OCR Parser - Has OCR_SERVICE_URL: ${hasOcrServiceUrl}`);
+    console.log(`OCR Parser - External Service Enabled: ${externalOcrServiceEnabled}`);
+
+    let ocrParserModule;
+
     try {
-        if (selectedImplementation !== 'PaddleOCR') {
-            console.log('Attempting fallback to PaddleOCR...');
-            parserModule = require('./PaddleOCR/labParser');
-            console.log('Successfully loaded PaddleOCR as fallback');
+        if (isProductionMode) {
+            console.log('OCR Parser: Production mode detected - OCR disabled');
+            ocrParserModule = {
+                extractFromPDF: async (filePath) => {
+                    console.log('OCR Parser: Returning production fallback response');
+                    return {
+                        labValues: {},
+                        testDate: new Date(),
+                        processingErrors: ['OCR processing is disabled in production environment']
+                    };
+                },
+                parseLabValues: (text) => ({}),
+                extractTestDate: (text) => new Date(),
+                interpretConfidence: (confidence) => 'disabled'
+            };
+        } else if (externalOcrServiceEnabled) {
+            console.log('OCR Parser: Attempting to load external OCR service');
+            // This should NOT execute since you don't have OCR_SERVICE_URL set
+            throw new Error('External OCR service should not be enabled');
         } else {
-            console.log('Attempting fallback to PyTesseract...');
-            parserModule = require('./PyTesseract/labParser');
-            console.log('Successfully loaded PyTesseract as fallback');
+            console.log(`OCR Parser: Loading local ${ocrImplementation} implementation`);
+            if (ocrImplementation === 'PaddleOCR') {
+                ocrParserModule = require('./PaddleOCR/labParser');
+                console.log('OCR Parser: PaddleOCR loaded successfully');
+            } else {
+                throw new Error(`Unsupported OCR implementation: ${ocrImplementation}`);
+            }
         }
-    } catch (fallbackError) {
-        console.error('All OCR implementations failed to load:', fallbackError.message);
-        // Provide a dummy implementation that doesn't crash
-        parserModule = {
+    } catch (error) {
+        console.error(`OCR Parser: Failed to load:`, error.message);
+        ocrParserModule = {
             extractFromPDF: async (filePath) => {
-                console.warn('OCR functionality disabled - no working implementation found');
+                console.log('OCR Parser: Using error fallback');
                 return {
                     labValues: {},
-                    testDate: new Date()
+                    testDate: new Date(),
+                    processingErrors: [`OCR failed to initialize: ${error.message}`]
                 };
             },
             parseLabValues: (text) => ({}),
             extractTestDate: (text) => new Date(),
-            interpretConfidence: (confidence) => 'unknown'
+            interpretConfidence: (confidence) => 'error'
         };
     }
-}
 
-/**
- * Extract lab values and test date from a PDF or image file
- * @param {string} filePath - Path to the file
- * @returns {Promise<{labValues: Object, testDate: Date|null}>} Extracted lab values and test date
- */
-async function extractFromPDF(filePath) {
-    try {
-        return await parserModule.extractFromPDF(filePath);
-    } catch (error) {
-        console.error('Error in extractFromPDF:', error.message);
-        return {
-            labValues: {},
-            testDate: new Date()
-        };
-    }
-}
-
-/**
- * Parse lab values from OCR text
- * @param {string} text - OCR text
- * @returns {Object} Extracted lab values
- */
-function parseLabValues(text) {
-    try {
-        return parserModule.parseLabValues(text);
-    } catch (error) {
-        console.error('Error in parseLabValues:', error.message);
-        return {};
-    }
-}
-
-/**
- * Extract test date from OCR text
- * @param {string} text - OCR text
- * @returns {Date|null} Extracted test date
- */
-function extractTestDate(text) {
-    try {
-        return parserModule.extractTestDate(text);
-    } catch (error) {
-        console.error('Error in extractTestDate:', error.message);
-        return new Date();
-    }
-}
-
-/**
- * Interpret OCR confidence level
- * @param {number} confidence - Confidence value
- * @returns {string} Confidence level (high, medium, low)
- */
-function interpretConfidence(confidence) {
-    try {
-        return parserModule.interpretConfidence(confidence);
-    } catch (error) {
-        console.error('Error in interpretConfidence:', error.message);
-        return 'unknown';
-    }
-}
-
-// Export the parser functions
-module.exports = {
-    extractFromPDF,
-    parseLabValues,
-    extractTestDate,
-    interpretConfidence,
-    implementation: selectedImplementation
-};
+    // Export functions
+    module.exports = {
+        extractFromPDF: async function(filePath) {
+            console.log('OCR Parser: extractFromPDF called with:', filePath);
+            try {
+                const result = await ocrParserModule.extractFromPDF(filePath);
+                console.log('OCR Parser: extractFromPDF result:', {
+                    labValueCount: Object.keys(result.labValues || {}).length,
+                    hasErrors: !!(result.processingErrors && result.processingErrors.length > 0),
+                    errors: result.processingErrors
+                });
+                return result;
+            } catch (error) {
+                console.error('OCR Parser: extractFromPDF error:', error.message);
+                return {
+                    labValues: {},
+                    testDate: new Date(),
+                    processingErrors: [`OCR extraction failed: ${error.message}`]
+                };
+            }
+        },
+        parseLabValues: function(text) {
+            try {
+                return ocrParserModule.parseLabValues(text);
+            } catch (error) {
+                console.error('OCR Parser: parseLabValues error:', error.message);
+                return {};
+            }
+        },
+        extractTestDate: function(text) {
+            try {
+                return ocrParserModule.extractTestDate(text);
+            } catch (error) {
+                console.error('OCR Parser: extractTestDate error:', error.message);
+                return new Date();
+            }
+        },
+        interpretConfidence: function(confidence) {
+            try {
+                return ocrParserModule.interpretConfidence(confidence);
+            } catch (error) {
+                console.error('OCR Parser: interpretConfidence error:', error.message);
+                return 'error';
+            }
+        },
+        implementation: isProductionMode ? 'production-fallback' : ocrImplementation
+    };
+})();
