@@ -23,10 +23,16 @@ The app enables users to mae sense of complex medical information.
 - Passport.js
 - MongoDB
 - PostgreSQL
+- PaddleOCR
+- HuggingFace
+- OpenAI
+- Anthropic
 
 ### Production
 
 - Vercel
+- Digital Ocean
+- Railway
 
 ### Setup Steps
 
