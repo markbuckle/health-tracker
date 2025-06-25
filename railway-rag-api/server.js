@@ -15,7 +15,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Import your existing services
-const medicalKnowledgeService = require('./service/medicalKnowledgeService');
+const medicalKnowledgeService = require('./server/medicalKnowledgeService');
 
 // Health check endpoint
 app.get('/health', (req, res) => {
