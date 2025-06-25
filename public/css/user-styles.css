@@ -15,10 +15,10 @@
   .w-tab-link {
     position: relative;
     /* display: inline-block; */
-    display: flex;
+    /* display: flex; */
     vertical-align: top;
     text-decoration: none;
-    padding: 9px 30px;
+    padding: 9px 16px;
     text-align: center;
     cursor: pointer;
     color: #222222;
@@ -87,10 +87,11 @@
     flex: none;
     width: auto;
     min-width: 4rem;
-    text-align: center;
+    text-align: center !important;
     margin-left: 0;
     margin-right: 0.4em;
-    padding: 4px 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
     transition: background-color 0.3s ease;
   }
   .in-page-link:hover {

@@ -1,196 +1,178 @@
-// src/parsers/index.js - Updated for production compatibility
+// src/db/pgConnector.js
+const { Pool } = require("pg");
+const path = require("path");
 
-require('dotenv').config();
+// Load environment variables from project root
+require("dotenv").config({ path: path.join(__dirname, "../../.env") });
 
-// Detect environment
-const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
-const selectedImplementation = process.env.OCR_IMPLEMENTATION || 'PyTesseract';
-const hasExternalOCRService = process.env.OCR_SERVICE_URL && !isProduction;
+// Detect environment - prioritize local development detection
+const isVercel = !!process.env.VERCEL;
+const isNodeProduction = process.env.NODE_ENV === 'production';
+const postgresUri = process.env.POSTGRES_URI || '';
+const hasLocalPostgres = postgresUri.includes('localhost') || postgresUri.includes('127.0.0.1');
+const hasDatabaseUrl = !!process.env.DATABASE_URL;
 
-console.log(`Environment: ${isProduction ? 'Production' : 'Development'}`);
-console.log(`OCR Implementation: ${selectedImplementation}`);
-console.log(`External OCR Service: ${hasExternalOCRService ? 'Enabled' : 'Disabled'}`);
+// Check for explicit local development indicators
+const isExplicitlyLocal = process.env.NODE_ENV === 'development' || hasLocalPostgres;
+const isExplicitlyProduction = isVercel || (isNodeProduction && hasDatabaseUrl);
 
-let parserModule;
+// Force local if no DATABASE_URL is set (since production should always have DATABASE_URL)
+// OR if explicitly local development
+const isLocal = isExplicitlyLocal || (!isExplicitlyProduction && !hasDatabaseUrl);
+const isProduction = !isLocal;
 
-try {
-    if (isProduction) {
-        console.log('Production environment detected - disabling OCR processing');
-        // In production, use a simplified parser that doesn't require external services
-        parserModule = {
-            extractFromPDF: async (filePath) => {
-                console.log('Production: OCR processing disabled, saving file metadata only');
-                return {
-                    labValues: {},
-                    testDate: new Date()
-                };
-            },
-            parseLabValues: (text) => ({}),
-            extractTestDate: (text) => new Date(),
-            interpretConfidence: (confidence) => 'unknown'
-        };
-    } else if (hasExternalOCRService) {
-        console.log('Development: Using external OCR service');
-        // Use external OCR service in development
-        try {
-            parserModule = require('./ExternalOCR/labParser'); // If you have this
-        } catch (err) {
-            console.warn('External OCR service not available, falling back to local implementation');
-            throw err;
-        }
+console.log(`Environment Detection:`);
+console.log(`  - VERCEL: ${isVercel}`);
+console.log(`  - NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`  - POSTGRES_URI: ${postgresUri ? (postgresUri.substring(0, 30) + '...') : 'Not set'}`);
+console.log(`  - Has localhost POSTGRES_URI: ${hasLocalPostgres}`);
+console.log(`  - Has DATABASE_URL: ${hasDatabaseUrl}`);
+console.log(`  - Is explicitly local: ${isExplicitlyLocal}`);
+console.log(`  - Is explicitly production: ${isExplicitlyProduction}`);
+console.log(`  - Final: ${isProduction ? 'Production' : 'Local Development'}`);
+
+// Configure connection based on environment
+let poolConfig;
+
+if (isLocal) {
+  // Local development configuration - force localhost
+  const localConnectionString = "postgresql://postgres:BroBeans_2317@localhost:5432/postgres";
+  
+  poolConfig = {
+    connectionString: localConnectionString,
+    ssl: false,
+  };
+  console.log('Using local PostgreSQL configuration');
+  console.log(`Connection string: ${localConnectionString}`);
+} else {
+  // Production configuration (Vercel/cloud)
+  const productionConnectionString = process.env.DATABASE_URL;
+  
+  poolConfig = {
+    connectionString: productionConnectionString,
+    ssl: { rejectUnauthorized: false },
+    max: 10, // Maximum number of clients in the pool
+    idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+    connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  };
+  console.log('Using production PostgreSQL configuration');
+  console.log(`Connection string: ${productionConnectionString ? 'Set' : 'Not set'}`);
+}
+
+// Create connection pool
+const pool = new Pool(poolConfig);
+
+// Test the connection (your original method for local, enhanced for production)
+if (isLocal) {
+  // Original local connection test
+  pool.connect((err, client, release) => {
+    if (err) {
+      console.error("Error connecting to PostgreSQL:", err);
     } else {
-        // Development environment - use local OCR
-        console.log('Development: Using local OCR implementation');
-        if (selectedImplementation === 'PaddleOCR') {
-            parserModule = require('./PaddleOCR/labParser');
-            console.log('Successfully loaded PaddleOCR implementation');
-        } else {
-            parserModule = require('./PyTesseract/labParser');
-            console.log('Successfully loaded PyTesseract implementation');
-        }
+      console.log("Connected to PostgreSQL database");
+      release();
     }
-} catch (error) {
-    console.error(`Failed to load OCR implementation:`, error.message);
+  });
+} else {
+  // Production connection test
+  pool.connect()
+    .then(client => {
+      console.log("Connected to PostgreSQL database (production)");
+      client.release();
+    })
+    .catch(err => {
+      console.error("Error connecting to PostgreSQL (production):", err);
+    });
+}
+
+// Helper function for executing queries (enhanced version of your original)
+async function query(text, params) {
+  const start = Date.now();
+  
+  try {
+    let processedParams = params;
     
-    // Fallback to a working implementation that doesn't crash
-    parserModule = {
-        extractFromPDF: async (filePath) => {
-            console.warn('OCR functionality disabled - no working implementation found');
-            return {
-                labValues: {},
-                testDate: new Date()
-            };
-        },
-        parseLabValues: (text) => ({}),
-        extractTestDate: (text) => new Date(),
-        interpretConfidence: (confidence) => 'unknown'
-    };
-}
-
-// src/parsers/index.js - Updated with unique variable names
-
-require('dotenv').config();
-
-// Detect environment - using unique variable names
-const isProductionMode = process.env.NODE_ENV === 'production' || process.env.VERCEL;
-const ocrImplementation = process.env.OCR_IMPLEMENTATION || 'PaddleOCR';
-const externalOcrServiceEnabled = process.env.OCR_SERVICE_URL && !isProductionMode;
-
-console.log(`Environment: ${isProductionMode ? 'Production' : 'Development'}`);
-console.log(`OCR Implementation: ${ocrImplementation}`);
-console.log(`External OCR Service: ${externalOcrServiceEnabled ? 'Enabled' : 'Disabled'}`);
-
-let ocrParserModule;
-
-try {
-    if (isProductionMode) {
-        console.log('Production environment detected - OCR processing disabled');
-        // In production, clearly indicate OCR is disabled
-        ocrParserModule = {
-            extractFromPDF: async (filePath) => {
-                console.log('Production: OCR processing disabled, saving file metadata only');
-                return {
-                    labValues: {},
-                    testDate: new Date(),
-                    processingErrors: ['OCR processing is disabled in production environment']
-                };
-            },
-            parseLabValues: (text) => ({}),
-            extractTestDate: (text) => new Date(),
-            interpretConfidence: (confidence) => 'disabled'
-        };
-    } else if (externalOcrServiceEnabled) {
-        console.log('Development: Attempting to use external OCR service');
-        // Try to use external OCR service
-        try {
-            ocrParserModule = require('./ExternalOCR/labParser');
-            console.log('Successfully loaded external OCR service');
-        } catch (err) {
-            console.error('External OCR service failed to load:', err.message);
-            throw new Error(`External OCR service unavailable: ${err.message}`);
+    // Your original special handling for vectors (keep this for compatibility)
+    if (params) {
+      processedParams = params.map((param) => {
+        if (
+          Array.isArray(param) &&
+          param.length > 0 &&
+          typeof param[0] === "number"
+        ) {
+          // Convert array of numbers to PostgreSQL vector format [n1,n2,n3,...]
+          return `[${param.join(",")}]`;
         }
-    } else {
-        // Development environment - use only the specified implementation
-        console.log(`Development: Loading ${ocrImplementation} implementation`);
-        
-        if (ocrImplementation === 'PaddleOCR') {
-            ocrParserModule = require('./PaddleOCR/labParser');
-            console.log('Successfully loaded PaddleOCR implementation');
-        } else {
-            throw new Error(`Unsupported OCR implementation: ${ocrImplementation}. Only PaddleOCR is currently supported.`);
-        }
+        return param;
+      });
     }
-} catch (error) {
-    console.error(`OCR implementation failed to load:`, error.message);
+
+    const res = await pool.query(text, processedParams);
     
-    // Don't fall back - provide clear error messaging
-    ocrParserModule = {
-        extractFromPDF: async (filePath) => {
-            const errorMessage = `OCR failed to initialize: ${error.message}`;
-            console.error(errorMessage);
-            return {
-                labValues: {},
-                testDate: new Date(),
-                processingErrors: [errorMessage]
-            };
-        },
-        parseLabValues: (text) => {
-            console.error('OCR not available for text parsing');
-            return {};
-        },
-        extractTestDate: (text) => {
-            console.error('OCR not available for date extraction');
-            return new Date();
-        },
-        interpretConfidence: (confidence) => 'error'
+    // Add performance logging for production
+    if (!isLocal) {
+      const duration = Date.now() - start;
+      console.log('Executed query', { 
+        text: text.substring(0, 50) + (text.length > 50 ? '...' : ''), 
+        duration, 
+        rows: res.rowCount 
+      });
+    }
+    
+    return res;
+  } catch (err) {
+    console.error("Error executing query:", err);
+    throw err;
+  }
+}
+
+// Your original test function, enhanced for both environments
+async function testConnection() {
+  try {
+    const res = await query("SELECT NOW() as current_time");
+    return {
+      connected: true,
+      timestamp: res.rows[0].current_time,
+      environment: isLocal ? 'local' : 'production'
     };
+  } catch (error) {
+    console.error('PostgreSQL connection test failed:', error);
+    return {
+      connected: false,
+      error: error.message,
+      environment: isLocal ? 'local' : 'production'
+    };
+  }
 }
 
-// Export functions with clear error states
-async function extractFromPDF(filePath) {
-    try {
-        return await ocrParserModule.extractFromPDF(filePath);
-    } catch (error) {
-        console.error('Error in extractFromPDF:', error.message);
-        return {
-            labValues: {},
-            testDate: new Date(),
-            processingErrors: [`OCR extraction failed: ${error.message}`]
-        };
-    }
-}
+// Additional production utilities (only available in production)
+const productionUtils = !isLocal ? {
+  // Get a client from the pool (for transactions)
+  getClient: async () => {
+    return await pool.connect();
+  },
+  
+  // Graceful shutdown
+  end: async () => {
+    await pool.end();
+  },
+  
+  // Pool status
+  getPoolStatus: () => {
+    return {
+      totalCount: pool.totalCount,
+      idleCount: pool.idleCount,
+      waitingCount: pool.waitingCount
+    };
+  }
+} : {};
 
-function parseLabValues(text) {
-    try {
-        return ocrParserModule.parseLabValues(text);
-    } catch (error) {
-        console.error('Error in parseLabValues:', error.message);
-        return {};
-    }
-}
-
-function extractTestDate(text) {
-    try {
-        return ocrParserModule.extractTestDate(text);
-    } catch (error) {
-        console.error('Error in extractTestDate:', error.message);
-        return new Date();
-    }
-}
-
-function interpretConfidence(confidence) {
-    try {
-        return ocrParserModule.interpretConfidence(confidence);
-    } catch (error) {
-        console.error('Error in interpretConfidence:', error.message);
-        return 'error';
-    }
-}
-
+// Export based on environment
 module.exports = {
-    extractFromPDF,
-    parseLabValues,
-    extractTestDate,
-    interpretConfidence,
-    implementation: isProductionMode ? 'production-fallback' : ocrImplementation
+  query,
+  testConnection,
+  pool,
+  isLocal,
+  isProduction,
+  ...productionUtils
 };
