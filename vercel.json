@@ -2,6 +2,13 @@
     "version": 2,
     "builds": [
         { 
+            "src": "api/**/*.js", 
+            "use": "@vercel/node",
+            "config": {
+                "maxDuration": 30
+            }
+        },
+        { 
             "src": "src/index.js", 
             "use": "@vercel/node", 
             "config": { 
@@ -10,29 +17,18 @@
             } 
         },
         { 
-            "src": "api/**/*.js", 
-            "use": "@vercel/node",
-            "config": {
-                "maxDuration": 30
-            }
-        },
-        { 
             "src": "public/**/*", 
             "use": "@vercel/static"
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/api/ocr/(.*)",
-            "destination": "/api/ocr/$1"
+            "src": "/api/(.*)",
+            "dest": "/api/$1"
         },
         {
-            "source": "/api/rag/(.*)",
-            "destination": "/api/rag/$1"
-        },
-        {
-            "source": "/((?!api).*)",
-            "destination": "/src/index.js"
+            "src": "/(.*)",
+            "dest": "/src/index.js"
         }
     ],
     "headers": [
