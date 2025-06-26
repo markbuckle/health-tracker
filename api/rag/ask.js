@@ -1,5 +1,15 @@
-// api/rag/ask.js - Vercel API route that proxies to Railway
+// api/rag/ask.js
 export default async function handler(req, res) {
+  // Add CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ 
       error: 'Method not allowed',
@@ -19,8 +29,10 @@ export default async function handler(req, res) {
 
     console.log('Proxying RAG request to Railway...');
 
-    // Call your Railway RAG API
-    const ragResponse = await fetch(`${process.env.RAILWAY_RAG_URL}/api/rag/ask`, {
+    const railwayUrl = process.env.RAILWAY_RAG_URL;
+    console.log('Calling Railway API:', railwayUrl);
+    
+    const ragResponse = await fetch(`${railwayUrl}/api/rag/ask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,8 +41,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         query,
         options: options || {}
-      }),
-      timeout: 25000 // 25 second timeout
+      })
     });
 
     if (!ragResponse.ok) {
@@ -46,7 +57,6 @@ export default async function handler(req, res) {
 
     const result = await ragResponse.json();
     
-    // Return the result to your frontend
     res.status(200).json({
       success: true,
       response: result.response,
@@ -58,31 +68,9 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Proxy error:', error);
     
-    if (error.name === 'AbortError' || error.code === 'ECONNABORTED') {
-      res.status(504).json({
-        error: 'Request timeout',
-        message: 'The RAG service took too long to respond'
-      });
-    } else if (error.code === 'ECONNREFUSED') {
-      res.status(503).json({
-        error: 'Service unavailable',
-        message: 'The RAG service is currently unavailable'
-      });
-    } else {
-      res.status(500).json({
-        error: 'Internal server error',
-        message: 'Failed to process your request'
-      });
-    }
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to process your request'
+    });
   }
-}
-
-// Optional: Add configuration for Vercel
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-    responseLimit: false,
-  },
 }
