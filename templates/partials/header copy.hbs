@@ -1,0 +1,37 @@
+<header id="header" class="header">
+  <div id="headerContainer" class="header-container">
+    <a href="/" class="logo-block">
+      <img id="logo" src="images/logo2_1.png" loading="lazy" alt="Logo" class="header-logo"/>
+    </a>
+    
+    <!-- Desktop Navigation - Will be hidden on mobile -->
+    <div class="center-header desktop-nav">
+      <a href="/how-it-works" class="header-links">How It Works</a>
+      <a href="/learning" class="header-links">Learning Center</a>
+    </div>
+    
+    <div class="authentication-block desktop-nav">
+      <a href="/login" class="auth-button login-button">Log In</a>
+      <a href="/register" class="auth-button signup-button">Sign Up</a>
+    </div>
+    
+    <!-- Mobile Hamburger Button - Hidden on desktop -->
+    <button id="hamburger-button" class="hamburger-button" aria-label="Menu" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </div>
+  
+  <!-- Mobile Navigation Menu - Hidden by default -->
+  <div id="mobile-nav" class="mobile-nav" aria-hidden="true">
+    <nav class="mobile-nav-links">
+      <a href="/how-it-works" class="mobile-nav-link">How It Works</a>
+      <a href="/learning" class="mobile-nav-link">Learning Center</a>
+      <div class="mobile-nav-buttons">
+        <a href="/login" class="auth-button login-button">Log In</a>
+        <a href="/register" class="auth-button signup-button">Sign Up</a>
+      </div>
+    </nav>
+  </div>
+</header>

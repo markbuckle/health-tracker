@@ -1,0 +1,32 @@
+Processing file: C:\Users\Marks-Desktop\Coding\health-tracker-v2\public\uploads\1745323904370-183258009.pdf
+Initializing EasyOCR reader...
+Error processing PDF: code=2: cannot remove file 'C:\Users\barkm\AppData\Local\Temp\tmpjb0fklp3.png': Permission denied
+Traceback (most recent call last):
+  File "C:\Users\Marks-Desktop\Coding\health-tracker-v2\public\uploads\run_easyocr.py", line 57, in process_pdf
+    pix.save(temp_img_path)
+  File "C:\Users\barkm\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymupdf\__init__.py", line 10387, in save
+    return self._writeIMG(filename, idx, jpg_quality)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\barkm\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymupdf\__init__.py", line 10068, in _writeIMG
+    if   format_ == 1:  mupdf.fz_save_pixmap_as_png(pm, filename)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\barkm\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymupdf\mupdf.py", line 48568, in fz_save_pixmap_as_png
+    return _mupdf.fz_save_pixmap_as_png(pixmap, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pymupdf.mupdf.FzErrorSystem: code=2: cannot remove file 'C:\Users\barkm\AppData\Local\Temp\tmpjb0fklp3.png': Permission denied
+
+Error processing PDF: code=2: cannot remove file 'C:\Users\barkm\AppData\Local\Temp\tmpjb0fklp3.png': Permission denied
+Traceback (most recent call last):
+  File "C:\Users\Marks-Desktop\Coding\health-tracker-v2\public\uploads\run_easyocr.py", line 57, in process_pdf
+    pix.save(temp_img_path)
+  File "C:\Users\barkm\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymupdf\__init__.py", line 10387, in save
+    return self._writeIMG(filename, idx, jpg_quality)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\barkm\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymupdf\__init__.py", line 10068, in _writeIMG
+    if   format_ == 1:  mupdf.fz_save_pixmap_as_png(pm, filename)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\barkm\AppData\Local\Programs\Python\Python312\Lib\site-packages\pymupdf\mupdf.py", line 48568, in fz_save_pixmap_as_png
+    return _mupdf.fz_save_pixmap_as_png(pixmap, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pymupdf.mupdf.FzErrorSystem: code=2: cannot remove file 'C:\Users\barkm\AppData\Local\Temp\tmpjb0fklp3.png': Permission denied
+
