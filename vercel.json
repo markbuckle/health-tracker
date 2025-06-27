@@ -20,5 +20,19 @@
             "src": "public/**/*", 
             "use": "@vercel/static"
         }
+    ],
+    "routes": [
+        {
+            "src": "/api/simple-test",
+            "dest": "/api/simple-test.js"
+        },
+        {
+            "src": "/api/rag/ask",
+            "dest": "/api/rag/ask.js"
+        },
+        {
+            "src": "/((?!api).*)",
+            "dest": "/src/index.js"
+        }
     ]
 }
