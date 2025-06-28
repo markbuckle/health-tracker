@@ -568,6 +568,10 @@ body.menu-open .hero-title {
     --header-height-default: 50px;
     --header-height-scrolled: 44px;
   }
+  body.menu-open .hero {
+    transition: margin-top 0.3s ease;
+    margin-top: 3rem !important;
+  }
   /* Keep header at fixed position */
   .header {
     position: relative !important;
