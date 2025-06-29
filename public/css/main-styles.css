@@ -210,7 +210,7 @@ html, body {
 }
 
 .btn-primary {
-  background-color: var(--btn-primary-bg);
+  background-color: #4cc12fab;
   color: #000;
   border-radius: 76px;
   padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
@@ -444,7 +444,7 @@ html, body {
 /* ----- Wave elements ----- */
 .wave-light-bg {
   background: #e0ecee;
-  margin-top: 0; /* Remove any top margin */
+  margin-top: -1px; /* Remove any top margin */
   margin-bottom: -1px; /* Remove any top margin */
   padding-top: 0; /* Remove any top padding */
 }

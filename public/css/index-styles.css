@@ -1380,8 +1380,7 @@
 /* Mobile (320px - 479px) */
 @media screen and (max-width: 480px) {
   .hero {
-    padding: 3rem 0 !important;
-    /* margin-top: 3rem !important; */
+    padding: 3rem 0 1rem 0 !important;
     margin-bottom: -1px !important;
   }
   /* .content-container {
@@ -1391,21 +1390,21 @@
     padding: 0 0.5rem;
   }
   .hero-title {
-    font-size: 1rem !important;
+    font-size: 1.8rem !important;
     margin: 0 !important;
     margin-top: -1rem !important;
   }
   .hero-text {
-    font-size: clamp(1.3rem, 6vw, 1.6rem) !important;
+    font-size: clamp(1.6rem, 6vw, 2rem) !important;
     margin-bottom: 0.3rem !important;
     line-height: 1.25 !important;
   }
   .mobile {
-    max-width: 75% !important;
+    max-width: 85% !important;
     margin: 0 !important;
   }
   .mobile-only {
-    width: 85%;
+    width: 90%;
     max-width: 260px;
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
@@ -1424,14 +1423,14 @@
     padding: 1rem 0.25rem;
   }
   .quote-1 {
-    font-size: 1.2rem;
-    margin: 1rem 0 0.5rem;
+    font-size: 1.3rem;
+    margin: 2.5rem 0 0.5rem;
     max-width: 98%;
     line-height: 1.4;
   }
   .quote-2 {
     font-size: 1rem;
-    margin-top: 2rem;
+    margin-top: 3rem;
     max-width: 98%;
     padding: 0 0.5rem;
     line-height: 1.45;
@@ -1465,7 +1464,7 @@
     margin: 0 auto 1.5rem;
   }
   .section-title {
-    font-size: clamp(1.1rem, 5.5vw, 1.4rem);
+    font-size: clamp(1.4rem, 5.5vw, 1.6rem);
     margin-bottom: 0.75rem;
     padding: 0 0.5rem;
   }
@@ -1477,17 +1476,21 @@
   .slider-container {
     max-width: 100%;
   }
+  .slider-content-container {
+    padding: 0;
+  }
   .slider-wrapper {
-    margin: 0 10px;
+    margin: 0 5px;
+    margin-top: 2rem;
     padding-bottom: 1rem;
   }
   .slider-track {
     padding: 1rem 0;
   }
   .use-case-card {
-    width: 200px;
-    height: 200px;
-    padding: 0.5rem;
+    width: 260px;
+    height: 260px;
+    padding: 0;
   }
   .card-icon {
     width: 35px;
@@ -1499,16 +1502,16 @@
     height: 18px;
   }
   .card-title {
-    font-size: 0.8rem;
+    font-size: 1rem;
     margin-top: 0.4rem;
     margin-bottom: 0.2rem;
-    max-width: 90%;
+    max-width: 85%;
     line-height: 1.2;
   }
   .card-description {
-    font-size: 0.65rem;
+    font-size: 0.8rem;
     margin-top: 0.3rem;
-    max-width: 85%;
+    max-width: 80%;
     line-height: 1.25;
     -webkit-line-clamp: 3;
   }
@@ -1551,8 +1554,9 @@
     padding: 0;
   }
   .inner-content-container {
-    width: 90%;
+    width: 95%;
     margin-top: 2rem;
+    margin-bottom: 1.9rem;
   }
 }
 
