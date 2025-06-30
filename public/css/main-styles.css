@@ -1034,7 +1034,13 @@ label[for="customBloodType"] {
   padding-left: 160px;
 }
 .dashboard-img + .wave-light-bg {
-  margin-top: -6px !important;
+  margin-top: -3px !important;
+}
+
+.dashboard-img .content-container,
+.dashboard-img .inner-content-container {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* ----- Button Touch Device Optimizations ----- */
