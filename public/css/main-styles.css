@@ -444,7 +444,7 @@ html, body {
 /* ----- Wave elements ----- */
 .wave-light-bg {
   background: #e0ecee;
-  margin-top: -1px; /* Remove any top margin */
+  /* margin-top: -1px; Remove any top margin */
   margin-bottom: -1px; /* Remove any top margin */
   padding-top: 0; /* Remove any top padding */
 }
@@ -1030,6 +1030,9 @@ label[for="customBloodType"] {
   background-color: rgba(0,0,0,0.5); 
   z-index: 1000; 
   padding-left: 160px;
+}
+.dashboard-img + .wave-light-bg {
+  margin-top: -2px;
 }
 
 /* ----- Button Touch Device Optimizations ----- */
