@@ -718,6 +718,7 @@
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  margin-left: 0.3rem;
 }
 .chat-input:focus {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
@@ -1552,6 +1553,7 @@
   .chat-input {
     padding: 0.5rem 0.75rem;
     font-size: 12px;
+    margin-left: 0.1rem;
   }
   .chat-submit-btn {
     width: 36px;
