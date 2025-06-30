@@ -727,7 +727,7 @@ img,
   background-color: #b3d6ff;
   position: relative !important;
   z-index: 1 !important; /* Lower than hero-wrapper */
-  margin-top: -1px;
+  /* margin-top: -1px; */
 }
 .cms-notice {
   padding-bottom: 20px;
