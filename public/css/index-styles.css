@@ -71,7 +71,7 @@
 .mobile {
   margin-top: 3.5rem;
   margin-bottom: auto;
-  max-width: 45% !important;
+  max-width: 35% !important;
   height: auto;
   opacity: 0;
   transform: translateX(100px);
@@ -1062,7 +1062,7 @@
   }
   .mobile {
     order: 2 !important;
-    max-width: 38% !important;
+    max-width: 34% !important;
     height: auto !important;
     margin-top: 2rem !important;
     flex-shrink: 0 !important;
@@ -1400,7 +1400,7 @@
     line-height: 1.25 !important;
   }
   .mobile {
-    max-width: 85% !important;
+    max-width: 80% !important;
     margin: 0 !important;
   }
   .mobile-only {
@@ -1584,7 +1584,7 @@
     line-height: 1.2 !important;
   }
   .mobile {
-    max-width: clamp(200px, 80%, 280px) !important;
+    max-width: clamp(200px, 75%, 280px) !important;
   }
   .mobile-only {
     width: 85%;
