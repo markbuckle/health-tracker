@@ -13,29 +13,35 @@ const OCR_SERVICE_URL = process.env.OCR_SERVICE_URL; // Remove the fallback URL
 const useExternalOCR = OCR_SERVICE_URL && !isVercel && !isProductionEnv;
 
 // External OCR service connectivity test
+// if (useExternalOCR) {
+//   console.log('External OCR service configured for development environment');
+  
+//   const testConnectivity = async () => {
+//     try {
+//       console.log(`Testing external OCR service connectivity: ${OCR_SERVICE_URL}/health`);
+//       const fetch = require('node-fetch');
+//       const response = await fetch(`${OCR_SERVICE_URL}/health`, { 
+//         timeout: 5000 
+//       });
+      
+//       if (response.ok) {
+//         const data = await response.json();
+//         console.log('External OCR service is healthy:', data);
+//       } else {
+//         console.error('External OCR service health check failed:', response.status);
+//       }
+//     } catch (error) {
+//       console.error('External OCR service connectivity test failed:', error.message);
+//     }
+//   };
+
+//   testConnectivity();
+// } else {
+//   console.log('External OCR service disabled in production environment');
+// }
+
 if (useExternalOCR) {
   console.log('External OCR service configured for development environment');
-  
-  const testConnectivity = async () => {
-    try {
-      console.log(`Testing external OCR service connectivity: ${OCR_SERVICE_URL}/health`);
-      const fetch = require('node-fetch');
-      const response = await fetch(`${OCR_SERVICE_URL}/health`, { 
-        timeout: 5000 
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('External OCR service is healthy:', data);
-      } else {
-        console.error('External OCR service health check failed:', response.status);
-      }
-    } catch (error) {
-      console.error('External OCR service connectivity test failed:', error.message);
-    }
-  };
-
-  testConnectivity();
 } else {
   console.log('External OCR service disabled in production environment');
 }
