@@ -89,6 +89,72 @@
 
     <script src="js/main.js" defer type="module"></script>
     <script src="js/main-mobile.js" defer type="module"></script>
+    <script> // vertical scroll effect
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize timeline animations
+            initTimelineAnimations();
+            });
+
+            function initTimelineAnimations() {
+            const stepBlocks = document.querySelectorAll('.step-block');
+            
+            if (stepBlocks.length === 0) return;
+
+            // Create intersection observer for scroll animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '-10% 0px -10% 0px', // Trigger when 10% visible
+                threshold: [0.1, 0.5, 0.9]
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                const stepBlock = entry.target;
+                const stepNumber = stepBlock.querySelector('.step-number');
+                
+                if (entry.isIntersecting) {
+                    // Add animation class with staggered delay
+                    const index = Array.from(stepBlocks).indexOf(stepBlock);
+                    setTimeout(() => {
+                    stepBlock.classList.add('animate-in');
+                    }, index * 150); // 150ms delay between each step
+                    
+                    // Add pulse effect to step number
+                    if (stepNumber && entry.intersectionRatio > 0.5) {
+                    stepNumber.style.animation = 'pulse 0.6s ease-out';
+                    }
+                } else {
+                    // Remove animation class when out of view (optional - remove if you want them to stay animated)
+                    // stepBlock.classList.remove('animate-in');
+                }
+                });
+            }, observerOptions);
+
+            // Observe all step blocks
+            stepBlocks.forEach(stepBlock => observer.observe(stepBlock));
+
+            // Add smooth scrolling behavior
+            addSmoothScrolling();
+            }
+
+            function addSmoothScrolling() {
+            // Add smooth scrolling to any links that might jump to timeline sections
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    e.preventDefault();
+                    targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                    });
+                }
+                });
+            });
+            }
+    </script>
 </body>
 
 </html>
