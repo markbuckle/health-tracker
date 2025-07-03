@@ -335,7 +335,7 @@
   right: 0;
   bottom: 0;
   border-radius: 50%;
-  background: linear-gradient(45deg, #5cb15d 0%, #4379ba 100%);
+  /* background: linear-gradient(45deg, #5cb15d 0%, #4379ba 100%); */
   opacity: 0;
   transition: opacity 0.4s ease;
   z-index: -1;
