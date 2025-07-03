@@ -479,28 +479,23 @@
   }
   .steps-container {
     width: 100%;
-    max-width: 100%;
-    margin: 1rem auto;
+    max-width: 320px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 2.5rem auto 3rem auto;
+    gap: 3rem;
   }
   .step-number {
     position: absolute;
-    left: 50%; /* Center horizontally */
-    top: 0; /* Position above the card */
-    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    left: -1.5rem; /* left side positioning */
+    top: 50%; /* Position above the card */
+    transform: translateY(-50%); /* Center both horizontally and vertically */
     z-index: 10;
     width: 3rem;
     height: 3rem;
     font-size: 1.25rem;
     border: 3px solid white;
-  }
-  .step-card {
-    padding: 1.25rem;
-  }
-  .step-block {
-    margin-left: 0;
   }
   .steps-container::before {
     left: 50%;
@@ -519,23 +514,12 @@
   .hiw-subtitle {
     max-width: 90%;
   }
-  .steps-container {
-    max-width: 320px;
-    margin-top: 2.5rem;
-    margin-bottom: 3rem;
-    gap: 3rem;
-  }
-  .step-number {
-    width: 3rem;
-    height: 3rem;
-    font-size: 1.25rem;
-  }
   .step-card {
+    position: relative;
     width: 100%;
     max-width: 300px; /* Limit card width */
-    padding: 0.5rem !important;
+    padding: 0.25rem !important;
     margin: 0 !important;
-    margin-top: 0 !important; /* Add space for step number */
     transform: translateX(0) !important; /* Remove side animation */
   }
   .step-block {
@@ -546,9 +530,15 @@
     margin: 0 1rem 2rem 1rem;
     width: 100%;
     align-items: center; 
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .step-block.animate-in {
+    opacity: 1;
+    transform: translateY(0);
   }
   .step-block.animate-in .step-number {
-    transform: translate(-50%, -50%) !important; /* Maintain centering during animation */
+    transform: translateY(-50%) scale(1.02); /* Maintain centering during animation */
   }
   .step-block.animate-in .step-card {
     transform: translateX(0) !important; /* Keep centered */
