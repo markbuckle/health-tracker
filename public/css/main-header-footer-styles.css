@@ -716,6 +716,7 @@ body.menu-open .hero-title {
   }
   .mobile-nav-links-horizontal {
     gap: 0;
+    margin-bottom: 0.5rem;
   }
   .mobile-nav-links-horizontal .mobile-nav-link {
     padding: 10px 16px;
