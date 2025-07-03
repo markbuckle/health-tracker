@@ -343,7 +343,7 @@
 .use-case-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  background: #f1f4f2;
+  /* background: #f1f4f2; */
 }
 .use-case-card:hover::before {
   opacity: 0.1;
@@ -1518,7 +1518,7 @@
   .nav-button {
     width: 34px;
     height: 34px;
-    margin: 0 0.25rem;
+    margin: 0 0.5rem;
   }
   .nav-button svg {
     width: 14px;
