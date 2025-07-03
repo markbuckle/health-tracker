@@ -728,7 +728,7 @@ img,
   position: relative !important;
   z-index: 1 !important; /* Lower than hero-wrapper */
   margin-top: -1px !important;
-  margin-bottom: -1px !important;
+  margin-bottom: -2px !important;
   padding-bottom: 0 !important;
 }
 .cms-notice {

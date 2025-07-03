@@ -1381,7 +1381,7 @@
 @media screen and (max-width: 480px) {
   .hero {
     padding: 3rem 0 1rem 0 !important;
-    margin-bottom: -1px !important;
+    margin-bottom: -2px !important;
   }
   /* .content-container {
     margin-bottom: -5px !important;
@@ -1566,7 +1566,7 @@
 /* Small Mobile (below 320px) */
 @media screen and (max-width: 319px) {
   .hero {
-    margin-bottom: -1px;
+    margin-bottom: -2px;
   }
   .hero-container {
     gap: 1rem !important;
