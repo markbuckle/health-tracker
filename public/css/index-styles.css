@@ -1399,7 +1399,7 @@
   .hero {
     padding: 3rem 0 1rem 0 !important;
     padding-bottom: 0 !important;
-    margin-bottom: -2px !important;
+    margin-bottom: -5px !important;
   }
   .wave-light-bg {
     margin-bottom: -3px !important;
@@ -1589,15 +1589,16 @@
     /* margin-bottom: 1.9rem; */
     margin-bottom: 0 !important;
   }
-  /* .dashboard-img {
-    margin-bottom: -1px;
-  } */
+  .dashboard-img {
+    margin-top: -5px !important;
+    margin-bottom: -5px !important;
+  }
 }
 
 /* Small Mobile (below 320px) */
 @media screen and (max-width: 319px) {
   .hero {
-    margin-bottom: -2px !important;
+    margin-bottom: -5px !important;
   }
   .wave-light-bg {
     margin-bottom: -3px !important;
@@ -1823,16 +1824,16 @@
 /* iPhone specific fixes */
 @supports (-webkit-touch-callout: none) {
   .hero {
-    margin-bottom: -3px !important;
+    margin-bottom: -8px !important;
   }
   
   .dashboard-img {
-    margin-top: -3px !important;
-    margin-bottom: -3px !important;
+    margin-top: -8px !important;
+    margin-bottom: -8px !important;
   }
   
   .wave-light-bg {
-    margin-top: -3px !important;
-    margin-bottom: -3px !important;
+    margin-top: -8px !important;
+    margin-bottom: -8px !important;
   }
 }

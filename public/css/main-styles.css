@@ -455,8 +455,9 @@ html, body {
   height: auto;
   overflow: hidden;
   z-index: 2;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  margin-top: -5px !important;
+  margin-bottom: -5px !important;
+  line-height: 0;
 }
 
 .wave-pattern svg {
@@ -465,6 +466,8 @@ html, body {
   display: block;
   min-width: 1000px;
   transform-origin: bottom;
+  vertical-align: top !important; /* Prevents baseline gaps */
+  line-height: 0;
 }
 
 /* ----- Dashboard / User Page Layout ----- */
