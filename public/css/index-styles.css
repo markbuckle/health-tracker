@@ -671,6 +671,9 @@
   z-index: 20 !important;
   margin-top: -1px;
 }
+.wave-light-bg-5 {
+  background: #e0ecee;
+}
 /* -------------- feedback-widget.css ------------- */
 .feedback-widget {
   position: fixed;
@@ -1242,7 +1245,7 @@
     max-width: 70% !important;
   }
   .mobile-only {
-    margin-bottom: 4rem !important;
+    margin-bottom: 2rem !important;
   }
   .btn-primary {
     order: 3 !important;
@@ -1433,7 +1436,7 @@
     max-width: 260px;
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
-    margin-bottom: 3rem !important;
+    margin-bottom: 2rem !important;
   }
   .btn-primary {
     width: 7rem !important;
@@ -1629,7 +1632,7 @@
     max-width: 260px;
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
-    margin-bottom: 3rem !important;
+    margin-bottom: 2rem !important;
   }
   .btn-primary {
     width: 5.5rem !important;
