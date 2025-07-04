@@ -443,7 +443,7 @@ html, body {
 
 /* ----- Wave elements ----- */
 .wave-light-bg {
-  background: #e0ecee;
+  /* background: #e0ecee; */
   /* margin-top: -1px; Remove any top margin */
   margin-top: -3px !important;
   margin-bottom: -2px; /* Remove any top margin */
