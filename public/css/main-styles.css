@@ -445,6 +445,7 @@ html, body {
 .wave-light-bg {
   background: #e0ecee;
   /* margin-top: -1px; Remove any top margin */
+  margin-top: 0 !important;
   margin-bottom: -1px; /* Remove any top margin */
   padding-top: 0; /* Remove any top padding */
 }
@@ -454,6 +455,8 @@ html, body {
   height: auto;
   overflow: hidden;
   z-index: 2;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .wave-pattern svg {
@@ -728,11 +731,22 @@ img,
   position: relative !important;
   z-index: 1 !important; /* Lower than hero-wrapper */
   margin-top: -1px !important;
-  margin-bottom: -2px !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.dashboard-img .content-container {
+  margin-bottom: 0 !important;
   padding-bottom: 0 !important;
 }
 .hero, .dashboard-img {
   margin-bottom: -1px !important;
+}
+.dashboard-img .inner-content-container {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.dashboard-img .demo-page-img {
+  margin-bottom: 0 !important;
 }
 .cms-notice {
   padding-bottom: 20px;

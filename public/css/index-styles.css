@@ -2,7 +2,8 @@
 .hero {
   justify-content: center;
   align-items: center;
-  padding-top: var(--header-height-default);
+  padding-top: var(--header-height-default) !important;
+  padding-bottom: 0 !important;
   display: flex;
   gap: 0 !important;
   flex-direction: column; /* Changed to column to accommodate mobile button */
@@ -20,7 +21,7 @@
   gap: 1rem;
   width: auto;
   max-width: 45rem;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem !important;
   margin-bottom: 0 !important;
 }
 .hero-content {
@@ -68,7 +69,8 @@
 }
 .mobile-only {
   display: none;
-  margin-bottom: 0 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 3rem !important;
 }
 /* Mobile Phone Image Style */
 .mobile {
@@ -89,7 +91,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--spacing-md) var(--spacing-sm);
+  padding-top: 0 !important;
+  padding-bottom: var(--spacing-md) !important;
   width: 100%;
 }
 .quote-container-2 {
@@ -586,6 +589,8 @@
   animation-delay: 2.5s;
   width: 9rem !important;
   padding: 0.8rem 1.6rem !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
 }
 .btn-primary-scrolled {
   opacity: 1 !important;
@@ -1236,6 +1241,9 @@
     order: 2;
     max-width: 70% !important;
   }
+  .mobile-only {
+    margin-bottom: 4rem !important;
+  }
   .btn-primary {
     order: 3 !important;
     width: 7rem !important;
@@ -1390,7 +1398,8 @@
 @media screen and (max-width: 480px) {
   .hero {
     padding: 3rem 0 1rem 0 !important;
-    margin-bottom: -2px !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
   }
   .wave-light-bg {
     margin-bottom: -2px !important;
@@ -1403,6 +1412,7 @@
   } */
   .hero-container {
     padding: 0 0.5rem;
+    padding-bottom: 0 !important;
   }
   .hero-title {
     font-size: 1.8rem !important;
@@ -1423,15 +1433,20 @@
     max-width: 260px;
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
+    margin-bottom: 3rem !important;
   }
   .btn-primary {
     width: 7rem !important;
     padding: 0.7rem 1.2rem !important;
     font-size: 0.9rem !important;
+    margin-bottom: 3rem;
   }
   .btn-primary.mobile-only {
     width: 80%;
     max-width: 260px;
+  }
+  .quote-container-1 {
+    padding-top: 0 !important;
   }
   .quote-container-1,
   .quote-container-2 {
@@ -1582,7 +1597,7 @@
 /* Small Mobile (below 320px) */
 @media screen and (max-width: 319px) {
   .hero {
-    margin-bottom: -2px !important;
+    margin-bottom: 0 !important;
   }
   .wave-light-bg {
     margin-bottom: -2px !important;
@@ -1613,6 +1628,7 @@
     max-width: 260px;
     padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
+    margin-bottom: 3rem !important;
   }
   .btn-primary {
     width: 5.5rem !important;
