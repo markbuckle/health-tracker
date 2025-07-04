@@ -455,7 +455,7 @@ html, body {
   height: auto;
   overflow: hidden;
   z-index: 2;
-  margin-top: 0 !important;
+  margin-top: -2px !important;
   margin-bottom: 0 !important;
 }
 
