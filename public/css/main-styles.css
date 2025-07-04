@@ -445,7 +445,7 @@ html, body {
 .wave-light-bg {
   background: #e0ecee;
   /* margin-top: -1px; Remove any top margin */
-  margin-top: -2px !important;
+  margin-top: -3px !important;
   margin-bottom: -2px; /* Remove any top margin */
   padding-top: 0; /* Remove any top padding */
 }
@@ -455,7 +455,7 @@ html, body {
   height: auto;
   overflow: hidden;
   z-index: 2;
-  margin-top: -2px !important;
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
 
