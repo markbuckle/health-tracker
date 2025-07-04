@@ -445,8 +445,8 @@ html, body {
 .wave-light-bg {
   background: #e0ecee;
   /* margin-top: -1px; Remove any top margin */
-  margin-top: 0 !important;
-  margin-bottom: -1px; /* Remove any top margin */
+  margin-top: -2px !important;
+  margin-bottom: -2px; /* Remove any top margin */
   padding-top: 0; /* Remove any top padding */
 }
 
@@ -730,8 +730,8 @@ img,
   background-color: #b3d6ff;
   position: relative !important;
   z-index: 1 !important; /* Lower than hero-wrapper */
-  margin-top: -1px !important;
-  margin-bottom: 0 !important;
+  margin-top: -2px !important;
+  margin-bottom: -2px !important;
   padding-bottom: 0 !important;
 }
 .dashboard-img .content-container {
@@ -1050,10 +1050,6 @@ label[for="customBloodType"] {
   z-index: 1000; 
   padding-left: 160px;
 }
-.dashboard-img + .wave-light-bg {
-  margin-top: -1px !important;
-}
-
 .dashboard-img .content-container,
 .dashboard-img .inner-content-container {
   margin-bottom: 0 !important;

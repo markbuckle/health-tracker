@@ -1399,7 +1399,7 @@
   .hero {
     padding: 3rem 0 1rem 0 !important;
     padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
+    margin-bottom: -2px !important;
   }
   .wave-light-bg {
     margin-bottom: -2px !important;
@@ -1597,7 +1597,7 @@
 /* Small Mobile (below 320px) */
 @media screen and (max-width: 319px) {
   .hero {
-    margin-bottom: 0 !important;
+    margin-bottom: -2px !important;
   }
   .wave-light-bg {
     margin-bottom: -2px !important;
@@ -1817,5 +1817,22 @@
   .pagination-dot {
     width: 10px !important;
     height: 10px !important;
+  }
+}
+
+/* iPhone specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .hero {
+    margin-bottom: -3px !important;
+  }
+  
+  .dashboard-img {
+    margin-top: -3px !important;
+    margin-bottom: -3px !important;
+  }
+  
+  .wave-light-bg {
+    margin-top: -3px !important;
+    margin-bottom: -3px !important;
   }
 }
