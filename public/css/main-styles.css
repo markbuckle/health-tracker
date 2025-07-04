@@ -731,6 +731,9 @@ img,
   margin-bottom: -2px !important;
   padding-bottom: 0 !important;
 }
+.hero, .dashboard-img {
+  margin-bottom: -1px !important;
+}
 .cms-notice {
   padding-bottom: 20px;
   font-family: "Poppin-Regular", sans-serif;
