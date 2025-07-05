@@ -23,6 +23,10 @@ const { biomarkerData, markerCategories, getRecommendableBiomarkers } = require(
 const { Resend } = require("resend"); // npm install resend
 const ragRoutes = require("./db/routes/ragRoutes");
 // const { extractFromPDF } = require('./parsers/PaddleOCR/labParser');
+const fetch = require("node-fetch");
+
+console.log("HF_API_TOKEN present:", !!process.env.HF_API_TOKEN);
+console.log("HF_API_TOKEN first 10 chars:", process.env.HF_API_TOKEN ? process.env.HF_API_TOKEN.substring(0, 10) + "..." : "NOT FOUND");
 
 // express app setup
 const app = express();
@@ -2361,9 +2365,41 @@ app.post("/api/feedback", async (req, res) => {
 
 app.use("/api/rag", ragRoutes);
 
+// Add this function after your imports but before server.listen
+async function testHuggingFaceToken() {
+  try {
+    const response = await fetch("https://huggingface.co/api/whoami", {
+      headers: {
+        Authorization: `Bearer ${process.env.HF_API_TOKEN}`,
+      },
+    });
+    
+    const result = await response.text();
+    console.log("Token test status:", response.status);
+    console.log("Token test result:", result);
+    
+    return response.ok;
+  } catch (error) {
+    console.error("Token test failed:", error);
+    return false;
+  }
+}
+
 // Change from app.listen to server.listen at the end of the file
-server.listen(port, () => {
+// server.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
+
+server.listen(port, async () => {
   console.log(`Server is running on port ${port}`);
+  
+  // Test Hugging Face token
+  const isTokenValid = await testHuggingFaceToken();
+  if (isTokenValid) {
+    console.log("✅ Hugging Face token is valid");
+  } else {
+    console.log("❌ Hugging Face token is invalid - check your HF_API_TOKEN");
+  }
 });
 
 // app.listen(port, () => {

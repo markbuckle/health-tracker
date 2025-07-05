@@ -87,7 +87,7 @@ async function generateBasicResponse(query, context) {
     const formattedContext = formatContext(context);
 
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
       // "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
       {
         method: "POST",
@@ -124,6 +124,12 @@ Your response: [/INST]</s>`,
       "Raw response first 200 chars:",
       responseText.substring(0, 200) + "..."
     );
+
+    if (!response.ok) {
+      console.error(`Hugging Face API error: ${response.status} ${response.statusText}`);
+      console.error("Response body:", responseText);
+      return `Error: Hugging Face API returned ${response.status} - ${responseText}`;
+    }
 
     let result;
     try {
@@ -256,9 +262,30 @@ async function testModel() {
   }
 }
 
+// Add this function to test your HF token
+async function testHuggingFaceToken() {
+  try {
+    const response = await fetch("https://huggingface.co/api/whoami", {
+      headers: {
+        Authorization: `Bearer ${HF_API_TOKEN}`,
+      },
+    });
+    
+    const result = await response.text();
+    console.log("Token test status:", response.status);
+    console.log("Token test result:", result);
+    
+    return response.ok;
+  } catch (error) {
+    console.error("Token test failed:", error);
+    return false;
+  }
+}
+
 module.exports = {
   cleanResponse,
   generateEmbedding,
   generateBasicResponse,
   testModel,
+  testHuggingFaceToken
 };
