@@ -1,5 +1,5 @@
-const pgConnector = require("../db/pgConnector");
-const llmService = require("../db/chatService");
+const pgConnector = require("./pgConnector");
+const llmService = require("./chatService");
 
 // Function to add a simple document to the knowledge base
 async function addDocument(document) {

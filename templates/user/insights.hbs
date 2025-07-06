@@ -917,36 +917,38 @@
 
         async function sendToRAG(query) {
           try {
-             // First, get user context
-            console.log('Getting user context...');
+            // STEP 1: Get user context first
+            console.log('🔍 Getting user context...');
             const contextResponse = await fetch("/api/user/context", {
               method: "POST",
               headers: { "Content-Type": "application/json" }
             });
             
-            if (!contextResponse.ok) {
-              console.error('Failed to get user context:', contextResponse.status);
-              // Fallback to regular query without context
-              var userContext = null;
-            } else {
+            let userContext = null;
+            if (contextResponse.ok) {
               const contextData = await contextResponse.json();
-              var userContext = contextData.userContext;
-              console.log('User context retrieved:', userContext);
+              userContext = contextData.userContext;
+              console.log('✅ User context retrieved:', userContext);
+            } else {
+              console.error('❌ Failed to get user context:', contextResponse.status);
+              // Continue without context
             }
-    
-            // Then send to RAG with context
-            console.log('Sending query with context to RAG...');
+            
+            // STEP 2: Send to RAG with context
+            console.log('🔍 Sending query with context to RAG...');
             const response = await fetch("/api/rag/ask", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+              },
               body: JSON.stringify({ 
                 query,
-                userContext 
+                userContext  // THIS IS THE KEY ADDITION
               }),
             });
 
             const data = await response.json();
-            console.log('RAG response:', data);
+            console.log('📋 RAG response:', data);
 
             // Remove typing indicator
             removeTypingIndicator();
