@@ -1,5 +1,5 @@
-const pgConnector = require("./pgConnector");
-const llmService = require("./chatService");
+const pgConnector = require("../db/pgConnector");
+const llmService = require("../db/chatService");
 
 // Function to add a simple document to the knowledge base
 async function addDocument(document) {
@@ -124,10 +124,8 @@ async function performRag(query, options = {}) {
 
     // Step 2: Format context with better structure and source attribution
     const context = documents
-      .map((doc, index) => {
-        return `Document ${index + 1} (${doc.title}, Source: ${
-          doc.source || "Unknown"
-        }): ${doc.content}`;
+      .map((doc) => {
+        return doc.content;
       })
       .join("\n\n");
 

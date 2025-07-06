@@ -138,29 +138,73 @@ async function checkTogetherAIStatus() {
   }
 }
 
-// Function to generate a response using Ollama
-async function generateBasicResponse(query, context) {
+// Update your generateBasicResponse function to handle userContext
+async function generateBasicResponse(query, context, userContext = null) {
   try {
     console.log("Generating response with Together AI...");
     console.log("Context length:", context.length, "characters");
+    console.log("User context provided:", !!userContext);
 
     // Format the context in a more structured way
     const formattedContext = formatContext(context);
     
-    // Debug: Check if context contains Apo-B information
-    const hasApoB = formattedContext.toLowerCase().includes('apo-b') || 
-                    formattedContext.toLowerCase().includes('apob') ||
-                    formattedContext.toLowerCase().includes('apolipoprotein b');
-    console.log("Context contains Apo-B information:", hasApoB);
-    
-    // Show first 500 chars of context for debugging
-    console.log("Context preview:", formattedContext.substring(0, 500) + "...");
-    
-    if (hasApoB) {
-      console.log("✅ Apo-B information found in context");
-    } else {
-      console.log("❌ No Apo-B information found in context");
+    // Build the user prompt with optional user context
+    let userPrompt = `Read through these medical documents carefully and answer the question based on what you find:
+
+${formattedContext}`;
+
+    // Add user context if provided
+    if (userContext) {
+      const contextInfo = [];
+      
+      if (userContext.profile?.age) {
+        contextInfo.push(`Patient is ${userContext.profile.age} years old`);
+      }
+      
+      if (userContext.profile?.sex) {
+        contextInfo.push(`Patient is ${userContext.profile.sex}`);
+      }
+      
+      if (userContext.profile?.bloodType) {
+        contextInfo.push(`Patient's blood type is ${userContext.profile.bloodType}`);
+      }
+      
+      if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
+        const labInfo = Object.entries(userContext.recentLabValues)
+          .map(([test, data]) => `${test}: ${data.value} ${data.unit || ''}`)
+          .join(', ');
+        contextInfo.push(`Recent lab values: ${labInfo}`);
+      }
+      
+      if (userContext.profile?.familyHistory && userContext.profile.familyHistory.length > 0) {
+        contextInfo.push(`Family history: ${userContext.profile.familyHistory.join(', ')}`);
+      }
+      
+      if (userContext.profile?.medications && userContext.profile.medications.length > 0) {
+        contextInfo.push(`Current medications: ${userContext.profile.medications.join(', ')}`);
+      }
+      
+      if (contextInfo.length > 0) {
+        userPrompt += `
+
+PATIENT INFORMATION:
+${contextInfo.join('\n')}`;
+        console.log("Added patient context to prompt");
+      }
     }
+
+    userPrompt += `
+
+Question: ${query}
+
+Instructions:
+- Search through ALL the document content for information related to the question
+- Use the patient information above when relevant to provide personalized answers
+- If you find relevant information, provide a comprehensive but CONCISE answer (maximum 100 words)
+- Be specific and detailed but brief
+- Focus on the most important facts
+- For questions about the patient's specific details (like blood type, age, etc.), use the patient information provided
+- Do not add information not in the documents or patient information`;
 
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
       method: 'POST',
@@ -173,26 +217,14 @@ async function generateBasicResponse(query, context) {
         messages: [
           {
             role: 'system',
-            content: 'You are a medical research assistant. You must carefully read through the provided documents and extract relevant information to answer questions. Provide concise, focused answers in 100 words or less. If the documents contain information about the topic, use that information. Only say the documents lack information if they truly contain nothing relevant to the question.'
+            content: 'You are a medical research assistant. You have access to medical documents and patient information. Use both sources to provide personalized, accurate answers. If asked about specific patient details that are provided in the patient information, answer directly using that information.'
           },
           {
             role: 'user', 
-            content: `Read through these medical documents carefully and answer the question based on what you find:
-
-${formattedContext}
-
-Question: ${query}
-
-Instructions:
-- Search through ALL the document content for information related to the question
-- If you find relevant information, provide a comprehensive but CONCISE answer (maximum 100 words)
-- Be specific and detailed but brief
-- Focus on the most important facts
-- Only say the documents lack information if they truly contain nothing about the topic
-- Do not add information not in the documents`
+            content: userPrompt
           }
         ],
-        max_tokens: 150,  // Reduced from 500 to keep responses short
+        max_tokens: 150,
         temperature: 0.3,
         top_p: 0.9,
         repetition_penalty: 1.1

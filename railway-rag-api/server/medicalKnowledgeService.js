@@ -149,6 +149,42 @@ async function performRag(query, options = {}) {
   }
 }
 
+async function performRagWithContext(query, userContext) {
+  // Build contextual prompt
+  let contextualQuery = query;
+  
+  if (userContext) {
+    const contextInfo = [];
+    
+    if (userContext.profile.age) {
+      contextInfo.push(`Patient is ${userContext.profile.age} years old`);
+    }
+    
+    if (userContext.profile.sex) {
+      contextInfo.push(`Patient is ${userContext.profile.sex}`);
+    }
+    
+    if (userContext.recentLabValues) {
+      const labInfo = Object.entries(userContext.recentLabValues)
+        .map(([test, data]) => `${test}: ${data.value} ${data.unit}`)
+        .join(', ');
+      contextInfo.push(`Recent lab values: ${labInfo}`);
+    }
+    
+    if (userContext.profile.familyHistory?.length > 0) {
+      contextInfo.push(`Family history: ${userContext.profile.familyHistory.join(', ')}`);
+    }
+    
+    // Prepend context to the query
+    contextualQuery = `Patient context: ${contextInfo.join('. ')}. 
+    
+    Question: ${query}`;
+  }
+  
+  // Use existing RAG logic with enhanced query
+  return await performRag(contextualQuery);
+}
+
 module.exports = {
   addDocument,
   testAddDocument,

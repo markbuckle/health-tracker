@@ -2360,32 +2360,55 @@ app.post("/api/feedback", async (req, res) => {
   }
 });
 
-app.use("/api/rag", ragRoutes);
-
-// Add this function after your imports but before server.listen
-async function testHuggingFaceToken() {
+// New endpoint to prepare user context for RAG
+app.post('/api/user/context', checkAuth, async (req, res) => {
   try {
-    const response = await fetch("https://huggingface.co/api/whoami", {
-      headers: {
-        Authorization: `Bearer ${process.env.HF_API_TOKEN}`,
+    const user = await registerCollection.findById(req.user._id);
+    
+    // Extract relevant user data for RAG
+    const userContext = {
+      userId: user._id,
+      profile: {
+        age: user.profile?.age,
+        sex: user.profile?.sex,
+        bloodType: user.profile?.bloodType,
+        familyHistory: user.profile?.familyHistory?.map(h => h.condition),
+        lifestyle: user.profile?.lifestyle?.map(l => l.category),
+        medications: user.profile?.medsandsups?.map(m => m.name)
       },
-    });
+      recentLabValues: extractRecentLabValues(user.files),
+      healthConcerns: identifyHealthConcerns(user)
+    };
     
-    const result = await response.text();
-    console.log("Token test status:", response.status);
-    console.log("Token test result:", result);
-    
-    return response.ok;
+    res.json({ userContext });
   } catch (error) {
-    console.error("Token test failed:", error);
-    return false;
+    res.status(500).json({ error: 'Failed to prepare user context' });
   }
+});
+
+// Helper function to extract recent lab values
+function extractRecentLabValues(files) {
+  const recentFiles = files
+    .filter(f => f.labValues && Object.keys(f.labValues).length > 0)
+    .sort((a, b) => new Date(b.testDate) - new Date(a.testDate))
+    .slice(0, 3); // Last 3 lab results
+    
+  const labSummary = {};
+  recentFiles.forEach(file => {
+    Object.entries(file.labValues).forEach(([key, value]) => {
+      labSummary[key] = {
+        value: value.value,
+        unit: value.unit,
+        referenceRange: value.referenceRange,
+        date: file.testDate
+      };
+    });
+  });
+  
+  return labSummary;
 }
 
-// Change from app.listen to server.listen at the end of the file
-// server.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
+app.use("/api/rag", ragRoutes);
 
 server.listen(port, async () => {
   console.log(`Server is running on port ${port}`);
@@ -2402,6 +2425,31 @@ server.listen(port, async () => {
     console.log("💡 Check your TOGETHER_API_KEY in .env file");
   }
 });
+
+// Add this function after your imports but before server.listen
+// async function testHuggingFaceToken() {
+//   try {
+//     const response = await fetch("https://huggingface.co/api/whoami", {
+//       headers: {
+//         Authorization: `Bearer ${process.env.HF_API_TOKEN}`,
+//       },
+//     });
+    
+//     const result = await response.text();
+//     console.log("Token test status:", response.status);
+//     console.log("Token test result:", result);
+    
+//     return response.ok;
+//   } catch (error) {
+//     console.error("Token test failed:", error);
+//     return false;
+//   }
+// }
+
+// Change from app.listen to server.listen at the end of the file
+// server.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
 
 // app.listen(port, () => {
 //     console.log(`Server is running on port ${port}`);
