@@ -2362,8 +2362,18 @@ app.post("/api/feedback", async (req, res) => {
 
 // New endpoint to prepare user context for RAG
 app.post('/api/user/context', checkAuth, async (req, res) => {
+  console.log('🔍 USER CONTEXT ENDPOINT CALLED');
+  console.log('🔍 User ID:', req.user._id);
+  
   try {
     const user = await registerCollection.findById(req.user._id);
+    console.log('🔍 User found:', !!user);
+    console.log('🔍 User blood type:', user?.profile?.bloodType);
+    
+    if (!user) {
+      console.log('❌ User not found in database');
+      return res.status(404).json({ error: 'User not found' });
+    }
     
     // Extract relevant user data for RAG
     const userContext = {
@@ -2372,41 +2382,82 @@ app.post('/api/user/context', checkAuth, async (req, res) => {
         age: user.profile?.age,
         sex: user.profile?.sex,
         bloodType: user.profile?.bloodType,
-        familyHistory: user.profile?.familyHistory?.map(h => h.condition),
-        lifestyle: user.profile?.lifestyle?.map(l => l.category),
-        medications: user.profile?.medsandsups?.map(m => m.name)
+        familyHistory: user.profile?.familyHistory?.map(h => h.condition) || [],
+        lifestyle: user.profile?.lifestyle?.map(l => l.category) || [],
+        medications: user.profile?.medsandsups?.map(m => m.name) || []
       },
-      recentLabValues: extractRecentLabValues(user.files),
+      recentLabValues: extractRecentLabValues(user.files || []),
       healthConcerns: identifyHealthConcerns(user)
     };
     
+    console.log('🔍 User context prepared:', JSON.stringify(userContext, null, 2));
     res.json({ userContext });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to prepare user context' });
+    console.error('❌ Error in user context endpoint:', error);
+    res.status(500).json({ error: 'Failed to prepare user context', details: error.message });
   }
 });
 
 // Helper function to extract recent lab values
 function extractRecentLabValues(files) {
-  const recentFiles = files
-    .filter(f => f.labValues && Object.keys(f.labValues).length > 0)
-    .sort((a, b) => new Date(b.testDate) - new Date(a.testDate))
-    .slice(0, 3); // Last 3 lab results
+  try {
+    if (!files || files.length === 0) return {};
     
-  const labSummary = {};
-  recentFiles.forEach(file => {
-    Object.entries(file.labValues).forEach(([key, value]) => {
-      labSummary[key] = {
-        value: value.value,
-        unit: value.unit,
-        referenceRange: value.referenceRange,
-        date: file.testDate
-      };
+    const recentFiles = files
+      .filter(f => f.labValues && Object.keys(f.labValues).length > 0)
+      .sort((a, b) => new Date(b.testDate) - new Date(a.testDate))
+      .slice(0, 3); // Last 3 lab results
+      
+    const labSummary = {};
+    recentFiles.forEach(file => {
+      try {
+        // Handle both Map and Object formats for labValues
+        const entries = file.labValues instanceof Map ? 
+          Array.from(file.labValues.entries()) : 
+          Object.entries(file.labValues);
+          
+        entries.forEach(([key, value]) => {
+          labSummary[key] = {
+            value: value.value,
+            unit: value.unit,
+            referenceRange: value.referenceRange,
+            date: file.testDate
+          };
+        });
+      } catch (fileError) {
+        console.error('Error processing file:', fileError);
+      }
     });
-  });
-  
-  return labSummary;
+    
+    return labSummary;
+  } catch (error) {
+    console.error('Error extracting lab values:', error);
+    return {};
+  }
 }
+
+// Helper function to identify health concerns
+function identifyHealthConcerns(user) {
+  try {
+    const concerns = [];
+    
+    if (user.profile?.familyHistory?.length > 0) {
+      concerns.push('family_history_risk');
+    }
+    
+    // Add more concern identification logic here
+    
+    return concerns;
+  } catch (error) {
+    console.error('Error identifying health concerns:', error);
+    return [];
+  }
+}
+
+app.get('/api/test-endpoint', (req, res) => {
+  console.log('🧪 Test endpoint called successfully!');
+  res.json({ message: 'Test endpoint working' });
+});
 
 app.use("/api/rag", ragRoutes);
 

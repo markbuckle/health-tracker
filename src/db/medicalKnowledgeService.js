@@ -147,9 +147,75 @@ async function performRag(query, options = {}) {
   }
 }
 
+async function performRagWithContext(query, userContext, options = {}) {
+  try {
+    console.log('🔍 Performing RAG with user context');
+    console.log('🔍 User blood type:', userContext?.profile?.bloodType);
+    
+    // Build contextual prompt
+    let contextualQuery = query;
+    
+    if (userContext && userContext.profile) {
+      const contextInfo = [];
+      
+      if (userContext.profile.age) {
+        contextInfo.push(`Patient is ${userContext.profile.age} years old`);
+      }
+      
+      if (userContext.profile.sex) {
+        contextInfo.push(`Patient is ${userContext.profile.sex}`);
+      }
+      
+      if (userContext.profile.bloodType) {
+        contextInfo.push(`Patient's blood type is ${userContext.profile.bloodType}`);
+      }
+      
+      if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
+        const labInfo = Object.entries(userContext.recentLabValues)
+          .slice(0, 3) // Limit to first 3 lab values to avoid overwhelming the prompt
+          .map(([test, data]) => `${test}: ${data.value} ${data.unit || ''}`)
+          .join(', ');
+        contextInfo.push(`Recent lab values: ${labInfo}`);
+      }
+      
+      if (userContext.profile.familyHistory && userContext.profile.familyHistory.length > 0) {
+        const validFamilyHistory = userContext.profile.familyHistory.filter(h => h !== null);
+        if (validFamilyHistory.length > 0) {
+          contextInfo.push(`Family history: ${validFamilyHistory.join(', ')}`);
+        }
+      }
+      
+      if (userContext.profile.medications && userContext.profile.medications.length > 0) {
+        const validMedications = userContext.profile.medications.filter(m => m !== null);
+        if (validMedications.length > 0) {
+          contextInfo.push(`Current medications: ${validMedications.join(', ')}`);
+        }
+      }
+      
+      // Only add context if we have any meaningful information
+      if (contextInfo.length > 0) {
+        contextualQuery = `Patient context: ${contextInfo.join('. ')}. 
+
+Question: ${query}`;
+        
+        console.log('🔍 Enhanced query with user context:', contextualQuery);
+      }
+    }
+    
+    // Use existing RAG logic with enhanced query
+    return await performRag(contextualQuery, options);
+  } catch (error) {
+    console.error("❌ Error performing RAG with context:", error);
+    // Fallback to regular RAG if context processing fails
+    console.log('🔄 Falling back to regular RAG...');
+    return await performRag(query, options);
+  }
+}
+
 module.exports = {
   addDocument,
   testAddDocument,
   searchDocuments,
   performRag,
+  performRagWithContext
 };

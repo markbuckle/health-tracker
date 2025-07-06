@@ -145,52 +145,75 @@ async function generateBasicResponse(query, context, userContext = null) {
     console.log("Context length:", context.length, "characters");
     console.log("User context provided:", !!userContext);
 
+    // Check if this is a direct question about user's personal information
+    const isPersonalQuestion = query.toLowerCase().includes('my blood type') || 
+                              query.toLowerCase().includes('what is my') ||
+                              query.toLowerCase().includes('what is the user') ||
+                              query.toLowerCase().includes('blood type');
+
+    console.log("Is personal question:", isPersonalQuestion);
+
+    if (userContext && isPersonalQuestion) {
+      // For personal questions, answer DIRECTLY from user data without medical documents
+      console.log("🎯 Handling personal question with direct user data");
+      
+      const response = await fetch('https://api.together.xyz/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'mistralai/Mistral-7B-Instruct-v0.1',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a medical assistant. Answer questions directly based on the patient information provided. Do not reference any documents.'
+            },
+            {
+              role: 'user', 
+              content: `Patient Information:
+- Name: Mark Buckle
+- Age: ${userContext.profile?.age || 'Not specified'}
+- Sex: ${userContext.profile?.sex || 'Not specified'}  
+- Blood Type: ${userContext.profile?.bloodType || 'Not specified'}
+- Current Medications: ${userContext.profile?.medications?.filter(m => m).join(', ') || 'None'}
+
+Question: ${query}
+
+Answer directly based on the patient information above. Be specific and concise.`
+            }
+          ],
+          max_tokens: 50, // Very short response
+          temperature: 0.1,
+          top_p: 0.9
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const answer = result.choices[0].message.content;
+        console.log("✅ Direct personal response:", answer);
+        return cleanResponse(answer);
+      }
+    }
+
+    // For non-personal questions, use the existing logic
+    console.log("📚 Handling general medical question");
+    
     // Format the context in a more structured way
     const formattedContext = formatContext(context);
     
-    // Build the user prompt with optional user context
     let userPrompt = `Read through these medical documents carefully and answer the question based on what you find:
 
 ${formattedContext}`;
 
-    // Add user context if provided
     if (userContext) {
-      const contextInfo = [];
-      
-      if (userContext.profile?.age) {
-        contextInfo.push(`Patient is ${userContext.profile.age} years old`);
-      }
-      
-      if (userContext.profile?.sex) {
-        contextInfo.push(`Patient is ${userContext.profile.sex}`);
-      }
-      
-      if (userContext.profile?.bloodType) {
-        contextInfo.push(`Patient's blood type is ${userContext.profile.bloodType}`);
-      }
-      
-      if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
-        const labInfo = Object.entries(userContext.recentLabValues)
-          .map(([test, data]) => `${test}: ${data.value} ${data.unit || ''}`)
-          .join(', ');
-        contextInfo.push(`Recent lab values: ${labInfo}`);
-      }
-      
-      if (userContext.profile?.familyHistory && userContext.profile.familyHistory.length > 0) {
-        contextInfo.push(`Family history: ${userContext.profile.familyHistory.join(', ')}`);
-      }
-      
-      if (userContext.profile?.medications && userContext.profile.medications.length > 0) {
-        contextInfo.push(`Current medications: ${userContext.profile.medications.join(', ')}`);
-      }
-      
-      if (contextInfo.length > 0) {
-        userPrompt += `
+      userPrompt += `
 
-PATIENT INFORMATION:
-${contextInfo.join('\n')}`;
-        console.log("Added patient context to prompt");
-      }
+PATIENT CONTEXT (use if relevant):
+- Age: ${userContext.profile?.age}, Sex: ${userContext.profile?.sex}
+- Blood Type: ${userContext.profile?.bloodType}`;
     }
 
     userPrompt += `
@@ -199,12 +222,9 @@ Question: ${query}
 
 Instructions:
 - Search through ALL the document content for information related to the question
-- Use the patient information above when relevant to provide personalized answers
-- If you find relevant information, provide a comprehensive but CONCISE answer (maximum 100 words)
-- Be specific and detailed but brief
-- Focus on the most important facts
-- For questions about the patient's specific details (like blood type, age, etc.), use the patient information provided
-- Do not add information not in the documents or patient information`;
+- Use the patient context when relevant to provide personalized answers
+- Provide a comprehensive but CONCISE answer (maximum 100 words)
+- Be specific and detailed but brief`;
 
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
       method: 'POST',
@@ -217,7 +237,7 @@ Instructions:
         messages: [
           {
             role: 'system',
-            content: 'You are a medical research assistant. You have access to medical documents and patient information. Use both sources to provide personalized, accurate answers. If asked about specific patient details that are provided in the patient information, answer directly using that information.'
+            content: 'You are a medical research assistant. Provide information based on the context provided and any provided patient information.'
           },
           {
             role: 'user', 
@@ -236,31 +256,19 @@ Instructions:
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`Together AI API error: ${response.status} ${response.statusText}`);
-      console.error("Error response:", errorText);
-      
-      if (response.status === 401) {
-        return "Error: Invalid API key. Please check your Together AI configuration.";
-      }
-      
-      if (response.status === 429) {
-        return "Error: Rate limit exceeded. Please try again in a moment.";
-      }
-      
-      return `Error: Together AI API returned ${response.status} - ${errorText}`;
+      return `Error: Together AI API returned ${response.status}`;
     }
 
     const result = await response.json();
-    console.log("✅ Together AI response generated successfully");
-
     const answer = result.choices[0].message.content;
 
     if (!answer) {
-      console.log("No answer extracted from Together AI response");
       return "No response could be generated. Please try again later.";
     }
 
     console.log("Answer generated:", answer.substring(0, 100) + "...");
     return cleanResponse(answer);
+
   } catch (error) {
     console.error("Error generating response with Together AI:", error);
     return "Error processing your request: " + error.message;
