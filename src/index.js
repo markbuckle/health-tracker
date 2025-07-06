@@ -25,9 +25,6 @@ const ragRoutes = require("./db/routes/ragRoutes");
 // const { extractFromPDF } = require('./parsers/PaddleOCR/labParser');
 const fetch = require("node-fetch");
 
-console.log("HF_API_TOKEN present:", !!process.env.HF_API_TOKEN);
-console.log("HF_API_TOKEN first 10 chars:", process.env.HF_API_TOKEN ? process.env.HF_API_TOKEN.substring(0, 10) + "..." : "NOT FOUND");
-
 // express app setup
 const app = express();
 
@@ -40,7 +37,7 @@ if (process.env.NODE_ENV === "development") {
         "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdn.plot.ly; " +
         "img-src 'self' data: blob: *; " +
         "font-src 'self' data: fonts.gstatic.com; " +
-        "connect-src 'self' ws: wss: localhost:* cdn.jsdelivr.net cdn.plot.ly; " +
+        "connect-src 'self' ws: wss: localhost:* cdn.jsdelivr.net cdn.plot.ly huggingface.co api-inference.huggingface.co; " +
         "child-src 'self' blob:; " +
         "worker-src 'self' blob:; " +
         "object-src 'none'; " +
@@ -2393,12 +2390,16 @@ async function testHuggingFaceToken() {
 server.listen(port, async () => {
   console.log(`Server is running on port ${port}`);
   
-  // Test Hugging Face token
-  const isTokenValid = await testHuggingFaceToken();
-  if (isTokenValid) {
-    console.log("✅ Hugging Face token is valid");
+  // Test Together AI status
+  const { checkTogetherAIStatus } = require('./db/chatService');
+  const togetherStatus = await checkTogetherAIStatus();
+  
+  if (togetherStatus.working) {
+    console.log("✅ Together AI is working");
+    console.log(`🤖 Using model: ${togetherStatus.model}`);
   } else {
-    console.log("❌ Hugging Face token is invalid - check your HF_API_TOKEN");
+    console.log("❌ Together AI error:", togetherStatus.error);
+    console.log("💡 Check your TOGETHER_API_KEY in .env file");
   }
 });
 
