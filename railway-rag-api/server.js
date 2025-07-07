@@ -8,7 +8,7 @@ const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://your-vercel-app.vercel.app',
+  origin: process.env.FRONTEND_URL || 'https://www.earlyhealthlync.com/',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
