@@ -87,8 +87,7 @@ async function generateBasicResponse(query, context) {
     const formattedContext = formatContext(context);
 
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
-      // "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
       {
         method: "POST",
         headers: {
@@ -96,10 +95,7 @@ async function generateBasicResponse(query, context) {
           Authorization: `Bearer ${HF_API_TOKEN}`,
         },
         body: JSON.stringify({
-          inputs: `<s>[INST] You are a professional medical assistant providing factual information in English only. 
-                    Your task is to answer a question based SOLELY on the information provided in the following documents. 
-                    DO NOT use any external knowledge or facts that are not explicitly stated in these documents. 
-                    Answer the question directly. Do not include any introductory words or phrases like 'According to' or greeting terms.
+          inputs: `<s>[INST] You are a professional medical assistant providing factual information in English only. Your task is to answer a question based SOLELY on the information provided in the following documents. DO NOT use any external knowledge or facts that are not explicitly stated in these documents. Answer the question directly. Do not include any introductory words or phrases like 'According to' or greeting terms.
 
 Documents:
 ${formattedContext}
@@ -110,9 +106,13 @@ IMPORTANT RULES:
 1. Only use information explicitly stated in the documents above
 2. If the documents don't contain the information needed, say "The provided documents don't contain specific information about this topic."
 3. Do not mention any sources or knowledge outside of these documents
-4. Keep your response concise, accurate, and in English only
-
-Your response: [/INST]</s>`,
+4. Keep your response concise, accurate, and in English only [/INST]`,
+          parameters: {
+            max_new_tokens: 500,
+            temperature: 0.3,
+            do_sample: true,
+            return_full_text: false
+          }
         }),
       }
     );
@@ -125,6 +125,13 @@ Your response: [/INST]</s>`,
       responseText.substring(0, 200) + "..."
     );
 
+    // Add status check before parsing
+    if (!response.ok) {
+      console.error(`Hugging Face API error: ${response.status} ${response.statusText}`);
+      console.error("Response body:", responseText);
+      return `Error: Hugging Face API returned ${response.status} - ${responseText}`;
+    }
+
     let result;
     try {
       result = JSON.parse(responseText);
@@ -133,67 +140,27 @@ Your response: [/INST]</s>`,
       return "Error: Could not parse response from Hugging Face API";
     }
 
-    // Extract the generated text
+    // Extract the generated text - simplified for return_full_text: false
     const fullText = result[0]?.generated_text || "";
 
-    // Split the text to get only the response part
-    let answer = "";
-    const parts = fullText.split("[/INST]");
-    if (parts.length > 1) {
-      // Get the raw answer after [/INST]
-      const rawAnswer = parts[1]
-        .replace(/\s*<\/s>\s*$/, "") // Remove closing </s> tag
-        .replace(/^\s*<\/s>\s*/, "") // Remove opening </s> tag if present
-        .trim();
+    // Since return_full_text: false, we get only the response without the prompt
+    let answer = fullText.trim();
 
-      // Look for the true start of the answer
-      // This targets finding the first proper sentence in the text
-      const sentenceMatch = rawAnswer.match(/[A-Z][^.!?]*[.!?]/);
-      if (sentenceMatch) {
-        // Get the index where the first proper sentence starts
-        const startIndex = rawAnswer.indexOf(sentenceMatch[0]);
-        if (startIndex > 0) {
-          // If it's not at the beginning, take everything from this point
-          answer = rawAnswer.substring(startIndex);
-        } else {
-          answer = rawAnswer;
-        }
-      } else {
-        // If no clear sentence is found, try to clean up by removing non-alphanumeric prefixes
-        answer = rawAnswer.replace(/^[^a-zA-Z0-9\s]+/, "").trim();
-
-        // Also check for common prefixes that appear in the output
-        const commonPrefixes = ["IB.", "力IB.", "BIB.", "BL", "B ", "I ", "L "];
-        for (const prefix of commonPrefixes) {
-          if (answer.startsWith(prefix)) {
-            answer = answer.substring(prefix.length).trim();
-            break;
-          }
-        }
-      }
-    } else {
-      // If we can't split by [/INST], just use a more basic approach
-      answer = fullText
-        .replace(/\s*<\/s>\s*$/, "")
-        .replace(/^\s*<\/s>\s*/, "")
-        .replace(/^[^a-zA-Z0-9\s]+/, "")
-        .trim();
-    }
-
-    // Final cleanup - remove any remaining non-printable characters and normalize whitespace
+    // Basic cleanup for Mistral v0.2
     answer = answer
+      .replace(/\s*<\/s>\s*$/, "") // Remove any trailing </s>
+      .replace(/^\s*<\/s>\s*/, "") // Remove any leading </s>
       .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control characters
       .replace(/\s{2,}/g, " ") // Normalize whitespace
       .trim();
 
-    // Final check for known prefixes that might remain
-    if (
-      answer.startsWith("IB.") ||
-      answer.startsWith("LB.") ||
-      answer.startsWith("BI.") ||
-      answer.startsWith("BL.")
-    ) {
-      answer = answer.substring(3).trim();
+    // Remove any remaining common prefixes that might appear
+    const commonPrefixes = ["IB.", "力IB.", "BIB.", "BL.", "BI.", "LB."];
+    for (const prefix of commonPrefixes) {
+      if (answer.startsWith(prefix)) {
+        answer = answer.substring(prefix.length).trim();
+        break;
+      }
     }
 
     if (!answer) {
