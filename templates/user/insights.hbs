@@ -919,23 +919,29 @@
           try {
             // STEP 1: Get user context first
             console.log('🔍 Getting user context...');
-            const contextResponse = await fetch("/api/rag/context", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" }
-            });
-            
             let userContext = null;
-            if (contextResponse.ok) {
-              const contextData = await contextResponse.json();
-              userContext = contextData.userContext;
-              console.log('✅ User context retrieved:', userContext);
-            } else {
-              console.error('❌ Failed to get user context:', contextResponse.status);
-              // Continue without context
+            
+            try {
+              const contextResponse = await fetch("/api/rag/context", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+              });
+              
+              if (contextResponse.ok) {
+                const contextData = await contextResponse.json();
+                userContext = contextData.userContext;
+                console.log('✅ User context retrieved:', userContext);
+              } else {
+                console.error('❌ Failed to get user context:', contextResponse.status);
+              }
+            } catch (contextError) {
+              console.error('❌ Error getting user context:', contextError);
             }
             
             // STEP 2: Send to RAG with context
             console.log('🔍 Sending query with context to RAG...');
+            console.log('🔍 User context being sent:', userContext); // Add this debug line
+            
             const response = await fetch("/api/rag/ask", {
               method: "POST",
               headers: {
@@ -943,7 +949,7 @@
               },
               body: JSON.stringify({ 
                 query,
-                userContext  // THIS IS THE KEY ADDITION
+                userContext: userContext  // Make sure this is explicitly set
               }),
             });
 
