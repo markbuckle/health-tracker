@@ -2360,7 +2360,7 @@ app.post("/api/feedback", async (req, res) => {
   }
 });
 
-// New endpoint to prepare user context for RAG
+// Update the user context endpoint
 app.post('/api/user/context', checkAuth, async (req, res) => {
   console.log('🔍 USER CONTEXT ENDPOINT CALLED');
   console.log('🔍 User ID:', req.user._id);
@@ -2368,12 +2368,68 @@ app.post('/api/user/context', checkAuth, async (req, res) => {
   try {
     const user = await registerCollection.findById(req.user._id);
     console.log('🔍 User found:', !!user);
-    console.log('🔍 User blood type:', user?.profile?.bloodType);
     
     if (!user) {
       console.log('❌ User not found in database');
       return res.status(404).json({ error: 'User not found' });
     }
+    
+    // Extract family history with full details
+    let familyHistoryDetails = [];
+    if (user.profile?.familyHistory && Array.isArray(user.profile.familyHistory)) {
+      familyHistoryDetails = user.profile.familyHistory
+        .filter(item => item && item.familyCondition)
+        .map(item => ({
+          condition: item.familyCondition,
+          relatives: item.relatives || 'Not specified',
+          notes: item.addNotes || 'No notes'
+        }));
+    }
+    
+    // Extract lifestyle with full details
+    let lifestyleDetails = [];
+    if (user.profile?.lifestyle && Array.isArray(user.profile.lifestyle)) {
+      lifestyleDetails = user.profile.lifestyle
+        .filter(item => item && item.habitType)
+        .map(item => ({
+          habitType: item.habitType,
+          status: item.status || 'Not specified',
+          notes: item.lifestyleNotes || 'No notes'
+        }));
+    }
+    
+    // Extract medications with full details
+    let medicationDetails = [];
+    if (user.profile?.medsandsups && Array.isArray(user.profile.medsandsups)) {
+      medicationDetails = user.profile.medsandsups
+        .filter(item => item && (item.medicine || item.supplement || item.name))
+        .map(item => ({
+          name: item.medicine || item.supplement || item.name,
+          type: item.medSupType || (item.medicine ? 'Medicine' : 'Supplement'),
+          dosage: item.dosage || 'Not specified',
+          frequency: item.frequency || 'Not specified',
+          notes: item.medsAndSupsNotes || item.notes || 'No notes'
+        }));
+    }
+    
+    // Extract monitoring with full details
+    let monitoringDetails = [];
+    if (user.profile?.monitoring && Array.isArray(user.profile.monitoring)) {
+      monitoringDetails = user.profile.monitoring
+        .filter(item => item)
+        .map(item => ({
+          weight: item.weight || 'Not specified',
+          bloodPressure: item.bloodPressure || 'Not specified',
+          restingHeartRate: item.restingHeartRate || 'Not specified',
+          sleep: item.sleep || 'Not specified',
+          notes: item.monitoringNotes || 'No notes'
+        }));
+    }
+    
+    console.log('🔍 Detailed family history:', familyHistoryDetails);
+    console.log('🔍 Detailed lifestyle:', lifestyleDetails);
+    console.log('🔍 Detailed medications:', medicationDetails);
+    console.log('🔍 Detailed monitoring:', monitoringDetails);
     
     // Extract relevant user data for RAG
     const userContext = {
@@ -2382,9 +2438,10 @@ app.post('/api/user/context', checkAuth, async (req, res) => {
         age: user.profile?.age,
         sex: user.profile?.sex,
         bloodType: user.profile?.bloodType,
-        familyHistory: user.profile?.familyHistory?.map(h => h.condition) || [],
-        lifestyle: user.profile?.lifestyle?.map(l => l.category) || [],
-        medications: user.profile?.medsandsups?.map(m => m.name) || []
+        familyHistoryDetails: familyHistoryDetails,
+        lifestyleDetails: lifestyleDetails,
+        medicationDetails: medicationDetails,
+        monitoringDetails: monitoringDetails
       },
       recentLabValues: extractRecentLabValues(user.files || []),
       healthConcerns: identifyHealthConcerns(user)

@@ -141,134 +141,128 @@ async function checkTogetherAIStatus() {
 // Update your generateBasicResponse function to handle userContext
 async function generateBasicResponse(query, context, userContext = null) {
   try {
-    console.log("Generating response with Together AI...");
-    console.log("Context length:", context.length, "characters");
-    console.log("User context provided:", !!userContext);
-
+    console.log("🚨 UPDATED generateBasicResponse called with query:", query);
+    console.log("🚨 UserContext provided:", !!userContext);
+    
     // Check if this is a direct question about user's personal information
-    const isPersonalQuestion = query.toLowerCase().includes('my blood type') || 
-                              query.toLowerCase().includes('what is my') ||
-                              query.toLowerCase().includes('what is the user') ||
-                              query.toLowerCase().includes('blood type');
+    const personalQuestionPatterns = [
+      'my blood type', 'what is my', 'what is the user', 'blood type',
+      'how old am i', 'my age', 'what age am i', 'how old is the user',
+      'my sex', 'my gender', 'what sex am i', 'what gender am i',
+      'my medications', 'what medications', 'my meds', 'what meds',
+      'my family history', 'family history', 'my lifestyle', 'my health history',
+      'my lab values', 'my lab results', 'my recent labs', 'my test results'
+    ];
+    
+    const queryLower = query.toLowerCase();
+    const isPersonalQuestion = personalQuestionPatterns.some(pattern => 
+      queryLower.includes(pattern)
+    );
 
     console.log("Is personal question:", isPersonalQuestion);
 
     if (userContext && isPersonalQuestion) {
-      // For personal questions, answer DIRECTLY from user data without medical documents
-      console.log("🎯 Handling personal question with direct user data");
-      
-      const response = await fetch('https://api.together.xyz/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
+  // For personal questions, answer DIRECTLY from user data without medical documents
+  console.log("🎯 Handling personal question with direct user data");
+  
+  // Format family history details
+  let familyHistoryText = 'No family history recorded';
+  if (userContext.profile?.familyHistoryDetails && userContext.profile.familyHistoryDetails.length > 0) {
+    familyHistoryText = userContext.profile.familyHistoryDetails
+      .map(item => `${item.condition} (affects: ${item.relatives}, notes: ${item.notes})`)
+      .join('; ');
+  }
+  
+  // Format lifestyle details
+  let lifestyleText = 'No lifestyle information recorded';
+  if (userContext.profile?.lifestyleDetails && userContext.profile.lifestyleDetails.length > 0) {
+    lifestyleText = userContext.profile.lifestyleDetails
+      .map(item => `${item.habitType} (status: ${item.status}, notes: ${item.notes})`)
+      .join('; ');
+  }
+  
+  // Format medication details
+  let medicationsText = 'No medications or supplements recorded';
+  if (userContext.profile?.medicationDetails && userContext.profile.medicationDetails.length > 0) {
+    medicationsText = userContext.profile.medicationDetails
+      .map(item => `${item.name} (${item.type}, ${item.dosage}, ${item.frequency})`)
+      .join('; ');
+  }
+  
+  // Format monitoring details
+  let monitoringText = 'No monitoring data recorded';
+  if (userContext.profile?.monitoringDetails && userContext.profile.monitoringDetails.length > 0) {
+    const monitoring = userContext.profile.monitoringDetails[0]; // Get most recent
+    monitoringText = `Weight: ${monitoring.weight}, Blood Pressure: ${monitoring.bloodPressure}, Heart Rate: ${monitoring.restingHeartRate}, Sleep: ${monitoring.sleep}`;
+  }
+  
+  // Format recent lab values
+  let labValuesText = 'No recent lab values available';
+  if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
+    const labEntries = Object.entries(userContext.recentLabValues)
+      .slice(0, 5)
+      .map(([test, data]) => `${test}: ${data.value} ${data.unit || ''} (${new Date(data.date).toLocaleDateString()})`)
+      .join(', ');
+    labValuesText = labEntries;
+  }
+  
+  const response = await fetch('https://api.together.xyz/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'mistralai/Mistral-7B-Instruct-v0.1',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a medical assistant. Answer questions directly and clearly based on the patient information provided. If the patient has specific health information, state it clearly. Be specific and helpful.'
         },
-        body: JSON.stringify({
-          model: 'mistralai/Mistral-7B-Instruct-v0.1',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a medical assistant. Answer questions directly based on the patient information provided. Do not reference any documents.'
-            },
-            {
-              role: 'user', 
-              content: `Patient Information:
-- Name: Mark Buckle
-- Age: ${userContext.profile?.age || 'Not specified'}
+        {
+          role: 'user', 
+          content: `PATIENT HEALTH INFORMATION FOR MARK BUCKLE:
+
+BASIC INFO:
+- Age: ${userContext.profile?.age || 'Not specified'} years old
 - Sex: ${userContext.profile?.sex || 'Not specified'}  
 - Blood Type: ${userContext.profile?.bloodType || 'Not specified'}
-- Current Medications: ${userContext.profile?.medications?.filter(m => m).join(', ') || 'None'}
+
+FAMILY HISTORY:
+${familyHistoryText}
+
+LIFESTYLE:
+${lifestyleText}
+
+MEDICATIONS & SUPPLEMENTS:
+${medicationsText}
+
+CURRENT MONITORING DATA:
+${monitoringText}
+
+RECENT LAB VALUES:
+${labValuesText}
 
 Question: ${query}
 
-Answer directly based on the patient information above. Be specific and concise.`
-            }
-          ],
-          max_tokens: 50, // Very short response
-          temperature: 0.1,
-          top_p: 0.9
-        })
-      });
+Answer this question directly using the patient information above. Be specific and comprehensive.`
+        }
+      ],
+      max_tokens: 150,
+      temperature: 0.1,
+      top_p: 0.9
+    })
+  });
 
-      if (response.ok) {
-        const result = await response.json();
-        const answer = result.choices[0].message.content;
-        console.log("✅ Direct personal response:", answer);
-        return cleanResponse(answer);
-      }
-    }
-
-    // For non-personal questions, use the existing logic
-    console.log("📚 Handling general medical question");
-    
-    // Format the context in a more structured way
-    const formattedContext = formatContext(context);
-    
-    let userPrompt = `Read through these medical documents carefully and answer the question based on what you find:
-
-${formattedContext}`;
-
-    if (userContext) {
-      userPrompt += `
-
-PATIENT CONTEXT (use if relevant):
-- Age: ${userContext.profile?.age}, Sex: ${userContext.profile?.sex}
-- Blood Type: ${userContext.profile?.bloodType}`;
-    }
-
-    userPrompt += `
-
-Question: ${query}
-
-Instructions:
-- Search through ALL the document content for information related to the question
-- Use the patient context when relevant to provide personalized answers
-- Provide a comprehensive but CONCISE answer (maximum 100 words)
-- Be specific and detailed but brief`;
-
-    const response = await fetch('https://api.together.xyz/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'mistralai/Mistral-7B-Instruct-v0.1',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a medical research assistant. Provide information based on the context provided and any provided patient information.'
-          },
-          {
-            role: 'user', 
-            content: userPrompt
-          }
-        ],
-        max_tokens: 150,
-        temperature: 0.3,
-        top_p: 0.9,
-        repetition_penalty: 1.1
-      })
-    });
-
-    console.log("Together AI response status:", response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Together AI API error: ${response.status} ${response.statusText}`);
-      return `Error: Together AI API returned ${response.status}`;
-    }
-
+  if (response.ok) {
     const result = await response.json();
     const answer = result.choices[0].message.content;
-
-    if (!answer) {
-      return "No response could be generated. Please try again later.";
-    }
-
-    console.log("Answer generated:", answer.substring(0, 100) + "...");
+    console.log("✅ Direct personal response:", answer);
     return cleanResponse(answer);
+  }
+}
 
+    // ... rest of your existing function for non-personal questions
   } catch (error) {
     console.error("Error generating response with Together AI:", error);
     return "Error processing your request: " + error.message;

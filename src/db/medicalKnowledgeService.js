@@ -150,64 +150,45 @@ async function performRag(query, options = {}) {
 async function performRagWithContext(query, userContext, options = {}) {
   try {
     console.log('🔍 Performing RAG with user context');
-    console.log('🔍 User blood type:', userContext?.profile?.bloodType);
+    console.log('🔍 User data:', JSON.stringify(userContext.profile, null, 2));
     
-    // Build contextual prompt
-    let contextualQuery = query;
+    // Expanded personal question detection
+    const personalQuestionPatterns = [
+      'my blood type', 'what is my', 'what is the user', 'blood type',
+      'how old am i', 'my age', 'what age am i', 'how old is the user',
+      'my sex', 'my gender', 'what sex am i', 'what gender am i',
+      'my medications', 'what medications', 'my meds', 'what meds',
+      'my family history', 'family history', 'my lifestyle', 'my health history',
+      'my lab values', 'my lab results', 'my recent labs', 'my test results'
+    ];
     
-    if (userContext && userContext.profile) {
-      const contextInfo = [];
+    const queryLower = query.toLowerCase();
+    const isPersonalQuestion = personalQuestionPatterns.some(pattern => 
+      queryLower.includes(pattern)
+    );
+    
+    console.log('🔍 Query:', query);
+    console.log('🔍 Is personal question:', isPersonalQuestion);
+    
+    if (isPersonalQuestion) {
+      console.log('🎯 Personal question detected - bypassing document search');
       
-      if (userContext.profile.age) {
-        contextInfo.push(`Patient is ${userContext.profile.age} years old`);
-      }
+      // For personal questions, answer directly without searching documents
+      const directResponse = await llmService.generateBasicResponse(
+        query, 
+        "", // Empty context - no medical documents
+        userContext
+      );
       
-      if (userContext.profile.sex) {
-        contextInfo.push(`Patient is ${userContext.profile.sex}`);
-      }
-      
-      if (userContext.profile.bloodType) {
-        contextInfo.push(`Patient's blood type is ${userContext.profile.bloodType}`);
-      }
-      
-      if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
-        const labInfo = Object.entries(userContext.recentLabValues)
-          .slice(0, 3) // Limit to first 3 lab values to avoid overwhelming the prompt
-          .map(([test, data]) => `${test}: ${data.value} ${data.unit || ''}`)
-          .join(', ');
-        contextInfo.push(`Recent lab values: ${labInfo}`);
-      }
-      
-      if (userContext.profile.familyHistory && userContext.profile.familyHistory.length > 0) {
-        const validFamilyHistory = userContext.profile.familyHistory.filter(h => h !== null);
-        if (validFamilyHistory.length > 0) {
-          contextInfo.push(`Family history: ${validFamilyHistory.join(', ')}`);
-        }
-      }
-      
-      if (userContext.profile.medications && userContext.profile.medications.length > 0) {
-        const validMedications = userContext.profile.medications.filter(m => m !== null);
-        if (validMedications.length > 0) {
-          contextInfo.push(`Current medications: ${validMedications.join(', ')}`);
-        }
-      }
-      
-      // Only add context if we have any meaningful information
-      if (contextInfo.length > 0) {
-        contextualQuery = `Patient context: ${contextInfo.join('. ')}. 
-
-Question: ${query}`;
-        
-        console.log('🔍 Enhanced query with user context:', contextualQuery);
-      }
+      return {
+        response: directResponse,
+        sources: [], // No document sources for personal questions
+      };
     }
     
-    // Use existing RAG logic with enhanced query
-    return await performRag(contextualQuery, options);
+    // ... rest of your existing function for non-personal questions
   } catch (error) {
     console.error("❌ Error performing RAG with context:", error);
-    // Fallback to regular RAG if context processing fails
-    console.log('🔄 Falling back to regular RAG...');
     return await performRag(query, options);
   }
 }
