@@ -151,65 +151,88 @@ async function performRag(query, options = {}) {
 
 async function performRagWithContext(query, userContext, options = {}) {
   try {
-    console.log('🔍 Performing RAG with user context');
+    console.log('🔍 Performing RAG with user context (Railway)');
     console.log('🔍 User blood type:', userContext?.profile?.bloodType);
     
-    // Build contextual prompt
+    // Check if this is a personal question that should bypass document search
+    const personalQuestionPatterns = [
+      'my blood type', 'what is my', 'what is the user', 'blood type',
+      'how old am i', 'my age', 'what age am i', 'how old is the user',
+      'my sex', 'my gender', 'what sex am i', 'what gender am i',
+      'my medications', 'what medications', 'my meds', 'what meds',
+      'my family history', 'family history', 'my lifestyle', 'my health history',
+      'my lab values', 'my lab results', 'my recent labs', 'my test results'
+    ];
+    
+    const queryLower = query.toLowerCase();
+    const isPersonalQuestion = personalQuestionPatterns.some(pattern => 
+      queryLower.includes(pattern)
+    );
+    
+    if (isPersonalQuestion) {
+      console.log('🎯 Personal question detected - bypassing document search (Railway)');
+      
+      // For personal questions, answer directly without searching documents
+      const directResponse = await llmService.generateBasicResponse(
+        query, 
+        "", // Empty context - no medical documents
+        userContext
+      );
+      
+      return {
+        response: directResponse,
+        sources: [], // No document sources for personal questions
+      };
+    }
+    
+    // For non-personal questions, build contextual prompt and search documents
     let contextualQuery = query;
     
-    if (userContext && userContext.profile) {
+    if (userContext) {
       const contextInfo = [];
       
-      if (userContext.profile.age) {
+      if (userContext.profile?.age) {
         contextInfo.push(`Patient is ${userContext.profile.age} years old`);
       }
       
-      if (userContext.profile.sex) {
+      if (userContext.profile?.sex) {
         contextInfo.push(`Patient is ${userContext.profile.sex}`);
       }
       
-      if (userContext.profile.bloodType) {
+      if (userContext.profile?.bloodType) {
         contextInfo.push(`Patient's blood type is ${userContext.profile.bloodType}`);
       }
       
       if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
         const labInfo = Object.entries(userContext.recentLabValues)
-          .slice(0, 3) // Limit to first 3 lab values to avoid overwhelming the prompt
+          .slice(0, 3)
           .map(([test, data]) => `${test}: ${data.value} ${data.unit || ''}`)
           .join(', ');
         contextInfo.push(`Recent lab values: ${labInfo}`);
       }
       
-      if (userContext.profile.familyHistory && userContext.profile.familyHistory.length > 0) {
-        const validFamilyHistory = userContext.profile.familyHistory.filter(h => h !== null);
-        if (validFamilyHistory.length > 0) {
-          contextInfo.push(`Family history: ${validFamilyHistory.join(', ')}`);
-        }
-      }
-      
-      if (userContext.profile.medications && userContext.profile.medications.length > 0) {
-        const validMedications = userContext.profile.medications.filter(m => m !== null);
-        if (validMedications.length > 0) {
-          contextInfo.push(`Current medications: ${validMedications.join(', ')}`);
-        }
+      if (userContext.profile?.familyHistoryDetails && userContext.profile.familyHistoryDetails.length > 0) {
+        const familyHistory = userContext.profile.familyHistoryDetails
+          .map(item => item.condition)
+          .join(', ');
+        contextInfo.push(`Family history: ${familyHistory}`);
       }
       
       // Only add context if we have any meaningful information
       if (contextInfo.length > 0) {
         contextualQuery = `Patient context: ${contextInfo.join('. ')}. 
-
+        
 Question: ${query}`;
         
-        console.log('🔍 Enhanced query with user context:', contextualQuery);
+        console.log('🔍 Enhanced query with user context (Railway):', contextualQuery);
       }
     }
     
-    // Use existing RAG logic with enhanced query
+    // Use existing RAG logic with enhanced query for non-personal questions
     return await performRag(contextualQuery, options);
   } catch (error) {
-    console.error("❌ Error performing RAG with context:", error);
+    console.error("❌ Error performing RAG with context (Railway):", error);
     // Fallback to regular RAG if context processing fails
-    console.log('🔄 Falling back to regular RAG...');
     return await performRag(query, options);
   }
 }

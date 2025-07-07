@@ -36,7 +36,13 @@ app.post('/api/rag/ask', async (req, res) => {
   try {
     console.log(`RAG API Request: ${req.method} ${req.path}`);
     
-    const { query, options = {} } = req.body;
+    const { query, userContext, options = {} } = req.body; // Add userContext here
+
+    console.log('🔍 Railway - Query:', query);
+    console.log('🔍 Railway - User context provided:', !!userContext);
+    if (userContext) {
+      console.log('🔍 Railway - User blood type:', userContext.profile?.bloodType);
+    }
 
     if (!query) {
       return res.status(400).json({ error: "Query is required" });
@@ -47,7 +53,10 @@ app.post('/api/rag/ask', async (req, res) => {
       setTimeout(() => reject(new Error('Request timeout')), 25000)
     );
 
-    const ragPromise = medicalKnowledgeService.performRag(query, options);
+    // Use context-aware RAG if userContext is provided
+    const ragPromise = userContext 
+      ? medicalKnowledgeService.performRagWithContext(query, userContext, options)
+      : medicalKnowledgeService.performRag(query, options);
 
     const result = await Promise.race([ragPromise, timeoutPromise]);
 
@@ -55,11 +64,12 @@ app.post('/api/rag/ask', async (req, res) => {
       success: true,
       response: result.response,
       sources: result.sources,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      contextUsed: !!userContext // Add this to track if context was used
     });
 
   } catch (error) {
-    console.error("Error in RAG endpoint:", error);
+    console.error("Error in RAG endpoint (Railway):", error);
     
     if (error.message === 'Request timeout') {
       res.status(504).json({ 
