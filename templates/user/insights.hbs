@@ -919,7 +919,7 @@
           try {
             // STEP 1: Get user context first
             console.log('🔍 Getting user context...');
-            const contextResponse = await fetch("/api/user/context", {
+            const contextResponse = await fetch("/api/rag/context", {
               method: "POST",
               headers: { "Content-Type": "application/json" }
             });

@@ -31,6 +31,10 @@
             "dest": "/api/rag/ask.js"
         },
         {
+            "src": "/api/rag/context",
+            "dest": "/api/rag/context.js"
+        },
+        {
             "src": "/((?!api).*)",
             "dest": "/src/index.js"
         }
