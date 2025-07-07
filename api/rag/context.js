@@ -21,22 +21,40 @@ export default async function handler(req, res) {
     console.log('🔍 USER CONTEXT ENDPOINT CALLED (Production)');
     
     // For now, let's hardcode your user ID for testing
-    // TODO: Add proper authentication later
-    const hardcodedUserId = "68401daf362c3d1af8918e62"; // Your user ID from the logs
+    const hardcodedUserId = "68401daf362c3d1af8918e62";
     
-    const { registerCollection } = await import('../../src/mongodb.js');
-    const user = await registerCollection.findById(hardcodedUserId);
+    // Import and connect to MongoDB with error handling
+    let registerCollection;
+    try {
+      const mongoModule = await import('../../src/mongodb.js');
+      registerCollection = mongoModule.registerCollection;
+      console.log('📊 MongoDB import successful');
+    } catch (importError) {
+      console.error('❌ MongoDB import failed:', importError);
+      return res.status(500).json({ 
+        error: 'Database connection failed', 
+        details: 'Import error' 
+      });
+    }
+    
+    // Add connection timeout
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Database query timeout')), 10000)
+    );
+    
+    const userQueryPromise = registerCollection.findById(hardcodedUserId);
+    
+    const user = await Promise.race([userQueryPromise, timeoutPromise]);
+    
     console.log('🔍 User found:', !!user);
-    console.log('🔍 User data preview:', user ? 'User exists' : 'No user');
     
     if (!user) {
       console.log('❌ User not found in database');
       return res.status(404).json({ error: 'User not found' });
     }
     
-    console.log('🔍 Raw family history:', user?.profile?.familyHistory);
-    console.log('🔍 Raw lifestyle:', user?.profile?.lifestyle);
-    console.log('🔍 Raw monitoring:', user?.profile?.monitoring);
+    // Rest of your existing code for processing user data...
+    // (Keep all the familyHistoryDetails, lifestyleDetails, etc. processing)
     
     // Extract family history with full details
     let familyHistoryDetails = [];
@@ -45,7 +63,7 @@ export default async function handler(req, res) {
         .filter(item => item && item.familyCondition)
         .map(item => ({
           condition: item.familyCondition,
-          relatives: item.relatives || 'Not specified',
+          relatives: Array.isArray(item.relatives) ? item.relatives.join(', ') : item.relatives || 'Not specified',
           notes: item.addNotes || 'No notes'
         }));
     }
@@ -57,7 +75,7 @@ export default async function handler(req, res) {
         .filter(item => item && item.habitType)
         .map(item => ({
           habitType: item.habitType,
-          status: item.status || 'Not specified',
+          status: Array.isArray(item.status) ? item.status.join(', ') : item.status || 'Not specified',
           notes: item.lifestyleNotes || 'No notes'
         }));
     }
@@ -142,10 +160,7 @@ export default async function handler(req, res) {
       healthConcerns: user.profile?.familyHistory?.length > 0 ? ['family_history_risk'] : []
     };
     
-    console.log('🔍 Processed family history:', familyHistoryDetails);
-    console.log('🔍 Processed lifestyle:', lifestyleDetails);
-    console.log('🔍 Processed medications:', medicationDetails);
-    console.log('🔍 User context prepared (Production)');
+    console.log('✅ User context prepared successfully (Production)');
     
     res.status(200).json({ userContext });
 
