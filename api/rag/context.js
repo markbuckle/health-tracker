@@ -20,23 +20,23 @@ export default async function handler(req, res) {
   try {
     console.log('🔍 USER CONTEXT ENDPOINT CALLED (Production)');
     
-    // In production, we need to get the user from session/auth
-    // This will depend on how your authentication works in production
-    // For now, let's assume you can get the user ID somehow
-    
-    // You'll need to adapt this based on your Vercel authentication setup
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ error: 'User not authenticated' });
-    }
+    // For now, let's hardcode your user ID for testing
+    // TODO: Add proper authentication later
+    const hardcodedUserId = "68401daf362c3d1af8918e62"; // Your user ID from the logs
     
     const { registerCollection } = await import('../../src/mongodb.js');
-    const user = await registerCollection.findById(req.user._id);
+    const user = await registerCollection.findById(hardcodedUserId);
     console.log('🔍 User found:', !!user);
+    console.log('🔍 User data preview:', user ? 'User exists' : 'No user');
     
     if (!user) {
       console.log('❌ User not found in database');
       return res.status(404).json({ error: 'User not found' });
     }
+    
+    console.log('🔍 Raw family history:', user?.profile?.familyHistory);
+    console.log('🔍 Raw lifestyle:', user?.profile?.lifestyle);
+    console.log('🔍 Raw monitoring:', user?.profile?.monitoring);
     
     // Extract family history with full details
     let familyHistoryDetails = [];
@@ -142,11 +142,16 @@ export default async function handler(req, res) {
       healthConcerns: user.profile?.familyHistory?.length > 0 ? ['family_history_risk'] : []
     };
     
-    console.log('🔍 User context prepared (Production):', JSON.stringify(userContext, null, 2));
-    res.json({ userContext });
+    console.log('🔍 Processed family history:', familyHistoryDetails);
+    console.log('🔍 Processed lifestyle:', lifestyleDetails);
+    console.log('🔍 Processed medications:', medicationDetails);
+    console.log('🔍 User context prepared (Production)');
+    
+    res.status(200).json({ userContext });
 
   } catch (error) {
     console.error('❌ Error in user context endpoint (Production):', error);
+    console.error('❌ Error stack:', error.stack);
     res.status(500).json({ 
       error: 'Failed to prepare user context', 
       details: error.message 
