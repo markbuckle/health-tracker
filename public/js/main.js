@@ -81,20 +81,26 @@ function initializeHeaderScroll() {
   
   // Add resize listener to handle screen size changes
   window.addEventListener('resize', () => {
-    if (window.innerWidth <= 767) {
-      // Remove all scroll classes on mobile
-      header.classList.remove('header-scrolled');
-      headerContainer.classList.remove('header-container-scrolled');
-      logo.classList.remove('logo-scrolled');
-      // Reset positioning
-      header.style.top = '0px';
-      header.style.transform = 'translateY(0)';
-    } else {
-      // Ensure proper positioning on larger screens
-      header.style.top = '0px';
-      header.style.transform = 'translateY(0)';
+    // Only reset scroll classes when actually resizing from one breakpoint to another
+    // Don't interfere with mobile scroll effects
+    header.style.top = '0px';
+    header.style.transform = 'translateY(0)';
+    
+    // Only reset scroll state if the menu is open and we resize to desktop
+    if (window.innerWidth > 767) {
+        // Ensure proper positioning on larger screens
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const mobileNav = document.querySelector('.mobile-nav');
+        
+        // Close mobile menu if open when resizing to desktop
+        if (mobileMenu && mobileMenu.classList.contains('open')) {
+        mobileMenu.classList.remove('open');
+        }
+        if (mobileNav && mobileNav.classList.contains('open')) {
+        mobileNav.classList.remove('open');
+        }
     }
-  });
+    });
 }
 
 // Initialize when DOM is loaded
