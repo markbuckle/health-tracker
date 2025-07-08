@@ -336,6 +336,7 @@
 }
 .hero {
   transition: margin-top 0.3s ease;
+  padding-top: var(--header-height-default) !important;
 }
 body.menu-open {
   position: relative;
@@ -758,23 +759,49 @@ body.menu-open .hero-title {
   } */
   .mobile-nav-link {
     font-size: 14px;
-    padding: 10px 0;
+    padding: 0;
+  }
+  .mobile-nav-links {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Reduced padding */
   }
   .mobile-nav-links-horizontal {
-    gap: 0;
-    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* Even spacing */
+    align-items: center;
+    width: 90% !important;
+    gap: 11px;
+    margin-bottom: 0; /* Reduced margin */
+    position: relative;
   }
   .mobile-nav-links-horizontal .mobile-nav-link {
-    padding: 10px 16px;
-    max-width: 90px;
+    font-size: 12px; /* Smaller font */
+    padding: 8px 4px !important; /* Reduced padding */
+    max-width: none; /* Remove max-width restriction */
+    flex: 1; /* Equal width distribution */
+    text-align: center;
+    white-space: nowrap;
   }
   .mobile-nav-links-horizontal::after {
-    font-size: 13px;
+    display: none;
+  }
+  .mobile-nav-buttons {
+    display: contents; /* This makes the buttons part of the horizontal flex */
   }
   .mobile-nav-buttons .auth-button {
-    font-size: 14px;
-    padding: 8px 0;
-    width: 6rem;
+    font-size: 12px; /* Match navigation links */
+    padding: 8px 4px; /* Match navigation links */
+    flex: 1; /* Equal width distribution */
+    text-align: center;
+    border-radius: 4px;
+    margin: 0; /* Remove any margins */
+  }
+  .mobile-nav.open {
+    max-height: 50px; /* Reduced from 70vh */
+    margin-bottom: 0 !important;
   }
   .footer {
     padding-top: 1rem !important;
