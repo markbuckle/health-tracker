@@ -2361,7 +2361,7 @@ app.post("/api/feedback", async (req, res) => {
 });
 
 // Update the user context endpoint
-app.post('/api/user/context', checkAuth, async (req, res) => {
+app.post('/api/rag/context', checkAuth, async (req, res) => {
   console.log('🔍 USER CONTEXT ENDPOINT CALLED');
   console.log('🔍 User ID:', req.user._id);
   

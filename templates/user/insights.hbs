@@ -922,7 +922,7 @@
             let userContext = null;
             
             try {
-              const contextResponse = await fetch("/api/user/context", {
+              const contextResponse = await fetch("/api/rag/context", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" }
               });
