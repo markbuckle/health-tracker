@@ -18,7 +18,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { query, options } = req.body;
+    const { query, userContext, options } = req.body; // Add userContext here
+    
+    console.log('🔍 Vercel proxy received:');
+    console.log('🔍 Query:', query);
+    console.log('🔍 User context provided to proxy:', !!userContext);
+    console.log('🔍 User context details:', userContext ? 'Has data' : 'No data');
     
     if (!query) {
       return res.status(400).json({
@@ -40,8 +45,15 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         query,
+        userContext, // IMPORTANT: Forward the user context to Railway
         options: options || {}
       })
+    });
+
+    console.log('🔍 Sent to Railway:', { 
+      query, 
+      hasUserContext: !!userContext,
+      options: options || {} 
     });
 
     if (!ragResponse.ok) {
@@ -62,7 +74,8 @@ export default async function handler(req, res) {
       response: result.response,
       sources: result.sources,
       timestamp: result.timestamp,
-      service: 'railway'
+      service: 'railway',
+      contextUsed: !!userContext // Add this for debugging
     });
 
   } catch (error) {
