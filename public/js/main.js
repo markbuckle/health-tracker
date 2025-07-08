@@ -17,11 +17,6 @@ function initializeHeaderScroll() {
   let scrollTimer = null; // For debouncing
 
   function handleScroll() {
-    // Only disable on mobile (767px and below), allow on tablets
-    if (window.innerWidth <= 767) {
-      return;
-    }
-    
     const scrollPosition = window.scrollY;
     
     // Clear any existing timers
@@ -29,58 +24,54 @@ function initializeHeaderScroll() {
     
     // Set a small timeout to make the transition smoother
     scrollTimer = setTimeout(() => {
-      // Determine scroll direction
-      const scrollingDown = scrollPosition > lastScrollTop;
-      
-      // Ensure header stays at top
-      header.style.top = '0px';
-      header.style.transform = 'translateY(0)';
-      
-      // Apply or remove classes based on scroll position and direction
-      if (scrollPosition > 50) {
-        // Apply scrolled state
-        header.classList.add('header-scrolled');
-        headerContainer.classList.add('header-container-scrolled');
+        // Determine scroll direction
+        const scrollingDown = scrollPosition > lastScrollTop;
         
-        // Ensure header stays in position
+        // Ensure header stays at top
         header.style.top = '0px';
         header.style.transform = 'translateY(0)';
         
-        // Add a slight delay when scrolling up for smoother transition
-        if (!scrollingDown) {
-          // Add class immediately
-          logo.classList.add('logo-scrolled');
+        // Apply or remove classes based on scroll position and direction
+        if (scrollPosition > 50) {
+            // Apply scrolled state
+            header.classList.add('header-scrolled');
+            headerContainer.classList.add('header-container-scrolled');
+            
+            // Ensure header stays in position
+            header.style.top = '0px';
+            header.style.transform = 'translateY(0)';
+            
+            // Add a slight delay when scrolling up for smoother transition
+            if (!scrollingDown) {
+                logo.classList.add('logo-scrolled');
+            } else {
+                setTimeout(() => {
+                    logo.classList.add('logo-scrolled');
+                }, 50);
+            }
         } else {
-          // Small delay when scrolling down
-          setTimeout(() => {
-            logo.classList.add('logo-scrolled');
-          }, 50);
+            // Return to normal state
+            header.classList.remove('header-scrolled');
+            headerContainer.classList.remove('header-container-scrolled');
+            
+            // Ensure header stays in position
+            header.style.top = '0px';
+            header.style.transform = 'translateY(0)';
+            
+            // Add a slight delay when scrolling down for smoother transition
+            if (scrollingDown) {
+                logo.classList.remove('logo-scrolled');
+            } else {
+                setTimeout(() => {
+                    logo.classList.remove('logo-scrolled');
+                }, 50);
+            }
         }
-      } else {
-        // Return to normal state
-        header.classList.remove('header-scrolled');
-        headerContainer.classList.remove('header-container-scrolled');
         
-        // Ensure header stays in position
-        header.style.top = '0px';
-        header.style.transform = 'translateY(0)';
-        
-        // Add a slight delay when scrolling down for smoother transition
-        if (scrollingDown) {
-          // Add class immediately
-          logo.classList.remove('logo-scrolled');
-        } else {
-          // Small delay when scrolling up
-          setTimeout(() => {
-            logo.classList.remove('logo-scrolled');
-          }, 50);
-        }
-      }
-      
-      // Update last scroll position
-      lastScrollTop = scrollPosition;
+        // Update last scroll position
+        lastScrollTop = scrollPosition;
     }, 10); // Small timeout for smoother effect
-  }
+}
   
   // Use passive event listener for better performance
   window.addEventListener('scroll', handleScroll, { passive: true });

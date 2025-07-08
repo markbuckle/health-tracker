@@ -1,4 +1,9 @@
 /* ----- Header styles ----- */
+:root {
+    --header-height-default: 70px; /* Change from 60px */
+    --header-height-scrolled: 45px; /* Change from 44px */
+}
+
 .header {
   background-color: transparent;
   height: var(--header-height-default);
@@ -58,7 +63,7 @@
 .logo-block img {
   height: auto;
   width: auto;
-  max-height: calc(var(--header-height-default) - 1rem);
+  max-height: calc(var(--header-height-default) - 1.1rem);
   margin-top: 0.2rem;
   margin-bottom: 0.2rem;
   cursor: pointer;
@@ -118,8 +123,10 @@
 }
 .header-container-scrolled {
   height: var(--header-height-scrolled);
-  background-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* background-color: rgba(255, 255, 255, 0.95); */
+  background-color: transparent;
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+  box-shadow: none;
 }
 .header-scrolled .logo-block {
   height: var(--header-height-scrolled);
@@ -129,7 +136,7 @@
   transform: scale(0.9);
 }
 .header-scrolled .header-links {
-  font-size: 11px;
+  font-size: 10px;
 }
 .header-container-scrolled .header-links {
   color: #4a4a4a;
@@ -702,6 +709,45 @@ body.menu-open .hero-title {
 
 /* Very small screens */
 @media screen and (max-width: 480px) {
+  .header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 60px !important;
+    z-index: 1000 !important;
+    background-color: white !important;
+    transition: background-color 0.3s ease !important;
+  }
+  .header-scrolled {
+    background-color: transparent !important;
+  }
+  .header-container {
+    height: 60px !important;
+    max-height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 15px !important;
+    background-color: transparent !important;
+    transition: all 0.3s ease !important;
+  }
+  .hamburger-line {
+    background-color: #333 !important;
+    transition: background-color 0.3s ease !important;
+  }
+  .header-scrolled .hamburger-line {
+    background-color: white !important;
+  }
+  body {
+    padding-top: 60px !important;
+  }
+  .mobile-nav {
+    top: 60px !important;
+  }
+  .header-scrolled .mobile-nav {
+    top: 60px !important;
+  }
   .hamburger-button,
   .mobile-menu-toggle {
     width: 22px;
