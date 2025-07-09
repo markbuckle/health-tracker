@@ -352,7 +352,7 @@ body.menu-open .hero-title {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 5px;
+  padding: 15px;
 }
 .mobile-nav-links-horizontal {
   display: flex;
@@ -748,6 +748,10 @@ body.menu-open .hero-title {
   }
   .header-scrolled .mobile-nav {
     top: 60px !important;
+    background-color: transparent !important;
+    border: 2px solid white !important;
+    border-radius: 25px !important;
+    box-shadow: none !important;
   }
   .hamburger-button,
   .mobile-menu-toggle {
@@ -762,10 +766,14 @@ body.menu-open .hero-title {
     padding: 0;
   }
   .mobile-nav-links {
-    padding: 0;
+    padding: 5px 0 0 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center; /* Reduced padding */
+  }
+  .mobile-nav.open {
+    margin-bottom: 0 !important;
   }
   .mobile-nav-links-horizontal {
     display: flex;
@@ -776,10 +784,11 @@ body.menu-open .hero-title {
     gap: 11px;
     margin-bottom: 0; /* Reduced margin */
     position: relative;
+    padding: 5px 0;
   }
   .mobile-nav-links-horizontal .mobile-nav-link {
     font-size: 12px; /* Smaller font */
-    padding: 5px 4px !important; /* Reduced padding */
+    padding: 5px 1px !important; /* Reduced padding */
     max-width: none; /* Remove max-width restriction */
     flex: 1; /* Equal width distribution */
     text-align: center;
@@ -790,6 +799,8 @@ body.menu-open .hero-title {
   }
   .mobile-nav-buttons {
     display: contents; /* This makes the buttons part of the horizontal flex */
+    padding: 0;
+    margin: 0;
   }
   .mobile-nav-buttons .auth-button {
     font-size: 12px; /* Match navigation links */
@@ -800,8 +811,7 @@ body.menu-open .hero-title {
     margin: 0; /* Remove any margins */
   }
   .mobile-nav.open {
-    max-height: 40px; /* Reduced from 70vh */
-    margin-bottom: 0 !important;
+    max-height: 50px; /* Reduced from 70vh */
   }
   .footer {
     padding-top: 1rem !important;
@@ -998,126 +1008,7 @@ body.menu-open .hero-title {
   transform: translateY(-3px);
   border-color: transparent;
 }
-
-
-/* Standard mobile (400px - 599px) */
-@media screen and (min-width: 400px) and (max-width: 599px) {
-  .mobile-header-container {
-    padding: 0.6rem 1.2rem;
-    height: 3.2rem;
-  }
-  
-  .mobile-header-logo .header-logo {
-    max-height: 1.8rem;
-    max-width: 90px;
-  }
-  
-  .mobile-menu-toggle {
-    font-size: 1.4rem;
-    padding: 0.3rem;
-  }
-  
-  .mobile-menu {
-    width: 280px;
-  }
-  
-  .mobile-menu .page-link {
-    padding: 0.8rem 1.2rem;
-  }
-}
-/* Standard Mobile (320px - 479px) */
-@media screen and (min-width: 320px) and (max-width: 479px) {
-  :root {
-    --header-height-default: 3rem;
-    --header-height-scrolled: 2.5rem;
-  }
-    .mobile-header-container {
-    padding: 0.5rem 1rem;
-    height: 1.5rem;
-  }
-
-  .mobile-header-logo .header-logo {
-    max-height: 1.6rem;
-    max-width: 80px;
-  }
-  
-  .content-container {
-    width: 100%;
-    padding: 0 0.75rem;
-  }
-  
-  .header-logo {
-    max-height: 1.5rem;
-  }
-  
-  .mobile-menu {
-    width: 260px;
-  }
-  
-  .mobile-menu-toggle {
-    font-size: 1.3rem;
-    padding: 0.25rem;
-    padding-right: 1.5rem;
-    margin-right: 2rem;
-  }
-
-  .mobile-menu .page-link {
-    padding: 0.7rem 1rem;
-  }
-
-  .mobile-menu .nav-icon {
-    width: 1rem;
-    height: 1rem;
-    margin-right: 0.5rem;
-  }
-  .mobile-menu .page-link-text-span {
-    font-size: 0.875rem;
-  }
-  /* Button adjustments */
-  /* .btn-primary, */
-  .btn-secondary {
-    width: 90%;
-    max-width: 250px;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .auth-buttons {
-    padding: 0.5rem;
-  }
-  
-  .authentication-block {
-    gap: 0.25rem;
-  }
-  
-  .auth-button {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.75rem;
-  }
-  
-  /* Typography adjustments */
-  .heading {
-    font-size: 1.5rem;
-  }
-  
-  .heading2 {
-    font-size: 1.4rem;
-  }
-  
-  .subheading {
-    font-size: 1rem;
-  }
-  
-  .subheading-2 {
-    font-size: 0.8rem;
-  }
-  .footer-container {
-    max-width: 100%;
-  }
-  .footer-column{
-    padding: 1.5rem 0.5rem;
-  }
-}
+ 
 /* Small Mobile (below 320px) */
 @media screen and (max-width: 319px) {
   .content-container {
