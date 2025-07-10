@@ -771,7 +771,7 @@ body.menu-open .hero-title {
     justify-content: center; /* Even spacing */
     align-items: center;
     width: 90% !important;
-    gap: 11px;
+    gap: 8px;
     margin-bottom: 0; /* Reduced margin */
     position: relative;
     padding: 5px 0;
@@ -796,6 +796,9 @@ body.menu-open .hero-title {
     display: contents; /* This makes the buttons part of the horizontal flex */
     padding: 0;
     margin: 0;
+  }
+  .auth-button {
+    min-width: 50px;
   }
   .mobile-nav-buttons .auth-button {
     font-size: 12px; /* Match navigation links */
@@ -834,9 +837,9 @@ body.menu-open .hero-title {
   }
   .header-scrolled .mobile-nav {
     position: fixed !important;
-    top: 13px !important; /* Vertically center with header */
+    top: 10px !important; /* Vertically center with header */
     left: 10px !important; /* Small left margin */
-    right: 50px !important; /* Small right margin from hamburger */
+    right: 60px !important; /* Small right margin from hamburger */
     width: auto !important;
     background-color: white !important;
     border-radius: 8px !important;
@@ -846,6 +849,7 @@ body.menu-open .hero-title {
   .header-scrolled .auth-button {
     padding: 4px 8px;
     font-size: 10px;
+    min-width: 40px;
   }
   .header-scrolled .mobile-nav-links {
     padding: 4px 0 4px 0 !important;
@@ -873,21 +877,11 @@ body.menu-open .hero-title {
   .header-scrolled .signup-button {
     margin-right: 0;
   }
-  .header:not(.header-scrolled) .mobile-nav-links-horizontal .mobile-nav-link {
-    font-size: 12px;
-    padding: 5px 1px !important;
-    max-width: none;
-    flex: 1;
-    text-align: center;
-    white-space: nowrap;
+  .header-scrolled .mobile-nav-link.learning {
+    padding-right: 3px !important;
   }
-  .header:not(.header-scrolled) .mobile-nav-buttons .auth-button {
-    font-size: 12px;
-    padding: 8px 4px;
-    flex: 1;
-    text-align: center;
-    border-radius: 4px;
-    margin: 0;
+  .mobile-nav-link.learning {
+    padding-right: 3px !important;
   }
 }
 
