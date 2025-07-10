@@ -384,6 +384,10 @@
   .wave-pattern {
     margin-top: -1px;
   }
+  body.menu-open .content-container {
+    transition: margin-top 0.3s ease;
+    margin-top: 50px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .learning-title::before {

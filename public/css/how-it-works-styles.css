@@ -369,12 +369,10 @@
     flex-direction: column;
     align-items: center;
   }
-  
   body.menu-open .content-section {
     transition: margin-top 0.3s ease;
     margin-top: var(--mobile-menu-height, 200px);
   }
-  
   .inner-content-section {
     width: 90%;
     display: flex;
@@ -382,17 +380,14 @@
     align-items: center;
     margin: 0 auto;
   }
-  
   .HIW-title::before {
     animation-duration: 3.5s;
   }
-  
   .hiw-subtitle {
     width: 90%;
     margin: 0 auto 0.25rem auto;
     text-align: center;
   }
-  
   /* Timeline line - left aligned for 481-767px range */
   .steps-container::before {
     left: 1.5rem;
@@ -400,13 +395,11 @@
     top: 0;
     bottom: 0;
   }
-  
   .steps-container {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
   }
-  
   .step-block {
     position: relative;
     display: flex;
@@ -417,12 +410,10 @@
     z-index: 2;
     margin-bottom: 3.5rem; /* Consistent spacing */
   }
-  
   .step-block.animate-in {
     opacity: 1;
     transform: translateY(0);
   }
-  
   .step-number {
     position: absolute;
     left: 0;
@@ -434,11 +425,9 @@
     font-size: 1.25rem;
     border: 3px solid white;
   }
-  
   .step-block.animate-in .step-number {
     transform: translateY(-50%) scale(1.05);
   }
-  
   .step-card {
     flex: 1;
     width: 100%; /* Ensure consistent width */
@@ -446,20 +435,16 @@
     min-width: 0; /* Reset min-width */
     transform: translateX(20px);
   }
-  
   .step-block.animate-in .step-card {
     transform: translateX(0);
   }
-  
   .step-content {
     text-align: left;
     padding: 1.5rem;
   }
-  
   .step-title {
     font-size: 18px;
   }
-  
   .step-description {
     font-size: 15px;
   }
@@ -553,5 +538,9 @@
   }
   .step-description {
     font-size: 14px;
+  }
+  body.menu-open .content-section {
+    transition: margin-top 0.3s ease;
+    margin-top: 50px;
   }
 }
