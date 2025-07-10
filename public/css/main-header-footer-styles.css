@@ -834,9 +834,9 @@ body.menu-open .hero-title {
   }
   .header-scrolled .mobile-nav {
     position: fixed !important;
-    top: 15px !important; /* Vertically center with header */
+    top: 13px !important; /* Vertically center with header */
     left: 10px !important; /* Small left margin */
-    right: 60px !important; /* Small right margin from hamburger */
+    right: 50px !important; /* Small right margin from hamburger */
     width: auto !important;
     background-color: white !important;
     border-radius: 8px !important;
