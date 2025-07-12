@@ -453,6 +453,7 @@
                 </div>
               </div>
 
+             
               <!-- Actions Tab -->
               <div data-w-tab="Actions" class="w-tab-pane">
                 <div class="wellness-summary-card">
@@ -464,45 +465,65 @@
                       </p>
                     </div>
 
-                    <!-- Debug information (you can remove this section once everything is working) -->
-                    <div class="debug-info">
-                      <p class="recommendation-count">Total recommendations: {{#if recommendations}}{{recommendations.length}}{{else}}0{{/if}}</p>
-                    </div>
-                    
-                    <!-- Recommendations list -->
-                    {{#if recommendations}}
-                      <div class="recommendations-list">
-                        {{#each recommendations as |recommendation|}}
-                          <div class="recommendation-item {{#if recommendation.priority}}{{recommendation.priority}}-priority{{/if}}">
-                            <div class="recommendation-text">
-                              {{#if recommendation.text}}
-                                {{recommendation.text}}
-                              {{else}}
-                                {{recommendation}}
+                    <!-- Check if user has minimal data (no files AND low profile completion) -->
+                    {{#unless recentFiles}}
+                      {{#if (lt totalScore 25)}}
+                        <!-- No data state - show when user has no files and very low profile completion -->
+                        <div class="no-data-state">
+                          <p class="no-data-subtitle">
+                            Please enter data in your profile page and/or upload lab files to receive personalized health recommendations.
+                          </p>
+                          <div class="no-data-actions">
+                            <a href="/profile" class="action-button profile-button-primary">
+                              👤 Complete Your Profile
+                            </a>
+                            <a href="/upload" class="action-button upload-button-primary">
+                              📁 Upload Lab Results
+                            </a>
+                          </div>
+                        </div>
+                      {{/if}}
+                    {{else}}
+                      <!-- Debug information (you can remove this section once everything is working) -->
+                      <div class="debug-info">
+                        <p class="recommendation-count">Total recommendations: {{#if recommendations}}{{recommendations.length}}{{else}}0{{/if}}</p>
+                      </div>
+                      
+                      <!-- Recommendations list -->
+                      {{#if recommendations}}
+                        <div class="recommendations-list">
+                          {{#each recommendations as |recommendation|}}
+                            <div class="recommendation-item {{#if recommendation.priority}}{{recommendation.priority}}-priority{{/if}}">
+                              <div class="recommendation-text">
+                                {{#if recommendation.text}}
+                                  {{recommendation.text}}
+                                {{else}}
+                                  {{recommendation}}
+                                {{/if}}
+                              </div>
+                              {{#if recommendation.type}}
+                                <small class="recommendation-meta">
+                                  {{#if (eq recommendation.type 'biomarker')}}🧪{{else}}👤{{/if}}
+                                  {{#if (eq recommendation.type 'biomarker')}}Lab Test{{else}}Health Profile{{/if}}
+                                  {{#if recommendation.priority}}• Priority: {{recommendation.priority}}{{/if}}
+                                </small>
                               {{/if}}
                             </div>
-                            {{#if recommendation.type}}
-                              <small class="recommendation-meta">
-                                {{#if (eq recommendation.type 'biomarker')}}🧪{{else}}👤{{/if}}
-                                {{#if (eq recommendation.type 'biomarker')}}Lab Test{{else}}Health Profile{{/if}}
-                                {{#if recommendation.priority}}• Priority: {{recommendation.priority}}{{/if}}
-                              </small>
-                            {{/if}}
-                          </div>
-                        {{/each}}
-                      </div>
-                    {{else}}
-                      <!-- No recommendations state -->
-                      <div class="no-recommendations">
-                        <div class="no-recommendations-icon">🎉</div>
-                        <p class="no-recommendations-title"><strong>Great job!</strong> You're on top of your health tracking.</p>
-                        <p class="no-recommendations-subtitle">Upload recent lab results or complete more profile sections to get additional personalized recommendations.</p>
-                        <div class="no-recommendations-actions">
-                          <a href="/upload" class="action-button upload-button">📁 Upload Labs</a>
-                          <a href="/profile" class="action-button profile-button">👤 Complete Profile</a>
+                          {{/each}}
                         </div>
-                      </div>
-                    {{/if}}
+                      {{else}}
+                        <!-- No recommendations state -->
+                        <div class="no-recommendations">
+                          <div class="no-recommendations-icon">🎉</div>
+                          <p class="no-recommendations-title"><strong>Great job!</strong> You're on top of your health tracking.</p>
+                          <p class="no-recommendations-subtitle">Upload recent lab results or complete more profile sections to get additional personalized recommendations.</p>
+                          <div class="no-recommendations-actions">
+                            <a href="/upload" class="action-button upload-button">📁 Upload Labs</a>
+                            <a href="/profile" class="action-button profile-button">👤 Complete Profile</a>
+                          </div>
+                        </div>
+                      {{/if}}
+                    {{/unless}}
                     
                   </div>
                 </div>

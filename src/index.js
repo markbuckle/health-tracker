@@ -873,6 +873,32 @@ app.get("/api/test-connections", async (req, res) => {
   res.json(results);
 });
 
+// Helper to check if user has minimal data
+hbs.registerHelper('hasMinimalData', function(recentFiles, totalScore) {
+  // Check if user has no files AND low profile completion
+  const hasNoFiles = !recentFiles || recentFiles.length === 0;
+  const hasLowProfileScore = totalScore < 30; // Adjust threshold as needed
+  
+  return hasNoFiles && hasLowProfileScore;
+});
+
+// Alternative helper that provides more granular control
+hbs.registerHelper('shouldShowNoDataState', function(user, totalScore, recentFiles) {
+  // More sophisticated logic - check if user truly has no meaningful data
+  const hasNoFiles = !recentFiles || recentFiles.length === 0;
+  const hasVeryLowScore = totalScore < 20; // Very low threshold
+  
+  // Check if user has any meaningful profile data
+  const hasBasicProfile = user && user.profile && (
+    (user.profile.familyHistory && user.profile.familyHistory.length > 0) ||
+    (user.profile.lifestyle && user.profile.lifestyle.length > 0) ||
+    (user.profile.monitoring && user.profile.monitoring.length > 0) ||
+    user.profile.bloodType
+  );
+  
+  return hasNoFiles && (hasVeryLowScore || !hasBasicProfile);
+});
+
 // Helper to check if recommendation is biomarker-related
 hbs.registerHelper('isBiomarkerRecommendation', function(recommendation) {
   // Handle both new structured format and legacy string format
