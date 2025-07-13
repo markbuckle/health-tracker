@@ -157,58 +157,67 @@
     </script> --}}
     <script> // vertical scroll effect
         document.addEventListener('DOMContentLoaded', function() {
-            initSequentialStepAnimations();
-        });
+    const stepBlocks = document.querySelectorAll('.step-block');
+    console.log('Found steps:', stepBlocks.length);
+    
+    if (stepBlocks.length === 0) return;
 
-        function initSequentialStepAnimations() {
-            const stepBlocks = document.querySelectorAll('.step-block');
+    // Show the first step immediately
+    setTimeout(() => {
+        stepBlocks[0].classList.add('step-visible');
+        console.log('First step shown');
+    }, 300);
+
+    // Responsive scroll detection
+    function checkStepsOnScroll() {
+        const isMobile = window.innerWidth <= 767;
+        const isTablet = window.innerWidth <= 1024 && window.innerWidth > 767;
+        
+        stepBlocks.forEach((step, index) => {
+            if (index === 0) return; // Skip first step
             
-            if (stepBlocks.length === 0) return;
-
-            // Hide all steps initially
-            stepBlocks.forEach(block => {
-                block.style.opacity = '0';
-            });
-
-            // Show first step after page load
-            setTimeout(() => {
-                if (stepBlocks[0]) {
-                    stepBlocks[0].classList.add('animate-in');
+            const rect = step.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Adjust trigger points based on screen size
+            let topTrigger, bottomTrigger;
+            
+            if (isMobile) {
+                topTrigger = windowHeight * 0.7;
+                bottomTrigger = windowHeight * 0.3;
+            } else if (isTablet) {
+                topTrigger = windowHeight * 0.65;
+                bottomTrigger = windowHeight * 0.35;
+            } else {
+                topTrigger = windowHeight * 0.6;
+                bottomTrigger = windowHeight * 0.4;
+            }
+            
+            if (rect.top < topTrigger && rect.bottom > bottomTrigger) {
+                if (!step.classList.contains('step-visible')) {
+                    step.classList.add('step-visible');
+                    console.log('Step', index + 1, 'shown on', isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop');
                 }
-            }, 500);
+            }
+        });
+    }
 
-            // Create intersection observer for subsequent steps
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px 0px -50% 0px', // Trigger when center of viewport
-                threshold: 0.1
-            };
+    // Handle window resize
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(checkStepsOnScroll, 100);
+    });
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const stepBlock = entry.target;
-                    const stepIndex = Array.from(stepBlocks).indexOf(stepBlock);
-                    
-                    if (entry.isIntersecting) {
-                        // Only animate if this is the next step in sequence
-                        const prevStepsAnimated = Array.from(stepBlocks)
-                            .slice(0, stepIndex)
-                            .every(block => block.classList.contains('animate-in'));
-                        
-                        if (prevStepsAnimated) {
-                            stepBlock.classList.add('animate-in');
-                        }
-                    }
-                });
-            }, observerOptions);
-
-            // Observe all step blocks except the first one
-            stepBlocks.forEach((stepBlock, index) => {
-                if (index > 0) {
-                    observer.observe(stepBlock);
-                }
-            });
-        }
+    // Smooth scroll listener
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(checkStepsOnScroll, 10);
+    });
+    
+    checkStepsOnScroll();
+});
     </script>
 </body>
 
