@@ -191,7 +191,7 @@
   border-radius: 10px;
   padding: 0rem 1.5rem 1.5rem 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-height: 80vh; /* Ensure card is tall enough */
+  min-height: 70vh; /* Ensure card is tall enough */
   margin-bottom: 1rem;
 }
 .wellness-content {
@@ -1321,10 +1321,11 @@
 /* No Data State Styles */
 .no-data-state {
   text-align: center;
-  padding: 3rem 2rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 2rem 1rem;
+  background: transparent;
+  /* background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); */
   border-radius: 16px;
-  border: 2px dashed #0ea5e9;
+  border: 0.1px solid rgb(214, 213, 213);
   margin: 1rem 0;
 }
 
@@ -1344,7 +1345,7 @@
 
 .no-data-subtitle {
   color: #475569;
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 2rem;
   line-height: 1.6;
   font-family: "Poppins-Regular", sans-serif;
@@ -1384,14 +1385,16 @@
   box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
 }
 .profile-button-primary:hover {
-  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+  background: linear-gradient(135deg, rgb(152, 200, 224) 0%, #43b4e8 100%);
+  /* box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35); */
 }
 .upload-button-primary {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 .upload-button-primary:hover {
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, #85d6bb 0%, #26c492 100%);
+  /* box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35); */
 }
 .no-data-help {
   padding: 1.5rem;
@@ -1484,6 +1487,7 @@
   .header-container-2 {
     margin-left: 0 !important;
     padding: 1.1rem !important;
+    padding-bottom: 0.5rem !important;
   }
   .no-recommendations-actions {
     flex-direction: column;

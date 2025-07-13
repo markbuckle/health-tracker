@@ -1001,6 +1001,7 @@
   .header-container-2 {
     margin-left: 0 !important;
     padding: 1.1rem !important;
+    padding-bottom: 0.5rem !important;
   }
   .in-page-menu {
     flex-wrap: wrap;
