@@ -96,7 +96,8 @@
 .steps-container {
   display: flex;
   flex-direction: column;
-  gap: 3.5rem;
+  gap: 0;
+  /* gap: 3.5rem; */
   margin-top: 2rem;
   position: relative;
   max-width: 800px;
@@ -106,8 +107,14 @@
 .step-block {
   position: relative;
   display: flex;
-  padding: 0 5rem 0 5rem; /* Make space for the step number */
-  /* min-height: 160px; */
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 5rem 0 5rem;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 2;
 }
 .step-number {
   position: absolute;
@@ -227,10 +234,23 @@
 /* Active step number styling */
 .step-block.animate-in .step-number {
   opacity: 1;
-  transform: translateY(-50%) scale(1.05);
   box-shadow: 0 6px 20px rgba(67, 121, 186, 0.4);
+  animation: pulse-scale 0.8s ease-out;
 }
-
+@keyframes pulse-scale {
+  0% {
+    transform: translateY(-50%) scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50%) scale(1.05);
+    opacity: 1;
+  }
+}
 /* Enhanced step card with better transitions */
 .step-card {
   flex: 1;
@@ -409,6 +429,7 @@
     transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     z-index: 2;
     margin-bottom: 3.5rem; /* Consistent spacing */
+    min-height: 80vh; /* Slightly less on mobile */
   }
   .step-block.animate-in {
     opacity: 1;
@@ -517,6 +538,7 @@
     align-items: center; 
     transform: translateY(20px);
     transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    min-height: 70vh;
   }
   .step-block.animate-in {
     opacity: 1;

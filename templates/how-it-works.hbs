@@ -89,7 +89,7 @@
 
     <script src="js/main.js" defer type="module"></script>
     <script src="js/main-mobile.js" defer type="module"></script>
-    <script> // vertical scroll effect
+    {{!-- <script> // vertical scroll effect
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize timeline animations
             initTimelineAnimations();
@@ -154,6 +154,61 @@
                 });
             });
             }
+    </script> --}}
+    <script> // vertical scroll effect
+        document.addEventListener('DOMContentLoaded', function() {
+            initSequentialStepAnimations();
+        });
+
+        function initSequentialStepAnimations() {
+            const stepBlocks = document.querySelectorAll('.step-block');
+            
+            if (stepBlocks.length === 0) return;
+
+            // Hide all steps initially
+            stepBlocks.forEach(block => {
+                block.style.opacity = '0';
+            });
+
+            // Show first step after page load
+            setTimeout(() => {
+                if (stepBlocks[0]) {
+                    stepBlocks[0].classList.add('animate-in');
+                }
+            }, 500);
+
+            // Create intersection observer for subsequent steps
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -50% 0px', // Trigger when center of viewport
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const stepBlock = entry.target;
+                    const stepIndex = Array.from(stepBlocks).indexOf(stepBlock);
+                    
+                    if (entry.isIntersecting) {
+                        // Only animate if this is the next step in sequence
+                        const prevStepsAnimated = Array.from(stepBlocks)
+                            .slice(0, stepIndex)
+                            .every(block => block.classList.contains('animate-in'));
+                        
+                        if (prevStepsAnimated) {
+                            stepBlock.classList.add('animate-in');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all step blocks except the first one
+            stepBlocks.forEach((stepBlock, index) => {
+                if (index > 0) {
+                    observer.observe(stepBlock);
+                }
+            });
+        }
     </script>
 </body>
 
