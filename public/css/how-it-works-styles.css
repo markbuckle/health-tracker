@@ -98,7 +98,7 @@
   flex-direction: column;
   gap: 0;
   /* gap: 3.5rem; */
-  margin-top: 2rem;
+  margin-top: 0;
   position: relative;
   max-width: 800px;
   margin-left: auto;
@@ -474,6 +474,8 @@
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
   }
   .step-block {
     position: relative;
@@ -543,7 +545,7 @@
     max-width: 90%;
   }
   .steps-container {
-    max-width: 100%;
+    max-width: 120%;
     gap: 0;
   }
   .step-number {
@@ -564,7 +566,7 @@
     padding: 0;
   }
   .inner-content-section {
-    width: 85%;
+    width: 90%;
   }
   .hiw-subtitle {
     max-width: 90%;
@@ -577,9 +579,9 @@
     transform: translateX(0) !important; /* Remove side animation */
   }
   .step-block {
-    min-height: 70vh;
-    padding: 0 1rem 0 3.5rem;
-    margin-bottom: 0;
+    min-height: 60vh;
+    padding: 0 0 0 3.1rem;
+    margin-bottom: 10rem;
   }
   .step-block.animate-in {
     opacity: 1;
@@ -592,7 +594,7 @@
     transform: translateX(0) !important; /* Keep centered */
   }
   .step-content {
-    padding: 1.5rem !important; /* Remove left padding since number is on top */
+    padding: 1.5rem 1rem !important; /* Remove left padding since number is on top */
     text-align: center; /* Center the text */
   }
   .step-title {
