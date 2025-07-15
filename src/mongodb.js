@@ -23,8 +23,6 @@ const connectionOptions = {
   heartbeatFrequencyMS: 10000,
   retryWrites: true,
   retryReads: true,
-  bufferCommands: false,
-  bufferMaxEntries: 0,
   autoIndex: !isProduction,
   autoCreate: !isProduction,
 };

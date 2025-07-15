@@ -574,7 +574,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.DB_STRING || "mongodb://localhost:27017/HealthLyncDatabase",
+      mongoUrl: process.env.DB_STRING,
       touchAfter: 24 * 3600,
       mongoOptions: {
         maxPoolSize: process.env.VERCEL ? 1 : 10,
@@ -621,26 +621,32 @@ app.use(passport.session());
 
 // new strategy
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      // Ensure connection
-      if (!isConnected()) {
-        await connectToMongoDB();
+  new LocalStrategy(
+    {
+      usernameField: 'uname',
+      passwordField: 'password'
+    },
+    async (username, password, done) => {
+      try {
+        // Ensure connection
+        if (!isConnected()) {
+          await connectToMongoDB();
+        }
+        
+        const user = await registerCollection.findOne({ uname: username });
+        if (!user) {
+          return done(null, false, { message: "Incorrect username." });
+        }
+        if (user.password !== password) {
+          return done(null, false, { message: "Incorrect password." });
+        }
+        return done(null, user);
+      } catch (error) {
+        console.error('Authentication error:', error);
+        return done(error);
       }
-      
-      const user = await registerCollection.findOne({ uname: username });
-      if (!user) {
-        return done(null, false, { message: "Incorrect username." });
-      }
-      if (user.password !== password) {
-        return done(null, false, { message: "Incorrect password." });
-      }
-      return done(null, user);
-    } catch (error) {
-      console.error('Authentication error:', error);
-      return done(error);
     }
-  })
+  )
 );
 
 passport.serializeUser((user, done) => {
