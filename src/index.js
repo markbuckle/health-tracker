@@ -105,6 +105,17 @@ app.use(async (req, res, next) => {
   }
 });
 
+// Debug session middleware
+app.use((req, res, next) => {
+  console.log('Session debug:', {
+    sessionID: req.sessionID,
+    isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+    user: req.user ? req.user.uname : 'No user',
+    path: req.path
+  });
+  next();
+});
+
 // Then create WebSocket server
 const wss = new WebSocket.Server({ server });
 
@@ -580,13 +591,20 @@ app.use(
         maxPoolSize: process.env.VERCEL ? 1 : 10,
         serverSelectionTimeoutMS: 5000,
         connectTimeoutMS: 10000,
-      }
+      },
+      // Add these options for better serverless compatibility
+      autoRemove: 'native',
+      autoRemoveInterval: 10,
+      ttl: 24 * 60 * 60 // 24 hours in seconds
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
       secure: process.env.NODE_ENV === "production" && process.env.VERCEL,
-      httpOnly: true
+      httpOnly: true,
+      sameSite: 'lax'
     },
+    rolling: true,
+    proxy: true
   })
 );
 
