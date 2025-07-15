@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
-const { registerCollection, feedbackCollection } = require("./mongodb");
+const { connectToMongoDB, registerCollection, feedbackCollection, isConnected } = require("./mongodb");
 const MongoStore = require("connect-mongo");
 const templatePath = path.join(__dirname, "../templates");
 const publicPath = path.join(__dirname, "../public");
@@ -83,6 +83,27 @@ const server = require("http").createServer(app);
 //     console.error("Error checking database:", err);
 //   }
 // });
+
+// Database connection middleware - ensure connection before handling requests
+app.use(async (req, res, next) => {
+  try {
+    if (!isConnected()) {
+      console.log('🔄 Establishing MongoDB connection...');
+      await connectToMongoDB();
+    }
+    next();
+  } catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    
+    // In development, we might want to show the error
+    if (process.env.NODE_ENV !== "production") {
+      return res.status(500).send(`Database connection failed: ${error.message}`);
+    }
+    
+    // In production, show a generic error
+    return res.status(500).send('Service temporarily unavailable. Please try again.');
+  }
+});
 
 // Then create WebSocket server
 const wss = new WebSocket.Server({ server });
@@ -529,20 +550,42 @@ if (!process.env.SESSION_SECRET) {
   console.error("SESSION_SECRET is not set in environment variables");
   process.exit(1);
 }
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     store: MongoStore.create({
+//       mongoUrl: process.env.DB_STRING,
+//       ttl: 24 * 60 * 60, // 24 hours
+//     }),
+//     cookie: {
+//       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+//       httpOnly: true,
+//       sameSite: "lax",
+//       // secure: process.env.NODE_ENV === 'production'
+//     },
+//   })
+// );
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.DB_STRING,
-      ttl: 24 * 60 * 60, // 24 hours
+      mongoUrl: process.env.DB_STRING || "mongodb://localhost:27017/HealthLyncDatabase",
+      touchAfter: 24 * 3600,
+      mongoOptions: {
+        maxPoolSize: process.env.VERCEL ? 1 : 10,
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 10000,
+      }
     }),
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      httpOnly: true,
-      sameSite: "lax",
-      // secure: process.env.NODE_ENV === 'production'
+      maxAge: 1000 * 60 * 60 * 24,
+      secure: process.env.NODE_ENV === "production" && process.env.VERCEL,
+      httpOnly: true
     },
   })
 );
@@ -551,28 +594,53 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// old strategy
+// passport.use(
+//   new LocalStrategy(
+//     {
+//       usernameField: "uname", // specify the field names from your form
+//       passwordField: "password",
+//     },
+//     async (username, password, done) => {
+//       try {
+//         const user = await registerCollection.findOne({ uname: username });
+//         if (!user) {
+//           return done(null, false, { message: "User not found" });
+//         }
+//         // In production, use proper password hashing comparison
+//         if (user.password !== password) {
+//           return done(null, false, { message: "Incorrect password" });
+//         }
+//         return done(null, user);
+//       } catch (error) {
+//         return done(error);
+//       }
+//     }
+//   )
+// );
+
+// new strategy
 passport.use(
-  new LocalStrategy(
-    {
-      usernameField: "uname", // specify the field names from your form
-      passwordField: "password",
-    },
-    async (username, password, done) => {
-      try {
-        const user = await registerCollection.findOne({ uname: username });
-        if (!user) {
-          return done(null, false, { message: "User not found" });
-        }
-        // In production, use proper password hashing comparison
-        if (user.password !== password) {
-          return done(null, false, { message: "Incorrect password" });
-        }
-        return done(null, user);
-      } catch (error) {
-        return done(error);
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      // Ensure connection
+      if (!isConnected()) {
+        await connectToMongoDB();
       }
+      
+      const user = await registerCollection.findOne({ uname: username });
+      if (!user) {
+        return done(null, false, { message: "Incorrect username." });
+      }
+      if (user.password !== password) {
+        return done(null, false, { message: "Incorrect password." });
+      }
+      return done(null, user);
+    } catch (error) {
+      console.error('Authentication error:', error);
+      return done(error);
     }
-  )
+  })
 );
 
 passport.serializeUser((user, done) => {
@@ -581,10 +649,16 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
+    // Ensure connection
+    if (!isConnected()) {
+      await connectToMongoDB();
+    }
+    
     const user = await registerCollection.findById(id);
     done(null, user);
   } catch (error) {
-    done(error);
+    console.error('Deserialization error:', error);
+    done(error, null);
   }
 });
 

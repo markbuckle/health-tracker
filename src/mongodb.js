@@ -2,18 +2,103 @@
 
 const mongoose = require("mongoose");
 
-const mongoURI =
-  process.env.DB_STRING || "mongodb://localhost:27017/HealthLyncDatabase";
+// Environment detection
+const isVercel = process.env.VERCEL || process.env.VERCEL_ENV;
+const isProduction = process.env.NODE_ENV === "production";
 
-mongoose
-  .connect(mongoURI)
-  .then(() => {
-    console.log("MongoDB connected");
-  })
-  .catch((err) => {
-    console.log("Failed to connect to MongoDB:", err);
-    process.exit(1);
+const mongoURI = process.env.DB_STRING || "mongodb://localhost:27017/HealthLyncDatabase";
+
+console.log(`🌍 Environment: ${isVercel ? 'Vercel' : 'Local'} | Production: ${isProduction}`);
+
+// Optimized connection options for serverless
+const connectionOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  maxPoolSize: isVercel ? 1 : 10,
+  minPoolSize: 0,
+  maxIdleTimeMS: 30000,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  connectTimeoutMS: 10000,
+  heartbeatFrequencyMS: 10000,
+  retryWrites: true,
+  retryReads: true,
+  bufferCommands: false,
+  bufferMaxEntries: 0,
+  autoIndex: !isProduction,
+  autoCreate: !isProduction,
+};
+
+// Connection management
+let isConnected = false;
+let connectionPromise = null;
+
+async function connectToMongoDB() {
+  if (isConnected && mongoose.connection.readyState === 1) {
+    console.log('✅ Using existing MongoDB connection');
+    return mongoose.connection;
+  }
+
+  if (connectionPromise) {
+    console.log('⏳ Awaiting existing connection attempt...');
+    return connectionPromise;
+  }
+
+  console.log('🔌 Attempting new MongoDB connection...');
+  
+  connectionPromise = mongoose.connect(mongoURI, connectionOptions);
+  
+  try {
+    await connectionPromise;
+    isConnected = true;
+    console.log('✅ MongoDB connected successfully');
+    
+    // Only set up listeners once
+    if (!mongoose.connection.listeners('error').length) {
+      mongoose.connection.on('error', (err) => {
+        console.error('❌ MongoDB connection error:', err.message);
+        isConnected = false;
+      });
+
+      mongoose.connection.on('disconnected', () => {
+        console.log('📡 MongoDB disconnected');
+        isConnected = false;
+      });
+
+      mongoose.connection.on('reconnected', () => {
+        console.log('🔄 MongoDB reconnected');
+        isConnected = true;
+      });
+    }
+    
+    return mongoose.connection;
+    
+  } catch (error) {
+    console.error('❌ Failed to connect to MongoDB:', error.message);
+    isConnected = false;
+    connectionPromise = null;
+    
+    // Don't exit process in serverless environment
+    if (!isVercel) {
+      throw error;
+    }
+    
+    // In serverless, we want to retry on next request
+    console.log('🔄 Connection will be retried on next request');
+    throw error;
+  }
+}
+
+// Initialize connection (but don't await it at module level)
+if (!isVercel) {
+  // Only auto-connect in local development
+  connectToMongoDB().catch(err => {
+    console.error('Initial MongoDB connection failed:', err.message);
+    if (!isVercel) {
+      process.exit(1);
+    }
   });
+}
 
 const familyHistorySchema = new mongoose.Schema(
   {
@@ -284,6 +369,9 @@ const feedbackSchema = new mongoose.Schema({
 const feedbackCollection = mongoose.model("Feedback", feedbackSchema);
 
 module.exports = {
+  connectToMongoDB,
   registerCollection,
   feedbackCollection,
+  mongoose,
+  isConnected: () => isConnected,
 };

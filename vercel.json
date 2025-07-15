@@ -5,15 +5,25 @@
             "src": "api/**/*.js", 
             "use": "@vercel/node",
             "config": {
-                "maxDuration": 30
+                "maxDuration": 30,
+                "memory": 1024,
+                "runtime": "nodejs18.x"
             }
         },
         { 
             "src": "src/index.js", 
             "use": "@vercel/node", 
             "config": { 
-                "includeFiles": ["package.json", "package-lock.json"],
-                "maxDuration": 30
+                "includeFiles": [
+                    "package.json", 
+                    "package-lock.json",
+                    "src/**/*",
+                    "templates/**/*",
+                    "public/**/*"
+                ],
+                "maxDuration": 30,
+                "memory": 1024,
+                "runtime": "nodejs18.x"
             } 
         },
         { 
@@ -23,20 +33,57 @@
     ],
     "routes": [
         {
+            "src": "/api/health",
+            "dest": "/api/health.js",
+            "methods": ["GET"]
+        },
+        {
+            "src": "/api/test-connections",
+            "dest": "/api/test-connections.js",
+            "methods": ["GET"]
+        },
+        {
             "src": "/api/simple-test",
             "dest": "/api/simple-test.js"
         },
         {
             "src": "/api/rag/ask",
-            "dest": "/api/rag/ask.js"
+            "dest": "/api/rag/ask.js",
+            "methods": ["POST", "OPTIONS"]
         },
         {
             "src": "/api/rag/context",
-            "dest": "/api/rag/context.js"
+            "dest": "/api/rag/context.js",
+            "methods": ["POST", "OPTIONS"]
+        },
+        {
+            "src": "/api/ocr/process",
+            "dest": "/api/ocr/process.js",
+            "methods": ["POST", "OPTIONS"]
         },
         {
             "src": "/((?!api).*)",
             "dest": "/src/index.js"
+        }
+    ],
+    "functions": {
+        "src/index.js": {
+            "maxDuration": 30,
+            "memory": 1024
+        },
+        "api/**/*.js": {
+            "maxDuration": 30,
+            "memory": 1024
+        }
+    },
+    "env": {
+        "NODE_ENV": "production",
+        "VERCEL": "1"
+    },
+    "crons": [
+        {
+            "path": "/api/health",
+            "schedule": "0 */12 * * *"
         }
     ]
 }

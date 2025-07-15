@@ -23,28 +23,65 @@ export default async function handler(req, res) {
     // For now, let's hardcode your user ID for testing
     const hardcodedUserId = "68401daf362c3d1af8918e62";
     
-    // Import and connect to MongoDB with error handling
-    let registerCollection;
+    // Import and connect to MongoDB with proper error handling
+    let connectToMongoDB, registerCollection, isConnected;
     try {
       const mongoModule = await import('../../src/mongodb.js');
+      connectToMongoDB = mongoModule.connectToMongoDB;
       registerCollection = mongoModule.registerCollection;
-      console.log('📊 MongoDB import successful');
+      isConnected = mongoModule.isConnected;
+      console.log('📊 MongoDB module imported successfully');
     } catch (importError) {
       console.error('❌ MongoDB import failed:', importError);
       return res.status(500).json({ 
         error: 'Database connection failed', 
-        details: 'Import error' 
+        details: 'Import error',
+        message: 'Unable to load database module'
       });
     }
-    
-    // Add connection timeout
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Database query timeout')), 10000)
-    );
-    
-    const userQueryPromise = registerCollection.findById(hardcodedUserId);
-    
-    const user = await Promise.race([userQueryPromise, timeoutPromise]);
+
+    // Ensure MongoDB connection
+    try {
+      if (!isConnected()) {
+        console.log('🔄 Establishing MongoDB connection...');
+        await Promise.race([
+          connectToMongoDB(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Connection timeout')), 8000)
+          )
+        ]);
+      }
+      console.log('✅ MongoDB connection verified');
+    } catch (connectionError) {
+      console.error('❌ MongoDB connection failed:', connectionError.message);
+      return res.status(503).json({ 
+        error: 'Database connection failed', 
+        details: connectionError.message,
+        message: 'Unable to connect to database. Please try again.'
+      });
+    }
+
+    // Query user with timeout and proper error handling
+    let user;
+    try {
+      console.log(`🔍 Querying user: ${hardcodedUserId}`);
+      
+      user = await Promise.race([
+        registerCollection.findById(hardcodedUserId).lean(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Query timeout')), 5000)
+        )
+      ]);
+      
+      console.log('🔍 User query completed:', !!user);
+    } catch (queryError) {
+      console.error('❌ User query failed:', queryError.message);
+      return res.status(500).json({ 
+        error: 'Database query failed', 
+        details: queryError.message,
+        message: 'Unable to retrieve user data'
+      });
+    }
     
     console.log('🔍 User found:', !!user);
     
