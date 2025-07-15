@@ -12,8 +12,6 @@ console.log(`🌍 Environment: ${isVercel ? 'Vercel' : 'Local'} | Production: ${
 
 // Optimized connection options for serverless
 const connectionOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   maxPoolSize: isVercel ? 1 : 10,
   minPoolSize: 0,
   maxIdleTimeMS: 30000,
