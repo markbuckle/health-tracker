@@ -403,9 +403,9 @@
   border-bottom: 1px solid #e5e7eb;
   transition: background-color 0.2s ease;
 }
-.family-history-entry:last-child {
+/* .family-history-entry:last-child {
   border-bottom: none;
-}
+} */
 .family-history-entry:hover {
   background-color: #f8f9fa;
 }
