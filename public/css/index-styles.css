@@ -174,6 +174,119 @@
   box-shadow: -4px 10px 16px 5px #0003;
 }
 /* ----- Animated Scroll Hero Section ----- */
+.scroll-container {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+.use-case-block {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  padding: 0 2rem;
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 2;
+  margin-top: -10vh;
+}
+.use-case-block.card-visible {
+  opacity: 1;
+  transform: translateY(-20px);
+  animation: slideUpCard 1.2s ease-out forwards;
+}
+/* Animation for cards sliding up */
+@keyframes slideUpCard {
+  0% {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-20px);
+  }
+}
+/* Enhanced card animation */
+.use-case-block.card-visible .use-case-card {
+  animation: cardSlideUp 1.2s ease-out 0.2s both;
+}
+@keyframes cardSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* Keep existing use-case-card styles but update positioning */
+.use-case-card {
+  /* background: #f2f4f3; */
+  background: linear-gradient(135deg, #f8faf9 0%, #f0f6f2 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  width: 400px;
+  height: 280px;
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* text-align: left; */
+}
+.use-case-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(92, 177, 93, 0.03) 0%, rgba(67, 121, 186, 0.03) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+.use-case-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 
+    0 32px 60px rgba(0, 0, 0, 0.12),
+    0 16px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.use-case-card:hover::before {
+  opacity: 1;
+}
+/* Remove all slider navigation styles */
+.use-cases-navigation,
+.nav-dot,
+.nav-button,
+.pagination,
+.slider-wrapper,
+.slider-track,
+.slide,
+.nav-indicator {
+  display: none !important;
+}
+
+/* ----- Animated Scroll Hero Section ----- */
 .slider-content-container {
   display: block;
   max-width: var(--content-width);
@@ -244,20 +357,6 @@
   transition: none;
 }
 /* Individual slide containing one centered card */
-.slide {
-  min-width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-}
-.use-cases-navigation {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-  gap: 6px;
-  z-index: 2;
-}
 .use-cases-slider {
   position: relative;
   height: auto;
@@ -270,233 +369,63 @@
   box-shadow: 0 6px 20px rgba(149, 175, 211, 0.12);
   overflow: hidden;
 }
-.nav-dot {
-  width: 14px;
-  height: 14px;
-  background-color: #b2c9e6;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0;
-}
-.nav-dot:first-child {
-  margin-top: 0 !important;
-}
-.nav-dot:last-child {
-  margin-bottom: 0 !important;
-}
-.nav-dot span {
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-.nav-dot.active {
-  background-color: #5cb15d;
-  transform: scale(1.2);
-}
-.nav-dot:hover {
-  transform: scale(1.1);
-}
-.nav-dot:active {
-  transform: scale(0.95);
-}
-.nav-dot.active span {
-  opacity: 1;
-}
-.nav-indicator {
-  position: absolute;
-  width: 2px;
-  background-color: #d1dff0;
-  z-index: 1;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 0 !important;
-  bottom: 0 !important;
-  height: 100% !important;
-}
-.use-case-card {
-  background: #f2f4f3;
-  backdrop-filter: blur(10px);
-  border-radius: 50%;
-  width: 275px;
-  height: 275px;
-  padding: 0.5rem;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transform: translateY(0);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.use-case-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 50%;
-  /* background: linear-gradient(45deg, #5cb15d 0%, #4379ba 100%); */
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: -1;
-}
-.use-case-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  /* background: #f1f4f2; */
-}
-.use-case-card:hover::before {
-  opacity: 0.1;
-}
 .card-icon {
-  width: 50px;
-  height: 50px;
+  width: 64px;
+  height: 64px;
   background: linear-gradient(135deg, #5cb15d 0%, #4379ba 100%);
-  border-radius: 50%;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.4rem;
+  margin-bottom: 1.5rem;
   position: relative;
   transition: all 0.4s ease;
   flex-shrink: 0;
+  z-index: 1;
+  box-shadow: 0 8px 20px rgba(92, 177, 93, 0.25);
 }
-.use-case-card:hover .card-icon {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 10px 30px rgba(92, 177, 93, 0.3);
-}
-.card-icon svg {
-  width: 24px;
-  height: 24px;
-  fill: white;
-  transition: transform 0.4s ease;
-}
-.use-case-card:hover .card-icon svg {
-  transform: scale(1.1);
-}
-.card-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-  margin-top: 0.4rem;
-  margin-bottom: 0.1rem;
-  line-height: 1.3;
-  text-align: center;
-  max-width: 80%;
-}
-.card-description {
-  font-size: 0.8rem;
-  color: #666;
-  line-height: 1.4;
-  margin-top: 0.75rem;
-  margin-bottom: 0rem;
-  text-align: center;
-  display: -webkit-box;
-  /* -webkit-line-clamp: 3; */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  max-width: 70%;
-}
-.nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
-  background: #b3d6ff;
-  backdrop-filter: blur(10px);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  margin: 0 1rem;
-}
-.nav-button:hover {
-  background: #e5f1eb;
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-  border: 1.5px solid #0c59b199;
-}
-.nav-button:active {
-  transform: translateY(-50%) scale(0.95);
-}
-.nav-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  transform: translateY(-50%) scale(0.9);
-}
-.nav-button:disabled:hover {
-  transform: translateY(-50%) scale(0.9);
-}
-.nav-button.prev {
-  left: 0;
-}
-.nav-button.next {
-  right: 0;
-}
-.nav-button svg {
-  width: 20px;
-  height: 20px;
-  fill: #333;
-  transition: fill 0.3s ease;
-}
-.nav-button:hover svg {
-  fill: #0c59b199;
-}
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 1rem;
-  align-items: center;
-  flex-wrap: nowrap;
-  min-height: 20px;
-}
-.pagination-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  flex-shrink: 0 !important;
-  aspect-ratio: 1;
-  box-sizing: border-box;
-}
-/* .pagination-dot::before {
+.card-icon::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: transparent;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-} */
-.pagination-dot.active {
-  background: #5cb15d;
-  /* transform: scale(1.2); */
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 1;
 }
-.pagination-dot.active::before {
-  background: rgba(255, 255, 255, 0.3);
+.card-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: white;
+  z-index: 2;
+  position: relative;
 }
-.pagination-dot:hover {
-  transform: scale(1.1);
-  background: rgba(92, 177, 93, 0.7);
-} 
+.use-case-card:hover .card-icon {
+  transform: scale(1.1) rotate(-2deg);
+  box-shadow: 0 12px 28px rgba(92, 177, 93, 0.35);
+}
+.card-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2d4a3e;
+  margin-bottom: 0.8rem;
+  line-height: 1.3;
+  font-family: "Poppins-SemiBold", sans-serif;
+  z-index: 1;
+  position: relative;
+}
+.card-description {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #5a6b61;
+  line-height: 1.6;
+  font-family: "Poppins-Regular", sans-serif;
+  z-index: 1;
+  position: relative;
+  opacity: 0.9;
+  text-align: center;
+  justify-content: space-around;
+  max-width: 75%;
+}
 .cta-section {
     text-align: center;
     margin-top: 4rem;
@@ -563,23 +492,6 @@
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.8rem;
     text-align: center;
-}
- /* Animation for cards appearing */
-.slide .use-case-card {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: slideInUp 0.6s ease forwards;
-}
-.slide .use-case-card:nth-child(1) { animation-delay: 0.1s; }
-.slide .use-case-card:nth-child(2) { animation-delay: 0.2s; }
-.slide .use-case-card:nth-child(3) { animation-delay: 0.3s; }
-.slide .use-case-card:nth-child(4) { animation-delay: 0.4s; }
-
-@keyframes slideInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .btn-primary {
@@ -907,7 +819,6 @@
       transition: none;
       animation: none;
   }
-  
   .slide .use-case-card {
       opacity: 1;
       transform: translateY(0);
@@ -915,10 +826,6 @@
 }
 @media (prefers-contrast: high) {
   .use-case-card {
-      border: 2px solid #333;
-  }
-  
-  .nav-button {
       border: 2px solid #333;
   }
 }
@@ -1143,11 +1050,6 @@
   .slider-wrapper {
     margin: 0 50px;
   }
-  .use-case-card {
-    width: 230px;
-    height: 230px;
-    padding: 1rem;
-  }
   .card-icon {
     width: 45px;
     height: 45px;
@@ -1166,23 +1068,6 @@
     font-size: 0.75rem;
     margin-top: 0.5rem;
     max-width: 75%;
-  }
-  .nav-button {
-    width: 45px;
-    height: 45px;
-    margin: 0 0.75rem;
-  }
-  .nav-button svg {
-    width: 18px;
-    height: 18px;
-  }
-  .pagination {
-    gap: 12px;
-    margin-top: 1rem;
-  }
-  .pagination-dot {
-    width: 12px;
-    height: 12px;
   }
   .touch-indicator {
     display: block;
@@ -1206,6 +1091,14 @@
     max-width: none;
     margin: 0 auto 2rem;
     padding: 1rem;
+  }
+  .use-case-block {
+    min-height: 70vh;
+    padding: 0 1rem;
+    margin-top: -5vh;
+  }
+  .scroll-container {
+    padding: 1rem 0;
   }
   .hero {
     padding: 1rem 0;
@@ -1313,40 +1206,23 @@
   .slider-track {
     padding: 1.5rem 0;
   }
-  .use-case-card {
-    width: 210px;
-    height: 210px;
-    padding: 0.75rem;
-  }
   .card-icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 0.5rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    margin-bottom: 1.2rem;
   }
   .card-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
   .card-title {
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.2rem;
-    max-width: 85%;
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
   }
   .card-description {
-    font-size: 0.7rem;
-    margin-top: 0.4rem;
-    max-width: 80%;
-    line-height: 1.3;
-  }
-  .nav-button {
-    width: 40px;
-    height: 40px;
-    margin: 0 0.5rem;
-  }
-  .nav-button svg {
-    width: 16px;
-    height: 16px;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
   .touch-indicator {
     display: block;
@@ -1442,7 +1318,8 @@
     width: 7rem !important;
     padding: 0.7rem 1.2rem !important;
     font-size: 0.9rem !important;
-    margin-bottom: 3rem;
+    margin-top: 0.5rem !important;
+    margin-bottom: 2rem !important;
   }
   .btn-primary.mobile-only {
     width: 80%;
@@ -1488,8 +1365,13 @@
     height: 90vh !important;
     margin-bottom: 180vh !important;
   }
+  .use-case-card {
+    width: 300px;
+    height: 240px;
+    padding: 1.8rem 1.2rem;
+  }
   .use-cases-section {
-    padding: 1.5rem 0;
+    padding: 1.5rem 0 0 0;
     margin-bottom: -1px;
   }
   .use-cases-container {
@@ -1498,7 +1380,8 @@
   }
   .section-title {
     font-size: clamp(1.4rem, 5.5vw, 1.6rem);
-    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
     padding: 0 0.5rem;
   }
   .section-subtitle {
@@ -1520,52 +1403,21 @@
   .slider-track {
     padding: 1rem 0;
   }
-  .use-case-card {
-    width: 260px;
-    height: 260px;
-    padding: 0;
-  }
   .card-icon {
-    width: 35px;
-    height: 35px;
-    margin-bottom: 0.4rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    margin-bottom: 1rem;
   }
   .card-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
   .card-title {
-    font-size: 1rem;
-    margin-top: 0.4rem;
-    margin-bottom: 0.2rem;
-    max-width: 85%;
-    line-height: 1.2;
+    font-size: 1.1rem;
   }
   .card-description {
-    font-size: 0.8rem;
-    margin-top: 0.3rem;
-    max-width: 80%;
-    line-height: 1.25;
-    -webkit-line-clamp: 3;
-  }
-  .nav-button {
-    width: 34px;
-    height: 34px;
-    margin: 0 0.5rem;
-  }
-  .nav-button svg {
-    width: 14px;
-    height: 14px;
-  }
-  .pagination {
-    gap: 8px;
-    margin-top: 0.25rem;
-  }
-  .pagination-dot {
-    width: 8px !important;
-    height: 8px !important;
-    border-radius: 50%;
-    aspect-ratio: 1;
+    font-size: 0.85rem;
   }
   .touch-indicator {
     font-size: 0.65rem;
@@ -1659,6 +1511,14 @@
     padding: 1rem 0.25rem;
     margin-bottom: 120vh;
   }
+  .use-case-card {
+    width: 280px;
+    height: 220px;
+    padding: 1.5rem 1rem;
+  }
+  .use-case-block {
+    min-height: 60vh;
+  }
   .use-cases-container {
     padding: 0.5rem 0.25rem;
   }
@@ -1672,19 +1532,14 @@
   .slider-wrapper {
     margin: 0;
   }
-  .use-case-card {
-    width: 170px;
-    height: 170px;
-    padding: 0.5rem;
-  }
   .card-icon {
-    width: 30px;
-    height: 30px;
-    margin-bottom: 0.3rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
   }
   .card-icon svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
   .card-title {
     font-size: 0.75rem;
@@ -1696,18 +1551,6 @@
     margin-top: 0.2rem;
     max-width: 90%;
     -webkit-line-clamp: 3;
-  }
-  .nav-button {
-    width: 32px;
-    height: 32px;
-  }
-  .nav-button svg {
-    width: 12px;
-    height: 12px;
-  }
-  .pagination-dot {
-    width: 6px;
-    height: 6px;
   }
   .touch-indicator {
     font-size: 0.6rem;
@@ -1773,10 +1616,6 @@
   }
   .slider-track {
     padding: 1rem 0;
-  }
-  .use-case-card {
-    width: 160px;
-    height: 160px;
   }
   .card-title {
     font-size: 0.8rem;

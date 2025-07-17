@@ -60,29 +60,6 @@ if (process.env.NODE_ENV === "development") {
 // Then create server with app
 const server = require("http").createServer(app);
 
-// test the mongoDB connection
-// mongoose.connection.once('open', async () => {
-//   try {
-//     // Get database name
-//     const dbName = mongoose.connection.db.databaseName;
-//     console.log(`Connected to database: ${dbName}`);
-    
-//     // Get collection names
-//     const collections = await mongoose.connection.db.listCollections().toArray();
-//     console.log('Collections in database:', collections.map(c => c.name));
-    
-//     // Count users
-//     const userCount = await registerCollection.countDocuments();
-//     console.log(`Found ${userCount} users in database`);
-    
-//     // List all usernames
-//     const allUsers = await registerCollection.find({}, {uname: 1, _id: 0}).lean();
-//     console.log('All usernames:', allUsers.map(u => u.uname));
-    
-//   } catch (err) {
-//     console.error("Error checking database:", err);
-//   }
-// });
 
 // Database connection middleware - ensure connection before handling requests
 app.use(async (req, res, next) => {
@@ -103,17 +80,6 @@ app.use(async (req, res, next) => {
     // In production, show a generic error
     return res.status(500).send('Service temporarily unavailable. Please try again.');
   }
-});
-
-// Debug session middleware
-app.use((req, res, next) => {
-  console.log('Session debug:', {
-    sessionID: req.sessionID,
-    isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
-    user: req.user ? req.user.uname : 'No user',
-    path: req.path
-  });
-  next();
 });
 
 // Then create WebSocket server
