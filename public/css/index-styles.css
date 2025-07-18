@@ -76,7 +76,7 @@
 .mobile {
   margin-top: 3.5rem;
   margin-bottom: auto;
-  max-width: 35% !important;
+  max-width: 55% !important;
   height: auto;
   opacity: 0;
   transform: translateX(100px);
@@ -880,7 +880,7 @@
     font-size: 2.5rem;
   }
   .mobile {
-    max-width: 38%;
+    max-width: 45%;
   }
   .btn-primary {
     width: 8rem;
@@ -908,7 +908,7 @@
     margin-bottom: 0.6rem;
   }
   .mobile {
-    max-width: 40%;
+    max-width: 47%;
     margin-top: 2.5rem;
   }
   .btn-primary {
@@ -986,7 +986,7 @@
   }
   .mobile {
     order: 2 !important;
-    max-width: 34% !important;
+    max-width: 38% !important;
     height: auto !important;
     margin-top: 2rem !important;
     flex-shrink: 0 !important;
@@ -1292,6 +1292,7 @@
   .hero-container {
     padding: 0 0.5rem;
     padding-bottom: 0 !important;
+    gap: 0 !important;
   }
   .hero-title {
     font-size: 1.8rem !important;
@@ -1304,7 +1305,7 @@
     line-height: 1.25 !important;
   }
   .mobile {
-    max-width: 80% !important;
+    max-width: 110% !important;
     margin: 0 !important;
   }
   .mobile-only {
@@ -1318,7 +1319,7 @@
     width: 7rem !important;
     padding: 0.7rem 1.2rem !important;
     font-size: 0.9rem !important;
-    margin-top: 0.5rem !important;
+    margin-top: -1rem !important;
     margin-bottom: 2rem !important;
   }
   .btn-primary.mobile-only {
