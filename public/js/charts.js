@@ -364,6 +364,26 @@ function getOptimalXAxisConfig(dates, containerWidth) {
     return tickConfig;
 }
 
+// Hover styles
+if (!document.getElementById('plotly-hover-styles')) {
+    const hoverStyle = document.createElement('style');
+    hoverStyle.id = 'plotly-hover-styles';
+    hoverStyle.textContent = `
+        .hoverlayer .hovertext {
+            border-radius: 6px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+            padding: 6px 8px !important;
+            font-size: 11px !important;
+        }
+        .hoverlayer .hovertext path {
+            fill: rgba(255, 255, 255, 0.95) !important;
+            stroke: #ddd !important;
+            stroke-width: 1px !important;
+        }
+    `;
+    document.head.appendChild(hoverStyle);
+}
+
 // Core chart rendering function (optimized for performance)
 function createBiomarkerChart(biomarkerElement, biomarkerName) {
     if (!biomarkerElement) {
@@ -495,14 +515,25 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
                 width: 1
             }
         },
-        hovertemplate: '%{x|%b %d, %Y}<br>%{y:.1f} ' + unit + '<extra></extra>',
+        hovertemplate: '<b>%{x|%b %d, %Y}</b><br>%{y:.1f} ' + unit + '<extra></extra>',
         hoverlabel: {
-            bgcolor: '#2c8cdc',
-            bordercolor: '#2c8cdc',
-            font: { color: 'white', size: 12 },
-            align: 'left'
-        }
+            bgcolor: 'rgba(255, 255, 255, 0.95)', // White background with slight transparency
+            bordercolor: '#ddd', // Light gray border
+            borderwidth: 1,
+            font: { 
+                color: '#333', // Dark text for better readability on white
+                size: 11,
+                family: 'Arial, sans-serif'
+            },
+            align: 'left',
+            // Add some padding and rounded corners
+            namelength: 0 // Hide the trace name
+        },
+        // Control hover distance and positioning
+        hoverinfo: 'x+y',
+        hoverdistance: 50 // Increase hover detection distance
     };
+
 
     // Important: Determine available width for better responsiveness
     // We use a minimum of 350px width to ensure proper rendering in all cases
@@ -629,9 +660,19 @@ function createBiomarkerChart(biomarkerElement, biomarkerName) {
         plot_bgcolor: 'rgba(0,0,0,0)',
         shapes: rangeShapes,
         showlegend: false,
-        hoverdistance: 100,
-        hovermode: 'x unified',
+        hoverdistance: 30,
+        hovermode: 'closest',
         spikedistance: -1,
+        hoverlabel: {
+            bgcolor: 'rgba(255, 255, 255, 0.95)',
+            bordercolor: '#ddd',
+            borderwidth: 1,
+            font: {
+                size: 11,
+                family: 'Arial, sans-serif',
+                color: '#333'
+            }
+        },
         xaxis: getOptimalXAxisConfig(dates, containerWidth),
         yaxis: {
             showgrid: true,
