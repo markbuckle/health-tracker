@@ -244,24 +244,72 @@ hbs.registerHelper("formatDateString", function (dateString) {
 //   return result;
 // });
 
+// hbs.registerHelper("parseReferenceRange", function (range) {
+//   if (!range) {
+//     return null;
+//   }
+
+//   // Remove all spaces and handle both hyphen types
+//   const cleanRange = range.toString().replace(/\s+/g, "").replace("–", "-");
+//   const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
+
+//   // Ensure matches exist before accessing indices
+//   if (!matches) {
+//     return null; // Or return a default object { min: null, max: null }
+//   }
+
+//   return {
+//     min: parseFloat(matches[1]),
+//     max: parseFloat(matches[2]),
+//   };
+// });
+
 hbs.registerHelper("parseReferenceRange", function (range) {
   if (!range) {
     return null;
   }
 
-  // Remove all spaces and handle both hyphen types
-  const cleanRange = range.toString().replace(/\s+/g, "").replace("–", "-");
+  const rangeStr = range.toString().trim();
+  console.log("Parsing reference range:", rangeStr); // Debug log
+  
+  // Handle "< X.X" format (like "< 1.05" or "Normal result range < 1.05")
+  const lessThanMatch = rangeStr.match(/(?:.*<\s*)?(\d+\.?\d*)$/);
+  if (rangeStr.includes('<') && lessThanMatch) {
+    const result = {
+      min: 0,
+      max: parseFloat(lessThanMatch[1])
+    };
+    console.log("Parsed as less-than range:", result); // Debug log
+    return result;
+  }
+  
+  // Handle "> X.X" format (like "> 2.5" or "Normal result range > 2.5")
+  const greaterThanMatch = rangeStr.match(/(?:.*>\s*)?(\d+\.?\d*)$/);
+  if (rangeStr.includes('>') && greaterThanMatch) {
+    const minValue = parseFloat(greaterThanMatch[1]);
+    const result = {
+      min: minValue,
+      max: minValue * 3 // Reasonable upper bound
+    };
+    console.log("Parsed as greater-than range:", result); // Debug log
+    return result;
+  }
+  
+  // Handle standard "X.X-Y.Y" format
+  const cleanRange = rangeStr.replace(/\s+/g, "").replace("–", "-");
   const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
 
-  // Ensure matches exist before accessing indices
   if (!matches) {
-    return null; // Or return a default object { min: null, max: null }
+    console.log("Could not parse reference range:", rangeStr); // Debug log
+    return null;
   }
 
-  return {
+  const result = {
     min: parseFloat(matches[1]),
-    max: parseFloat(matches[2]),
+    max: parseFloat(matches[2])
   };
+  console.log("Parsed as standard range:", result); // Debug log
+  return result;
 });
 
 // bar chart marker position

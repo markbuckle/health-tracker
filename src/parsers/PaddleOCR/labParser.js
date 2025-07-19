@@ -284,6 +284,7 @@ function runPaddleOCR(filePath) {
  * @returns {Object} Extracted lab values
  */
 function parseLabValues(text) {
+
   // First try the structured lab report parser for medical lab reports with tables
   const structuredResults = parseStructuredLabReport(text);
   
@@ -297,14 +298,33 @@ function parseLabValues(text) {
   const results = {};
   
   // Return empty results if no text
-  if (!text) return results;
+  if (!text) {
+    console.log("NO TEXT PROVIDED - returning empty results");
+    return results;
+  }
+
+  // NEW: Try to parse "Result X.XX (unit)" format first
+  const resultFormatResults = parseResultFormat(text);
+  Object.assign(results, resultFormatResults);
+  
+  if (Object.keys(resultFormatResults).length > 0) {
+    console.log(`Found ${Object.keys(resultFormatResults).length} biomarkers using Result format`);
+  }
   
   // Normalize text for consistency
   const normalizedText = text.replace(/\s+/g, ' ').trim();
   const lines = text.split('\n');
+
+  console.log("Normalized text:", normalizedText.substring(0, 200));
+  console.log("Number of lines:", lines.length);
   
   // Try to match common lab test patterns
   for (const [testName, pattern] of Object.entries(labPatterns)) {
+    // Skip if we already found this biomarker using Result format
+    if (results[testName]) {
+      continue;
+    }
+
     try {
       const match = pattern.regex.exec(normalizedText);
       if (match) {
@@ -348,6 +368,152 @@ function parseLabValues(text) {
   }
   
   return results;
+}
+
+// Helper function to parse "Result X.XX (unit)" format
+function parseResultFormat(text) {
+  const results = {};
+  
+  if (!text) return results;
+  
+  // Split text into lines for easier processing
+  const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+  
+  for (let i = 0; i < lines.length - 1; i++) {
+    const currentLine = lines[i];
+    const nextLine = lines[i + 1];
+    
+    // Check if next line contains "Result" followed by a number and unit
+    const resultMatch = nextLine.match(/^Result\s+([\d.]+)\s*\(([^)]+)\)/i);
+    
+    if (resultMatch) {
+      const value = parseFloat(resultMatch[1]);
+      const unit = resultMatch[2];
+      
+      // Try to match the current line (biomarker name) with known patterns
+      const biomarkerName = findBiomarkerMatch(currentLine);
+      
+      if (biomarkerName) {
+        console.log(`Found Result format: ${biomarkerName} = ${value} ${unit}`);
+        
+        // ENHANCED: Look for reference range in nearby lines and convert to proper format
+        let referenceRange = null;
+        
+        // Check next few lines for reference range
+        for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
+          const refLine = lines[j];
+          
+          // Common reference range patterns
+          const refPatterns = [
+            // Standard range format: "X.X - Y.Y"
+            /([\d.]+)\s*[-–]\s*([\d.]+)/i,
+            // Less than format: "< X.X"
+            /Normal result range\s*<\s*([\d.]+)/i,
+            /Reference range\s*<\s*([\d.]+)/i,
+            /<\s*([\d.]+)/i,
+            // Greater than format: "> X.X"
+            /Normal result range\s*>\s*([\d.]+)/i,
+            /Reference range\s*>\s*([\d.]+)/i,
+            />\s*([\d.]+)/i,
+            // Standard format with labels
+            /Reference range\s*:\s*([\d.]+)\s*[-–]\s*([\d.]+)/i,
+            /Normal\s*:\s*([\d.]+)\s*[-–]\s*([\d.]+)/i
+          ];
+          
+          for (const pattern of refPatterns) {
+            const refMatch = refLine.match(pattern);
+            if (refMatch) {
+              // Convert different formats to standard "min-max" format
+              if (refLine.includes('<')) {
+                // For "< X.X", create range from 0 to X.X
+                const maxValue = parseFloat(refMatch[1]);
+                referenceRange = `0.0-${maxValue}`;
+              } else if (refLine.includes('>')) {
+                // For "> X.X", create range from X.X to a reasonable upper bound
+                const minValue = parseFloat(refMatch[1]);
+                const upperBound = minValue * 3; // Reasonable upper bound
+                referenceRange = `${minValue}-${upperBound}`;
+              } else if (refMatch[2]) {
+                // Standard "X.X-Y.Y" format
+                referenceRange = `${refMatch[1]}-${refMatch[2]}`;
+              }
+              break;
+            }
+          }
+          
+          if (referenceRange) break;
+        }
+        
+        // If we couldn't find a reference range, try to get it from biomarkerData
+        if (!referenceRange && biomarkerData && biomarkerData[biomarkerName]) {
+          const biomarkerInfo = biomarkerData[biomarkerName];
+          if (biomarkerInfo.referenceRange) {
+            referenceRange = biomarkerInfo.referenceRange;
+          }
+        }
+        
+        results[biomarkerName] = {
+          value: value,
+          unit: unit,
+          rawText: `${currentLine} ${nextLine}`,
+          referenceRange: referenceRange,
+          confidence: 0.95
+        };
+        
+        console.log(`Parsed reference range: ${referenceRange} for ${biomarkerName}`);
+      } else {
+        // If we can't match to a known biomarker, store with the raw name
+        console.log(`Found Result format for unknown biomarker: ${currentLine} = ${value} ${unit}`);
+        results[currentLine] = {
+          value: value,
+          unit: unit,
+          rawText: `${currentLine} ${nextLine}`,
+          referenceRange: null,
+          confidence: 0.7
+        };
+      }
+    }
+  }
+  
+  return results;
+}
+
+// NEW: Helper function to match biomarker names to known patterns
+function findBiomarkerMatch(testName) {
+  // Direct match first
+  if (labPatterns[testName]) {
+    return testName;
+  }
+  
+  // Check alternate names
+  for (const [patternName, pattern] of Object.entries(labPatterns)) {
+    if (pattern.alternateNames && pattern.alternateNames.includes(testName)) {
+      return patternName;
+    }
+    
+    // Check if any alternate name matches (case insensitive)
+    if (pattern.alternateNames) {
+      for (const altName of pattern.alternateNames) {
+        if (altName.toLowerCase() === testName.toLowerCase()) {
+          return patternName;
+        }
+      }
+    }
+  }
+  
+  // Check for partial matches (for cases like "APOLIPOPROTEIN B" -> "Apo-B")
+  const testNameLower = testName.toLowerCase();
+  for (const [patternName, pattern] of Object.entries(labPatterns)) {
+    if (pattern.alternateNames) {
+      for (const altName of pattern.alternateNames) {
+        if (testNameLower.includes(altName.toLowerCase()) || altName.toLowerCase().includes(testNameLower)) {
+          return patternName;
+        }
+      }
+    }
+  }
+  
+  return null;
 }
 
 /**

@@ -280,8 +280,8 @@ const labPatterns = {
         '(?:g\\/L|mg\\/dL)',
         'g/L'
     ),
-    'Apo-B': createLabPattern('(?:Apo-B|Apolipoprotein B|APOLIPOPROTEIN B)',
-        ['Apo B', 'ApoB', 'APOLIPOPROTEIN B', 'Apolipoprotein B'],
+    'Apo-B': createLabPattern('Apo-B',
+        ['Apolipoprotein B', 'APOLIPOPROTEIN B', 'Apo B', 'ApoB', 'Apolipoprotein-B'],
         '(?:g\\/L|mg\\/dL)',
         'g/L'
     ),
@@ -803,8 +803,8 @@ const labPatterns = {
         '(?:μg\\/L|nmol\\/L)',
         'μg/L'
     ),
-    'Aluminum': createLabPattern('(?:Aluminum|Al(?:\\s|$))', // Only match "Al" if followed by space or end of string
-        ['Aluminium'], // Use full name alternates only
+    'Aluminum': createLabPattern('Aluminum',
+        ['Aluminum'],
         '(?:μg\\/L|nmol\\/L)',
         'μg/L'
     ),
