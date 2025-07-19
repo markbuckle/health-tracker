@@ -428,6 +428,7 @@ function parseResultFormat(text) {
                 // For "< X.X", create range from 0 to X.X
                 const maxValue = parseFloat(refMatch[1]);
                 referenceRange = `0.0-${maxValue}`;
+                console.log("Converted < format to:", referenceRange);
               } else if (refLine.includes('>')) {
                 // For "> X.X", create range from X.X to a reasonable upper bound
                 const minValue = parseFloat(refMatch[1]);

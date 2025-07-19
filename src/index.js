@@ -266,11 +266,13 @@ hbs.registerHelper("formatDateString", function (dateString) {
 
 hbs.registerHelper("parseReferenceRange", function (range) {
   if (!range) {
+    console.log("parseReferenceRange: No range provided");
     return null;
   }
 
   const rangeStr = range.toString().trim();
-  console.log("Parsing reference range:", rangeStr); // Debug log
+  console.log("parseReferenceRange: Input range =", rangeStr);
+  console.log("parseReferenceRange: Range type =", typeof range);
   
   // Handle "< X.X" format (like "< 1.05" or "Normal result range < 1.05")
   const lessThanMatch = rangeStr.match(/(?:.*<\s*)?(\d+\.?\d*)$/);
@@ -279,19 +281,19 @@ hbs.registerHelper("parseReferenceRange", function (range) {
       min: 0,
       max: parseFloat(lessThanMatch[1])
     };
-    console.log("Parsed as less-than range:", result); // Debug log
+    console.log("parseReferenceRange: Parsed as less-than range:", result);
     return result;
   }
   
-  // Handle "> X.X" format (like "> 2.5" or "Normal result range > 2.5")
+  // Handle "> X.X" format
   const greaterThanMatch = rangeStr.match(/(?:.*>\s*)?(\d+\.?\d*)$/);
   if (rangeStr.includes('>') && greaterThanMatch) {
     const minValue = parseFloat(greaterThanMatch[1]);
     const result = {
       min: minValue,
-      max: minValue * 3 // Reasonable upper bound
+      max: minValue * 3
     };
-    console.log("Parsed as greater-than range:", result); // Debug log
+    console.log("parseReferenceRange: Parsed as greater-than range:", result);
     return result;
   }
   
@@ -300,7 +302,7 @@ hbs.registerHelper("parseReferenceRange", function (range) {
   const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
 
   if (!matches) {
-    console.log("Could not parse reference range:", rangeStr); // Debug log
+    console.log("parseReferenceRange: Could not parse range:", rangeStr);
     return null;
   }
 
@@ -308,7 +310,7 @@ hbs.registerHelper("parseReferenceRange", function (range) {
     min: parseFloat(matches[1]),
     max: parseFloat(matches[2])
   };
-  console.log("Parsed as standard range:", result); // Debug log
+  console.log("parseReferenceRange: Parsed as standard range:", result);
   return result;
 });
 
@@ -820,7 +822,16 @@ app.get("/reports", checkAuth, async (req, res) => {
 
     // When processing lab values
     filesWithLabValues.forEach((file) => {
-      Array.from(file.labValues.entries()).forEach(([labTestName, value]) => {
+      // Handle both Map and Object formats for labValues
+      let labValuesEntries;
+      if (file.labValues instanceof Map) {
+        labValuesEntries = Array.from(file.labValues.entries());
+      } else {
+        // Convert object to entries array
+        labValuesEntries = Object.entries(file.labValues);
+      }
+      
+      labValuesEntries.forEach(([labTestName, value]) => {
         const biomarkerMatch = findBiomarkerMatch(labTestName);
         if (biomarkerMatch) {
           const [standardName, biomarkerInfo] = biomarkerMatch;

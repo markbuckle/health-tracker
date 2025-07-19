@@ -121,13 +121,13 @@ async function processUploadedFile(file, extractFromPDF) {
       const fileObject = {
         filename: file.filename || file.originalname,
         originalName: file.originalname,
-        path: null, // Always null in Vercel
+        path: filePath,
         size: file.size,
         mimetype: file.mimetype,
         uploadDate: new Date(),
         testDate: extractedData.testDate || new Date(),
         labValues: extractedData.labValues || {},
-        extractionMethod: 'digital-ocean-ocr',
+        extractionMethod: isVercel ? 'digital-ocean-ocr' : 'local-ocr',
         processingErrors: extractedData.processingErrors || []
       };
       
