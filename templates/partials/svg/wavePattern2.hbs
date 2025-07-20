@@ -1,34 +1,29 @@
 <svg 
   xmlns="http://www.w3.org/2000/svg" 
-  viewBox="0 0 1600 190" 
+  viewBox="0 0 1600 200" 
   preserveAspectRatio="none"
   width="100%"
-  height="160px"
 >
-  <!-- Fill entire background with gray (#e0ecee) -->
-  <rect x="0" y="0" width="1600" height="190" fill="#e0ecee" />
+  <!-- Solid background color -->
+  <rect x="0" y="0" width="1600" height="200" fill="#b3d6ff" />
   
-  <!-- Bottom solid blue section -->
-  <rect x="0" y="160" width="1600" height="40" fill="#b3d6ff" />
-  
-  <!-- First wave (bottom) -->
-  <path 
-    fill="#b3d6ff" 
-    fill-opacity="0.8"
-    d="M0,160 C250,190 350,130 550,160 C750,190 850,130 1050,160 C1250,190 1350,130 1550,160 L1600,160 L1600,200 L0,200 Z"
-  />
-  
-  <!-- Second wave (middle) -->
-  <path 
-    fill="#b3d6ff" 
-    fill-opacity="0.5"
-    d="M0,120 C150,150 250,90 400,120 C550,150 650,90 800,120 C950,150 1050,90 1200,120 C1350,150 1450,90 1600,120 L1600,200 L0,200 Z"
-  />
-  
-  <!-- Third wave (top) -->
-  <path 
-    fill="#b3d6ff" 
-    fill-opacity="0.3"
-    d="M0,80 C200,110 300,50 500,80 C700,110 800,50 1000,80 C1200,110 1300,50 1500,80 L1600,80 L1600,200 L0,200 Z"
-  />
+  <g>
+    <!-- Top green wave layer -->
+    <path
+      fill="#e0ecee"
+      d="M0 52c90 38 235 95 435 76 255-24 265-116 565-116 305 0 310 98 635 98s555-85 725-85c115 0 225 5 315 15V0H0v52Z"
+    ></path>
+    <!-- Middle green wave layer with opacity -->
+    <path
+      fill="#e0ecee"
+      fill-opacity=".6"
+      d="M0 105c145 54 295 98 515 54 125-25 280-151 565-146 225 3 370 118 700 118 290 0 365-118 600-127h315V0H0v105Z"
+    ></path>
+    <!-- Bottom green wave layer with less opacity -->
+    <path
+      fill="#e0ecee"
+      fill-opacity=".3"
+      d="M0 13c310 8 440 97 735 103 205 3 280-93 510-93 265 0 460 123 650 123 255 0 345-89 500-93 115-4 220 1 315 14V0H0v13Z"
+    ></path>
+  </g>
 </svg>
