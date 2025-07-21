@@ -9,25 +9,27 @@
   <rect x="0" y="-20" width="1600" height="230" fill="#e0ecee" />
   
   <!-- Add multiple gray strips at very top to eliminate any gaps -->
-  <rect x="0" y="0" width="1600" height="10" fill="#b3d6ff" />
+  <rect x="0" y="-20" width="1600" height="30" fill="#e0ecee" />
+  <rect x="0" y="-10" width="1600" height="20" fill="#e0ecee" />
+  <rect x="0" y="0" width="1600" height="10" fill="#e0ecee" />
   
   <g>
-    <!-- Top blue wave layer - start from well above viewBox -->
+    <!-- Top blue wave layer - pronounced smooth waves with unique frequency -->
     <path
       fill="#b3d6ff"
-      d="M0 45c85 35 220 90 410 72 240-23 250-110 530-110 285 0 290 92 595 92s520-80 680-80c110 0 210 5 295 14V-20H0v65Z"
+      d="M0 45c80 20 160 48 260 40c100-8 180-50 300-38c120 12 220 55 340 45c120-10 200-60 320-45c120 15 180 50 280 40c100-10 160-45 240-32c80 13 140 38 200 30V-20H0v65Z"
     ></path>
-    <!-- Middle blue wave layer with opacity -->
+    <!-- Middle blue wave layer - different pattern for good overlap -->
     <path
       fill="#b3d6ff"
       fill-opacity=".5"
-      d="M0 98c135 51 275 92 480 51 120-24 260-142 530-137 210 3 345 111 655 111 270 0 342-111 560-119h295V-20H0v118Z"
+      d="M0 98c100 28 200 62 330 50c130-12 220-70 380-55c160 15 280 75 440 60c160-15 260-80 420-60c160 20 240 65 360 50c120-15 180-55 280-40c100 15 160 45 220 35V-20H0v118Z"
     ></path>
-    <!-- Bottom blue wave layer with less opacity -->
+    <!-- Bottom blue wave layer - third unique frequency -->
     <path
       fill="#b3d6ff"
       fill-opacity=".25"
-      d="M0 12c290 8 410 91 685 96 190 3 260-87 475-87 245 0 430 115 605 115 240 0 320-83 465-87 105-4 205 1 295 13V-20H0v32Z"
+      d="M0 12c120 7 240 32 390 28c150-4 270-40 440-35c170 5 320 45 500 40c180-5 300-50 470-40c170 12 260 40 380 35c120-5 200-30 300-22c100 8 160 28 230 25V-20H0v32Z"
     ></path>
   </g>
 </svg>

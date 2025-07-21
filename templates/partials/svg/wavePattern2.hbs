@@ -4,26 +4,29 @@
   preserveAspectRatio="none"
   width="100%"
 >
-  <!-- Solid background color -->
-  <rect x="0" y="0" width="1600" height="200" fill="#b3d6ff" />
+  <!-- Solid background color - extended blue background -->
+  <rect x="0" y="-10" width="1600" height="210" fill="#b3d6ff" />
+  
+  <!-- Add thin blue strip at very top to cover any gaps -->
+  <rect x="0" y="-10" width="1600" height="15" fill="#b3d6ff" />
   
   <g>
-    <!-- Top green wave layer -->
+    <!-- Top green wave layer - pronounced waves with smooth overlapping -->
     <path
       fill="#e0ecee"
-      d="M0 52c90 38 235 95 435 76 255-24 265-116 565-116 305 0 310 98 635 98s555-85 725-85c115 0 225 5 315 15V0H0v52Z"
+      d="M0 52c70 18 140 42 220 35c80-7 160-45 280-35c120 10 200 50 320 40c120-10 180-55 300-40c120 15 160 45 260 35c100-10 140-40 220-30c80 10 120 35 180 25V-10H0v62Z"
     ></path>
-    <!-- Middle green wave layer with opacity -->
+    <!-- Middle green wave layer - different frequency with good overlap -->
     <path
       fill="#e0ecee"
       fill-opacity=".6"
-      d="M0 105c145 54 295 98 515 54 125-25 280-151 565-146 225 3 370 118 700 118 290 0 365-118 600-127h315V0H0v105Z"
+      d="M0 105c90 25 180 55 300 45c120-10 200-65 350-50c150 15 250 70 400 55c150-15 220-75 370-55c150 20 200 60 320 45c120-15 160-50 260-35c100 15 140 40 200 30V-10H0v115Z"
     ></path>
-    <!-- Bottom green wave layer with less opacity -->
+    <!-- Bottom green wave layer - third frequency for complex overlapping -->
     <path
       fill="#e0ecee"
       fill-opacity=".3"
-      d="M0 13c310 8 440 97 735 103 205 3 280-93 510-93 265 0 460 123 650 123 255 0 345-89 500-93 115-4 220 1 315 14V0H0v13Z"
+      d="M0 13c110 6 220 28 360 25c140-3 240-35 400-30c160 5 280 40 450 35c170-5 260-45 420-35c160 10 220 35 340 30c120-5 180-25 280-20V-10H0v23Z"
     ></path>
   </g>
 </svg>
