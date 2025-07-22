@@ -442,8 +442,8 @@
   box-shadow: 0 12px 28px rgba(92, 177, 93, 0.35);
 }
 .card-illustration {
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
@@ -454,7 +454,7 @@
 .card-flex {
   display: flex;
 }
-.use-case-card:hover .card-illustration img {
+.use-case-card:hover {
   transform: scale(1.05);
 }
 .card-illustration img {
@@ -464,7 +464,7 @@
   transition: all 0.4s ease;
 }
 .card-title {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 500;
   color: #2d4a3e;
   margin-bottom: 0.8rem;
@@ -474,7 +474,7 @@
   position: relative;
 }
 .card-description {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 400;
   color: #5a6b61;
   line-height: 1.6;
@@ -1287,7 +1287,7 @@
   }
   .card-title {
     font-size: 1.2rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.2rem;
   }
   .card-description {
     font-size: 0.9rem;
@@ -1376,6 +1376,7 @@
   .mobile {
     max-width: 110% !important;
     margin: 0 !important;
+    margin-top: -1rem !important;
   }
   .mobile-only {
     width: 90%;
@@ -1409,9 +1410,9 @@
     line-height: 1.4;
   }
   .quote-2 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     margin-top: 3rem;
-    max-width: 96%;
+    max-width: 98%;
     padding: 0 0.5rem;
     line-height: 1.45;
   }
