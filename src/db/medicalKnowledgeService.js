@@ -10,9 +10,6 @@ async function addDocument(document) {
     console.log("Generating embedding for document:", title);
     const embedding = await llmService.generateEmbedding(content);
 
-    // Format the embedding as an array for pgvector
-    // This is the key fix - we need to pass the vector as a properly formatted array
-
     // Insert the document with its embedding
     const text = `
       INSERT INTO medical_documents (
@@ -80,8 +77,8 @@ async function searchDocuments(query, options = {}) {
     const result = await pgConnector.query(sql, params);
     console.log(`Query returned ${result.rows.length} rows`);
 
-    // Only keep results that meet the similarity threshold. Lower threshold is better for vector similarity
-    const documents = result.rows.filter((row) => row.similarity >= threshold); // Change <= to >= since DESC
+    // Only keep results that meet the similarity threshold
+    const documents = result.rows.filter((row) => row.similarity >= threshold);
 
     console.log(`Found ${documents.length} relevant documents`);
     console.log(
@@ -90,14 +87,6 @@ async function searchDocuments(query, options = {}) {
         id: d.id,
         title: d.title,
         similarity: d.similarity,
-      }))
-    );
-
-    console.log(
-      "Raw similarity scores:",
-      result.rows.map((row) => ({
-        title: row.title,
-        similarity: row.similarity,
       }))
     );
 
@@ -111,6 +100,8 @@ async function searchDocuments(query, options = {}) {
 // Function to perform RAG
 async function performRag(query, options = {}) {
   try {
+    console.log('🔍 Performing standard RAG');
+    
     // Step 1: Get relevant documents with options
     const documents = await searchDocuments(query, options);
 
@@ -122,7 +113,7 @@ async function performRag(query, options = {}) {
       };
     }
 
-    // Step 2: Format context with better structure and source attribution
+    // Step 2: Format context with better structure
     const context = documents
       .map((doc) => {
         return doc.content;
@@ -130,9 +121,10 @@ async function performRag(query, options = {}) {
       .join("\n\n");
 
     // Step 3: Generate response
+    console.log('🔍 Generating response with context length:', context.length);
     const responseText = await llmService.generateBasicResponse(query, context);
 
-    return {
+    const result = {
       response: responseText,
       sources: documents.map((doc) => ({
         id: doc.id,
@@ -141,8 +133,12 @@ async function performRag(query, options = {}) {
         similarity: doc.similarity,
       })),
     };
+
+    console.log('✅ RAG result:', { response: result.response?.substring(0, 100) + '...', sources: result.sources.length });
+    return result;
+    
   } catch (error) {
-    console.error("Error performing RAG:", error);
+    console.error("❌ Error performing RAG:", error);
     throw error;
   }
 }
@@ -150,7 +146,7 @@ async function performRag(query, options = {}) {
 async function performRagWithContext(query, userContext, options = {}) {
   try {
     console.log('🔍 Performing RAG with user context');
-    console.log('🔍 User data:', JSON.stringify(userContext.profile, null, 2));
+    console.log('🔍 User data:', JSON.stringify(userContext?.profile, null, 2));
     
     // Expanded personal question detection
     const personalQuestionPatterns = [
@@ -174,22 +170,92 @@ async function performRagWithContext(query, userContext, options = {}) {
       console.log('🎯 Personal question detected - bypassing document search');
       
       // For personal questions, answer directly without searching documents
-      const directResponse = await llmService.generateBasicResponse(
-        query, 
-        "", // Empty context - no medical documents
-        userContext
-      );
-      
-      return {
-        response: directResponse,
-        sources: [], // No document sources for personal questions
-      };
+      try {
+        const directResponse = await llmService.generateBasicResponse(
+          query, 
+          "", // Empty context - no medical documents
+          userContext
+        );
+        
+        const result = {
+          response: directResponse,
+          sources: [], // No document sources for personal questions
+        };
+        
+        console.log('✅ Personal question result:', { response: result.response?.substring(0, 100) + '...', sources: result.sources.length });
+        return result;
+        
+      } catch (personalError) {
+        console.error('❌ Error handling personal question:', personalError);
+        return {
+          response: "I'm sorry, I couldn't process your personal information request.",
+          sources: []
+        };
+      }
     }
     
-    // ... rest of your existing function for non-personal questions
+    // For non-personal questions, enhance the query with user context and perform regular RAG
+    console.log('🔍 Non-personal question - performing enhanced RAG search');
+    
+    try {
+      // Create a contextual query that includes relevant user information
+      let contextualQuery = query;
+      
+      if (userContext?.profile) {
+        const { age, sex, familyHistoryDetails, recentLabValues } = userContext.profile;
+        
+        // Add relevant context to the query
+        const contextParts = [];
+        if (age && sex) {
+          contextParts.push(`Patient is a ${age} year old ${sex?.toLowerCase()}`);
+        }
+        
+        if (familyHistoryDetails && familyHistoryDetails.length > 0) {
+          const conditions = familyHistoryDetails.map(fh => fh.condition).join(', ');
+          contextParts.push(`Family history includes: ${conditions}`);
+        }
+        
+        if (recentLabValues && Object.keys(recentLabValues).length > 0) {
+          const labSummary = Object.entries(recentLabValues)
+            .map(([key, value]) => `${key}: ${value.value} ${value.unit}`)
+            .join(', ');
+          contextParts.push(`Recent lab values: ${labSummary}`);
+        }
+        
+        if (contextParts.length > 0) {
+          contextualQuery = `${contextParts.join('. ')}. 
+        
+Question: ${query}`;
+          
+          console.log('🔍 Enhanced query with user context:', contextualQuery);
+        }
+      }
+      
+      // Use existing RAG logic with enhanced query for non-personal questions
+      const result = await performRag(contextualQuery, options);
+      console.log('✅ Enhanced RAG result:', { response: result.response?.substring(0, 100) + '...', sources: result.sources.length });
+      return result;
+      
+    } catch (enhancedRagError) {
+      console.error('❌ Error performing enhanced RAG:', enhancedRagError);
+      // Fallback to regular RAG if context processing fails
+      console.log('🔄 Falling back to regular RAG');
+      return await performRag(query, options);
+    }
+    
   } catch (error) {
     console.error("❌ Error performing RAG with context:", error);
-    return await performRag(query, options);
+    
+    // Final fallback - return a basic error response
+    try {
+      return await performRag(query, options);
+    } catch (fallbackError) {
+      console.error("❌ Even fallback RAG failed:", fallbackError);
+      return {
+        response: "I'm sorry, I encountered an error while processing your question. Please try again.",
+        sources: []
+      };
+    }
   }
 }
 

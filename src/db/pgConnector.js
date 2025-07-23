@@ -1,134 +1,169 @@
-// src/db/pgConnector.js - Optimized for serverless cold starts
-
+// src/db/pgConnector.js - FIXED VERSION
 const { Pool } = require("pg");
+require('dotenv').config();
 
-const isLocal = process.env.NODE_ENV !== "development";
+// CORRECT environment detection
+const isLocal = process.env.NODE_ENV === "development";  // ✅ FIXED!
 const isProduction = process.env.NODE_ENV === "production";
 const isVercel = process.env.VERCEL || process.env.VERCEL_ENV;
 
-// Optimized pool configuration for serverless
+console.log('🔍 Environment Detection:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('isLocal:', isLocal);
+console.log('isProduction:', isProduction);
+console.log('isVercel:', isVercel);
+
+// Get the correct connection string
+let connectionString;
+
+if (isLocal) {
+  // Local development - use POSTGRES_URI
+  connectionString = process.env.POSTGRES_URI;
+  console.log('📍 Using LOCAL configuration');
+  console.log('Connection string source: POSTGRES_URI');
+} else {
+  // Production - try multiple options
+  connectionString = process.env.POSTGRES_URI || 
+                   process.env.POSTGRES_URL || 
+                   process.env.DATABASE_URL;
+  console.log('📍 Using PRODUCTION configuration');
+  console.log('Connection string source:', 
+    process.env.POSTGRES_URI ? 'POSTGRES_URI' :
+    process.env.POSTGRES_URL ? 'POSTGRES_URL' : 
+    process.env.DATABASE_URL ? 'DATABASE_URL' : 'NONE FOUND');
+}
+
+if (!connectionString) {
+  console.error('❌ No PostgreSQL connection string found!');
+  console.error('Available env vars:');
+  console.error('- POSTGRES_URI:', !!process.env.POSTGRES_URI);
+  console.error('- POSTGRES_URL:', !!process.env.POSTGRES_URL);
+  console.error('- DATABASE_URL:', !!process.env.DATABASE_URL);
+  throw new Error('PostgreSQL connection string not configured');
+}
+
+console.log('✅ Using connection string:', connectionString.substring(0, 30) + '...');
+
+// Optimized pool configuration
 const poolConfig = {
-  connectionString: process.env.POSTGRES_URL,
+  connectionString: connectionString,
   ssl: isProduction ? { rejectUnauthorized: false } : false,
   
-  // Serverless optimizations
+  // Connection pool settings
   max: isVercel ? 1 : 10,  // Single connection for serverless
   min: 0,                  // No idle connections
   acquireTimeoutMillis: 3000,  // Fail fast
-  idleTimeoutMillis: 1000,     // Release quickly
+  idleTimeoutMillis: isVercel ? 1000 : 30000,     // Release quickly in serverless
   connectionTimeoutMillis: 3000, // Quick timeout
   
-  // Enable keep-alive
+  // Enable keep-alive for better performance
   keepAlive: true,
   keepAliveInitialDelayMillis: 0,
   
-  // Query timeout for cold starts
-  statement_timeout: 5000,
-  query_timeout: 5000
+  // Query timeout
+  statement_timeout: 10000,
+  query_timeout: 10000
 };
 
-console.log(`🚀 Database Config: ${isVercel ? 'Vercel Serverless' : isLocal ? 'Local' : 'Production'}`);
+// Create connection pool
+const pool = new Pool(poolConfig);
 
-// Lazy connection pool (don't connect immediately)
-let pool = null;
-
-function getPool() {
-  if (!pool) {
-    pool = new Pool(poolConfig);
+// Test connection on startup
+async function initializeConnection() {
+  try {
+    const client = await pool.connect();
+    console.log(`✅ Connected to PostgreSQL database`);
     
-    // Handle pool errors gracefully
-    pool.on('error', (err) => {
-      console.error('⚠️ Database pool error:', err.message);
-      // Don't exit process in serverless environment
-    });
+    // Test basic query
+    const result = await client.query('SELECT NOW() as current_time, version() as pg_version');
+    console.log(`📊 Database time: ${result.rows[0].current_time}`);
+    console.log(`📊 PostgreSQL version: ${result.rows[0].pg_version.split(' ')[0]}`);
     
-    pool.on('connect', () => {
-      console.log('✅ Database client connected');
-    });
+    client.release();
+    return true;
+  } catch (err) {
+    console.error("❌ Error connecting to PostgreSQL:", err.message);
+    
+    // Provide helpful error messages
+    if (err.code === 'ECONNREFUSED') {
+      console.error('💡 Connection refused - check if PostgreSQL is running');
+    } else if (err.code === 'ENOTFOUND') {
+      console.error('💡 Host not found - check your connection string hostname');
+    } else if (err.message.includes('password')) {
+      console.error('💡 Authentication failed - check username/password');
+    } else if (err.message.includes('SASL')) {
+      console.error('💡 Password authentication error - check password format');
+    }
+    
+    console.error('💡 Current connection string start:', connectionString.substring(0, 50) + '...');
+    return false;
   }
-  return pool;
 }
 
-// Fast query function with timeout
+// Initialize connection on startup
+initializeConnection();
+
+// Helper function for executing queries
 async function query(text, params) {
-  const startTime = Date.now();
-  let client = null;
+  const start = Date.now();
   
   try {
-    const currentPool = getPool();
-    
-    // Get client with timeout
-    client = await Promise.race([
-      currentPool.connect(),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Connection timeout')), 3000)
-      )
-    ]);
-
-    // Process vector parameters (keep your existing logic)
     let processedParams = params;
+    
+    // Special handling for vectors (for pgvector)
     if (params) {
       processedParams = params.map((param) => {
-        if (Array.isArray(param) && param.length > 0 && typeof param[0] === "number") {
+        if (
+          Array.isArray(param) &&
+          param.length > 0 &&
+          typeof param[0] === "number"
+        ) {
+          // Convert array of numbers to PostgreSQL vector format [n1,n2,n3,...]
           return `[${param.join(",")}]`;
         }
         return param;
       });
     }
 
-    // Execute query with timeout
-    const result = await Promise.race([
-      client.query(text, processedParams),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Query timeout')), 5000)
-      )
-    ]);
+    const res = await pool.query(text, processedParams);
     
-    const duration = Date.now() - startTime;
+    const duration = Date.now() - start;
+    console.log(`✅ Query completed in ${duration}ms, returned ${res.rowCount} rows`);
     
-    // Log slow queries in production
-    if (isProduction && duration > 1000) {
-      console.log(`🐌 Slow query: ${duration}ms - ${text.substring(0, 50)}...`);
-    }
-    
-    return result;
-    
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    console.error(`❌ Query failed after ${duration}ms:`, error.message);
-    throw error;
-  } finally {
-    if (client) {
-      client.release();
-    }
+    return res;
+  } catch (err) {
+    const duration = Date.now() - start;
+    console.error(`❌ Query failed after ${duration}ms:`, err.message);
+    console.error("Query:", text.substring(0, 100) + (text.length > 100 ? '...' : ''));
+    throw err;
   }
 }
 
-// Non-blocking connection test
+// Test function
 async function testConnection() {
   try {
-    const result = await query("SELECT NOW() as current_time");
+    const res = await query("SELECT NOW() as current_time, current_database() as db_name");
     return {
       connected: true,
-      timestamp: result.rows[0].current_time,
-      environment: isVercel ? 'vercel' : isLocal ? 'local' : 'production'
+      timestamp: res.rows[0].current_time,
+      database: res.rows[0].db_name,
+      environment: isLocal ? 'local' : 'production'
     };
   } catch (error) {
-    console.error('🔥 Connection test failed:', error.message);
+    console.error('PostgreSQL connection test failed:', error.message);
     return {
       connected: false,
       error: error.message,
-      environment: isVercel ? 'vercel' : isLocal ? 'local' : 'production'
+      environment: isLocal ? 'local' : 'production'
     };
   }
 }
 
-// Graceful shutdown for serverless
+// Graceful shutdown
 async function closePool() {
   if (pool) {
     try {
       await pool.end();
-      pool = null;
       console.log('💤 Database pool closed');
     } catch (error) {
       console.error('⚠️ Error closing pool:', error.message);
@@ -136,12 +171,24 @@ async function closePool() {
   }
 }
 
-// Export optimized functions
+// Graceful shutdown handlers
+process.on('SIGINT', async () => {
+  console.log('🛑 Received SIGINT, closing database connections...');
+  await closePool();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('🛑 Received SIGTERM, closing database connections...');
+  await closePool();
+  process.exit(0);
+});
+
 module.exports = {
   query,
   testConnection,
   closePool,
-  getPool: () => pool,
+  pool,
   isLocal,
   isProduction,
   isVercel
