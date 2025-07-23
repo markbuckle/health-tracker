@@ -1435,10 +1435,13 @@
     height: 90vh !important;
     margin-bottom: 180vh !important;
   }
+  .section-header {
+    padding-bottom: 0;
+  }
   .use-case-block {
     min-height: 90vh;
     height: 90vh;
-    margin-top: -5vh;
+    margin-top: -13vh;
   }
   .use-case-card {
     width: 300px;
