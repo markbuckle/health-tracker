@@ -138,7 +138,7 @@
   font-weight: 400;
   font-style: italic;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-  max-width: 80%;
+  max-width: 60%;
   position: relative;
   padding: 0 20px;
 }
@@ -178,20 +178,21 @@
   position: relative;
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 0;
 }
 .use-case-block {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 90vh;
+  min-height: 100vh;
   padding: 0 2rem;
   opacity: 0;
   transform: translateY(80px);
   transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 2;
   margin-top: -10vh;
+  box-sizing: border-box;
 }
 .use-case-block.card-visible {
   opacity: 1;
@@ -233,8 +234,6 @@
 }
 /* Keep existing use-case-card styles but update positioning */
 .use-case-card {
-  /* background: #f2f4f3; */
-  /* background: linear-gradient(135deg, #f8faf9 0%, #f0f6f2 100%); */
   backdrop-filter: blur(20px);
   border-radius: 24px;
   width: 400px;
@@ -244,17 +243,11 @@
   position: relative;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  /* border: 1px solid rgba(255, 255, 255, 0.2); */
-  /* box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.08),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6); */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   text-align: center;
-  /* text-align: left; */
   animation: float 6s ease-in-out infinite;
 }
 .use-case-card::before {
@@ -309,7 +302,7 @@
 .use-cases-section {
   /* background: linear-gradient(135deg, #e0ecee 0%, #b3d6ff 100%); */
   background-color: #e0ecee;
-  padding: 4rem 0;
+  padding: 0;
   position: relative;
   overflow: hidden;
 }
@@ -326,14 +319,17 @@
 .use-cases-container {
   position: relative;
   max-width: 900px;
-  margin: 0 auto 5rem; /* Add bottom margin to replace padding */
-  padding: 1rem;
+  margin: 0 auto; /* Add bottom margin to replace padding */
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .section-header {
   text-align: center;
+  padding: 2rem 1rem; /* Add padding only to header */
+  position: relative;
+  z-index: 3;
 }
 .section-title {
   font-size: clamp(1rem, 5vw, 2rem);
@@ -917,7 +913,6 @@
   }
   .quote-2 {
     font-size: 1.6rem;
-    max-width: 70%;
     margin-top: 5.5rem;
   }
   .quote-2-by {
@@ -950,11 +945,9 @@
   }
   .quote-1 {
     font-size: 2rem;
-    max-width: 80%;
   }
   .quote-2 {
     font-size: 1.4rem;
-    max-width: 75%;
   }
   .quote-2-by {
     font-size: 1.25rem;
@@ -981,7 +974,6 @@
   }
   .quote-2 {
     font-size: 1.3rem;
-    max-width: 80%;
   }
   .quote-2-by {
     font-size: 1.15rem;
@@ -1008,6 +1000,12 @@
   }
   .use-cases-section {
     padding-top: 3rem 0;
+  }
+  .use-case-block {
+    min-height: 100vh;
+    height: 100vh;
+    margin-top: -10vh;
+    padding: 0 1.5rem;
   }
   .hero-container {
     display: flex !important;
@@ -1070,7 +1068,7 @@
   }
   .quote-2 {
     font-size: 1.2rem;
-    max-width: 88%;
+    max-width: 80%;
     margin-top: 3.5rem;
     padding: 0 1rem;
   }
@@ -1153,9 +1151,10 @@
     padding: 1rem;
   }
   .use-case-block {
-    min-height: 70vh;
+    min-height: 100vh; /* Increased from 70vh */
+    height: 100vh;
     padding: 0 1rem;
-    margin-top: -5vh;
+    margin-top: -8vh; /* Adjusted for mobile */
   }
   .use-case-card {
     margin-top: 0rem;
@@ -1167,7 +1166,7 @@
     height: 180px;
   }
   .scroll-container {
-    padding: 1rem 0;
+    padding: 0;
   }
   .hero {
     padding: 1rem 0;
@@ -1436,10 +1435,19 @@
     height: 90vh !important;
     margin-bottom: 180vh !important;
   }
+  .use-case-block {
+    min-height: 90vh;
+    height: 90vh;
+    margin-top: -5vh;
+  }
   .use-case-card {
     width: 300px;
     height: 300px;
     padding: 1.8rem 1.2rem;
+  }
+  .card-illustration {
+    width: 160px;
+    height: 160px;
   }
   .use-cases-section {
     padding: 1.5rem 0 0 0;
