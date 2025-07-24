@@ -735,7 +735,8 @@ img,
   z-index: 1 !important; /* Lower than hero-wrapper */
   margin-top: -2px !important;
   margin-bottom: -2px !important;
-  padding-bottom: 0 !important;
+  padding: 80px 0;
+  overflow: hidden;
 }
 .dashboard-img .content-container {
   margin-bottom: 0 !important;

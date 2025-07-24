@@ -156,20 +156,38 @@
       </div>
     </div>
 
-    <div class="dashboard-img">
-      <div class="content-container">
-        <div class="inner-content-container">
-          <img
-            src="images/Dashboard.png"
-            loading="lazy"
-            width="Auto"
-            height="Auto"
-            alt=""
-            class="demo-page-img"
-          />
+    <!-- Dashboard Continuous Image Slider Section -->
+    <section class="dashboard-img">
+        <div class="content-container">
+            <div class="inner-content-container">
+                <div class="slider-wrapper">
+                    <div class="slider-track" id="sliderTrack">
+                        <!-- Original set of images -->
+                        <div class="slider-item">
+                            <img src="images/insights-dashboard-ipad.png" alt="Insights Dashboard" loading="lazy">
+                        </div>
+                        <div class="slider-item">
+                            <img src="images/recommended-actions-ipad.png" alt="Recommended Actions" loading="lazy">
+                        </div>
+                        <div class="slider-item">
+                            <img src="images/wellness-score-ipad.png" alt="Wellness Score" loading="lazy">
+                        </div>
+                        
+                        <!-- Duplicate set for seamless loop -->
+                        <div class="slider-item">
+                            <img src="images/insights-dashboard-ipad.png" alt="Insights Dashboard" loading="lazy">
+                        </div>
+                        <div class="slider-item">
+                            <img src="images/recommended-actions-ipad.png" alt="Recommended Actions" loading="lazy">
+                        </div>
+                        <div class="slider-item">
+                            <img src="images/wellness-score-ipad.png" alt="Wellness Score" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
+    </section>
 
     <div class="wave-light-bg">
       <div class="wave-pattern">
@@ -545,6 +563,60 @@
         });
       })();
     </script> --}}
+    <script> // Sliding image carousel
+        class ContinuousSlider {
+            constructor() {
+                this.track = document.getElementById('sliderTrack');
+                this.animationStarted = false;
+                this.observerOptions = {
+                    threshold: 0.3,
+                    rootMargin: '0px 0px -10% 0px'
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupIntersectionObserver();
+            }
+            
+            setupIntersectionObserver() {
+                if ('IntersectionObserver' in window) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting && !this.animationStarted) {
+                                // Start animation 1 second after coming into viewport
+                                setTimeout(() => {
+                                    this.startAnimation();
+                                }, 1000);
+                                this.animationStarted = true;
+                            }
+                        });
+                    }, this.observerOptions);
+                    
+                    observer.observe(document.querySelector('.dashboard-img'));
+                } else {
+                    // Fallback for browsers without IntersectionObserver
+                    setTimeout(() => {
+                        this.startAnimation();
+                    }, 2000);
+                }
+            }
+            
+            startAnimation() {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    return; // Respect user's motion preferences
+                }
+                
+                this.track.classList.add('animate');
+            }
+        }
+        
+        // Initialize the slider when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ContinuousSlider();
+        });
+    </script>
     <script src="/js/feedbackWidget.js"></script>
   </body>
 </html>
