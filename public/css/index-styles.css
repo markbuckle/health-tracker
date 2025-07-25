@@ -1412,16 +1412,16 @@
   }
   
   .slider-wrapper {
-    height: 300px;
+    height: 400px;
   }
   
   .slider-track {
     gap: 40px; /* More space on mobile too */
-    width: calc(600% + 40px);
+    width: calc(400% + 40px);
   }
   
   .slider-item {
-    flex: 0 0 calc(14% - 28px); /* Adjusted for mobile */
+    flex: 0 0 calc(20% - 28px); /* Adjusted for mobile */
     border-radius: 15px;
   }
   
@@ -1576,11 +1576,11 @@
     padding: 0;
   }
   .slider-wrapper {
-    height: 250px;
+    height: 350px;
   }
   .slider-track {
     gap: 30px; /* More space on small screens */
-    width: calc(600% + 30px);
+    width: calc(400% + 30px);
   }
   .card-icon {
     width: 52px;
@@ -1616,7 +1616,7 @@
     will-change: auto !important;
   }
   .content-container {
-    padding: 0 15px;
+    padding: 0;
   }
   .inner-content-container {
     width: 95%;
@@ -1630,7 +1630,7 @@
     margin-bottom: -5px !important;
   }
   .slider-item {
-    flex: 0 0 calc(14% - 20px); /* Adjusted for small screens */
+    flex: 0 0 calc(18% - 20px); /* Adjusted for small screens */
     border-radius: 12px;
   }
   .slider-item img {
