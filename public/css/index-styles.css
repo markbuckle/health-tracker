@@ -288,17 +288,6 @@
 .use-case-card:nth-child(3n) {
   animation-delay: -4s;
 }
-/* Remove all slider navigation styles */
-.use-cases-navigation,
-.nav-dot,
-.nav-button,
-.pagination,
-.slider-wrapper,
-.slider-track,
-.slide,
-.nav-indicator {
-  display: none !important;
-}
 
 /* ----- Animated Scroll Hero Section ----- */
 .slider-content-container {
@@ -374,9 +363,9 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: 400px;
-  mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-  -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+  height: 500px;
+  mask: linear-gradient(90deg, transparent, white 10%, white 90%, transparent);
+  -webkit-mask: linear-gradient(90deg, transparent, white 10%, white 90%, transparent);
 }
 .slider-wrapper::before {
   content: '';
@@ -395,7 +384,7 @@
 }
 .slider-track {
   display: flex;
-  width: calc(600% + 80px); /* 6 images with larger gaps */
+  width: calc(500% + 80px); /* 6 images with larger gaps */
   height: 100%;
   gap: 60px; /* More space between images */
   animation: slide 30s linear infinite; /* Slower animation */
@@ -405,7 +394,7 @@
   animation-play-state: running;
 }
 .slider-item {
-  flex: 0 0 calc(14% - 40px); /* Narrower images with more gap compensation */
+  flex: 0 0 calc(9% - 40px); /* Narrower images with more gap compensation */
   height: 100%;
   display: flex;
   align-items: center;
@@ -415,24 +404,21 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
-  background: red !important; /* Temporary - you should see red rectangles */
-    min-height: 200px !important;
 }
-
 .slider-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
-
 .slider-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
+  object-position: center top;
   border-radius: 20px;
   transition: transform 0.3s ease;
+  padding: 8px; /* Reduced padding */
+  box-sizing: border-box;
 }
-
 .slider-item:hover img {
   transform: scale(1.05);
 }
@@ -933,6 +919,19 @@
 }
 .dashboard-img .demo-page-img {
   margin-bottom: 2rem !important;
+}
+.dashboard-img .content-container {
+  display: flex !important;
+  max-width: 1200px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  justify-content: center !important;
+}
+.dashboard-img .inner-content-container {
+  width: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 /* Handle screen readers and accessibility */
  @media (prefers-reduced-motion: reduce) {
@@ -1627,7 +1626,7 @@
   }
   .dashboard-img {
     margin-top: -5px !important;
-    padding: 40px 0;
+    padding: 40px 0 !important;
     margin-bottom: -5px !important;
   }
   .slider-item {
