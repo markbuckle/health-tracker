@@ -367,20 +367,24 @@
   mask: linear-gradient(90deg, transparent, white 10%, white 90%, transparent);
   -webkit-mask: linear-gradient(90deg, transparent, white 10%, white 90%, transparent);
 }
+.slider-wrapper::before,
+.slider-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10%;
+    z-index: 2;
+    pointer-events: none;
+}
 .slider-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, 
-      rgba(179, 214, 255, 0.3) 0%, 
-      transparent 20%, 
-      transparent 80%, 
-      rgba(179, 214, 255, 0.3) 100%);
-  pointer-events: none;
-  z-index: 1;
+    left: 0;
+    background: linear-gradient(90deg, #b3d6ff, transparent);
+}
+
+.slider-wrapper::after {
+    right: 0;
+    background: linear-gradient(270deg, #b3d6ff, transparent);
 }
 .slider-track {
   display: flex;
@@ -1408,27 +1412,26 @@
     margin-bottom: 3.5rem;
   }
   .dashboard-img {
-    padding: 60px 0;
+    padding: 40px 0;
   }
-  
   .slider-wrapper {
     height: 400px;
   }
-  
+  .slider-wrapper::before,
+  .slider-wrapper::after {
+        width: 8%;
+  }
   .slider-track {
     gap: 40px; /* More space on mobile too */
     width: calc(400% + 40px);
   }
-  
   .slider-item {
     flex: 0 0 calc(20% - 28px); /* Adjusted for mobile */
     border-radius: 15px;
   }
-  
   .slider-item img {
     border-radius: 15px;
   }
-  
   @keyframes slide {
     0% {
         transform: translateX(0);
@@ -1630,6 +1633,7 @@
   .dashboard-img {
     margin-top: -5px !important;
     padding: 40px 0 !important;
+    padding-top: 0 !important;
     margin-bottom: -5px !important;
   }
   .slider-item {
@@ -1640,12 +1644,9 @@
     border-radius: 12px;
     padding: 5px;
   }
-  .slider-wrapper::before {
-    background: linear-gradient(90deg, 
-        rgba(179, 214, 255, 0.5) 0%, 
-        transparent 5%, 
-        transparent 95%, 
-        rgba(179, 214, 255, 0.5) 100%);
+  .slider-wrapper::before,
+  .slider-wrapper::after {
+    width: 5%;
   }
 }
 
