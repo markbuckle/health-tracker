@@ -14,13 +14,13 @@
   gap: 0 !important;
   display: flex;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
   justify-content: center;
 }
 .inner-content-container {
   width: 100%;
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 .hero-container {
   display: flex;
@@ -101,7 +101,6 @@
   flex-direction: column;
   align-items: center;
   padding-top: 0 !important;
-  padding-bottom: var(--spacing-md) !important;
   width: 100%;
 }
 .quote-container-2 {
@@ -390,7 +389,7 @@
   display: flex;
   width: calc(500% + 80px); /* 6 images with larger gaps */
   height: 100%;
-  gap: 60px; /* More space between images */
+  gap: 20px; /* More space between images */
   animation: slide 30s linear infinite; /* Slower animation */
   animation-play-state: paused;
 }
@@ -926,16 +925,15 @@
 }
 .dashboard-img .content-container {
   display: flex !important;
-  max-width: 1200px !important;
-  width: 100% !important;
+  width: 95% !important;
   margin: 0 auto !important;
-  padding: 0 20px !important;
+  padding: 0 !important;
   justify-content: center !important;
 }
 .dashboard-img .inner-content-container {
   width: 100% !important;
   position: relative !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 /* Handle screen readers and accessibility */
  @media (prefers-reduced-motion: reduce) {
@@ -1184,7 +1182,8 @@
     max-width: 68%;
   }
   .slider-wrapper {
-    margin: 0 50px;
+    margin: 0;
+    height: 250px;
   }
   .card-icon {
     width: 55px;
@@ -1415,14 +1414,14 @@
     padding: 40px 0;
   }
   .slider-wrapper {
-    height: 400px;
+    height: 250px;
   }
   .slider-wrapper::before,
   .slider-wrapper::after {
         width: 8%;
   }
   .slider-track {
-    gap: 40px; /* More space on mobile too */
+    gap: 20px; /* More space on mobile too */
     width: calc(400% + 40px);
   }
   .slider-item {
@@ -1580,12 +1579,12 @@
     padding: 0;
   }
   .slider-wrapper {
-    height: 250px;
-    mask: linear-gradient(90deg, transparent, white 5%, white 95%, transparent);
-    -webkit-mask: linear-gradient(90deg, transparent, white 5%, white 95%, transparent);
+    height: 180px;
+    mask: linear-gradient(90deg, transparent, white 10%, white 90%, transparent);
+    -webkit-mask: linear-gradient(90deg, transparent, white 10%, white 90%, transparent);
   }
   .slider-track {
-    gap: 30px; /* More space on small screens */
+    gap: 15px; /* More space on small screens */
     width: calc(400% + 30px);
   }
   .card-icon {
