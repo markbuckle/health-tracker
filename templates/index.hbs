@@ -159,23 +159,22 @@
     <div class="dashboard-img">
       <div class="content-container">
         <div class="inner-content-container">
-          <div class="laptop-container">
-            <img
-              src="images/laptop1.png"
-              loading="lazy"
-              width="Auto"
-              height="Auto"
-              alt=""
-              class="demo-page-img"
-            />
-            <div id="imageLoader" class="image-loader"></div>
-            <div class="hover-titles">
-              <div class="hover-title active" data-image="laptop1.png">👤 Basic Info</div>
-              <div class="hover-title" data-image="laptop2.png">📁 Upload Medical Documents</div>
-              <div class="hover-title" data-image="laptop3.png">📊 Reports</div>
-              <div class="hover-title" data-image="laptop4.png">💡 Insights</div>
+            <!-- Laptop images container -->
+            <div class="laptop-image-container">
+                <!-- Placeholder for aspect ratio -->
+                <div class="laptop-placeholder"></div>
+                <!-- All images preloaded and layered -->
+                <img src="images/laptop1.png" alt="Basic Info dashboard" class="demo-page-img active" data-target="basic-info">
+                <img src="images/laptop2.png" alt="Upload Documents dashboard" class="demo-page-img" data-target="upload-docs">
+                <img src="images/laptop3.png" alt="Reports dashboard" class="demo-page-img" data-target="reports">
+                <img src="images/laptop4.png" alt="Insights dashboard" class="demo-page-img" data-target="insights">
             </div>
-          </div>
+            <div class="hover-titles">
+              <div class="hover-title active" data-target="basic-info">👤 Basic Info</div>
+              <div class="hover-title" data-target="upload-docs">📁 Upload Medical Documents</div>
+              <div class="hover-title" data-target="reports">📊 Reports</div>
+              <div class="hover-title" data-target="insights">💡 Insights</div>
+            </div>
         </div>
       </div>
     </div>
@@ -340,108 +339,27 @@
     });
     </script>
     <script> // Laptop image changer
-        class DashboardImageChanger {
-            constructor() {
-                this.laptopImage = document.getElementById('laptopImage');
-                this.imageLoader = document.getElementById('imageLoader');
-                this.hoverTitles = document.querySelectorAll('.hover-title');
-                this.currentImage = 'laptop1.png';
-                this.isChanging = false;
-                
-                this.init();
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            const titles = document.querySelectorAll('.hover-title');
+            const images = document.querySelectorAll('.demo-page-img');
             
-            init() {
-                // Preload all images for smooth transitions
-                this.preloadImages();
-                
-                // Add event listeners to hover titles
-                this.hoverTitles.forEach(title => {
-                    title.addEventListener('mouseenter', (e) => this.handleHover(e));
-                    title.addEventListener('mouseleave', () => this.handleMouseLeave());
+            titles.forEach(title => {
+                title.addEventListener('mouseenter', function() {
+                    const target = this.dataset.target;
+                    
+                    // Remove active class from all titles and images
+                    titles.forEach(t => t.classList.remove('active'));
+                    images.forEach(img => img.classList.remove('active'));
+                    
+                    // Add active class to current title and corresponding image
+                    this.classList.add('active');
+                    const targetImage = document.querySelector(`[data-target="${target}"].demo-page-img`);
+                    if (targetImage) {
+                        targetImage.classList.add('active');
+                    }
                 });
-            }
-            
-            preloadImages() {
-                const imageNames = ['laptop1.png', 'laptop2.png', 'laptop3.png', 'laptop4.png'];
-                
-                imageNames.forEach(imageName => {
-                    const img = new Image();
-                    img.src = `images/${imageName}`;
-                });
-            }
-            
-            handleHover(event) {
-                const targetImage = event.target.dataset.image;
-                
-                if (targetImage && targetImage !== this.currentImage && !this.isChanging) {
-                    this.changeImage(targetImage);
-                    this.setActiveTitle(event.target);
-                }
-            }
-            
-            handleMouseLeave() {
-                // Optional: You can add logic here if you want the image to revert
-                // when not hovering over any title
-            }
-            
-            changeImage(newImage) {
-                if (this.isChanging) return;
-                
-                this.isChanging = true;
-                
-                // Show loading indicator
-                this.imageLoader.classList.add('show');
-                this.laptopImage.classList.add('changing');
-                
-                // Create new image to ensure it's loaded
-                const img = new Image();
-                img.onload = () => {
-                    // Small delay for smooth transition
-                    setTimeout(() => {
-                        this.laptopImage.src = `images/${newImage}`;
-                        this.currentImage = newImage;
-                        
-                        // Hide loading indicator
-                        this.imageLoader.classList.remove('show');
-                        this.laptopImage.classList.remove('changing');
-                        this.isChanging = false;
-                    }, 150);
-                };
-                
-                img.onerror = () => {
-                    // Handle error - hide loader and reset
-                    console.warn(`Failed to load image: ${newImage}`);
-                    this.imageLoader.classList.remove('show');
-                    this.laptopImage.classList.remove('changing');
-                    this.isChanging = false;
-                };
-                
-                img.src = `images/${newImage}`;
-            }
-            
-            setActiveTitle(activeTitle) {
-                // Remove active class from all titles
-                this.hoverTitles.forEach(title => title.classList.remove('active'));
-                
-                // Add active class to hovered title
-                activeTitle.classList.add('active');
-            }
-        }
-        
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            new DashboardImageChanger();
-        });
-        
-        // Fallback for older browsers or if DOMContentLoaded already fired
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                new DashboardImageChanger();
             });
-        } else {
-            new DashboardImageChanger();
-        }
+        });
     </script>
     {{!-- <script>  // Debug panel for scroll animation (keep commented until needed)
       (function() {
