@@ -159,14 +159,23 @@
     <div class="dashboard-img">
       <div class="content-container">
         <div class="inner-content-container">
-          <img
-            src="images/laptop1.png"
-            loading="lazy"
-            width="Auto"
-            height="Auto"
-            alt=""
-            class="demo-page-img"
-          />
+          <div class="laptop-container">
+            <img
+              src="images/laptop1.png"
+              loading="lazy"
+              width="Auto"
+              height="Auto"
+              alt=""
+              class="demo-page-img"
+            />
+            <div id="imageLoader" class="image-loader"></div>
+            <div class="hover-titles">
+              <div class="hover-title active" data-image="laptop1.png">👤 Basic Info</div>
+              <div class="hover-title" data-image="laptop2.png">📁 Upload Medical Documents</div>
+              <div class="hover-title" data-image="laptop3.png">📊 Reports</div>
+              <div class="hover-title" data-image="laptop4.png">💡 Insights</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -329,6 +338,110 @@
         
         checkCardsOnScroll();
     });
+    </script>
+    <script> // Laptop image changer
+        class DashboardImageChanger {
+            constructor() {
+                this.laptopImage = document.getElementById('laptopImage');
+                this.imageLoader = document.getElementById('imageLoader');
+                this.hoverTitles = document.querySelectorAll('.hover-title');
+                this.currentImage = 'laptop1.png';
+                this.isChanging = false;
+                
+                this.init();
+            }
+            
+            init() {
+                // Preload all images for smooth transitions
+                this.preloadImages();
+                
+                // Add event listeners to hover titles
+                this.hoverTitles.forEach(title => {
+                    title.addEventListener('mouseenter', (e) => this.handleHover(e));
+                    title.addEventListener('mouseleave', () => this.handleMouseLeave());
+                });
+            }
+            
+            preloadImages() {
+                const imageNames = ['laptop1.png', 'laptop2.png', 'laptop3.png', 'laptop4.png'];
+                
+                imageNames.forEach(imageName => {
+                    const img = new Image();
+                    img.src = `images/${imageName}`;
+                });
+            }
+            
+            handleHover(event) {
+                const targetImage = event.target.dataset.image;
+                
+                if (targetImage && targetImage !== this.currentImage && !this.isChanging) {
+                    this.changeImage(targetImage);
+                    this.setActiveTitle(event.target);
+                }
+            }
+            
+            handleMouseLeave() {
+                // Optional: You can add logic here if you want the image to revert
+                // when not hovering over any title
+            }
+            
+            changeImage(newImage) {
+                if (this.isChanging) return;
+                
+                this.isChanging = true;
+                
+                // Show loading indicator
+                this.imageLoader.classList.add('show');
+                this.laptopImage.classList.add('changing');
+                
+                // Create new image to ensure it's loaded
+                const img = new Image();
+                img.onload = () => {
+                    // Small delay for smooth transition
+                    setTimeout(() => {
+                        this.laptopImage.src = `images/${newImage}`;
+                        this.currentImage = newImage;
+                        
+                        // Hide loading indicator
+                        this.imageLoader.classList.remove('show');
+                        this.laptopImage.classList.remove('changing');
+                        this.isChanging = false;
+                    }, 150);
+                };
+                
+                img.onerror = () => {
+                    // Handle error - hide loader and reset
+                    console.warn(`Failed to load image: ${newImage}`);
+                    this.imageLoader.classList.remove('show');
+                    this.laptopImage.classList.remove('changing');
+                    this.isChanging = false;
+                };
+                
+                img.src = `images/${newImage}`;
+            }
+            
+            setActiveTitle(activeTitle) {
+                // Remove active class from all titles
+                this.hoverTitles.forEach(title => title.classList.remove('active'));
+                
+                // Add active class to hovered title
+                activeTitle.classList.add('active');
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new DashboardImageChanger();
+        });
+        
+        // Fallback for older browsers or if DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                new DashboardImageChanger();
+            });
+        } else {
+            new DashboardImageChanger();
+        }
     </script>
     {{!-- <script>  // Debug panel for scroll animation (keep commented until needed)
       (function() {
