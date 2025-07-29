@@ -736,6 +736,7 @@ img,
   margin-top: -2px !important;
   margin-bottom: -2px !important;
   padding: 40px 0 !important;
+  padding-top: 0 !important;
   overflow: hidden !important;
 }
 .dashboard-img .content-container {
