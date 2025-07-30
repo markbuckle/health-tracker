@@ -1967,9 +1967,10 @@
   }
   
   .use-case-block {
-    min-height: 85vh; /* Reduced from 100vh */
-    height: 85vh;
-    margin-top: -5vh; /* Reduced spacing between blocks */
+    min-height: 75vh; /* Reduced from 100vh */
+    height: 75vh;
+    margin-top: -20vh; /* Reduced spacing between blocks */
+    margin-bottom: -10vh; /* Reduced spacing between blocks */
     padding: 0 1.5rem;
   }
   
