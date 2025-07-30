@@ -277,23 +277,39 @@
     <script> // Hero scrolling animation
       document.addEventListener('DOMContentLoaded', function() {
         const cardBlocks = document.querySelectorAll('.use-case-block');
+        const sectionTitle = document.querySelector('.section-title');
         console.log('Found use case cards:', cardBlocks.length);
+        console.log('Found section title:', sectionTitle ? 'Yes' : 'No');
         
         if (cardBlocks.length === 0) return;
-
-        // Show the first card immediately
-        setTimeout(() => {
-            cardBlocks[0].classList.add('card-visible');
-            console.log('First card shown');
-        }, 300);
 
         // Responsive scroll detection
         function checkCardsOnScroll() {
             const isMobile = window.innerWidth <= 767;
             const isTablet = window.innerWidth <= 1024 && window.innerWidth > 767;
             
+            // Check section title first
+            if (sectionTitle && !sectionTitle.classList.contains('title-visible')) {
+                const titleRect = sectionTitle.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                
+                // Trigger title animation when it comes into viewport
+                if (titleRect.top < windowHeight * 0.8 && titleRect.bottom > windowHeight * 0.2) {
+                    sectionTitle.classList.add('title-visible');
+                    console.log('Section title animated on scroll');
+                    
+                    // Show first card shortly after title
+                    setTimeout(() => {
+                        if (cardBlocks[0] && !cardBlocks[0].classList.contains('card-visible')) {
+                            cardBlocks[0].classList.add('card-visible');
+                            console.log('First card shown after title');
+                        }
+                    }, 200);
+                }
+            }
+            
             cardBlocks.forEach((card, index) => {
-                if (index === 0) return; // Skip first card
+                if (index === 0) return; // Skip first card (handled above)
                 
                 const rect = card.getBoundingClientRect();
                 const windowHeight = window.innerHeight;
@@ -336,7 +352,7 @@
         });
         
         checkCardsOnScroll();
-    });
+      });
     </script>
     <script> // Laptop image changer
         document.addEventListener('DOMContentLoaded', function() {
