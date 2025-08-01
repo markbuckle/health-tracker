@@ -955,90 +955,123 @@
 }
 
 /* Sample PDF Section Styles */
-  .upload-section-container {
-    display: flex;
-    gap: 2rem;
-    align-items: flex-start;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  .file-upload-container {
-    flex: 1;
-    min-width: 0; /* Prevents flex item from overflowing */
-  }
-  .sample-pdf-section {
-    flex: 0 0 280px; /* Fixed width for consistency */
-    background-color: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-  }
-  .sample-pdf-section:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-  .sample-pdf-section h4 {
-    font-family: "Poppins-Regular", sans-serif;
-    font-size: 1.1rem;
-    color: #1e293b;
-    margin: 0 0 1rem 0;
-    text-align: center;
-    font-weight: 600;
-  }
-  .sample-pdf-preview {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-  .sample-pdf-preview img {
-    width: 100%;
-    max-width: 200px;
-    height: auto;
-    border: 2px solid #e2e8f0;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  .sample-pdf-preview img:hover {
-    border-color: #699670;
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  .use-sample-btn {
-    background-color: #699670;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9rem;
-    font-family: "Poppins-Regular", sans-serif;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  .use-sample-btn:hover {
-    background-color: #5b9865;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(105, 150, 112, 0.3);
-  }
-  .use-sample-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(105, 150, 112, 0.3);
-  }
-  .use-sample-btn::before {
-    content: "📄";
-    font-size: 1rem;
-  }
+.upload-section-container {
+  display: flex;
+  gap: 2rem;
+  align-items: center; /* Center vertically */
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.file-upload-container {
+  flex: 1;
+  min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.sample-pdf-section {
+  flex: 0 0 260px; /* Slightly smaller fixed width */
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem; /* Reduced padding */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sample-pdf-section:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.sample-pdf-section h4 {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 1rem; /* Slightly smaller */
+  color: #1e293b;
+  margin: 0 0 0.75rem 0; /* Reduced margin */
+  text-align: center;
+  font-weight: 600;
+}
+
+.sample-pdf-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem; /* Reduced gap */
+}
+
+.sample-pdf-preview img {
+  width: 100%;
+  max-width: 180px; /* Smaller image */
+  height: auto;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.sample-pdf-preview img:hover {
+  border-color: #699670;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.use-sample-btn {
+  background-color: #699670;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.65rem 1.25rem; /* Slightly smaller padding */
+  font-size: 0.85rem; /* Smaller font */
+  font-family: "Poppins-Regular", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.use-sample-btn:hover {
+  background-color: #5b9865;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(105, 150, 112, 0.3);
+}
+
+.use-sample-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(105, 150, 112, 0.3);
+}
+
+/* Add icon to button */
+.use-sample-btn::before {
+  content: "📄";
+  font-size: 1rem;
+}
+
+/* Additional helper class for drag and drop indication */
+.sample-pdf-section.drag-active {
+  border-color: #699670;
+  background-color: #f2f9f1;
+}
+
+.sample-pdf-section.drag-active h4 {
+  color: #699670;
+}
+
+/* Subtle animation for when sample is being loaded */
+.sample-pdf-section.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.sample-pdf-section.loading .use-sample-btn {
+  background-color: #b8c5b5;
+  cursor: not-allowed;
+}
 
 @media screen and (max-width: 991px) {
   .lab-result-card {
@@ -1273,28 +1306,36 @@
   }
   .upload-section-container {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0; /* Slightly reduced gap */
+    align-items: stretch; /* Full width on mobile */
   }
+  
   .sample-pdf-section {
     flex: none;
     width: 100%;
   }
+  
   .sample-pdf-preview {
     flex-direction: row;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem; /* Consistent reduced gap */
   }
+  
   .sample-pdf-preview img {
-    flex: 0 0 120px;
-    max-width: 120px;
+    flex: 0 0 100px; /* Smaller mobile image */
+    max-width: 100px;
   }
+  
   .use-sample-btn {
     flex: 1;
     max-width: none;
+    padding: 0.55rem 1rem; /* Smaller mobile button */
+    font-size: 0.8rem;
   }
+  
   .sample-pdf-section h4 {
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
+    font-size: 0.9rem; /* Smaller mobile heading */
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -1332,18 +1373,19 @@
     font-size: 11px;
   }
   .sample-pdf-section {
-    padding: 1rem;
+    padding: 0.75rem; /* Reduced mobile padding */
   }
   .sample-pdf-preview {
     flex-direction: column;
+    gap: 0.5rem; /* Smaller gap */
   }
   .sample-pdf-preview img {
     flex: none;
-    max-width: 150px;
+    max-width: 120px; /* Smaller very mobile image */
   }
   .use-sample-btn {
     width: 100%;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.8rem;
+    padding: 0.5rem 1rem; /* Smaller padding */
+    font-size: 0.75rem; /* Smaller font */
   }
 }
