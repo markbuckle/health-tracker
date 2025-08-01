@@ -954,6 +954,92 @@
   display: block;
 }
 
+/* Sample PDF Section Styles */
+  .upload-section-container {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .file-upload-container {
+    flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
+  }
+  .sample-pdf-section {
+    flex: 0 0 280px; /* Fixed width for consistency */
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  .sample-pdf-section:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  .sample-pdf-section h4 {
+    font-family: "Poppins-Regular", sans-serif;
+    font-size: 1.1rem;
+    color: #1e293b;
+    margin: 0 0 1rem 0;
+    text-align: center;
+    font-weight: 600;
+  }
+  .sample-pdf-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .sample-pdf-preview img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .sample-pdf-preview img:hover {
+    border-color: #699670;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .use-sample-btn {
+    background-color: #699670;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-family: "Poppins-Regular", sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .use-sample-btn:hover {
+    background-color: #5b9865;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(105, 150, 112, 0.3);
+  }
+  .use-sample-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(105, 150, 112, 0.3);
+  }
+  .use-sample-btn::before {
+    content: "📄";
+    font-size: 1rem;
+  }
+
 @media screen and (max-width: 991px) {
   .lab-result-card {
     padding: 0.5rem 0.5rem 0 0.5rem;
@@ -1185,6 +1271,31 @@
   .sidebar {
     display: none;
   }
+  .upload-section-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .sample-pdf-section {
+    flex: none;
+    width: 100%;
+  }
+  .sample-pdf-preview {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+  .sample-pdf-preview img {
+    flex: 0 0 120px;
+    max-width: 120px;
+  }
+  .use-sample-btn {
+    flex: 1;
+    max-width: none;
+  }
+  .sample-pdf-section h4 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
 }
 
 /* Very small screens */
@@ -1219,5 +1330,20 @@
   }
   .notification-message {
     font-size: 11px;
+  }
+  .sample-pdf-section {
+    padding: 1rem;
+  }
+  .sample-pdf-preview {
+    flex-direction: column;
+  }
+  .sample-pdf-preview img {
+    flex: none;
+    max-width: 150px;
+  }
+  .use-sample-btn {
+    width: 100%;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
   }
 }

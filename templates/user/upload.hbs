@@ -162,18 +162,29 @@
                   </button>
                 </div>
                 {{!-- Upload container --}}
-                <div class="file-upload-container">
-                  <div class="file-upload-area" id="dropZone">
-                    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input" />
-                    <div class="upload-content">
-                      <div class="upload-text">Drag and drop files here</div>
-                      <button class="browse-button">Browse files</button>
-                      {{> svg/upload }}
-                      <div class="file-limits">Limit 200MB per file • PDF, JPEG, PNG</div>
+                <div class="upload-section-container">
+                  <div class="file-upload-container">
+                    <div class="file-upload-area" id="dropZone">
+                      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input" />
+                      <div class="upload-content">
+                        <div class="upload-text">Drag and drop files here</div>
+                        <button class="browse-button">Browse files</button>
+                        {{> svg/upload }}
+                        <div class="file-limits">Limit 200MB per file • PDF, JPEG, PNG</div>
+                      </div>
+                    </div>
+                    <div id="fileList" class="file-list"></div>
+                    <button id="processFiles" class="process-button" disabled>Upload File(s)</button>
+                  </div>
+                  <div class="sample-pdf-section">
+                    <h4>Try with our sample report</h4>
+                    <div class="sample-pdf-preview">
+                      <img src="/images/sample-report-preview.png" alt="Sample medical report preview">
+                      <button class="use-sample-btn" data-sample-file="/samples/jane-smith-lab-report.pdf">
+                        Use This Sample
+                      </button>
                     </div>
                   </div>
-                  <div id="fileList" class="file-list"></div>
-                  <button id="processFiles" class="process-button" disabled>Upload File(s)</button>
                 </div>
                 <div class="upload-page-text-container">
                   {{!-- <div class="upload-page-text2">Supported file types:
