@@ -977,6 +977,7 @@
   padding: 1.25rem; /* Reduced padding */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  margin-right: 2.5rem;
 }
 
 .sample-pdf-section:hover {
@@ -1071,6 +1072,20 @@
 .sample-pdf-section.loading .use-sample-btn {
   background-color: #b8c5b5;
   cursor: not-allowed;
+}
+
+/* Fix drag and drop colors */
+.file-upload-area.drag-over {
+  border-color: #518458 !important;
+  background-color: #f2f9f1 !important;
+}
+
+/* Add cleaner file size styling */
+.file-size {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-family: "Poppins-Regular", sans-serif;
+  font-weight: 400;
 }
 
 @media screen and (max-width: 991px) {
@@ -1384,7 +1399,7 @@
     max-width: 120px; /* Smaller very mobile image */
   }
   .use-sample-btn {
-    width: 100%;
+    width: 55%;
     padding: 0.5rem 1rem; /* Smaller padding */
     font-size: 0.75rem; /* Smaller font */
   }

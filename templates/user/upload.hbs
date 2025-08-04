@@ -686,20 +686,20 @@
       // Handle drag and drop
       dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropZone.style.borderColor = '#2563eb';
-        dropZone.style.backgroundColor = '#f1f5f9';
+        dropZone.style.borderColor = '#518458'; // Changed from blue to green
+        dropZone.style.backgroundColor = '#f2f9f1'; // Changed from blue to green
       });
 
       dropZone.addEventListener('dragleave', (e) => {
         e.preventDefault();
-        dropZone.style.borderColor = '#3b82f6';
-        dropZone.style.backgroundColor = '#f8fafc';
+        dropZone.style.borderColor = '#518458'; // Keep consistent green
+        dropZone.style.backgroundColor = '#f2f9f1'; // Keep consistent green background
       });
 
       dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        dropZone.style.borderColor = '#3b82f6';
-        dropZone.style.backgroundColor = '#f8fafc';
+        dropZone.style.borderColor = '#518458'; // Keep green
+        dropZone.style.backgroundColor = '#f2f9f1'; // Keep green background
         handleFiles(e.dataTransfer.files);
       });
 
@@ -751,6 +751,99 @@
 
       function updateProcessButton() {
         processButton.disabled = files.size === 0;
+      }
+
+      // Handle "Use This Sample" button click
+      const useSampleBtn = document.querySelector('.use-sample-btn');
+      
+      if (useSampleBtn) {
+        useSampleBtn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          
+          const sampleFilePath = this.dataset.sampleFile;
+          
+          try {
+            // Show loading state
+            const originalContent = this.innerHTML;
+            this.style.opacity = '0.7';
+            this.style.pointerEvents = 'none';
+            this.innerHTML = '⌛ Loading sample...';
+            
+            // Fetch the sample PDF file
+            const response = await fetch(sampleFilePath);
+            
+            if (!response.ok) {
+              throw new Error('Could not load sample file');
+            }
+            
+            // Convert response to blob
+            const blob = await response.blob();
+
+            // Mobile-compatible file creation
+            let sampleFile;
+            try {
+              sampleFile = new File([blob], 'jane-smith-lab-report.pdf', {
+                type: 'application/pdf',
+                lastModified: Date.now()
+              });
+            } catch (e) {
+              sampleFile = blob;
+              sampleFile.name = 'jane-smith-lab-report.pdf';
+              sampleFile.lastModified = Date.now();
+            }
+            
+            // Add the sample file using your existing logic
+            files.add(sampleFile);
+            
+            // Display the file EXACTLY like drag/drop does - matching your handleFiles function
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            // Create the exact same structure as drag/drop files
+            fileItem.innerHTML = `
+              <span class="file-name">jane-smith-lab-report.pdf</span>
+              <span class="file-size">${(sampleFile.size / 1024 / 1024).toFixed(2)} MB</span>
+              <button class="remove-file" data-filename="jane-smith-lab-report.pdf">Remove</button>
+            `;
+            
+            // Add event listener for remove button - exactly like drag/drop files
+            const removeBtn = fileItem.querySelector('.remove-file');
+            removeBtn.addEventListener('click', () => {
+              files.delete(sampleFile);
+              fileItem.remove();
+              updateProcessButton();
+            });
+            
+            fileList.appendChild(fileItem);
+            
+            // Update the process button using your existing function
+            updateProcessButton();
+            
+            // Reset button state
+            this.style.opacity = '1';
+            this.style.pointerEvents = 'auto';
+            this.innerHTML = originalContent;
+            
+            // Optional: Show visual feedback
+            const sampleSection = document.querySelector('.sample-pdf-section');
+            sampleSection.style.borderColor = '#699670';
+            sampleSection.style.backgroundColor = '#f2f9f1';
+            
+            setTimeout(() => {
+              sampleSection.style.borderColor = '#e2e8f0';
+              sampleSection.style.backgroundColor = '#fff';
+            }, 2000);
+            
+          } catch (error) {
+            console.error('Error loading sample file:', error);
+            alert('Sorry, could not load the sample file. Please try uploading your own file.');
+            
+            // Reset button state
+            this.style.opacity = '1';
+            this.style.pointerEvents = 'auto';
+            this.innerHTML = originalContent;
+          }
+        });
       }
 
       // Main process button click handler
