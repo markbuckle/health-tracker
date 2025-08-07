@@ -397,19 +397,24 @@
 }
 
 /* Make sure buttons stack vertically and align left like other tabs */
-.w-tab-pane[data-w-tab="History"] .add-button-container {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
+.history-buttons-container {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0rem;
+  align-items: flex-start; /* Align to left */
+  justify-content: flex-start; /* Start from left, don't spread */
 }
 
-.w-tab-pane[data-w-tab="History"] .add-button-container:last-of-type {
-  margin-bottom: 1rem;
-}
-
-/* Keep the existing button styling consistent */
-.w-tab-pane[data-w-tab="History"] .edit-button-modal {
+/* Individual button styling to match other tabs */
+.history-buttons-container .edit-button-modal {
   max-width: 13rem;
   width: auto;
+  flex: none; /* Don't grow to fill space */
+}
+
+/* Remove any margin on individual buttons since container handles spacing */
+.history-buttons-container .edit-button-modal {
+  margin: 0;
 }
 /* Personal History Styles - copy from family history with personal prefix */
 .personal-history-container {
