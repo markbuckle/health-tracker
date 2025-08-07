@@ -395,22 +395,21 @@
   visibility: visible;
   display: flex;
 }
-.history-buttons-container {
-  display: flex;
-  gap: 1rem;
-  margin: 1rem 1.5rem;
-  flex-wrap: wrap;
+
+/* Make sure buttons stack vertically and align left like other tabs */
+.w-tab-pane[data-w-tab="History"] .add-button-container {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
-.history-buttons-container .add-button-container {
-  margin: 0;
-  flex: 1;
-  min-width: 200px;
+
+.w-tab-pane[data-w-tab="History"] .add-button-container:last-of-type {
+  margin-bottom: 1rem;
 }
-.history-buttons-container .edit-button-modal {
-  width: 100%;
-  max-width: none;
-  justify-content: center;
-  text-align: center;
+
+/* Keep the existing button styling consistent */
+.w-tab-pane[data-w-tab="History"] .edit-button-modal {
+  max-width: 13rem;
+  width: auto;
 }
 /* Personal History Styles - copy from family history with personal prefix */
 .personal-history-container {
