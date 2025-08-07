@@ -96,6 +96,20 @@ if (!isVercel) {
   });
 }
 
+const personalHistorySchema = new mongoose.Schema(
+  {
+    personalCondition: {
+      type: String,
+      default: null,
+    },
+    personalNotes: {
+      type: String,
+      default: null,
+    },
+  },
+  { _id: true }
+);
+
 const familyHistorySchema = new mongoose.Schema(
   {
     familyCondition: {
@@ -223,6 +237,10 @@ const profileSchema = new mongoose.Schema(
     age: {
       type: Number,
       default: null,
+    },
+    personalHistory: {
+      type: [personalHistorySchema],
+      default: [],
     },
     familyHistory: {
       type: [familyHistorySchema],

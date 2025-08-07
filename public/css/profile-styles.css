@@ -385,6 +385,44 @@
   visibility: visible;
   display: flex;
 }
+.personal-history-container {
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 1.5rem 1rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+.personal-history-table-header {
+  display: flex;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+.personal-history-entry {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+.personal-history-entry:hover {
+  background-color: #f8f9fa;
+}
+.personal-history-column {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 14px;
+}
+.personal-history-table-header .personal-history-column {
+  font-family: "Poppins-SemiBold", sans-serif;
+  color: #4b5563;
+}
+.personal-history-empty {
+  padding: 20px;
+  text-align: left;
+  color: #6b7280;
+  font-style: italic;
+}
 .family-history-container {
   border-radius: 8px;
   overflow: hidden;

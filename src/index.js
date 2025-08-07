@@ -1556,6 +1556,8 @@ app.post("/update-profile", checkAuth, async (req, res) => {
       sex,
       bloodType,
       customBloodType,
+      personalCondition,
+      personalNotes,
       familyCondition,
       relatives,
       addNotes,
@@ -1619,6 +1621,11 @@ app.post("/update-profile", checkAuth, async (req, res) => {
       }
     }
 
+    // ADD THIS - Initialize personalHistory array
+    if (!Array.isArray(user.profile.personalHistory)) {
+      user.profile.personalHistory = [];
+    }
+
     // Ensure familyHistory is initialized
     if (!Array.isArray(user.profile.familyHistory)) {
       user.profile.familyHistory = [];
@@ -1628,6 +1635,12 @@ app.post("/update-profile", checkAuth, async (req, res) => {
     if (action) {
       switch (action) {
         case "add":
+          if (personalCondition) {
+            user.profile.personalHistory.push({
+              personalCondition,
+              personalNotes: personalNotes || "",
+            });
+          }
           if (familyCondition && relatives) {
             user.profile.familyHistory.push({
               familyCondition,
@@ -1663,6 +1676,16 @@ app.post("/update-profile", checkAuth, async (req, res) => {
           break;
 
         case "edit":
+          // Existing family history edit case
+          if (entryId && personalCondition) {
+            const personalEntryIndex = user.profile.personalHistory.findIndex(
+              (entry) => entry._id.toString() === entryId
+            );
+            if (personalEntryIndex !== -1) {
+              user.profile.personalHistory[personalEntryIndex].personalCondition = personalCondition;
+              user.profile.personalHistory[personalEntryIndex].personalNotes = personalNotes || "";
+            }
+          }
           // Existing family history edit case
           if (entryId && familyCondition && relatives) {
             const entryIndex = user.profile.familyHistory.findIndex(
@@ -1740,6 +1763,10 @@ app.post("/update-profile", checkAuth, async (req, res) => {
                 case "medsandsups":
                   updateField = "profile.medsandsups";
                   targetArray = targetUser.profile.medsandsups;
+                  break;
+                case "personalHistory":
+                  updateField = "profile.personalHistory";
+                  targetArray = targetUser.profile.personalHistory;
                   break;
                 default:
                   updateField = "profile.familyHistory";
@@ -1991,6 +2018,7 @@ app.post("/update-profile", checkAuth, async (req, res) => {
       bloodType: user.profile.bloodType,
       customBloodType: user.profile.customBloodType,
       sex: user.profile.sex,
+      personalHistory: user.profile.personalHistory,
       familyHistory: user.profile.familyHistory,
       lifestyle: user.profile.lifestyle,
       monitoring: user.profile.monitoring,

@@ -126,48 +126,55 @@
 
             <div data-w-tab="History" class="w-tab-pane">
               <div class="dropdown-wrapper user-content-bg">
+                
+                <!-- Personal Medical History Section -->
                 <div class="header-container-3">
-                  <h1 class="username-heading">Family History</h1>
+                  <h1 class="username-heading">Personal Medical History</h1>
                 </div>
-
-                <div class="family-history-container">
-                  <!-- Table Header -->
-                  <div class="family-history-table-header">
-                    <div class="family-history-column condition-column">Condition</div>
-                    <div class="family-history-column relatives-column">Relative(s) Impacted</div>
-                    <div class="family-history-column notes-column">Notes</div>
-                    <div class="family-history-column actions-column">Actions</div>
+                <div class="personal-history-container">
+                  <!-- Personal History Table (duplicate of family history structure) -->
+                  <div class="personal-history-table-header">
+                    <div class="personal-history-column condition-column">Condition</div>
+                    <div class="personal-history-column notes-column">Notes</div>
+                    <div class="personal-history-column actions-column">Actions</div>
                   </div>
-
-                  <!-- Table Content -->
-                  <div class="family-history-table-content">
-                    {{#if profile.familyHistory.length}}
-                      {{#each profile.familyHistory}}
-                        <div class="family-history-entry">
-                          <div class="family-history-column condition-column">{{familyCondition}}</div>
-                          <div class="family-history-column relatives-column">
-                            {{#each relatives}}
-                              {{this}}{{#unless @last}}, {{/unless}}
-                            {{/each}}
-                          </div>
-                          <div class="family-history-column notes-column">{{addNotes}}</div>
-                          <div class="family-history-column actions-column">
+                  <div class="personal-history-table-content">
+                    {{#if profile.personalHistory.length}}
+                      {{#each profile.personalHistory}}
+                        <div class="personal-history-entry">
+                          <div class="personal-history-column condition-column">{{condition}}</div>
+                          <div class="personal-history-column notes-column">{{notes}}</div>
+                          <div class="personal-history-column actions-column">
                             <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
                             <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
                           </div>
                         </div>
                       {{/each}}
                     {{else}}
-                      <div class="family-history-empty">No family history or genetic conditions reported</div>
+                      <div class="personal-history-empty">No personal medical history recorded</div>
                     {{/if}}
                   </div>
                 </div>
-              </div>
                 <div class="add-button-container">
-                  <a data-w-id="familyHistory-1234" href="#" class="edit-button-modal w-inline-block">
-                    <div class="button-text">Add </div>
+                  <a data-w-id="personalHistory-1234" href="#" class="edit-button-modal w-inline-block">
+                    <div class="button-text">Add Personal History</div>
                   </a>
                 </div>
+
+                <!-- Family History Section -->
+                <div class="header-container-3">
+                  <h1 class="username-heading">Family History</h1>
+                </div>
+                <div class="family-history-container">
+                  <!-- Existing Family History Table -->
+                </div>
+                <div class="add-button-container">
+                  <a data-w-id="familyHistory-1234" href="#" class="edit-button-modal w-inline-block">
+                    <div class="button-text">Add Family History</div>
+                  </a>
+                </div>
+                
+              </div>
             </div>
 
             <div data-w-tab="Monitoring" class="w-tab-pane">
@@ -441,6 +448,26 @@
       <div class="w-form-fail">
         <div>Oops! Something went wrong while submitting the form.</div>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-wrapper modal-wrapper-3">
+    <div data-w-id="" class="modal-background"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <a data-w-id="" aria-current="page" class="modal-return-button w-inline-block w--current">
+          {{> svg/backArrow}}</a>
+        <h1 class="modal-button">Personal Medical History</h1>
+      </div>
+      <form class="modal-form" id="personalHistoryForm" name="personalHistoryForm" method="post" action="/update-profile">
+        <label for="personalCondition" class="field-label">Condition</label>
+        <input class="form-text-field" name="personalCondition" id="personalCondition" maxlength="256" placeholder="" type="text" value="" />
+
+        <label for="personalNotes" class="field-label">Add Notes</label>
+        <input class="form-text-field" maxlength="256" name="personalNotes" placeholder="" type="text" id="personalNotes" value="" />
+
+        <input type="submit" value="Save" class="submit-button w-button" />
+      </form>
     </div>
   </div>
 
@@ -727,6 +754,21 @@
         }
       }
 
+      function clearPersonalHistoryForm() {
+        const form = document.getElementById('personalHistoryForm');
+        form.reset();
+
+        // Clear any hidden fields
+        const actionInput = form.querySelector('#action');
+        const entryIdInput = form.querySelector('#entryId');
+        if (actionInput) actionInput.remove();
+        if (entryIdInput) entryIdInput.remove();
+
+        // Clear condition and notes
+        document.getElementById('personalCondition').value = '';
+        document.getElementById('personalNotes').value = '';
+      }
+
       function clearFamilyHistoryForm() {
         const form = document.getElementById('familyHistoryForm');
         form.reset();
@@ -840,10 +882,112 @@
       // ====== Event Listeners ======
       // Modal trigger buttons
       const updateProfileButton = document.querySelector('[data-w-id="basicInfo-1234"]');
+      const addPersonalHistoryButton = document.querySelector('[data-w-id="personalHistory-1234"]');
       const addFamilyHistoryButton = document.querySelector('[data-w-id="familyHistory-1234"]');
       const addMonitoringButton = document.querySelector('[data-w-id="Monitoring-1234"]');
       const addLifestyleButton = document.querySelector('[data-w-id="Lifestyle-1234"]');
       const addMedsAndSupsButton = document.querySelector('[data-w-id="Meds-Sups-1234"]');
+
+      // Personal History edit entry functionality
+      document.querySelectorAll('.personal-history-entry .edit-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          console.log('Personal History Edit button clicked');
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.personal-history-entry');
+
+          try {
+            // Get data from table cells
+            const conditionElement = entry.querySelector('.condition-column');
+            const notesElement = entry.querySelector('.notes-column');
+
+            if (!conditionElement) {
+              throw new Error('Could not find all required elements');
+            }
+
+            // Get text content
+            const condition = conditionElement.textContent.trim();
+            const notes = notesElement ? notesElement.textContent.trim() : '';
+
+            // Populate form
+            document.getElementById('personalCondition').value = condition;
+            document.getElementById('personalNotes').value = notes;
+
+            // Add hidden fields for edit action and entry ID
+            const form = document.getElementById('personalHistoryForm');
+            
+            // For action
+            let actionInput = form.querySelector('input[name="action"]');
+            if (!actionInput) {
+              actionInput = document.createElement('input');
+              actionInput.type = 'hidden';
+              actionInput.id = 'action';
+              actionInput.name = 'action';
+              form.appendChild(actionInput);
+            }
+            actionInput.value = 'editPersonal';
+            
+            // For entryId
+            let entryIdInput = form.querySelector('input[name="entryId"]');
+            if (!entryIdInput) {
+              entryIdInput = document.createElement('input');
+              entryIdInput.type = 'hidden';
+              entryIdInput.id = 'entryId';
+              entryIdInput.name = 'entryId';
+              form.appendChild(entryIdInput);
+            }
+            entryIdInput.value = entryId;
+
+            // Show modal (assuming you use modal-wrapper-6 for personal history)
+            const modal = document.querySelector('.modal-wrapper-6');
+            openModal(modal);
+          } catch (error) {
+            console.error('Error preparing edit form:', error);
+            alert('Could not load personal history entry for editing.');
+          }
+        });
+      });
+
+      // Personal History Delete entry functionality
+      document.querySelectorAll('.personal-history-entry .delete-entry-button-2').forEach(button => {
+        button.addEventListener('click', async function() {
+          if (!confirm('Are you sure you want to delete this entry?')) return;
+
+          const entryId = this.getAttribute('data-id');
+          const entry = this.closest('.personal-history-entry');
+
+          try {
+            const response = await fetch('/update-profile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'deletePersonal',
+                entryId: entryId
+              })
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const result = await response.json();
+
+            if (result.success) {
+              entry.remove();
+              
+              // Check if there are any personal history entries left
+              const historyTable = document.querySelector('.personal-history-table-content');
+              if (!historyTable.querySelector('.personal-history-entry')) {
+                historyTable.innerHTML = '<div class="personal-history-empty">No personal medical history recorded</div>';
+              }
+            } else {
+              throw new Error(result.message || 'Failed to delete entry');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete entry: ' + error.message);
+          }
+        });
+      });
 
       // Family History edit entry functionality
       document.querySelectorAll('.family-history-entry .edit-entry-button-2').forEach(button => {
@@ -1343,6 +1487,15 @@
         });
       }
 
+      if (addPersonalHistoryButton) {
+        addPersonalHistoryButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          clearPersonalHistoryForm();
+          const targetModal = document.querySelector('.modal-wrapper-6'); // Assuming modal-wrapper-6 for personal history
+          if (targetModal) openModal(targetModal);
+        });
+      }
+
       if (addFamilyHistoryButton) {
         addFamilyHistoryButton.addEventListener('click', (e) => {
           e.preventDefault();
@@ -1383,7 +1536,7 @@
       document.querySelectorAll('.modal-background, .modal-return-button, .cancel-button').forEach(element => {
         element.addEventListener('click', (e) => {
           e.preventDefault();
-          const parentModal = element.closest('.modal-wrapper, .modal-wrapper-1, .modal-wrapper-2, .modal-wrapper-3, .modal-wrapper-4, .modal-wrapper-5');
+          const parentModal = element.closest('.modal-wrapper, .modal-wrapper-1, .modal-wrapper-2, .modal-wrapper-3, .modal-wrapper-4, .modal-wrapper-5, .modal-wrapper-6');
           if (parentModal) closeModal(parentModal);
         });
       });
@@ -1437,6 +1590,41 @@
         } catch (error) {
           console.error('Error:', error);
           alert('Failed to update profile: ' + error.message);
+        }
+      });
+
+      // Personal History Form Submission
+      document.getElementById('personalHistoryForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentTab = getCurrentTab();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data.action) {
+          data.action = 'addPersonal';
+        }
+
+        try {
+          const response = await fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const result = await response.json();
+          if (result.success) {
+            sessionStorage.setItem('activeTab', currentTab);
+            window.location.reload();
+          } else {
+            throw new Error(result.message || 'Failed to update entry');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to save changes: ' + error.message);
         }
       });
 
