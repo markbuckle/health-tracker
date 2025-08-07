@@ -266,6 +266,16 @@
   width: 100%;
   box-sizing: border-box;
 }
+.header-container-4 {
+  background: transparent;
+  display: flex;
+  justify-content: flex-start; /* Changed to flex-start to align logo to left */
+  align-items: center;
+  height: 70px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: -1rem !important;
+}
 .edit-entry-button,
 .delete-entry-button {
   padding: 4px 8px;
@@ -385,6 +395,24 @@
   visibility: visible;
   display: flex;
 }
+.history-buttons-container {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 1.5rem;
+  flex-wrap: wrap;
+}
+.history-buttons-container .add-button-container {
+  margin: 0;
+  flex: 1;
+  min-width: 200px;
+}
+.history-buttons-container .edit-button-modal {
+  width: 100%;
+  max-width: none;
+  justify-content: center;
+  text-align: center;
+}
+/* Personal History Styles - copy from family history with personal prefix */
 .personal-history-container {
   border-radius: 8px;
   overflow: hidden;
@@ -412,6 +440,22 @@
   align-items: center;
   font-family: "Poppins-Regular", sans-serif;
   font-size: 14px;
+}
+.personal-history-column.condition-column {
+  flex: 3;
+  font-weight: 500;
+  min-width: 180px;
+}
+.personal-history-column.notes-column {
+  flex: 4;
+  min-width: 200px;
+}
+.personal-history-column.actions-column {
+  flex: 2;
+  justify-content: center;
+  gap: 8px;
+  min-width: 150px;
+  text-align: center;
 }
 .personal-history-table-header .personal-history-column {
   font-family: "Poppins-SemiBold", sans-serif;
@@ -656,6 +700,10 @@
 @media screen and (max-width: 991px) {
   .header-container-3 {
     width: auto;
+  }
+  .personal-history-container {
+    max-width: auto;
+    margin: 0 0.5rem 1rem 0.5rem;
   }
   .family-history-container {
     max-width: auto;

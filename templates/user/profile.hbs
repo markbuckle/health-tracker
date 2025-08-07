@@ -131,19 +131,22 @@
                 <div class="header-container-3">
                   <h1 class="username-heading">Personal Medical History</h1>
                 </div>
+                
                 <div class="personal-history-container">
-                  <!-- Personal History Table (duplicate of family history structure) -->
+                  <!-- Personal History Table Header -->
                   <div class="personal-history-table-header">
                     <div class="personal-history-column condition-column">Condition</div>
                     <div class="personal-history-column notes-column">Notes</div>
                     <div class="personal-history-column actions-column">Actions</div>
                   </div>
+                  
+                  <!-- Personal History Table Content -->
                   <div class="personal-history-table-content">
                     {{#if profile.personalHistory.length}}
                       {{#each profile.personalHistory}}
                         <div class="personal-history-entry">
-                          <div class="personal-history-column condition-column">{{condition}}</div>
-                          <div class="personal-history-column notes-column">{{notes}}</div>
+                          <div class="personal-history-column condition-column">{{personalCondition}}</div>
+                          <div class="personal-history-column notes-column">{{personalNotes}}</div>
                           <div class="personal-history-column actions-column">
                             <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
                             <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
@@ -155,25 +158,59 @@
                     {{/if}}
                   </div>
                 </div>
+
+                <!-- Family History Section -->
+                <div class="header-container-4" style="margin-top: 2rem;">
+                  <h1 class="username-heading">Family History</h1>
+                </div>
+
+                <div class="family-history-container">
+                  <!-- Table Header -->
+                  <div class="family-history-table-header">
+                    <div class="family-history-column condition-column">Condition</div>
+                    <div class="family-history-column relatives-column">Relative(s) Impacted</div>
+                    <div class="family-history-column notes-column">Notes</div>
+                    <div class="family-history-column actions-column">Actions</div>
+                  </div>
+
+                  <!-- Table Content -->
+                  <div class="family-history-table-content">
+                    {{#if profile.familyHistory.length}}
+                      {{#each profile.familyHistory}}
+                        <div class="family-history-entry">
+                          <div class="family-history-column condition-column">{{familyCondition}}</div>
+                          <div class="family-history-column relatives-column">
+                            {{#each relatives}}
+                              {{this}}{{#unless @last}}, {{/unless}}
+                            {{/each}}
+                          </div>
+                          <div class="family-history-column notes-column">{{addNotes}}</div>
+                          <div class="family-history-column actions-column">
+                            <button type="button" class="edit-entry-button-2" data-id="{{_id}}">Edit</button>
+                            <button type="button" class="delete-entry-button-2" data-id="{{_id}}">Delete</button>
+                          </div>
+                        </div>
+                      {{/each}}
+                    {{else}}
+                      <div class="family-history-empty">No family history or genetic conditions reported</div>
+                    {{/if}}
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Buttons Container - Outside the dropdown-wrapper for proper positioning -->
+              <div class="history-buttons-container">
                 <div class="add-button-container">
                   <a data-w-id="personalHistory-1234" href="#" class="edit-button-modal w-inline-block">
                     <div class="button-text">Add Personal History</div>
                   </a>
-                </div>
-
-                <!-- Family History Section -->
-                <div class="header-container-3">
-                  <h1 class="username-heading">Family History</h1>
-                </div>
-                <div class="family-history-container">
-                  <!-- Existing Family History Table -->
                 </div>
                 <div class="add-button-container">
                   <a data-w-id="familyHistory-1234" href="#" class="edit-button-modal w-inline-block">
                     <div class="button-text">Add Family History</div>
                   </a>
                 </div>
-                
               </div>
             </div>
 
