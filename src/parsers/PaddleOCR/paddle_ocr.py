@@ -10,8 +10,8 @@ if len(sys.argv) < 2:
 
 file_path = sys.argv[1]
 
-# Initialize PaddleOCR
-ocr = PaddleOCR(use_angle_cls=True, lang='en')
+# Initialize PaddleOCR for 3.x - updated parameters
+ocr = PaddleOCR(use_textline_orientation=True, lang='en')
 
 # Count total pages if it's a PDF
 def count_pdf_pages(file_path):
@@ -30,8 +30,13 @@ def count_pdf_pages(file_path):
 total_pages = count_pdf_pages(file_path)
 print(f"TOTAL_PAGES:{total_pages}", file=sys.stderr)
 
-# Process the file
-result = ocr.ocr(file_path, cls=True)
+# Process the file - updated for PaddleOCR 3.x API
+try:
+    # Use predict instead of ocr, and remove cls parameter
+    result = ocr.predict(file_path)
+except Exception as e:
+    print(f"Error during OCR prediction: {e}", file=sys.stderr)
+    sys.exit(1)
 
 # Print recognized text with page information
 for page_idx, page_result in enumerate(result):
