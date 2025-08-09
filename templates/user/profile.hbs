@@ -500,7 +500,10 @@
         <label for="personalNotes" class="field-label">Add Notes</label>
         <input class="form-text-field" maxlength="256" name="personalNotes" placeholder="" type="text" id="personalNotes" value="" />
 
-        <input type="submit" value="Save" class="submit-button w-button" />
+        <div class="modal-footer">
+          <a href="/profile" aria-current="page" class="cancel-button">Cancel</a>
+          <input type="submit" class="profile-button save" value="Save" aria-label="Save Profile Changes" />
+        </div>
       </form>
     </div>
   </div>

@@ -914,6 +914,7 @@ app.get("/insights", checkAuth, async (req, res) => {
     const inputs = {
       bloodType: user.profile && user.profile.bloodType ? user.profile.bloodType.length > 0 : false,
       familyHistory: user.profile && user.profile.familyHistory ? user.profile.familyHistory.length > 0 : false,
+      personalHistory: user.profile && user.profile.personalHistory ? user.profile.personalHistory.length > 0 : false,
       bloodPressure: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.bloodPressure) : false,
       heartRate: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.restingHeartRate) : false,
       sleep: user.profile && user.profile.monitoring ? user.profile.monitoring.some(m => m && m.sleep) : false,
@@ -1014,6 +1015,7 @@ hbs.registerHelper('shouldShowNoDataState', function(user, totalScore, recentFil
   // Check if user has any meaningful profile data
   const hasBasicProfile = user && user.profile && (
     (user.profile.familyHistory && user.profile.familyHistory.length > 0) ||
+    (user.profile.personalHistory && user.profile.personalHistory.length > 0) ||
     (user.profile.lifestyle && user.profile.lifestyle.length > 0) ||
     (user.profile.monitoring && user.profile.monitoring.length > 0) ||
     user.profile.bloodType
@@ -1382,6 +1384,14 @@ function createRecommendations(inputs) {
       priority: 'medium',
       category: 'Profile Information',
       text: "Add your blood type to your profile"
+    });
+  }
+  if (inputs.personalHistory === false) {
+    recommendations.push({
+      type: 'profile',
+      priority: 'medium',
+      category: 'Profile Information',
+      text: "Add personal history information"
     });
   }
   if (inputs.familyHistory === false) {
@@ -2551,6 +2561,16 @@ app.post('/api/rag/context', checkAuth, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
+    let personalHistoryDetails = [];
+    if (user.profile?.personalHistory && Array.isArray(user.profile.personalHistory)) {
+      personalHistoryDetails = user.profile.personalHistory
+        .filter(item => item && item.personalCondition)
+        .map(item => ({
+          condition: item.personalCondition,
+          notes: item.personalNotes || 'No notes'
+        }));
+    }
+
     // Extract family history with full details
     let familyHistoryDetails = [];
     if (user.profile?.familyHistory && Array.isArray(user.profile.familyHistory)) {
@@ -2616,6 +2636,7 @@ app.post('/api/rag/context', checkAuth, async (req, res) => {
         sex: user.profile?.sex,
         bloodType: user.profile?.bloodType,
         familyHistoryDetails: familyHistoryDetails,
+        personalHistoryDetails: personalHistoryDetails,
         lifestyleDetails: lifestyleDetails,
         medicationDetails: medicationDetails,
         monitoringDetails: monitoringDetails
