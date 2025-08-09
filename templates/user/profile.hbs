@@ -961,7 +961,7 @@
               actionInput.name = 'action';
               form.appendChild(actionInput);
             }
-            actionInput.value = 'editPersonal';
+            actionInput.value = 'edit';
             
             // For entryId
             let entryIdInput = form.querySelector('input[name="entryId"]');
@@ -999,8 +999,9 @@
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                action: 'deletePersonal',
-                entryId: entryId
+                action: 'delete',
+                entryId: entryId,
+                type: 'personalHistory'
               })
             });
 
@@ -1638,7 +1639,7 @@
         const data = Object.fromEntries(formData.entries());
 
         if (!data.action) {
-          data.action = 'addPersonal';
+          data.action = 'add';
         }
 
         try {
