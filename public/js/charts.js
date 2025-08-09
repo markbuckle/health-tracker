@@ -781,9 +781,25 @@ function processChartsInContainer(container, processedCharts) {
         let biomarkerName = null;
         
         // Try to match biomarker name from element ID
+        // for (const name of biomarkers) {
+        //     const standardizedName = name.toLowerCase().replace(/[\s()]/g, '').replace(/[-+]/g, '');
+        //     if (elementId.includes(standardizedName)) {
+        //         biomarkerName = name;
+        //         break;
+        //     }
+        // }
+
+        // Try to match biomarker name from element ID
         for (const name of biomarkers) {
-            const standardizedName = name.toLowerCase().replace(/[\s()]/g, '').replace(/[-+]/g, '');
-            if (elementId.includes(standardizedName)) {
+            // Try multiple standardization patterns
+            const patterns = [
+                name.toLowerCase().replace(/[\s()]/g, '').replace(/[-+]/g, ''), // current logic
+                name.toLowerCase().replace(/[\s()]/g, ''), // preserve hyphens
+                name.toLowerCase().replace(/[\s()-]/g, ''), // remove spaces and hyphens
+                name.toLowerCase().replace(/\s+/g, '-') // replace spaces with hyphens
+            ];
+            
+            if (patterns.some(pattern => elementId.includes(pattern))) {
                 biomarkerName = name;
                 break;
             }
