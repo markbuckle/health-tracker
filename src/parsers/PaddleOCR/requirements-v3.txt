@@ -1,0 +1,5 @@
+paddlepaddle>=3.0.0
+paddleocr>=3.0.0
+Pillow
+opencv-python
+PyMuPDF
