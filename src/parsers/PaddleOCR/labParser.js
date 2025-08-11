@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { labPatterns, datePatterns } = require('../labPatterns');
-const { parseStructuredLabReport, extractStructuredDate } = require('./imageParser');
+const { parseStructuredLabReport, extractStructuredDate, preprocessOCRText } = require('./imageParser');
 
 /**
  * Detect document type based on file extension
@@ -370,18 +370,6 @@ function parseLabValues(text) {
   }
   
   return results;
-}
-
-function preprocessOCRText(text) {
-  if (!text) return '';
-  
-  return text
-    // Fix only obvious OCR errors that affect parsing
-    .replace(/\s{2,}/g, ' ')           // Normalize multiple spaces to single space
-    .replace(/\t/g, ' ')               // Convert tabs to spaces
-    .replace(/([a-z])(\d)/g, '$1 $2')  // Add space between letters and numbers where missing
-    .replace(/(\d)([a-z])/gi, '$1 $2') // Add space between numbers and letters where missing
-    .trim();
 }
 
 // Helper function to parse "Result X.XX (unit)" format

@@ -1,8 +1,7 @@
 // Enhanced medical lab parser for PaddleOCR
 
 /**
- * This function adds specific patterns to better recognize lab test results
- * in structured medical lab reports with headers like TEST NAME, RESULT, FLAG, etc.
+ * UPDATED parseStructuredLabReport function with better table detection
  * @param {string} text - OCR text from the document
  * @returns {Object} Extracted lab values
  */
@@ -10,9 +9,9 @@ function parseStructuredLabReport(text) {
     const results = {};
     if (!text) return results;
     
-    // IMPROVED: More flexible table detection patterns (keep your existing + add flexibility)
+    // IMPROVED: More flexible table detection patterns
     const tablePatterns = [
-      // Your current patterns (keep these)
+      // Your original patterns (keep these)
       /TEST\s*NAME.*?RESULT.*?(?:FLAG)?.*?REFERENCE.*?UNITS/i,
       /(?=.*TEST)(?=.*RESULT)(?=.*REFERENCE)/i,
       
@@ -23,6 +22,7 @@ function parseStructuredLabReport(text) {
       /(?=.*[A-Za-z]{5,})(?=.*\d+\.\d+)(?=.*(?:mg\/dL|g\/dL|%|K\/uL))/i
     ];
     
+    // Check if text contains a table structure
     const hasTableStructure = tablePatterns.some(pattern => pattern.test(text));
     
     if (!hasTableStructure) {
@@ -32,6 +32,7 @@ function parseStructuredLabReport(text) {
     
     console.log("Table structure detected");
     
+    // Split text into lines
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     
     for (let i = 0; i < lines.length; i++) {
@@ -65,7 +66,7 @@ function parseStructuredLabReport(text) {
           const refRange = match[4] ? match[4].trim() : null;
           const flag = match[5] || '';
           
-          // FLEXIBLE: Use the test name as-is, let your existing biomarker matching handle it
+          // Use the test name as-is, let your existing biomarker matching handle it
           if (testName.length >= 3 && value > 0) {
             console.log(`Structured parsing found: ${testName} = ${value} ${unit} (${refRange || 'no range'})`);
             
@@ -133,85 +134,31 @@ function parseStructuredLabReport(text) {
     return results;
 }
 
-function cleanReferenceRange(refRange) {
-  if (!refRange) return null;
-  
-  // Only basic cleaning - remove OCR artifacts
-  return refRange
-    .replace(/\s+/g, ' ')           // Normalize whitespace
-    .replace(/([0-9])\s*[\-–]\s*([0-9])/, '$1 - $2')  // Standardize range format
-    .replace(/[^\d\.\s\-<>]/g, '')  // Remove non-numeric/range characters
-    .trim();
+/**
+ * Normalize test names for better matching
+ * @param {string} testName - Raw test name from OCR
+ * @returns {string} Normalized test name
+ */
+function normalizeTestName(testName) {
+    return testName
+        .toLowerCase()
+        .replace(/[^\w\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
 }
 
-function preprocessOCRText(text) {
-  if (!text) return '';
-  
-  return text
-    // Fix only obvious OCR errors that affect parsing
-    .replace(/\s{2,}/g, ' ')           // Normalize multiple spaces to single space
-    .replace(/\t/g, ' ')               // Convert tabs to spaces
-    .replace(/([a-z])(\d)/g, '$1 $2')  // Add space between letters and numbers where missing
-    .replace(/(\d)([a-z])/gi, '$1 $2') // Add space between numbers and letters where missing
-    .trim();
-}
-
-
-
-  /**
-   * Normalize test names to standard format
-   * @param {string} testName - The detected test name
-   * @returns {string} - Standardized test name
-   */
-  function normalizeTestName(testName) {
-    testName = testName.trim();
-    
-    // Mapping of common variations to standard names
-    const nameMap = {
-      // TSH variations
-      'TSH': 'TSH',
-      'THYROID STIMULATING HORMONE': 'TSH',
-      
-      // Thyroid antibody variations
-      'THYROPEROXIDASE ANTIBODY': 'Anti-TPO',
-      'TPO ANTIBODY': 'Anti-TPO',
-      'THYROID PEROXIDASE': 'Anti-TPO',
-      
-      // CRP variations
-      'C REACTIVE PROTEIN': 'C-Reactive Protein',
-      'C REACTIVE PROTEIN HIGH SENS': 'hsCRP',
-      'CRP': 'C-Reactive Protein',
-      'HIGH SENSITIVITY CRP': 'hsCRP',
-      
-      // T3/T4 variations
-      'FREE T4': 'T4 Free',
-      'FREE T3': 'Free T3',
-      'T4': 'T4 Total',
-      'T3': 'T3 Total'
-    };
-    
-    // Replace spaces and hyphens for consistency in comparison
-    const normalized = testName.toUpperCase().replace(/[-\s]+/g, ' ');
-    
-    // Return mapped name or original if no mapping exists
-    return nameMap[normalized] || testName;
-  }
-  
-  /**
-   * Extract test date from structured lab report
-   * @param {string} text - OCR text
-   * @returns {Date|null} - Extracted date
-   */
-  function extractStructuredDate(text) {
+/**
+ * Extract test date from structured lab report format
+ * @param {string} text - OCR text
+ * @returns {Date|null} Extracted test date
+ */
+function extractStructuredDate(text) {
     if (!text) return null;
     
-    // Common date patterns in lab reports
+    // Common date patterns in structured lab reports
     const datePatterns = [
-      // Pattern for "Collected Date: 08-Jan-2019 07:28:00"
-      /Collected\s*Date:?\s*(\d{1,2}-[A-Za-z]{3}-\d{4})/i,
-      
-      // Pattern for mm/dd/yyyy or dd/mm/yyyy
-      /(?:Collected|Collection|Received|Date)[:\s]+(\d{1,2}\/\d{1,2}\/\d{4})/i,
+      // Pattern for "Collection Date: MM/DD/YYYY"
+      /(?:Collection|Test|Sample|Drawn|Report|Generated|Collected|Received|Date)[:\s]+(\d{1,2}\/\d{1,2}\/\d{4})/i,
       
       // Pattern for dates like "08-Jan-2019"
       /(\d{1,2}-[A-Za-z]{3}-\d{4})/i,
@@ -258,9 +205,42 @@ function preprocessOCRText(text) {
     }
     
     return null;
-  }
+}
+
+/**
+ * Clean and standardize reference ranges
+ * @param {string} refRange - Raw reference range from OCR
+ * @returns {string} Cleaned reference range
+ */
+function cleanReferenceRange(refRange) {
+  if (!refRange) return null;
   
-  // Export the new functions to use in labParser.js
+  // Only basic cleaning - remove OCR artifacts
+  return refRange
+    .replace(/\s+/g, ' ')           // Normalize whitespace
+    .replace(/([0-9])\s*[\-–]\s*([0-9])/, '$1 - $2')  // Standardize range format
+    .replace(/[^\d\.\s\-<>]/g, '')  // Remove non-numeric/range characters
+    .trim();
+}
+
+/**
+ * Basic OCR cleanup without any test-specific logic
+ * @param {string} text - Raw OCR text
+ * @returns {string} Cleaned text
+ */
+function preprocessOCRText(text) {
+  if (!text) return '';
+  
+  return text
+    // Fix only obvious OCR errors that affect parsing
+    .replace(/\s{2,}/g, ' ')           // Normalize multiple spaces to single space
+    .replace(/\t/g, ' ')               // Convert tabs to spaces
+    .replace(/([a-z])(\d)/g, '$1 $2')  // Add space between letters and numbers where missing
+    .replace(/(\d)([a-z])/gi, '$1 $2') // Add space between numbers and letters where missing
+    .trim();
+}
+
+// Export all functions
 module.exports = {
   parseStructuredLabReport,
   normalizeTestName,
