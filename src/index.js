@@ -957,7 +957,10 @@ app.get("/reports", checkAuth, async (req, res) => {
     console.log("enrichedBiomarkerData keys:", Object.keys(enrichedBiomarkerData).slice(0, 10));
 
     res.render("user/reports", {
-      markerCategories: Object.values(markerCategories),
+      markerCategories: Object.entries(markerCategories).map(([key, value]) => ({
+        name: key,
+        ...value
+      })), // ✅ This creates the structure the template expects
       biomarkerData: enrichedBiomarkerData,
       initialData: `<script>window.__INITIAL_DATA__ = ${JSON.stringify({
         files: user.files,
