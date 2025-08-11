@@ -404,21 +404,47 @@ hbs.registerHelper("concat", function (...args) {
 hbs.registerHelper(
   "getBiomarkersForCategory",
   function (biomarkerData, categoryName) {
+    if (!biomarkerData || !categoryName) return [];
+    
+    const categoryKey = categoryName.toLowerCase();
+    
     return Object.values(biomarkerData).filter(
       (biomarker) =>
-        biomarker.category.toLowerCase() === categoryName.toLowerCase() &&
-        biomarker.value !== null
+        biomarker.category === categoryKey && biomarker.value !== null
     );
   }
 );
 
+
 hbs.registerHelper(
-  "hasBiomarkersInCategory",
+  "hasBiomarkersInCategory", 
   function (biomarkerData, categoryName) {
-    return Object.values(biomarkerData).some(
-      (biomarker) =>
-        biomarker.category === categoryName && biomarker.value !== null
-    );
+    console.log(`🔍 Checking category: "${categoryName}"`);
+    
+    if (!biomarkerData || !categoryName) {
+      console.log(`❌ Missing data: biomarkerData=${!!biomarkerData}, categoryName=${categoryName}`);
+      return false;
+    }
+    
+    // Convert categoryName to lowercase to match biomarker.category values
+    const categoryKey = categoryName.toLowerCase();
+    console.log(`   Looking for biomarkers with category: "${categoryKey}"`);
+    
+    const biomarkersInCategory = Object.values(biomarkerData).filter(biomarker => {
+      const hasValue = biomarker.value !== null;
+      const matchesCategory = biomarker.category === categoryKey;
+      
+      if (matchesCategory && hasValue) {
+        console.log(`   ✅ Found: biomarker with category "${biomarker.category}" and value ${biomarker.value}`);
+      }
+      
+      return matchesCategory && hasValue;
+    });
+    
+    const hasResults = biomarkersInCategory.length > 0;
+    console.log(`   Result: ${hasResults ? '✅' : '❌'} ${biomarkersInCategory.length} biomarkers found`);
+    
+    return hasResults;
   }
 );
 
