@@ -215,7 +215,7 @@ function runPaddleOCR(filePath) {
     const scriptPath = path.join(__dirname, 'paddle_ocr.py');
     
     // Run the Python script with the file path as an argument
-    const command = `python ${scriptPath} "${filePath}"`;
+    const command = `py -3.11 ${scriptPath} "${filePath}"`;
     
     console.log(`Running command: ${command}`);
 
