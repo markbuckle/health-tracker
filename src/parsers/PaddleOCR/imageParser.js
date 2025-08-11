@@ -10,133 +10,154 @@ function parseStructuredLabReport(text) {
     const results = {};
     if (!text) return results;
     
-    // Look for common lab report table formats
+    // IMPROVED: More flexible table detection patterns (keep your existing + add flexibility)
     const tablePatterns = [
-      // Pattern 1: "TEST NAME    RESULT    FLAG    REFERENCE    UNITS"
+      // Your current patterns (keep these)
       /TEST\s*NAME.*?RESULT.*?(?:FLAG)?.*?REFERENCE.*?UNITS/i,
-      // Pattern 2: Header row with these words in any order
-      /(?=.*TEST)(?=.*RESULT)(?=.*REFERENCE)/i
+      /(?=.*TEST)(?=.*RESULT)(?=.*REFERENCE)/i,
+      
+      // ADD: More flexible patterns for different lab formats
+      /Test\s+Name.*Result.*Units.*Reference\s+Range/i,
+      /Result.*Units.*Reference\s+Range.*Flag/i,
+      // Generic pattern: if we see test names with numeric values and units
+      /(?=.*[A-Za-z]{5,})(?=.*\d+\.\d+)(?=.*(?:mg\/dL|g\/dL|%|K\/uL))/i
     ];
     
-    // Check if text contains a table structure
     const hasTableStructure = tablePatterns.some(pattern => pattern.test(text));
     
-    if (hasTableStructure) {
-      console.log("Found structured lab report table");
+    if (!hasTableStructure) {
+      console.log("No table structure detected");
+      return results;
+    }
+    
+    console.log("Table structure detected");
+    
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
       
-      // Split text into lines
-      const lines = text.split('\n');
+      // Skip header lines and non-data lines
+      if (/Test\s+Name|Result|Units|Reference|Flag|Page|Patient|Date|Collection|HEALTHLYNC|LABORATORY/i.test(line)) continue;
+      if (line.length < 10) continue;
       
-      // Find the header line for column identification
-      let headerIndex = -1;
-      for (let i = 0; i < lines.length; i++) {
-        if (/TEST\s*NAME|RESULT|REFERENCE|UNITS/i.test(lines[i])) {
-          headerIndex = i;
-          break;
+      // IMPROVED: More flexible pattern that works with various lab formats
+      // Pattern: TestName + Number + Unit + ReferenceRange + OptionalFlag
+      const labDataPatterns = [
+        // Pattern 1: Full structured format with all fields
+        /^([A-Za-z\s,\-()]+?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI]+)\s+([\d\.\s\-<>]+(?:\s*\-\s*[\d\.]+)?)\s*(?:(HIGH|LOW|NORMAL))?/,
+        
+        // Pattern 2: Simplified format (TestName Value Unit Range)
+        /^([A-Za-z\s,\-()]{3,}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdK]{1,10})\s+([\d\.\s\-<>]{3,})/,
+        
+        // Pattern 3: Even simpler (TestName Value Unit) - extract range separately
+        /^([A-Za-z\s,\-()]{3,}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdK]{1,10})/
+      ];
+      
+      let matched = false;
+      
+      for (const pattern of labDataPatterns) {
+        const match = line.match(pattern);
+        if (match && !isNaN(parseFloat(match[2]))) {
+          const testName = match[1].trim();
+          const value = parseFloat(match[2]);
+          const unit = match[3].trim();
+          const refRange = match[4] ? match[4].trim() : null;
+          const flag = match[5] || '';
+          
+          // FLEXIBLE: Use the test name as-is, let your existing biomarker matching handle it
+          if (testName.length >= 3 && value > 0) {
+            console.log(`Structured parsing found: ${testName} = ${value} ${unit} (${refRange || 'no range'})`);
+            
+            results[testName] = {
+              value: value,
+              unit: unit,  // Keep original unit - no standardization
+              rawText: line,
+              referenceRange: refRange ? cleanReferenceRange(refRange) : null,
+              confidence: 0.9,
+              flag: flag,
+              extractionMethod: 'structured'
+            };
+            
+            matched = true;
+            break;
+          }
         }
       }
       
-      if (headerIndex >= 0) {
-        const headerLine = lines[headerIndex].toLowerCase();
+      // If no pattern matched, try to extract reference range from nearby lines
+      if (!matched && /\d+\.\d+/.test(line)) {
+        // Look for loose numeric patterns that might be biomarkers
+        const loosePattern = /([A-Za-z\s,\-()]{3,})\s+([\d\.]+)/;
+        const looseMatch = line.match(loosePattern);
         
-        // Determine column positions based on header
-        const columns = {
-          testName: headerLine.indexOf('test name') !== -1 ? headerLine.indexOf('test name') : headerLine.indexOf('test'),
-          result: headerLine.indexOf('result'),
-          reference: headerLine.indexOf('reference'),
-          units: headerLine.indexOf('units')
-        };
-        
-        // Process lines after the header
-        for (let i = headerIndex + 1; i < lines.length; i++) {
-          const line = lines[i];
+        if (looseMatch) {
+          const testName = looseMatch[1].trim();
+          const value = parseFloat(looseMatch[2]);
           
-          // Skip empty lines and lines that look like headers or footers
-          if (!line.trim() || /page|date:|patient|performing/i.test(line)) continue;
+          // Look ahead for unit and reference range in next lines
+          let unit = '';
+          let refRange = null;
           
-          // Extract test name - might span multiple words
-          let testName = '';
-          let resultValue = '';
-          let referenceRange = '';
-          let units = '';
-          
-          // Extract test name (common medical test names)
-          const testNamePatterns = [
-            // Specific test name patterns
-            /\b(C\s*REACTIVE\s*PROTEIN\s*(?:HIGH\s*SENS)?)\b/i,
-            /\b(THYROPEROXIDASE\s*ANTIBODY)\b/i,
-            /\b(TSH)\b/i,
-            /\b(T3|T4|FREE\s*T4|FREE\s*T3)\b/i,
-            /\b(THYROID\s*STIMULATING\s*HORMONE)\b/i,
-            // Generic pattern for any text that might be a test name at the beginning of line
-            /^([A-Z][A-Za-z\s\-]+)(?=\s+[\d<>.])/
-          ];
-          
-          // Try to match test name patterns
-          for (const pattern of testNamePatterns) {
-            const match = line.match(pattern);
-            if (match) {
-              testName = match[1].trim();
-              break;
+          for (let j = i; j < Math.min(i + 3, lines.length); j++) {
+            const nextLine = lines[j];
+            // Look for units
+            const unitMatch = nextLine.match(/\b([a-zA-Z%\/μmLdKfluI]{1,10})\b/);
+            if (unitMatch && !unit) {
+              unit = unitMatch[1];
+            }
+            // Look for reference ranges
+            const rangeMatch = nextLine.match(/([\d\.]+\s*[\-–]\s*[\d\.]+|[<>]\s*[\d\.]+)/);
+            if (rangeMatch && !refRange) {
+              refRange = rangeMatch[1];
             }
           }
           
-          // If no test name found, try extracting from position
-          if (!testName && columns.testName >= 0) {
-            // Find where the result or next column might start
-            const nextColStart = Object.values(columns)
-              .filter(pos => pos > columns.testName && pos !== -1)
-              .sort((a, b) => a - b)[0] || line.length;
+          if (testName.length >= 3 && value > 0) {
+            console.log(`Loose parsing found: ${testName} = ${value} ${unit} (${refRange || 'no range'})`);
             
-            testName = line.substring(columns.testName, nextColStart).trim();
-          }
-          
-          // Only proceed if we have a test name
-          if (testName) {
-            // Extract result value - find a number pattern
-            const resultPattern = /(\d+\.?\d*|\<\s*\d+\.?\d*)/;
-            const resultMatch = line.match(resultPattern);
-            if (resultMatch) {
-              resultValue = resultMatch[1].replace('<', '').trim();
-            }
-            
-            // Extract reference range - look for a pattern like "0-6" or "0.5-2.0"
-            const rangePattern = /(\d+\.?\d*\s*[\-–]\s*\d+\.?\d*)/;
-            const rangeMatch = line.match(rangePattern);
-            if (rangeMatch) {
-              referenceRange = rangeMatch[1].trim();
-            }
-            
-            // Extract units - common units at the end of line
-            const unitsPattern = /(mg\/L|kIU\/L|nmol\/L|pmol\/L|U\/L|mmol\/L)$/;
-            const unitsMatch = line.match(unitsPattern);
-            if (unitsMatch) {
-              units = unitsMatch[1];
-            }
-            
-            // If we have a test name and result, add to results
-            if (testName && resultValue) {
-              // Normalize test name
-              const normalizedName = normalizeTestName(testName);
-              
-              results[normalizedName] = {
-                value: parseFloat(resultValue),
-                unit: units,
-                rawText: line.trim(),
-                referenceRange: referenceRange,
-                confidence: 0.9 // Higher confidence for structured format
-              };
-              
-              console.log(`Found structured format match: ${normalizedName} = ${resultValue} ${units} (${referenceRange})`);
-            }
+            results[testName] = {
+              value: value,
+              unit: unit || 'unknown',
+              rawText: line,
+              referenceRange: refRange ? cleanReferenceRange(refRange) : null,
+              confidence: 0.7,
+              flag: '',
+              extractionMethod: 'loose'
+            };
           }
         }
       }
     }
     
     return results;
-  }
+}
+
+function cleanReferenceRange(refRange) {
+  if (!refRange) return null;
   
+  // Only basic cleaning - remove OCR artifacts
+  return refRange
+    .replace(/\s+/g, ' ')           // Normalize whitespace
+    .replace(/([0-9])\s*[\-–]\s*([0-9])/, '$1 - $2')  // Standardize range format
+    .replace(/[^\d\.\s\-<>]/g, '')  // Remove non-numeric/range characters
+    .trim();
+}
+
+function preprocessOCRText(text) {
+  if (!text) return '';
+  
+  return text
+    // Fix only obvious OCR errors that affect parsing
+    .replace(/\s{2,}/g, ' ')           // Normalize multiple spaces to single space
+    .replace(/\t/g, ' ')               // Convert tabs to spaces
+    .replace(/([a-z])(\d)/g, '$1 $2')  // Add space between letters and numbers where missing
+    .replace(/(\d)([a-z])/gi, '$1 $2') // Add space between numbers and letters where missing
+    .trim();
+}
+
+
+
   /**
    * Normalize test names to standard format
    * @param {string} testName - The detected test name
@@ -240,8 +261,10 @@ function parseStructuredLabReport(text) {
   }
   
   // Export the new functions to use in labParser.js
-  module.exports = {
-    parseStructuredLabReport,
-    normalizeTestName,
-    extractStructuredDate
-  };
+module.exports = {
+  parseStructuredLabReport,
+  normalizeTestName,
+  extractStructuredDate,
+  cleanReferenceRange,
+  preprocessOCRText
+};

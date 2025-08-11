@@ -284,13 +284,15 @@ function runPaddleOCR(filePath) {
  * @returns {Object} Extracted lab values
  */
 function parseLabValues(text) {
-
+  // ADD: Basic preprocessing step to clean OCR text
+  const cleanedText = preprocessOCRText(text);
+  
   // First try the structured lab report parser for medical lab reports with tables
-  const structuredResults = parseStructuredLabReport(text);
+  const structuredResults = parseStructuredLabReport(cleanedText); // Use cleaned text
   
   // If we found structured results, use those
   if (Object.keys(structuredResults).length > 0) {
-    console.log("Found structured lab report with tables, using specialized parser");
+    console.log(`Found structured lab report with tables, using specialized parser. Found ${Object.keys(structuredResults).length} values`);
     return structuredResults;
   }
   
@@ -298,13 +300,13 @@ function parseLabValues(text) {
   const results = {};
   
   // Return empty results if no text
-  if (!text) {
+  if (!cleanedText) { // Use cleaned text
     console.log("NO TEXT PROVIDED - returning empty results");
     return results;
   }
 
   // NEW: Try to parse "Result X.XX (unit)" format first
-  const resultFormatResults = parseResultFormat(text);
+  const resultFormatResults = parseResultFormat(cleanedText); // Use cleaned text
   Object.assign(results, resultFormatResults);
   
   if (Object.keys(resultFormatResults).length > 0) {
@@ -312,8 +314,8 @@ function parseLabValues(text) {
   }
   
   // Normalize text for consistency
-  const normalizedText = text.replace(/\s+/g, ' ').trim();
-  const lines = text.split('\n');
+  const normalizedText = cleanedText.replace(/\s+/g, ' ').trim(); // Use cleaned text
+  const lines = cleanedText.split('\n'); // Use cleaned text
 
   console.log("Normalized text:", normalizedText.substring(0, 200));
   console.log("Number of lines:", lines.length);
@@ -368,6 +370,18 @@ function parseLabValues(text) {
   }
   
   return results;
+}
+
+function preprocessOCRText(text) {
+  if (!text) return '';
+  
+  return text
+    // Fix only obvious OCR errors that affect parsing
+    .replace(/\s{2,}/g, ' ')           // Normalize multiple spaces to single space
+    .replace(/\t/g, ' ')               // Convert tabs to spaces
+    .replace(/([a-z])(\d)/g, '$1 $2')  // Add space between letters and numbers where missing
+    .replace(/(\d)([a-z])/gi, '$1 $2') // Add space between numbers and letters where missing
+    .trim();
 }
 
 // Helper function to parse "Result X.XX (unit)" format
