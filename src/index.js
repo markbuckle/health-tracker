@@ -420,32 +420,17 @@ hbs.registerHelper(
 hbs.registerHelper(
   "hasBiomarkersInCategory", 
   function (biomarkerData, categoryName) {
-    console.log(`🔍 Checking category: "${categoryName}"`);
+    if (!biomarkerData || !categoryName) return false;
     
-    if (!biomarkerData || !categoryName) {
-      console.log(`❌ Missing data: biomarkerData=${!!biomarkerData}, categoryName=${categoryName}`);
-      return false;
-    }
-    
-    // Convert categoryName to lowercase to match biomarker.category values
     const categoryKey = categoryName.toLowerCase();
-    console.log(`   Looking for biomarkers with category: "${categoryKey}"`);
+    const biomarkersInCategory = Object.values(biomarkerData).filter(biomarker => 
+      biomarker.category === categoryKey && biomarker.value !== null
+    );
     
-    const biomarkersInCategory = Object.values(biomarkerData).filter(biomarker => {
-      const hasValue = biomarker.value !== null;
-      const matchesCategory = biomarker.category === categoryKey;
-      
-      if (matchesCategory && hasValue) {
-        console.log(`   ✅ Found: biomarker with category "${biomarker.category}" and value ${biomarker.value}`);
-      }
-      
-      return matchesCategory && hasValue;
-    });
+    // Only log if you want to debug
+    // console.log(`🏷️ ${categoryName}: ${biomarkersInCategory.length} biomarkers`);
     
-    const hasResults = biomarkersInCategory.length > 0;
-    console.log(`   Result: ${hasResults ? '✅' : '❌'} ${biomarkersInCategory.length} biomarkers found`);
-    
-    return hasResults;
+    return biomarkersInCategory.length > 0;
   }
 );
 
@@ -834,125 +819,68 @@ app.get("/migrate-biomarkers", checkAuth, async (req, res) => {
 
 app.get("/reports", checkAuth, async (req, res) => {
   try {
-    console.log("=== REPORTS ROUTE DEBUG ===");
+    console.log("⚡ Loading reports with processed data...");
     
     // Get the user's latest lab results
     const user = await registerCollection.findById(req.user._id);
-    console.log(`User ID: ${user._id}`);
 
     // Get all files with lab values and sort by test date
     const filesWithLabValues = user.files
       .filter((file) => file.labValues && Object.entries(file.labValues).length > 0)
       .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
 
-    console.log(`Found ${filesWithLabValues.length} files with lab values`);
+    console.log(`📊 Found ${filesWithLabValues.length} files with ${filesWithLabValues.some(f => f.biomarkerProcessingComplete) ? 'processed' : 'raw'} biomarkers`);
+
+    // Check if migration is needed
+    const needsMigration = filesWithLabValues.some(file => !file.biomarkerProcessingComplete);
+    if (needsMigration) {
+      console.log("🔄 Migration needed - some files have raw data");
+      await migrateExistingFilesToProcessedData(req.user._id);
+      // Refresh user data after migration
+      const updatedUser = await registerCollection.findById(req.user._id);
+      filesWithLabValues = updatedUser.files
+        .filter(file => file.labValues && Object.entries(file.labValues).length > 0)
+        .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
+    }
 
     // Track all values for each biomarker
     const biomarkerHistory = {};
 
-    // ENHANCED Helper function to find biomarker by any of its names
-    function findBiomarkerMatch(testName) {
-      console.log(`\n🔍 Trying to match: "${testName}"`);
-      
-      if (!testName) {
-        console.log("❌ No test name provided");
-        return null;
-      }
-      
-      const testNameLower = testName.toLowerCase().trim();
-      console.log(`Normalized: "${testNameLower}"`);
-
-      // Check all biomarkers in biomarkerData
-      for (const [standardName, data] of Object.entries(biomarkerData)) {
-        // Direct name match
-        if (standardName.toLowerCase() === testNameLower) {
-          console.log(`✅ DIRECT MATCH: "${testName}" → "${standardName}"`);
-          return [standardName, data];
-        }
-
-        // Check alternate names
-        if (data.alternateNames && Array.isArray(data.alternateNames)) {
-          for (const altName of data.alternateNames) {
-            if (altName.toLowerCase() === testNameLower) {
-              console.log(`✅ ALTERNATE MATCH: "${testName}" → "${standardName}" (via "${altName}")`);
-              return [standardName, data];
-            }
-          }
-        }
-      }
-
-      // Fuzzy matching for partial names
-      for (const [standardName, data] of Object.entries(biomarkerData)) {
-        const standardLower = standardName.toLowerCase();
-        
-        // Check if test name is contained in standard name or vice versa (min 4 chars)
-        if (testNameLower.length >= 4 && standardLower.includes(testNameLower)) {
-          console.log(`✅ PARTIAL MATCH: "${testName}" → "${standardName}" (partial)`);
-          return [standardName, data];
-        }
-        
-        if (standardLower.length >= 4 && testNameLower.includes(standardLower)) {
-          console.log(`✅ PARTIAL MATCH: "${testName}" → "${standardName}" (reverse partial)`);
-          return [standardName, data];
-        }
-      }
-
-      console.log(`❌ NO MATCH found for: "${testName}"`);
-      return null;
-    }
-
     // When processing lab values
-    filesWithLabValues.forEach((file, fileIndex) => {
-      console.log(`\n📁 Processing file ${fileIndex + 1}: ${file.originalName}`);
+    filesWithLabValues.forEach((file) => {
+      console.log(`📁 Loading processed data from: ${file.originalName} (${Object.keys(file.labValues).length} biomarkers)`);
       
-      // Handle both Map and Object formats for labValues
-      let labValuesEntries;
-      if (file.labValues instanceof Map) {
-        labValuesEntries = Array.from(file.labValues.entries());
-        console.log("Lab values format: Map");
-      } else {
-        labValuesEntries = Object.entries(file.labValues);
-        console.log("Lab values format: Object");
-      }
-      
-      console.log(`Found ${labValuesEntries.length} lab values in this file:`);
-      labValuesEntries.forEach(([name, value]) => {
-        console.log(`  - "${name}": ${value.value} ${value.unit || ''}`);
-      });
-      
-      labValuesEntries.forEach(([labTestName, value]) => {
-        const biomarkerMatch = findBiomarkerMatch(labTestName);
-        
-        if (biomarkerMatch) {
-          const [standardName, biomarkerInfo] = biomarkerMatch;
-
-          if (!biomarkerHistory[standardName]) {
-            biomarkerHistory[standardName] = [];
-          }
-
-          biomarkerHistory[standardName].push({
-            value: value.value,
-            unit: value.unit,
-            referenceRange: value.referenceRange,
-            testDate: file.testDate,
-            filename: file.originalName,
-          });
-          
-          console.log(`📊 Added to history: ${standardName} = ${value.value} ${value.unit || ''}`);
+      // Use processed labValues directly - they're already standardized!
+      Object.entries(file.labValues).forEach(([biomarkerName, biomarkerData]) => {
+        if (!biomarkerHistory[biomarkerName]) {
+          biomarkerHistory[biomarkerName] = [];
         }
+        
+        biomarkerHistory[biomarkerName].push({
+          value: biomarkerData.value,
+          unit: biomarkerData.unit,
+          referenceRange: biomarkerData.referenceRange,
+          testDate: file.testDate,
+          filename: file.originalName,
+          category: biomarkerData.category
+        });
       });
     });
-
-    console.log(`\n📈 Total biomarkers in history: ${Object.keys(biomarkerHistory).length}`);
-    console.log("Biomarkers found:", Object.keys(biomarkerHistory));
 
     // Merge static biomarker data with lab values
     const enrichedBiomarkerData = {};
 
-    for (const [biomarkerName, biomarkerInfo] of Object.entries(biomarkerData)) {
-      const allValues = biomarkerHistory[biomarkerName] || [];
+    Object.keys(biomarkerHistory).forEach(biomarkerName => {
+      const allValues = biomarkerHistory[biomarkerName];
       const sortedValues = allValues.sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
       const mostRecent = sortedValues[0];
+      
+      // Get biomarker info from biomarkerData or use stored data
+      const biomarkerInfo = biomarkerData[biomarkerName] || {
+        category: mostRecent.category,
+        description: `Biomarker: ${biomarkerName}`,
+        frequency: "quarterly/annually"
+      };
 
       enrichedBiomarkerData[biomarkerName] = {
         ...biomarkerInfo,
@@ -961,43 +889,16 @@ app.get("/reports", checkAuth, async (req, res) => {
         referenceRange: mostRecent?.referenceRange || null,
         history: sortedValues,
       };
-    }
+    });
 
-    // Debug category distribution
-    console.log("\n🏷️ CATEGORY ANALYSIS:");
-    const categoryCount = {};
-    const biomarkersWithValues = [];
-    
-    for (const [biomarkerName, data] of Object.entries(enrichedBiomarkerData)) {
-      if (data.value !== null) {
-        biomarkersWithValues.push(biomarkerName);
-        const category = data.category;
-        categoryCount[category] = (categoryCount[category] || 0) + 1;
-      }
-    }
-    
-    console.log("Biomarkers with values:", biomarkersWithValues);
-    console.log("Category distribution:", categoryCount);
-    
-    if (biomarkersWithValues.length === 0) {
-      console.log("🚨 NO BIOMARKERS HAVE VALUES! This is why categories are empty.");
-    }
-
-    // Create initialData script with sanitized file data
-    const filesForClient = filesWithLabValues.map((file) => ({
-      testDate: file.testDate,
-      labValues: Object.fromEntries(file.labValues),
-    }));
-
-    console.log("\n✅ Rendering reports page...");
-    console.log("markerCategories:", Object.keys(markerCategories || {}));
-    console.log("enrichedBiomarkerData keys:", Object.keys(enrichedBiomarkerData).slice(0, 10));
+    console.log(`✅ Reports loaded instantly with ${Object.keys(enrichedBiomarkerData).length} biomarkers`);
 
     res.render("user/reports", {
       markerCategories: Object.entries(markerCategories).map(([key, value]) => ({
         name: key,
-        ...value
-      })), // ✅ This creates the structure the template expects
+        displayName: value.name,
+        description: value.description
+      })),
       biomarkerData: enrichedBiomarkerData,
       initialData: `<script>window.__INITIAL_DATA__ = ${JSON.stringify({
         files: user.files,

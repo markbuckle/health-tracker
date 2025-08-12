@@ -113,11 +113,11 @@ async function processUploadedFile(file, extractFromPDF) {
       
       const extractedData = await processWithDigitalOceanOCR(file);
       
-      console.log("Extracted data:", {
-        numLabValues: Object.keys(extractedData.labValues || {}).length,
-        testDate: extractedData.testDate,
-        hasErrors: !!(extractedData.processingErrors && extractedData.processingErrors.length > 0)
-      });
+      // console.log("Extracted data:", {
+      //   numLabValues: Object.keys(extractedData.labValues || {}).length,
+      //   testDate: extractedData.testDate,
+      //   hasErrors: !!(extractedData.processingErrors && extractedData.processingErrors.length > 0)
+      // });
 
       const processedLabValues = processBiomarkersForStorage(extractedData.labValues);
 
@@ -125,7 +125,7 @@ async function processUploadedFile(file, extractFromPDF) {
       const fileObject = {
         filename: file.filename || file.originalname,
         originalName: file.originalname,
-        path: filePath,
+        path: file.path || null,
         size: file.size,
         mimetype: file.mimetype,
         uploadDate: new Date(),
