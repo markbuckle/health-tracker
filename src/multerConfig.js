@@ -12,6 +12,8 @@ console.log(`Environment: ${isVercel ? 'Vercel Production' : 'Local Development'
 const OCR_SERVICE_URL = process.env.OCR_SERVICE_URL; // Remove the fallback URL
 const useExternalOCR = OCR_SERVICE_URL && !isVercel && !isProductionEnv;
 
+const { processBiomarkersForStorage } = require('./utilities/biomarkerProcessor');
+
 // External OCR service connectivity test
 // if (useExternalOCR) {
 //   console.log('External OCR service configured for development environment');
@@ -116,7 +118,9 @@ async function processUploadedFile(file, extractFromPDF) {
         testDate: extractedData.testDate,
         hasErrors: !!(extractedData.processingErrors && extractedData.processingErrors.length > 0)
       });
-      
+
+      const processedLabValues = processBiomarkersForStorage(extractedData.labValues);
+
       // Create file object for database
       const fileObject = {
         filename: file.filename || file.originalname,
@@ -128,7 +132,10 @@ async function processUploadedFile(file, extractFromPDF) {
         testDate: extractedData.testDate || new Date(),
         labValues: extractedData.labValues || {},
         extractionMethod: isVercel ? 'digital-ocean-ocr' : 'local-ocr',
-        processingErrors: extractedData.processingErrors || []
+        processingErrors: extractedData.processingErrors || [],
+        labValues: processedLabValues, // ← Use processed data
+        biomarkerProcessingComplete: true,
+        totalBiomarkersProcessed: Object.keys(processedLabValues).length
       };
       
       return fileObject;

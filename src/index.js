@@ -24,6 +24,7 @@ const { Resend } = require("resend"); // npm install resend
 const ragRoutes = require("./db/routes/ragRoutes");
 // const { extractFromPDF } = require('./parsers/PaddleOCR/labParser');
 const fetch = require("node-fetch");
+const { processBiomarkersForStorage, migrateExistingFilesToProcessedData } = require('./utilities/biomarkerProcessor');
 
 // express app setup
 const app = express();
@@ -818,6 +819,16 @@ app.get("/upload", checkAuth, async (req, res) => {
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).send("Error loading upload page");
+  }
+});
+
+app.get("/migrate-biomarkers", checkAuth, async (req, res) => {
+  try {
+    const user = await registerCollection.findById(req.user._id);
+    const result = await migrateExistingFilesToProcessedData(user);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
