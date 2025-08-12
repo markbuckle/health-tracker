@@ -90,8 +90,44 @@ function processBiomarkersForStorage(rawLabValues) {
     return null;
   }
   
+  /**
+   * Filter out Mongoose internal properties and get clean entries
+   */
+  function getCleanEntries(labValues) {
+    const entries = [];
+    
+    // Handle both Map and regular object
+    if (labValues instanceof Map) {
+      for (const [key, value] of labValues.entries()) {
+        if (!key.startsWith('$__') && !key.startsWith('_')) {
+          entries.push([key, value]);
+        }
+      }
+    } else if (typeof labValues === 'object' && labValues !== null) {
+      // Use Object.keys to avoid inherited properties and filter out Mongoose internals
+      for (const key of Object.keys(labValues)) {
+        if (!key.startsWith('$__') && !key.startsWith('_') && 
+            typeof labValues[key] === 'object' && labValues[key] !== null) {
+          entries.push([key, labValues[key]]);
+        }
+      }
+    }
+    
+    return entries;
+  }
+  
+  // Get clean entries without Mongoose internals
+  const cleanEntries = getCleanEntries(rawLabValues);
+  console.log(`🔍 Processing ${cleanEntries.length} clean biomarker entries`);
+  
   // Process each raw biomarker
-  Object.entries(rawLabValues).forEach(([rawName, rawData]) => {
+  cleanEntries.forEach(([rawName, rawData]) => {
+    // Skip if rawData is not a proper biomarker object
+    if (!rawData || typeof rawData !== 'object' || rawData.value === undefined) {
+      console.log(`⚠️ Skipping invalid biomarker data for: ${rawName}`);
+      return;
+    }
+    
     const biomarkerMatch = findBiomarkerMatch(rawName);
     
     if (biomarkerMatch) {
@@ -167,13 +203,18 @@ async function migrateExistingFilesToProcessedData(user) {
         // Process the raw labValues
         const processedLabValues = processBiomarkersForStorage(file.labValues);
         
-        // Replace with processed data
-        file.labValues = processedLabValues;
-        file.biomarkerProcessingComplete = true;
-        file.migratedAt = new Date();
-        file.totalBiomarkersProcessed = Object.keys(processedLabValues).length;
-        
-        migrationCount++;
+        // Only proceed if we have valid processed data
+        if (Object.keys(processedLabValues).length > 0) {
+          // Replace with processed data
+          file.labValues = processedLabValues;
+          file.biomarkerProcessingComplete = true;
+          file.migratedAt = new Date();
+          file.totalBiomarkersProcessed = Object.keys(processedLabValues).length;
+          
+          migrationCount++;
+        } else {
+          console.log(`⚠️ No valid biomarkers processed for file: ${file.originalName}`);
+        }
       }
     });
     

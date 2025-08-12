@@ -422,13 +422,27 @@ hbs.registerHelper(
   function (biomarkerData, categoryName) {
     if (!biomarkerData || !categoryName) return false;
     
-    const categoryKey = categoryName.toLowerCase();
-    const biomarkersInCategory = Object.values(biomarkerData).filter(biomarker => 
-      biomarker.category === categoryKey && biomarker.value !== null
-    );
+    console.log(`🔍 Checking category "${categoryName}" for biomarkers`);
     
-    // Only log if you want to debug
-    // console.log(`🏷️ ${categoryName}: ${biomarkersInCategory.length} biomarkers`);
+    // Convert category name to lowercase for comparison
+    const categoryKey = categoryName.toLowerCase();
+    
+    // Look through the actual enriched biomarker data
+    const biomarkersInCategory = Object.values(biomarkerData).filter(biomarker => {
+      const hasValue = biomarker.value !== null && biomarker.value !== undefined;
+      const matchesCategory = biomarker.category && biomarker.category.toLowerCase() === categoryKey;
+      
+      if (hasValue && matchesCategory) {
+        console.log(`✅ Found biomarker in ${categoryName}:`, {
+          category: biomarker.category,
+          value: biomarker.value
+        });
+      }
+      
+      return hasValue && matchesCategory;
+    });
+    
+    console.log(`🏷️ ${categoryName}: ${biomarkersInCategory.length} biomarkers found`);
     
     return biomarkersInCategory.length > 0;
   }
@@ -835,7 +849,9 @@ app.get("/reports", checkAuth, async (req, res) => {
     const needsMigration = filesWithLabValues.some(file => !file.biomarkerProcessingComplete);
     if (needsMigration) {
       console.log("🔄 Migration needed - some files have raw data");
-      await migrateExistingFilesToProcessedData(req.user._id);
+      // FIXED: Pass the user object instead of user ID
+      await migrateExistingFilesToProcessedData(user);
+      
       // Refresh user data after migration
       const updatedUser = await registerCollection.findById(req.user._id);
       filesWithLabValues = updatedUser.files
@@ -851,18 +867,23 @@ app.get("/reports", checkAuth, async (req, res) => {
       console.log(`📁 Loading processed data from: ${file.originalName} (${Object.keys(file.labValues).length} biomarkers)`);
       
       // Use processed labValues directly - they're already standardized!
-      Object.entries(file.labValues).forEach(([biomarkerName, biomarkerData]) => {
+      Object.entries(file.labValues).forEach(([biomarkerName, processedBiomarkerData]) => {
+        // Skip Mongoose internal properties
+        if (biomarkerName.startsWith('$__') || biomarkerName.startsWith('_')) {
+          return;
+        }
+        
         if (!biomarkerHistory[biomarkerName]) {
           biomarkerHistory[biomarkerName] = [];
         }
         
         biomarkerHistory[biomarkerName].push({
-          value: biomarkerData.value,
-          unit: biomarkerData.unit,
-          referenceRange: biomarkerData.referenceRange,
+          value: processedBiomarkerData.value,
+          unit: processedBiomarkerData.unit,
+          referenceRange: processedBiomarkerData.referenceRange,
           testDate: file.testDate,
           filename: file.originalName,
-          category: biomarkerData.category
+          category: processedBiomarkerData.category
         });
       });
     });
@@ -875,11 +896,15 @@ app.get("/reports", checkAuth, async (req, res) => {
       const sortedValues = allValues.sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
       const mostRecent = sortedValues[0];
       
-      // Get biomarker info from biomarkerData or use stored data
-      const biomarkerInfo = biomarkerData[biomarkerName] || {
-        category: mostRecent.category,
-        description: `Biomarker: ${biomarkerName}`,
-        frequency: "quarterly/annually"
+      // FIXED: Use staticBiomarkerData to avoid variable name conflict
+      // Try to get biomarker info from the static biomarkerData first
+      const staticBiomarkerInfo = biomarkerData[biomarkerName];
+      
+      // If not found in static data, use the stored processed data
+      const biomarkerInfo = staticBiomarkerInfo || {
+        category: mostRecent.category || 'unknown',
+        description: mostRecent.description || `Biomarker: ${biomarkerName}`,
+        frequency: mostRecent.frequency || "quarterly/annually"
       };
 
       enrichedBiomarkerData[biomarkerName] = {
@@ -892,6 +917,11 @@ app.get("/reports", checkAuth, async (req, res) => {
     });
 
     console.log(`✅ Reports loaded instantly with ${Object.keys(enrichedBiomarkerData).length} biomarkers`);
+    console.log(`🔍 Debug - Sample biomarker data:`, Object.keys(enrichedBiomarkerData).slice(0, 3).map(name => ({
+      name,
+      value: enrichedBiomarkerData[name].value,
+      category: enrichedBiomarkerData[name].category
+    })));
 
     res.render("user/reports", {
       markerCategories: Object.entries(markerCategories).map(([key, value]) => ({
@@ -902,8 +932,8 @@ app.get("/reports", checkAuth, async (req, res) => {
       biomarkerData: enrichedBiomarkerData,
       initialData: `<script>window.__INITIAL_DATA__ = ${JSON.stringify({
         files: user.files,
-        biomarkers: Object.keys(biomarkerData),
-        biomarkerInfo: biomarkerData,
+        biomarkers: Object.keys(enrichedBiomarkerData), // FIXED: Use enriched data
+        biomarkerInfo: enrichedBiomarkerData, // FIXED: Use enriched data
       })};</script>`,
     });
   } catch (error) {
