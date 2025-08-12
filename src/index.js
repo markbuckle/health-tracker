@@ -825,7 +825,7 @@ app.get("/reports", checkAuth, async (req, res) => {
     const user = await registerCollection.findById(req.user._id);
 
     // Get all files with lab values and sort by test date
-    const filesWithLabValues = user.files
+    let filesWithLabValues = user.files
       .filter((file) => file.labValues && Object.entries(file.labValues).length > 0)
       .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
 
