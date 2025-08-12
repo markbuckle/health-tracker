@@ -140,15 +140,16 @@ function processBiomarkersForStorage(rawLabValues) {
       processedBiomarkers[standardName] = {
         value: rawData.value,
         unit: rawData.unit || '',
+        rawText: rawData.rawText || '',
         referenceRange: cleanReferenceRange,
+        confidence: rawData.confidence || 0.8,
+        // Additional fields for processing context
         category: biomarkerInfo.category,
         description: biomarkerInfo.description,
         frequency: biomarkerInfo.frequency,
-        confidence: rawData.confidence || 0.8,
-        rawText: rawData.rawText || '',
         originalName: rawName, // Keep track for debugging if needed
-        processedAt: new Date(),
-        matched: true
+        matched: true,
+        processedAt: new Date()
       };
       
       console.log(`✅ Processed: "${rawName}" → "${standardName}" (${biomarkerInfo.category})`);
@@ -162,12 +163,13 @@ function processBiomarkersForStorage(rawLabValues) {
       processedBiomarkers[rawName] = {
         value: rawData.value,
         unit: rawData.unit || '',
+        rawText: rawData.rawText || '',
         referenceRange: cleanReferenceRange,
+        confidence: rawData.confidence || 0.5,
+        // Additional fields for processing context
         category: 'unknown',
         description: `Unmatched biomarker: ${rawName}`,
         frequency: 'unknown',
-        confidence: rawData.confidence || 0.5,
-        rawText: rawData.rawText || '',
         originalName: rawName,
         matched: false,
         processedAt: new Date()
