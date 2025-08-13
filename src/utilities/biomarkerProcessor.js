@@ -207,8 +207,13 @@ async function migrateExistingFilesToProcessedData(user) {
     let hasChanges = false;
     
     user.files.forEach(file => {
-      // Check if file has labValues but hasn't been processed yet
-      if (file.labValues && !file.biomarkerProcessingComplete) {
+      // Only process files that explicitly need migration
+      const hasLabValues = file.labValues && (
+        file.labValues instanceof Map ? file.labValues.size > 0 : Object.keys(file.labValues).length > 0
+      );
+      const needsProcessing = file.biomarkerProcessingComplete !== true;
+      
+      if (hasLabValues && needsProcessing) {
         console.log(`🔄 Migrating file: ${file.originalName}`);
         
         // Convert Map to plain object for processing
@@ -245,7 +250,7 @@ async function migrateExistingFilesToProcessedData(user) {
             });
           });
           
-          // Replace with processed data
+          // Replace with processed data and mark as complete
           file.labValues = labValuesMap;
           file.biomarkerProcessingComplete = true;
           file.migratedAt = new Date();
@@ -253,18 +258,39 @@ async function migrateExistingFilesToProcessedData(user) {
           
           migrationCount++;
           hasChanges = true;
+          
+          console.log(`✅ Processed ${labValuesMap.size} biomarkers for: ${file.originalName}`);
         } else {
           console.log(`⚠️ No valid biomarkers processed for file: ${file.originalName}`);
+          // Still mark as processed to prevent re-processing
+          file.biomarkerProcessingComplete = true;
+          file.migratedAt = new Date();
+          file.totalBiomarkersProcessed = 0;
+          hasChanges = true;
+        }
+      } else if (hasLabValues && file.biomarkerProcessingComplete === true) {
+        // File already processed, skip silently
+      } else {
+        // No lab values, mark as processed to prevent future checks
+        if (file.biomarkerProcessingComplete !== true) {
+          file.biomarkerProcessingComplete = true;
+          file.migratedAt = new Date();
+          file.totalBiomarkersProcessed = 0;
+          hasChanges = true;
         }
       }
     });
     
     if (hasChanges) {
       await user.save();
-      console.log(`✅ Migration complete: ${migrationCount} files processed`);
+      if (migrationCount > 0) {
+        console.log(`✅ Migration complete: ${migrationCount} files processed`);
+      }
       return { 
         migrated: migrationCount, 
-        message: `Successfully migrated ${migrationCount} files to processed data format` 
+        message: migrationCount > 0 
+          ? `Successfully migrated ${migrationCount} files to processed data format`
+          : "Files marked as processed"
       };
     } else {
       console.log("No files needed migration");

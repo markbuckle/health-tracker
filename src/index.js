@@ -841,28 +841,43 @@ app.get("/reports", checkAuth, async (req, res) => {
       })
       .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
 
-    console.log(`📊 Found ${filesWithLabValues.length} files with ${filesWithLabValues.some(f => f.biomarkerProcessingComplete) ? 'processed' : 'raw'} biomarkers`);
+    console.log(`📊 Found ${filesWithLabValues.length} files`);
 
-    // Check if migration is needed
-    const needsMigration = filesWithLabValues.some(file => !file.biomarkerProcessingComplete);
+    // Check if migration is needed - be more specific about what needs migration
+    const needsMigration = filesWithLabValues.some(file => {
+      // Only migrate if file has labValues but is explicitly marked as not processed
+      const hasLabValues = file.labValues && (
+        file.labValues instanceof Map ? file.labValues.size > 0 : Object.keys(file.labValues).length > 0
+      );
+      const isNotProcessed = file.biomarkerProcessingComplete !== true;
+      
+      return hasLabValues && isNotProcessed;
+    });
+
     if (needsMigration) {
       console.log("🔄 Migration needed - some files have raw data");
-      // Pass the user object instead of user ID
-      await migrateExistingFilesToProcessedData(user);
       
-      // Refresh user data after migration
-      const updatedUser = await registerCollection.findById(req.user._id);
-      filesWithLabValues = updatedUser.files
-        .filter(file => {
-          if (!file.labValues) return false;
-          
-          const entriesCount = file.labValues instanceof Map 
-            ? file.labValues.size 
-            : Object.keys(file.labValues).length;
-          
-          return entriesCount > 0;
-        })
-        .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
+      // Pass the user object for migration
+      const migrationResult = await migrateExistingFilesToProcessedData(user);
+      
+      // Only refresh if migration actually processed files
+      if (migrationResult.migrated > 0) {
+        // Refresh user data after migration
+        const updatedUser = await registerCollection.findById(req.user._id);
+        filesWithLabValues = updatedUser.files
+          .filter(file => {
+            if (!file.labValues) return false;
+            
+            const entriesCount = file.labValues instanceof Map 
+              ? file.labValues.size 
+              : Object.keys(file.labValues).length;
+            
+            return entriesCount > 0;
+          })
+          .sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
+      }
+    } else {
+      console.log("📊 All files already processed - loading existing data");
     }
 
     // Track all values for each biomarker
@@ -878,7 +893,10 @@ app.get("/reports", checkAuth, async (req, res) => {
         labEntries = Object.entries(file.labValues);
       }
       
-      console.log(`📁 Loading processed data from: ${file.originalName} (${labEntries.length} biomarkers)`);
+      // Only log file loading for files that were actually processed
+      if (!file.biomarkerProcessingComplete) {
+        console.log(`📁 Loading processed data from: ${file.originalName} (${labEntries.length} biomarkers)`);
+      }
       
       // Process each biomarker entry
       labEntries.forEach(([biomarkerName, processedBiomarkerData]) => {
@@ -934,7 +952,7 @@ app.get("/reports", checkAuth, async (req, res) => {
       };
     });
 
-    console.log(`✅ Reports loaded instantly with ${Object.keys(enrichedBiomarkerData).length} biomarkers`);
+    console.log(`✅ Reports loaded with ${Object.keys(enrichedBiomarkerData).length} biomarkers`);
 
     res.render("user/reports", {
       markerCategories: Object.entries(markerCategories).map(([key, value]) => ({
