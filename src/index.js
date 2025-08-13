@@ -267,13 +267,13 @@ hbs.registerHelper("formatDateString", function (dateString) {
 
 hbs.registerHelper("parseReferenceRange", function (range) {
   if (!range) {
-    console.log("parseReferenceRange: No range provided");
+    // console.log("parseReferenceRange: No range provided");
     return null;
   }
 
   const rangeStr = range.toString().trim();
-  console.log("parseReferenceRange: Input range =", rangeStr);
-  console.log("parseReferenceRange: Range type =", typeof range);
+  // console.log("parseReferenceRange: Input range =", rangeStr);
+  // console.log("parseReferenceRange: Range type =", typeof range);
   
   // Handle "< X.X" format (like "< 1.05" or "Normal result range < 1.05")
   const lessThanMatch = rangeStr.match(/(?:.*<\s*)?(\d+\.?\d*)$/);
@@ -282,7 +282,7 @@ hbs.registerHelper("parseReferenceRange", function (range) {
       min: 0,
       max: parseFloat(lessThanMatch[1])
     };
-    console.log("parseReferenceRange: Parsed as less-than range:", result);
+    // console.log("parseReferenceRange: Parsed as less-than range:", result);
     return result;
   }
   
@@ -294,7 +294,7 @@ hbs.registerHelper("parseReferenceRange", function (range) {
       min: minValue,
       max: minValue * 3
     };
-    console.log("parseReferenceRange: Parsed as greater-than range:", result);
+    // console.log("parseReferenceRange: Parsed as greater-than range:", result);
     return result;
   }
   
@@ -303,7 +303,7 @@ hbs.registerHelper("parseReferenceRange", function (range) {
   const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
 
   if (!matches) {
-    console.log("parseReferenceRange: Could not parse range:", rangeStr);
+    // console.log("parseReferenceRange: Could not parse range:", rangeStr);
     return null;
   }
 
@@ -311,7 +311,7 @@ hbs.registerHelper("parseReferenceRange", function (range) {
     min: parseFloat(matches[1]),
     max: parseFloat(matches[2])
   };
-  console.log("parseReferenceRange: Parsed as standard range:", result);
+  // console.log("parseReferenceRange: Parsed as standard range:", result);
   return result;
 });
 
@@ -422,8 +422,6 @@ hbs.registerHelper(
   function (biomarkerData, categoryName) {
     if (!biomarkerData || !categoryName) return false;
     
-    console.log(`🔍 Checking category "${categoryName}" for biomarkers`);
-    
     // Convert category name to lowercase for comparison
     const categoryKey = categoryName.toLowerCase();
     
@@ -432,17 +430,8 @@ hbs.registerHelper(
       const hasValue = biomarker.value !== null && biomarker.value !== undefined;
       const matchesCategory = biomarker.category && biomarker.category.toLowerCase() === categoryKey;
       
-      if (hasValue && matchesCategory) {
-        console.log(`✅ Found biomarker in ${categoryName}:`, {
-          category: biomarker.category,
-          value: biomarker.value
-        });
-      }
-      
       return hasValue && matchesCategory;
     });
-    
-    console.log(`🏷️ ${categoryName}: ${biomarkersInCategory.length} biomarkers found`);
     
     return biomarkersInCategory.length > 0;
   }
@@ -900,7 +889,6 @@ app.get("/reports", checkAuth, async (req, res) => {
         
         // Ensure we have valid biomarker data
         if (!processedBiomarkerData || typeof processedBiomarkerData !== 'object') {
-          console.log(`⚠️ Skipping invalid biomarker data for: ${biomarkerName}`);
           return;
         }
         
@@ -947,12 +935,6 @@ app.get("/reports", checkAuth, async (req, res) => {
     });
 
     console.log(`✅ Reports loaded instantly with ${Object.keys(enrichedBiomarkerData).length} biomarkers`);
-    console.log(`🔍 Debug - Biomarker names:`, Object.keys(enrichedBiomarkerData));
-    console.log(`🔍 Debug - Sample biomarker data:`, Object.keys(enrichedBiomarkerData).slice(0, 3).map(name => ({
-      name,
-      value: enrichedBiomarkerData[name].value,
-      category: enrichedBiomarkerData[name].category
-    })));
 
     res.render("user/reports", {
       markerCategories: Object.entries(markerCategories).map(([key, value]) => ({

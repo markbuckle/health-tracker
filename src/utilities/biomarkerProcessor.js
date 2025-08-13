@@ -75,7 +75,6 @@ function processBiomarkersForStorage(rawLabValues) {
           /^\d{4}-\d{4}$/.test(cleanRange) ||     // XXXX-XXXX pattern
           cleanRange.length > 25 ||               // Too long to be a medical range
           /^[A-Z]{2,}-/.test(cleanRange)) {       // Starts with letters (likely not a range)
-        console.log(`   🗑️  Removed garbage range: "${cleanRange}"`);
         return null;
       }
       
@@ -118,13 +117,12 @@ function processBiomarkersForStorage(rawLabValues) {
   
   // Get clean entries without Mongoose internals
   const cleanEntries = getCleanEntries(rawLabValues);
-  console.log(`🔍 Processing ${cleanEntries.length} clean biomarker entries`);
+  console.log(`🔍 Processing ${cleanEntries.length} clean biomarker entries\n`);
   
   // Process each raw biomarker
   cleanEntries.forEach(([rawName, rawData]) => {
     // Skip if rawData is not a proper biomarker object
     if (!rawData || typeof rawData !== 'object' || rawData.value === undefined) {
-      console.log(`⚠️ Skipping invalid biomarker data for: ${rawName}`);
       return;
     }
     
@@ -151,11 +149,6 @@ function processBiomarkersForStorage(rawLabValues) {
         matched: true,
         processedAt: new Date()
       };
-      
-      console.log(`✅ Processed: "${rawName}" → "${standardName}" (${biomarkerInfo.category})`);
-      if (cleanReferenceRange !== rawData.referenceRange) {
-        console.log(`   🧹 Range cleaned: "${rawData.referenceRange}" → "${cleanReferenceRange || 'null'}"`);
-      }
     } else {
       // For unmatched biomarkers, still clean them up but mark as unmatched
       const cleanReferenceRange = getCleanReferenceRange(rawData.referenceRange, null);
@@ -174,17 +167,32 @@ function processBiomarkersForStorage(rawLabValues) {
         matched: false,
         processedAt: new Date()
       };
-      
-      console.log(`❓ Unmatched but cleaned: "${rawName}"`);
     }
   });
   
-  console.log(`🎯 Processing complete: ${Object.keys(processedBiomarkers).length} biomarkers processed`);
+  // Clean, compact logging with biomarker details
+  if (Object.keys(processedBiomarkers).length > 0) {
+    console.log("📊 PROCESSED BIOMARKERS:");
+    console.log("=" + "=".repeat(70));
+    
+    Object.entries(processedBiomarkers).forEach(([name, data]) => {
+      const value = `${data.value} ${data.unit}`.trim();
+      const range = data.referenceRange || 'No range';
+      const category = data.category.toUpperCase();
+      
+      console.log(`${name.padEnd(20)} │ ${value.padEnd(12)} │ ${range.padEnd(15)} │ ${category}`);
+    });
+    
+    console.log("=" + "=".repeat(70));
+  }
+  
+  console.log(`🎯 Processing complete: ${Object.keys(processedBiomarkers).length} biomarkers processed\n`);
   return processedBiomarkers;
 }
 
 /**
  * Migration function for existing files with raw data
+ * Fixed to properly handle MongoDB Map type for labValues
  */
 async function migrateExistingFilesToProcessedData(user) {
   try {
@@ -196,31 +204,62 @@ async function migrateExistingFilesToProcessedData(user) {
     }
     
     let migrationCount = 0;
+    let hasChanges = false;
     
     user.files.forEach(file => {
       // Check if file has labValues but hasn't been processed yet
       if (file.labValues && !file.biomarkerProcessingComplete) {
         console.log(`🔄 Migrating file: ${file.originalName}`);
         
+        // Convert Map to plain object for processing
+        let rawLabValues = {};
+        if (file.labValues instanceof Map) {
+          rawLabValues = Object.fromEntries(file.labValues);
+        } else {
+          rawLabValues = file.labValues;
+        }
+        
         // Process the raw labValues
-        const processedLabValues = processBiomarkersForStorage(file.labValues);
+        const processedLabValues = processBiomarkersForStorage(rawLabValues);
         
         // Only proceed if we have valid processed data
         if (Object.keys(processedLabValues).length > 0) {
+          // Create a new Map for MongoDB
+          const labValuesMap = new Map();
+          
+          // Populate the Map with processed data
+          Object.entries(processedLabValues).forEach(([biomarkerName, biomarkerData]) => {
+            labValuesMap.set(biomarkerName, {
+              value: biomarkerData.value,
+              unit: biomarkerData.unit || '',
+              rawText: biomarkerData.rawText || '',
+              referenceRange: biomarkerData.referenceRange || null,
+              confidence: biomarkerData.confidence || 0.8,
+              // Add the additional processed fields
+              category: biomarkerData.category,
+              description: biomarkerData.description,
+              frequency: biomarkerData.frequency,
+              originalName: biomarkerData.originalName,
+              matched: biomarkerData.matched,
+              processedAt: biomarkerData.processedAt
+            });
+          });
+          
           // Replace with processed data
-          file.labValues = processedLabValues;
+          file.labValues = labValuesMap;
           file.biomarkerProcessingComplete = true;
           file.migratedAt = new Date();
-          file.totalBiomarkersProcessed = Object.keys(processedLabValues).length;
+          file.totalBiomarkersProcessed = labValuesMap.size;
           
           migrationCount++;
+          hasChanges = true;
         } else {
           console.log(`⚠️ No valid biomarkers processed for file: ${file.originalName}`);
         }
       }
     });
     
-    if (migrationCount > 0) {
+    if (hasChanges) {
       await user.save();
       console.log(`✅ Migration complete: ${migrationCount} files processed`);
       return { 
