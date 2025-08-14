@@ -705,6 +705,22 @@
     max-width: auto;
     margin: 0 0.5rem 1rem 0.5rem;
   }
+  .personal-history-entry {
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+  .personal-history-column {
+    padding: 10px 6px;
+  }
+  .personal-history-column.condition-column {
+    min-width: 110px;
+  }
+  .personal-history-column.notes-column {
+    min-width: 190px;
+  }
+  .personal-history-column.actions-column {
+    min-width: 150px;
+  }
   .family-history-container {
     max-width: auto;
     margin: 0 0.5rem 1rem 0.5rem;
@@ -784,10 +800,6 @@
     padding-top: calc(10px + var(--mobile-menu-height, 0px)) !important;
     transition: padding-top 0.3s ease-in-out;
   }
-  /* Adjust for mobile menu */
-  /* body.menu-open .dashboard-content {
-    padding-top: calc(var(--mobile-menu-height, 0px)) !important;
-  } */
   .header-container-2 {
     margin-left: 0 !important;
     padding: 1.1rem !important;
@@ -843,6 +855,70 @@
     border-radius: 8px;
     font-size: 16px !important; /* Prevents zoom on iOS */
     box-sizing: border-box;
+  }
+  .personal-history-table-header {
+    display: none;
+  }
+  .personal-history-entry {
+    flex-direction: column;
+    padding: 10px 0;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+  }
+  .personal-history-column {
+    padding: 4px 16px;
+    width: 100%;
+    min-width: auto;
+  }
+  .personal-history-column.condition-column {
+    font-size: 16px;
+    font-weight: 600;
+    color: #777;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+  .personal-history-column.notes-column::before {
+    content: "Notes: ";
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .personal-history-column.actions-column {
+    justify-content: flex-start;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 8px;
+  }
+  .personal-history-container {
+    margin: 0 0.5rem 1rem 0.5rem;
+    border: none;
+    background-color: transparent;
+  }
+  .personal-history-empty {
+    padding: 20px 16px;
+    text-align: left;
+    color: #6b7280;
+    font-style: italic;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+  .header-container-3,
+  .header-container-4 {
+    width: auto;
+  }
+  .history-buttons-container {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0.5rem;
+    align-items: stretch;
+  }
+  
+  .history-buttons-container .edit-button-modal {
+    max-width: none;
+    width: 100%;
   }
   .family-history-table-header,
   .family-history-entry {
