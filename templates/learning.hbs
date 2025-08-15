@@ -13,232 +13,349 @@
     {{> header}}
     {{> mobileHeader}}
 
-    <section class="learning-center content-container">
-      <div class="learning-header">
-        <h1 class="learning-title" data-text="Explore Podcasts">Explore Podcasts</h1>
-        <p class="learning-subtitle">
-          Discover the latest health and wellness podcasts.
-        </p>
-      </div>
+    <div class="learning-container content-container">
+        <!-- Header -->
+        <div class="learning-header">
+            <h1 class="learning-title">Learning Center</h1>
+            <p class="learning-subtitle">
+                Discover educational resources and explore advanced biomarkers to optimize your health
+            </p>
+        </div>
 
-      <div class="podcast-container">
-        <!-- Podcast Card 1 -->
-        <div class="podcast-card">
-          <div class="podcast-content">
-            <div class="podcast-image-container">
-              <a href="https://peterattiamd.com/" target="_blank" rel="noopener noreferrer">
-                <img
-                  src="images/podcasts/thedrive2.png"
-                  alt="The Drive with Peter Attia"
-                  class="podcast-image"
-                />
-              </a>
+        <!-- Toggle Buttons -->
+        <div class="toggle-container">
+            <div class="toggle-buttons">
+                <button class="toggle-btn active" data-target="educational-tools">
+                    Educational Tools
+                </button>
+                <button class="toggle-btn" data-target="advanced-biomarkers">
+                    Advanced Biomarkers
+                </button>
             </div>
-            <div class="podcast-info">
-              <a href="https://peterattiamd.com/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
-                <h3 class="podcast-title">The Drive with Peter Attia</h3>
-              </a>
-              <p class="podcast-description">
-                Dr. Peter Attia explores the science of longevity, performance,
-                and health through in-depth interviews with experts.
-              </p>
-              <div class="podcast-links">
-                <a
-                  href="https://podcasts.apple.com/us/podcast/the-peter-attia-drive/id1400828889"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon apple-icon"></span>
-                  Apple Podcasts
-                </a>
-                <a
-                  href="https://open.spotify.com/show/63AWQmsSnFNFHUqnRAOFtD"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon spotify-icon"></span>
-                  Spotify
-                </a>
-                <a
-                  href="https://www.youtube.com/@PeterAttiaMD"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon youtube-icon"></span>
-                  YouTube
-                </a>
+        </div>
+
+        <!-- Educational Tools Content -->
+        <div id="educational-tools" class="content-section active">
+            <div class="podcast-container">
+                <!-- Podcast Card 1 -->
+                <div class="podcast-card">
+                  <div class="podcast-content">
+                    <div class="podcast-image-container">
+                      <a href="https://peterattiamd.com/" target="_blank" rel="noopener noreferrer">
+                        <img
+                          src="images/podcasts/thedrive2.png"
+                          alt="The Drive with Peter Attia"
+                          class="podcast-image"
+                        />
+                      </a>
+                    </div>
+                    <div class="podcast-info">
+                      <a href="https://peterattiamd.com/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
+                        <h3 class="podcast-title">The Drive with Peter Attia</h3>
+                      </a>
+                      <p class="podcast-description">
+                        Dr. Peter Attia explores the science of longevity, performance,
+                        and health through in-depth interviews with experts.
+                      </p>
+                      <div class="podcast-links">
+                        <a
+                          href="https://podcasts.apple.com/us/podcast/the-peter-attia-drive/id1400828889"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon apple-icon"></span>
+                          Apple Podcasts
+                        </a>
+                        <a
+                          href="https://open.spotify.com/show/63AWQmsSnFNFHUqnRAOFtD"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon spotify-icon"></span>
+                          Spotify
+                        </a>
+                        <a
+                          href="https://www.youtube.com/@PeterAttiaMD"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon youtube-icon"></span>
+                          YouTube
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Podcast Card 2 -->
+                <div class="podcast-card">
+                  <div class="podcast-content">
+                    <div class="podcast-image-container">
+                      <a href="https://www.hubermanlab.com/" target="_blank" rel="noopener noreferrer">
+                        <img
+                          src="images/podcasts/hubermanlab2.png"
+                          alt="Huberman Lab Podcast"
+                          class="podcast-image"
+                        />
+                      </a>
+                    </div>
+                    <div class="podcast-info">
+                      <a href="https://www.hubermanlab.com/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
+                        <h3 class="podcast-title">Huberman Lab</h3>
+                      </a>
+                      <p class="podcast-description">
+                        Dr. Andrew Huberman discusses neuroscience and practical tools
+                        for everyday life, covering topics like sleep, stress, focus,
+                        and performance.
+                      </p>
+                      <div class="podcast-links">
+                        <a
+                          href="https://podcasts.apple.com/us/podcast/huberman-lab/id1545953110"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon apple-icon"></span>
+                          Apple Podcasts
+                        </a>
+                        <a
+                          href="https://open.spotify.com/show/79CkJF3UJTHFV8Dse3Oy0P"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon spotify-icon"></span>
+                          Spotify
+                        </a>
+                        <a
+                          href="https://www.youtube.com/@hubermanlab"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon youtube-icon"></span>
+                          YouTube
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Podcast Card 3 -->
+                <div class="podcast-card">
+                  <div class="podcast-content">
+                    <div class="podcast-image-container">
+                      <a href="https://www.foundmyfitness.com/" target="_blank" rel="noopener noreferrer">
+                        <img
+                          src="images/podcasts/rhondapatrick2.jpg"
+                          alt="Found My Fitness with Dr. Rhonda Patrick"
+                          class="podcast-image"
+                        />
+                      </a>
+                    </div>
+                    <div class="podcast-info">
+                      <a href="https://www.foundmyfitness.com/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
+                        <h3 class="podcast-title">Found My Fitness</h3>
+                      </a>
+                      <p class="podcast-description">
+                        Dr. Rhonda Patrick translates complex scientific research into
+                        practical advice on nutrition, aging, and optimal health, with a
+                        focus on how lifestyle and nutritional interventions can promote
+                        longevity.
+                      </p>
+                      <div class="podcast-links">
+                        <a
+                          href="https://podcasts.apple.com/us/podcast/foundmyfitness/id818198322"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon apple-icon"></span>
+                          Apple Podcasts
+                        </a>
+                        <a
+                          href="https://open.spotify.com/show/5QjpaU0o1Q2MkVZwwG3y7d"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon spotify-icon"></span>
+                          Spotify
+                        </a>
+                        <a
+                          href="https://www.youtube.com/@FoundMyFitness"
+                          class="podcast-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span class="platform-icon youtube-icon"></span>
+                          YouTube
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="learning-section-divider"></div>
+
+              <div class="learning-header">
+                <h2 class="learning-title">Books We Recommend</h2>
+                <p class="learning-subtitle">
+                  Educational resources to improve your understanding of health and
+                  wellness.
+                </p>
+              </div>
+
+              <div class="books-container">
+                <div class="books-card">
+                  <div class="podcast-content">
+                    <div class="podcast-image-container">
+                      <a href="https://peterattiamd.com/outlive/" target="_blank" rel="noopener noreferrer">
+                        <img
+                          src="images/books/outlive.jpg"
+                          alt="Outlive: The Science and Art of Longevity by Peter Attia"
+                          class="podcast-image"
+                        />
+                      </a>
+                    </div>
+                    <div class="podcast-info">
+                      <a href="https://peterattiamd.com/outlive/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
+                        <h3 class="podcast-title">Outlive: The Science and Art of Longevity</h3>
+                      </a>
+                      <p class="podcast-description">
+                        Dr. Peter Attia presents a comprehensive guide to longevity, exploring the science behind living longer and healthier through evidence-based strategies for nutrition, exercise, sleep, and emotional health.
+                      </p>
+                      <div class="podcast-links">
+                        <a href="https://www.amazon.com/Outlive-Science-Art-Longevity/dp/0593236599" class="podcast-link" target="_blank" rel="noopener noreferrer">
+                          <span class="platform-icon amazon-icon"></span>
+                          Amazon
+                        </a>
+                        <a href="https://www.goodreads.com/book/show/61153739-outlive" class="podcast-link" target="_blank" rel="noopener noreferrer">
+                          <span class="platform-icon goodreads-icon"></span>
+                          Goodreads
+                        </a>
+                        <a href="https://peterattiamd.com/outlive/" class="podcast-link" target="_blank" rel="noopener noreferrer">
+                          <span class="platform-icon web-icon"></span>
+                          Official Page
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="learning-header">
+                <div class="learning-subtitle2">
+                  More books coming soon...
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <!-- Podcast Card 2 -->
-        <div class="podcast-card">
-          <div class="podcast-content">
-            <div class="podcast-image-container">
-              <a href="https://www.hubermanlab.com/" target="_blank" rel="noopener noreferrer">
-                <img
-                  src="images/podcasts/hubermanlab2.png"
-                  alt="Huberman Lab Podcast"
-                  class="podcast-image"
-                />
-              </a>
-            </div>
-            <div class="podcast-info">
-              <a href="https://www.hubermanlab.com/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
-                <h3 class="podcast-title">Huberman Lab</h3>
-              </a>
-              <p class="podcast-description">
-                Dr. Andrew Huberman discusses neuroscience and practical tools
-                for everyday life, covering topics like sleep, stress, focus,
-                and performance.
-              </p>
-              <div class="podcast-links">
-                <a
-                  href="https://podcasts.apple.com/us/podcast/huberman-lab/id1545953110"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon apple-icon"></span>
-                  Apple Podcasts
-                </a>
-                <a
-                  href="https://open.spotify.com/show/79CkJF3UJTHFV8Dse3Oy0P"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon spotify-icon"></span>
-                  Spotify
-                </a>
-                <a
-                  href="https://www.youtube.com/@hubermanlab"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon youtube-icon"></span>
-                  YouTube
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Podcast Card 3 -->
-        <!-- Podcast Card for Found My Fitness -->
-        <div class="podcast-card">
-          <div class="podcast-content">
-            <div class="podcast-image-container">
-              <a href="https://www.foundmyfitness.com/" target="_blank" rel="noopener noreferrer">
-                <img
-                  src="images/podcasts/rhondapatrick2.jpg"
-                  alt="Found My Fitness with Dr. Rhonda Patrick"
-                  class="podcast-image"
-                />
-              </a>
+            <!-- Advanced Biomarkers Content -->
+        <div id="advanced-biomarkers" class="content-section">
+            <div class="biomarkers-container">
+                <!-- Cardiovascular Category -->
+                <div class="biomarker-category">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <div class="category-title">
+                            <div class="category-icon">❤️</div>
+                            <span class="category-name">Cardiovascular</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="category-count">5 biomarkers</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="biomarkers-list">
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">Apolipoprotein B (ApoB)</div>
+                            <div class="biomarker-description">
+                                The most accurate predictor of cardiovascular risk. ApoB counts the actual number of atherogenic particles that can penetrate artery walls, providing superior risk assessment compared to standard cholesterol panels.
+                            </div>
+                        </div>
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">Apolipoprotein B/A1 Ratio</div>
+                            <div class="biomarker-description">
+                                Cutting-edge ratio that balances atherogenic vs. protective particles. Considered one of the strongest predictors of cardiovascular events, especially useful for personalized risk stratification.
+                            </div>
+                        </div>
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">LDL Particle Number</div>
+                            <div class="biomarker-description">
+                                Revolutionary test that counts actual LDL particles rather than just cholesterol content. More predictive of heart disease risk than traditional LDL cholesterol measurements.
+                            </div>
+                        </div>
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">Lipoprotein (a)</div>
+                            <div class="biomarker-description">
+                                Genetic cardiovascular risk factor affecting 20% of the population. Elevated Lp(a) increases heart attack and stroke risk regardless of other cholesterol levels, making it crucial for personalized prevention.
+                            </div>
+                        </div>
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">LDL Small Particles</div>
+                            <div class="biomarker-description">
+                                Small, dense LDL particles are significantly more atherogenic than large particles. This advanced test identifies patients at higher risk who may appear normal on standard cholesterol tests.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inflammation Category -->
+                <div class="biomarker-category">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <div class="category-title">
+                            <div class="category-icon">🔥</div>
+                            <span class="category-name">Inflammation</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="category-count">1 biomarker</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="biomarkers-list">
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">Oxidized LDL</div>
+                            <div class="biomarker-description">
+                                Advanced marker of oxidative stress and vascular inflammation. Oxidized LDL is the actual culprit in atherosclerosis development, making it a powerful predictor of cardiovascular events beyond traditional risk factors.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Genetic Risk Category -->
+                <div class="biomarker-category">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <div class="category-title">
+                            <div class="category-icon">🧬</div>
+                            <span class="category-name">Genetic Risk</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="category-count">2 biomarkers</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="biomarkers-list">
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">4q25-Atrial Fibrillation Risk</div>
+                            <div class="biomarker-description">
+                                Breakthrough genetic test identifying inherited risk for atrial fibrillation. Enables early monitoring and preventive strategies for the most common heart rhythm disorder affecting millions worldwide.
+                            </div>
+                        </div>
+                        <div class="biomarker-item">
+                            <div class="biomarker-name">LPA Aspirin Genotype</div>
+                            <div class="biomarker-description">
+                                Precision medicine at its finest - determines your genetic response to aspirin therapy. Optimizes cardiovascular protection by identifying who benefits most from aspirin's protective effects.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="podcast-info">
-              <a href="https://www.foundmyfitness.com/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
-                <h3 class="podcast-title">Found My Fitness</h3>
-              </a>
-              <p class="podcast-description">
-                Dr. Rhonda Patrick translates complex scientific research into
-                practical advice on nutrition, aging, and optimal health, with a
-                focus on how lifestyle and nutritional interventions can promote
-                longevity.
-              </p>
-              <div class="podcast-links">
-                <a
-                  href="https://podcasts.apple.com/us/podcast/foundmyfitness/id818198322"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon apple-icon"></span>
-                  Apple Podcasts
-                </a>
-                <a
-                  href="https://open.spotify.com/show/5QjpaU0o1Q2MkVZwwG3y7d"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon spotify-icon"></span>
-                  Spotify
-                </a>
-                <a
-                  href="https://www.youtube.com/@FoundMyFitness"
-                  class="podcast-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="platform-icon youtube-icon"></span>
-                  YouTube
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-
-      <div class="learning-section-divider"></div>
-
-      <div class="learning-header">
-        <h2 class="learning-title">Books We Recommend</h2>
-        <p class="learning-subtitle">
-          Educational resources to improve your understanding of health and
-          wellness.
-        </p>
-      </div>
-
-      <div class="books-container">
-        <div class="books-card">
-          <div class="podcast-content">
-            <div class="podcast-image-container">
-              <a href="https://peterattiamd.com/outlive/" target="_blank" rel="noopener noreferrer">
-                <img
-                  src="images/books/outlive.jpg"
-                  alt="Outlive: The Science and Art of Longevity by Peter Attia"
-                  class="podcast-image"
-                />
-              </a>
-            </div>
-            <div class="podcast-info">
-              <a href="https://peterattiamd.com/outlive/" target="_blank" rel="noopener noreferrer" class="podcast-title-link">
-                <h3 class="podcast-title">Outlive: The Science and Art of Longevity</h3>
-              </a>
-              <p class="podcast-description">
-                Dr. Peter Attia presents a comprehensive guide to longevity, exploring the science behind living longer and healthier through evidence-based strategies for nutrition, exercise, sleep, and emotional health.
-              </p>
-              <div class="podcast-links">
-                <a href="https://www.amazon.com/Outlive-Science-Art-Longevity/dp/0593236599" class="podcast-link" target="_blank" rel="noopener noreferrer">
-                  <span class="platform-icon amazon-icon"></span>
-                  Amazon
-                </a>
-                <a href="https://www.goodreads.com/book/show/61153739-outlive" class="podcast-link" target="_blank" rel="noopener noreferrer">
-                  <span class="platform-icon goodreads-icon"></span>
-                  Goodreads
-                </a>
-                <a href="https://peterattiamd.com/outlive/" class="podcast-link" target="_blank" rel="noopener noreferrer">
-                  <span class="platform-icon web-icon"></span>
-                  Official Page
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="learning-header">
-        <div class="learning-subtitle2">
-          More books coming soon...
-        </div>
-      </div>
-    </section>
+    </div>
 
     <div class="wave"> <!-- Wave -->
         <div class="wave-pattern">
@@ -250,5 +367,62 @@
     
     <script src="js/main.js" defer type="module"></script>
     <script src="js/main-mobile.js" defer type="module"></script>
+    <script> // Toggle between Educational Tools and Advanced Biomarkers
+            document.querySelectorAll('.toggle-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons and sections
+                    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Show corresponding content section
+                    const targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+            // Toggle biomarker categories
+            function toggleCategory(header) {
+                const biomarkersList = header.nextElementSibling;
+                const isExpanded = header.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    header.classList.remove('expanded');
+                    biomarkersList.classList.remove('expanded');
+                } else {
+                    header.classList.add('expanded');
+                    biomarkersList.classList.add('expanded');
+                }
+            }
+
+            // Add smooth scrolling and initial animations
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add entrance animation to cards
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe all cards for animation
+                document.querySelectorAll('.podcast-card, .biomarker-category').forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    observer.observe(card);
+                });
+            });
+        </script>
+
   </body>
 </html>
