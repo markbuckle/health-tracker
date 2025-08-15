@@ -612,78 +612,73 @@
 }
 
 @media screen and (max-width: 480px) {
+  .toggle-container {
+    margin-top: 0;
+  }
+  .biomarkers-container {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
   .content-container {
     padding: 0;
     margin: 0 auto; /* Ensure centering */
     width: 100%;
   }
-  
   .learning-title {
     font-size: 28px;
   }
-  
   .learning-subtitle {
     max-width: 70%;
     font-size: clamp(16px, 2vw, 18px);
-    margin: 0 auto; /* Ensure centering */
-    margin-bottom: 1rem;
+    margin: 1rem auto; /* Ensure centering */
+    margin-bottom: 0;
   }
-  
+  .learning-header {
+    margin-bottom: 2rem;
+  }
   .podcast-container {
     max-width: 90%;
     margin: 0 auto;
   }
-  
   .books-container {
     max-width: 90%;
     margin: 0 auto;
   }
-  
   .podcast-image-container {
     flex: 0 0 80px;
     display: flex;
     justify-content: center;
   }
-  
   .podcast-image {
     width: 100px;
     height: 100px;
   }
-  
   .podcast-title {
     font-size: 18px;
   }
-  
   .podcast-description {
     font-size: 13px;
   }
-  
   .podcast-link {
     font-size: 12px;
   }
-  
   .platform-icon {
     width: 16px;
     height: 16px;
   }
-  
   .wave-pattern {
     margin-top: -1px;
   }
-  
   body.menu-open .content-container {
     transition: margin-top 0.3s ease;
     margin-top: 50px;
   }
-
   .biomarker-category {
     margin-bottom: 1rem;
   }
-
   .category-header {
     padding: 1rem;
   }
-
   .biomarker-item {
     padding: 0.75rem 1rem;
   }
