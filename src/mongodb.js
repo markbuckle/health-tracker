@@ -323,9 +323,9 @@ const registerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    hasCompletedWelcome: {
-      type: Boolean,
-      default: false,
+    lastLogin: {
+      type: Date,
+      default: null,
     },
     profile: {
       type: profileSchema,

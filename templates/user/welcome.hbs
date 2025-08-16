@@ -581,40 +581,8 @@
 
         // Complete tutorial
         function completeTutorial() {
-          console.log('Completing tutorial...');
-          tutorialActive = false;
-          currentStep = 0;
-          document.body.classList.remove('tutorial-active');
-          
-          // Hide all tutorial elements
-          clearHighlights();
-          hideAllSteps();
-          
-          // Call the backend to mark welcome as completed
-          fetch('/complete-welcome', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'same-origin' // Include cookies for authentication
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              console.log('Welcome tutorial marked as completed');
-              // Redirect to profile page
-              window.location.href = data.redirectUrl || '/profile';
-            } else {
-              console.error('Error completing welcome tutorial:', data.message);
-              // Still redirect even if there's an error marking completion
-              window.location.href = '/profile';
-            }
-          })
-          .catch(error => {
-            console.error('Error calling complete-welcome endpoint:', error);
-            // Still redirect even if there's an error
-            window.location.href = '/profile';
-          });
+          console.log('Tutorial completed, redirecting to profile...');
+          window.location.href = '/profile';
         }
 
         // Function to close mobile menu when tutorial ends
