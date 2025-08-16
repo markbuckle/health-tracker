@@ -267,100 +267,121 @@
 
             <!-- Advanced Biomarkers Content -->
         <div id="advanced-biomarkers" class="content-section">
-            <div class="biomarkers-container">
-                <!-- Cardiovascular Category -->
-                <div class="biomarker-category">
-                    <div class="category-header" onclick="toggleCategory(this)">
-                        <div class="category-title">
-                            {{!-- <div class="category-icon"></div> --}}
-                            <span class="category-name">Cardiovascular</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <span class="expand-icon">▼</span>
-                        </div>
-                    </div>
-                    <div class="biomarkers-list">
-                        <div class="biomarker-item">
-                            <div class="biomarker-name">Apolipoprotein B (ApoB)</div>
-                            <div class="biomarker-description">
-                                The most accurate predictor of cardiovascular risk. ApoB counts the actual number of atherogenic particles that can penetrate artery walls, providing superior risk assessment compared to standard cholesterol panels.
-                            </div>
-                        </div>
-                        <div class="biomarker-item">
-                            <div class="biomarker-name">Apolipoprotein B/A1 Ratio</div>
-                            <div class="biomarker-description">
-                                Cutting-edge ratio that balances atherogenic vs. protective particles. Considered one of the strongest predictors of cardiovascular events, especially useful for personalized risk stratification.
-                            </div>
-                        </div>
-                        <div class="biomarker-item">
-                            <div class="biomarker-name">LDL Particle Number</div>
-                            <div class="biomarker-description">
-                                Revolutionary test that counts actual LDL particles rather than just cholesterol content. More predictive of heart disease risk than traditional LDL cholesterol measurements.
-                            </div>
-                        </div>
-                        <div class="biomarker-item">
+          <div class="biomarkers-container">
+              <!-- Cardiovascular Category -->
+              <div class="biomarker-category">
+                  <div class="category-header" onclick="toggleCategory(this)">
+                      <div class="category-title">
+                          <span class="category-name">Cardiovascular</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 1rem;">
+                          <span class="expand-icon">▼</span>
+                      </div>
+                  </div>
+                  <div class="biomarkers-list">
+                      <div class="biomarker-item">
+                          <div class="biomarker-header" onclick="toggleBiomarker(this)">
+                              <div class="biomarker-name">Apolipoprotein B (ApoB)</div>
+                              <div class="biomarker-toggle">+</div>
+                          </div>
+                          <div class="biomarker-description">
+                              The most accurate predictor of cardiovascular risk. ApoB counts the actual number of atherogenic particles that can penetrate artery walls, providing superior risk assessment compared to standard cholesterol panels.
+                          </div>
+                      </div>
+                      <div class="biomarker-item">
+                        <div class="biomarker-header" onclick="toggleBiomarker(this)">
                             <div class="biomarker-name">Lipoprotein (a)</div>
-                            <div class="biomarker-description">
-                                Genetic cardiovascular risk factor affecting 20% of the population. Elevated Lp(a) increases heart attack and stroke risk regardless of other cholesterol levels, making it crucial for personalized prevention.
-                            </div>
+                            <div class="biomarker-toggle">+</div>
                         </div>
-                        <div class="biomarker-item">
-                            <div class="biomarker-name">LDL Small Particles</div>
-                            <div class="biomarker-description">
-                                Small, dense LDL particles are significantly more atherogenic than large particles. This advanced test identifies patients at higher risk who may appear normal on standard cholesterol tests.
-                            </div>
+                        <div class="biomarker-description">
+                            Genetic cardiovascular risk factor affecting 20% of the population. Elevated Lp(a) increases heart attack and stroke risk regardless of other cholesterol levels, making it crucial for personalized prevention.
                         </div>
-                    </div>
-                </div>
+                      </div>
+                      <div class="biomarker-item">
+                          <div class="biomarker-header" onclick="toggleBiomarker(this)">
+                              <div class="biomarker-name">Apolipoprotein B/A1 Ratio</div>
+                              <div class="biomarker-toggle">+</div>
+                          </div>
+                          <div class="biomarker-description">
+                              Cutting-edge ratio that balances atherogenic vs. protective particles. Considered one of the strongest predictors of cardiovascular events, especially useful for personalized risk stratification.
+                          </div>
+                      </div>
+                      <div class="biomarker-item">
+                          <div class="biomarker-header" onclick="toggleBiomarker(this)">
+                              <div class="biomarker-name">LDL Particle Number</div>
+                              <div class="biomarker-toggle">+</div>
+                          </div>
+                          <div class="biomarker-description">
+                              Revolutionary test that counts actual LDL particles rather than just cholesterol content. More predictive of heart disease risk than traditional LDL cholesterol measurements.
+                          </div>
+                      </div>
+                      <div class="biomarker-item">
+                          <div class="biomarker-header" onclick="toggleBiomarker(this)">
+                              <div class="biomarker-name">LDL Small Particles</div>
+                              <div class="biomarker-toggle">+</div>
+                          </div>
+                          <div class="biomarker-description">
+                              Small, dense LDL particles are significantly more atherogenic than large particles. This advanced test identifies patients at higher risk who may appear normal on standard cholesterol tests.
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
-                <!-- Inflammation Category -->
-                <div class="biomarker-category">
-                    <div class="category-header" onclick="toggleCategory(this)">
-                        <div class="category-title">
-                            {{!-- <div class="category-icon"></div> --}}
-                            <span class="category-name">Inflammation</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <span class="expand-icon">▼</span>
-                        </div>
-                    </div>
-                    <div class="biomarkers-list">
-                        <div class="biomarker-item">
-                            <div class="biomarker-name">Oxidized LDL</div>
-                            <div class="biomarker-description">
-                                Advanced marker of oxidative stress and vascular inflammation. Oxidized LDL is the actual culprit in atherosclerosis development, making it a powerful predictor of cardiovascular events beyond traditional risk factors.
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              <!-- Inflammation Category -->
+              <div class="biomarker-category">
+                  <div class="category-header" onclick="toggleCategory(this)">
+                      <div class="category-title">
+                          <span class="category-name">Inflammation</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 1rem;">
+                          <span class="expand-icon">▼</span>
+                      </div>
+                  </div>
+                  <div class="biomarkers-list">
+                      <div class="biomarker-item">
+                          <div class="biomarker-header" onclick="toggleBiomarker(this)">
+                              <div class="biomarker-name">Oxidized LDL</div>
+                              <div class="biomarker-toggle">+</div>
+                          </div>
+                          <div class="biomarker-description">
+                              Advanced marker of oxidative stress and vascular inflammation. Oxidized LDL is the actual culprit in atherosclerosis development, making it a powerful predictor of cardiovascular events beyond traditional risk factors.
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
-                <!-- Genetic Risk Category -->
-                <div class="biomarker-category">
-                    <div class="category-header" onclick="toggleCategory(this)">
-                        <div class="category-title">
-                            {{!-- <div class="category-icon"></div> --}}
-                            <span class="category-name">Genetic Risk</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <span class="expand-icon">▼</span>
-                        </div>
-                    </div>
-                    <div class="biomarkers-list">
-                        <div class="biomarker-item">
-                            <div class="biomarker-name">4q25-Atrial Fibrillation Risk</div>
-                            <div class="biomarker-description">
-                                Breakthrough genetic test identifying inherited risk for atrial fibrillation. Enables early monitoring and preventive strategies for the most common heart rhythm disorder affecting millions worldwide.
-                            </div>
-                        </div>
-                        <div class="biomarker-item">
-                            <div class="biomarker-name">LPA Aspirin Genotype</div>
-                            <div class="biomarker-description">
-                                Precision medicine at its finest - determines your genetic response to aspirin therapy. Optimizes cardiovascular protection by identifying who benefits most from aspirin's protective effects.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+              <!-- Genetic Risk Category -->
+              <div class="biomarker-category">
+                  <div class="category-header" onclick="toggleCategory(this)">
+                      <div class="category-title">
+                          <span class="category-name">Genetic Risk</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 1rem;">
+                          <span class="expand-icon">▼</span>
+                      </div>
+                  </div>
+                  <div class="biomarkers-list">
+                      <div class="biomarker-item">
+                          <div class="biomarker-header" onclick="toggleBiomarker(this)">
+                              <div class="biomarker-name">4q25-Atrial Fibrillation Risk</div>
+                              <div class="biomarker-toggle">+</div>
+                          </div>
+                          <div class="biomarker-description">
+                              Breakthrough genetic test identifying inherited risk for atrial fibrillation. Enables early monitoring and preventive strategies for the most common heart rhythm disorder affecting millions worldwide.
+                          </div>
+                      </div>
+                      <div class="biomarker-item">
+                          <div class="biomarker-header" onclick="toggleBiomarker(this)">
+                              <div class="biomarker-name">LPA Aspirin Genotype</div>
+                              <div class="biomarker-toggle">+</div>
+                          </div>
+                          <div class="biomarker-description">
+                              Precision medicine at its finest - determines your genetic response to aspirin therapy. Optimizes cardiovascular protection by identifying who benefits most from aspirin's protective effects.
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
         </div>
     </div>
 
@@ -374,63 +395,81 @@
     
     <script src="js/main.js" defer type="module"></script>
     <script src="js/main-mobile.js" defer type="module"></script>
-    <script> // Toggle between Educational Tools and Advanced Biomarkers
-        document.querySelectorAll('.toggle-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons and sections
-                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-                document.querySelectorAll('.description-text').forEach(desc => desc.classList.remove('active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Show corresponding content section and description
-                const targetId = this.getAttribute('data-target');
-                document.getElementById(targetId).classList.add('active');
-                document.getElementById(targetId + '-desc').classList.add('active');
-            });
-        });
-
-        // Toggle biomarker categories
-        function toggleCategory(header) {
-            const biomarkersList = header.nextElementSibling;
-            const isExpanded = header.classList.contains('expanded');
+    <script>
+    // Toggle between Educational Tools and Advanced Biomarkers
+    document.querySelectorAll('.toggle-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons and sections
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.description-text').forEach(desc => desc.classList.remove('active'));
             
-            if (isExpanded) {
-                header.classList.remove('expanded');
-                biomarkersList.classList.remove('expanded');
-            } else {
-                header.classList.add('expanded');
-                biomarkersList.classList.add('expanded');
-            }
-        }
-
-        // Add smooth scrolling and initial animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add entrance animation to cards
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
-            // Observe all cards for animation
-            document.querySelectorAll('.podcast-card, .biomarker-category').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(card);
-            });
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Show corresponding content section and description
+            const targetId = this.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+            document.getElementById(targetId + '-desc').classList.add('active');
         });
+    });
+
+    // Toggle biomarker categories
+    function toggleCategory(header) {
+        const biomarkersList = header.nextElementSibling;
+        const isExpanded = header.classList.contains('expanded');
+        
+        if (isExpanded) {
+            header.classList.remove('expanded');
+            biomarkersList.classList.remove('expanded');
+        } else {
+            header.classList.add('expanded');
+            biomarkersList.classList.add('expanded');
+        }
+    }
+
+    // Toggle individual biomarkers
+    function toggleBiomarker(header) {
+        const description = header.nextElementSibling;
+        const toggle = header.querySelector('.biomarker-toggle');
+        const isExpanded = description.classList.contains('expanded');
+        
+        if (isExpanded) {
+            description.classList.remove('expanded');
+            toggle.classList.remove('expanded');
+            toggle.textContent = '+';
+        } else {
+            description.classList.add('expanded');
+            toggle.classList.add('expanded');
+            toggle.textContent = '−';
+        }
+    }
+
+    // Add smooth scrolling and initial animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add entrance animation to cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards for animation
+        document.querySelectorAll('.podcast-card, .biomarker-category').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    });
     </script>
 
   </body>

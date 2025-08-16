@@ -304,6 +304,40 @@
   border-color: var(--green-primary);
 }
 
+.biomarker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 0.75rem 0;
+  transition: all 0.3s ease;
+}
+
+.biomarker-header:hover {
+  color: var(--green-primary);
+}
+
+.biomarker-toggle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--green-primary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: var(--green-primary);
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.biomarker-toggle.expanded {
+  background: var(--green-primary);
+  color: white;
+}
+
 .category-header {
   padding: 1.5rem;
   border-bottom: 1px solid #e2e8f0;
@@ -389,7 +423,7 @@
 .biomarker-name {
   font-weight: 600;
   color: #1f2937;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
   font-family: "Poppins-SemiBold", sans-serif;
 }
 
@@ -398,8 +432,16 @@
   font-size: 0.9rem;
   line-height: 1.5;
   font-family: "Poppins-Regular", sans-serif;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding: 0 0 0 0;
 }
 
+.biomarker-description.expanded {
+  max-height: 200px;
+  padding: 0.5rem 0 1rem 0;
+}
 .view-link {
   margin-left: auto;
 }
