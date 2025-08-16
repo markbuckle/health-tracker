@@ -150,6 +150,30 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Section Description Text */
+.section-description {
+  text-align: center;
+  margin: 0 0 2.5rem 0;
+}
+
+.description-text {
+  font-size: 0.95rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 600px;
+  display: none;
+  font-family: "Poppins-Regular", sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.description-text.active {
+  display: block;
+}
+
 /* Educational Tools Content */
 .podcast-container {
   display: grid;

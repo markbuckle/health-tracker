@@ -34,6 +34,16 @@
             </div>
         </div>
 
+        <!-- Dynamic Description Text -->
+        <div class="section-description">
+            <p id="educational-tools-desc" class="description-text active">
+                Resources from leading health experts
+            </p>
+            <p id="advanced-biomarkers-desc" class="description-text">
+                Biomarkers most people should consider
+            </p>
+        </div>
+
         <!-- Educational Tools Content -->
         <div id="educational-tools" class="content-section active">
             <div class="podcast-container">
@@ -262,11 +272,10 @@
                 <div class="biomarker-category">
                     <div class="category-header" onclick="toggleCategory(this)">
                         <div class="category-title">
-                            <div class="category-icon">❤️</div>
+                            {{!-- <div class="category-icon"></div> --}}
                             <span class="category-name">Cardiovascular</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <span class="category-count">5 biomarkers</span>
                             <span class="expand-icon">▼</span>
                         </div>
                     </div>
@@ -308,11 +317,10 @@
                 <div class="biomarker-category">
                     <div class="category-header" onclick="toggleCategory(this)">
                         <div class="category-title">
-                            <div class="category-icon">🔥</div>
+                            {{!-- <div class="category-icon"></div> --}}
                             <span class="category-name">Inflammation</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <span class="category-count">1 biomarker</span>
                             <span class="expand-icon">▼</span>
                         </div>
                     </div>
@@ -330,11 +338,10 @@
                 <div class="biomarker-category">
                     <div class="category-header" onclick="toggleCategory(this)">
                         <div class="category-title">
-                            <div class="category-icon">🧬</div>
+                            {{!-- <div class="category-icon"></div> --}}
                             <span class="category-name">Genetic Risk</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <span class="category-count">2 biomarkers</span>
                             <span class="expand-icon">▼</span>
                         </div>
                     </div>
@@ -368,61 +375,63 @@
     <script src="js/main.js" defer type="module"></script>
     <script src="js/main-mobile.js" defer type="module"></script>
     <script> // Toggle between Educational Tools and Advanced Biomarkers
-            document.querySelectorAll('.toggle-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    // Remove active class from all buttons and sections
-                    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-                    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    this.classList.add('active');
-                    
-                    // Show corresponding content section
-                    const targetId = this.getAttribute('data-target');
-                    document.getElementById(targetId).classList.add('active');
-                });
-            });
-
-            // Toggle biomarker categories
-            function toggleCategory(header) {
-                const biomarkersList = header.nextElementSibling;
-                const isExpanded = header.classList.contains('expanded');
+        document.querySelectorAll('.toggle-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons and sections
+                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+                document.querySelectorAll('.description-text').forEach(desc => desc.classList.remove('active'));
                 
-                if (isExpanded) {
-                    header.classList.remove('expanded');
-                    biomarkersList.classList.remove('expanded');
-                } else {
-                    header.classList.add('expanded');
-                    biomarkersList.classList.add('expanded');
-                }
-            }
-
-            // Add smooth scrolling and initial animations
-            document.addEventListener('DOMContentLoaded', function() {
-                // Add entrance animation to cards
-                const observerOptions = {
-                    threshold: 0.1,
-                    rootMargin: '0px 0px -50px 0px'
-                };
-
-                const observer = new IntersectionObserver(function(entries) {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.style.opacity = '1';
-                            entry.target.style.transform = 'translateY(0)';
-                        }
-                    });
-                }, observerOptions);
-
-                // Observe all cards for animation
-                document.querySelectorAll('.podcast-card, .biomarker-category').forEach(card => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                    observer.observe(card);
-                });
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Show corresponding content section and description
+                const targetId = this.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+                document.getElementById(targetId + '-desc').classList.add('active');
             });
-        </script>
+        });
+
+        // Toggle biomarker categories
+        function toggleCategory(header) {
+            const biomarkersList = header.nextElementSibling;
+            const isExpanded = header.classList.contains('expanded');
+            
+            if (isExpanded) {
+                header.classList.remove('expanded');
+                biomarkersList.classList.remove('expanded');
+            } else {
+                header.classList.add('expanded');
+                biomarkersList.classList.add('expanded');
+            }
+        }
+
+        // Add smooth scrolling and initial animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add entrance animation to cards
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all cards for animation
+            document.querySelectorAll('.podcast-card, .biomarker-category').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
 
   </body>
 </html>
