@@ -10,8 +10,6 @@ function parseStructuredLabReport(text) {
     if (!text) return results;
     
     console.log("=== DEBUG: parseStructuredLabReport ===");
-    console.log("Input text length:", text.length);
-    console.log("First 300 chars:", text.substring(0, 300));
     
     // Split text into lines and clean
     const lines = text.split('\n')
@@ -19,10 +17,6 @@ function parseStructuredLabReport(text) {
         .filter(line => line.length > 0);
     
     console.log("Total lines:", lines.length);
-    console.log("First 10 lines:");
-    lines.slice(0, 10).forEach((line, i) => {
-        console.log(`  ${i + 1}: "${line}"`);
-    });
     
     // Look for lab data patterns in each line
     let inDataSection = false;
@@ -39,18 +33,21 @@ function parseStructuredLabReport(text) {
             continue;
         }
         
-        // Skip header lines
-        if (line.match(/Test Name|Result|Units|Reference Range|Flag|Patient Name|Date of Birth|Collection Date|HEALTHLYNC|LABORATORY/i)) {
+        // Skip header and non-data lines
+        if (line.match(/Test Name|Result|Units|Reference Range|Flag|Patient Name|Date of Birth|Collection Date|HEALTHLYNC|LABORATORY|Phone:|Address:|Practice:|Physician:|Medical License:|ABNORMAL VALUES|--- Page/i)) {
             continue;
         }
         
-        // Look for potential lab data lines
-        // Pattern: contains a test name, a number, and possibly units
+        // Parse potential lab data lines
         if (line.length > 10) {
             const parsed = parseLabDataLine(line, lines, i);
             if (parsed) {
                 console.log(`Parsed: ${parsed.testName} = ${parsed.value} ${parsed.unit}`);
-                results[parsed.testName] = {
+                
+                // Map to standard name
+                const standardName = mapToStandardBiomarker(parsed.testName);
+                
+                results[standardName] = {
                     value: parsed.value,
                     unit: parsed.unit,
                     rawText: line,
@@ -69,26 +66,30 @@ function parseStructuredLabReport(text) {
 
 // New helper function to parse individual lab data lines
 function parseLabDataLine(line, allLines, lineIndex) {
-    // Debug this specific line
+    // Skip page separators and junk lines
+    if (line.match(/^---\s*Page\s*\d+\s*---/i) || 
+        line.match(/Phone:|Address:|Practice:|Physician:|Medical License:/i)) {
+        return null;
+    }
+    
     console.log(`=== Parsing line ${lineIndex}: "${line}" ===`);
     
-    // Multiple patterns for different formats we might encounter
+    // Enhanced patterns with better handling of special cases
     const patterns = [
-        // Pattern 1: "Test Name Result Unit Range Flag"
-        // Example: "Hemoglobin 10.8 g/dL 12.0 - 15.0 LOW"
-        /^([A-Za-z\s,\-\(\)]{5,40}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)\s*(HIGH|LOW|NORMAL)?$/i,
+        // Pattern 1: Standard format "Test Name Value Unit Range Flag"
+        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)\s*(HIGH|LOW|NORMAL)?$/i,
         
-        // Pattern 2: "Test Name Result Unit Range" (no flag)
-        /^([A-Za-z\s,\-\(\)]{5,40}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)$/i,
+        // Pattern 2: Format without flag
+        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)$/i,
         
-        // Pattern 3: "Test Name Result Unit" (range might be elsewhere)
-        /^([A-Za-z\s,\-\(\)]{5,40}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+)$/i,
+        // Pattern 3: Just test name, value, unit
+        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)$/i,
         
-        // Pattern 4: Handle special cases like eGFR ">60"
-        /^([A-Za-z\s,\-\(\)]{5,40}?)\s+([>]?[\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+)(.*)$/i,
+        // Pattern 4: Handle special cases like eGFR ">60" or missing units
+        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([>]?[\d\.]+)\s*([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]*(?:\/\w+)*)\s*(.*)$/i,
         
-        // Pattern 5: More flexible - just test name and number
-        /^([A-Za-z\s,\-\(\)]{5,40}?)\s+([\d\.]+)(.*)$/i
+        // Pattern 5: Handle cases where unit might be missing but range exists
+        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)\s*(HIGH|LOW|NORMAL)?$/i
     ];
     
     for (let patternIndex = 0; patternIndex < patterns.length; patternIndex++) {
@@ -97,9 +98,8 @@ function parseLabDataLine(line, allLines, lineIndex) {
         
         if (match) {
             console.log(`  Matched pattern ${patternIndex + 1}`);
-            console.log(`  Groups: [${match.slice(1).join(', ')}]`);
             
-            const testName = match[1].trim();
+            let testName = match[1].trim();
             let value = parseFloat(match[2].replace('>', ''));
             let unit = match[3] ? match[3].trim() : '';
             let referenceRange = match[4] ? match[4].trim() : null;
@@ -111,27 +111,53 @@ function parseLabDataLine(line, allLines, lineIndex) {
                 continue;
             }
             
-            // Skip if test name is too short or looks like junk
+            // Skip if test name is too short or invalid
             if (testName.length < 3 || /^[^a-zA-Z]*$/.test(testName)) {
                 console.log(`  Skipping - invalid test name: "${testName}"`);
                 continue;
             }
             
-            // Clean up unit (remove obvious junk)
-            if (unit && (unit.length > 15 || /[^a-zA-Z0-9%\/μmLdKfluI\²³⁹⁰\-\/]/.test(unit))) {
-                console.log(`  Cleaning unit: "${unit}" -> extracting from match`);
-                // Try to extract just the unit part
-                const unitMatch = unit.match(/([a-zA-Z%\/μmLdK]+)/);
-                unit = unitMatch ? unitMatch[1] : '';
+            // Handle special cases for missing units
+            if (!unit || unit.length === 0) {
+                // Try to infer unit from test name or look ahead
+                unit = inferUnitFromTestName(testName) || lookAheadForUnit(allLines, lineIndex);
+            }
+            
+            // Handle cases where unit got mixed with range (Pattern 5)
+            if (patternIndex === 4 && unit && unit.match(/[\d\.\s\-<>]/)) {
+                referenceRange = unit;
+                unit = inferUnitFromTestName(testName) || '';
             }
             
             // Clean reference range
             if (referenceRange) {
+                // Remove non-numeric characters except ranges
                 referenceRange = referenceRange.replace(/[^\d\.\s\-<>]/g, '').trim();
-                if (referenceRange.length < 3) referenceRange = null;
+                if (referenceRange.length < 2) referenceRange = null;
+                
+                // Handle flags that got mixed into range
+                if (referenceRange && referenceRange.match(/HIGH|LOW|NORMAL/i)) {
+                    const flagMatch = referenceRange.match(/(HIGH|LOW|NORMAL)/i);
+                    if (flagMatch) flag = flagMatch[1];
+                    referenceRange = referenceRange.replace(/HIGH|LOW|NORMAL/gi, '').trim();
+                }
             }
             
-            console.log(`  SUCCESS: ${testName} = ${value} ${unit} (${referenceRange || 'no range'})`);
+            // Special handling for specific test types
+            if (testName.match(/eGFR/i)) {
+                unit = 'mL/min/1.73m²';
+                if (match[2].includes('>')) {
+                    referenceRange = '>60';
+                }
+            }
+            
+            // Fix specific test name issues
+            if (testName.match(/Hematocrit/i) && unit.match(/LOW|HIGH|NORMAL/i)) {
+                flag = unit;
+                unit = '%';
+            }
+            
+            console.log(`  SUCCESS: ${testName} = ${value} ${unit} (${referenceRange || 'no range'}) ${flag}`);
             
             return {
                 testName: testName,
@@ -145,6 +171,50 @@ function parseLabDataLine(line, allLines, lineIndex) {
     }
     
     console.log(`  No patterns matched for: "${line}"`);
+    return null;
+}
+
+function inferUnitFromTestName(testName) {
+    const unitMappings = {
+        'Hemoglobin': 'g/dL',
+        'Hematocrit': '%',
+        'Glucose': 'mg/dL',
+        'Cholesterol': 'mg/dL',
+        'Triglycerides': 'mg/dL',
+        'Creatinine': 'mg/dL',
+        'Sodium': 'mmol/L',
+        'Potassium': 'mmol/L',
+        'Chloride': 'mmol/L',
+        'TSH': 'mIU/L',
+        'Free T4': 'ng/dL',
+        'Vitamin D': 'ng/mL',
+        'Vitamin B12': 'pg/mL',
+        'Folate': 'ng/mL',
+        'ESR': 'mm/hr',
+        'CRP': 'mg/L',
+        'eGFR': 'mL/min/1.73m²'
+    };
+    
+    for (const [testPattern, unit] of Object.entries(unitMappings)) {
+        if (testName.toLowerCase().includes(testPattern.toLowerCase())) {
+            return unit;
+        }
+    }
+    
+    return null;
+}
+
+/**
+ * Look ahead in lines to find missing unit
+ */
+function lookAheadForUnit(allLines, currentIndex) {
+    // Check next 2 lines for isolated units
+    for (let i = currentIndex + 1; i < Math.min(currentIndex + 3, allLines.length); i++) {
+        const nextLine = allLines[i].trim();
+        if (nextLine.match(/^[a-zA-Z%\/μmLdK]+$/)) {
+            return nextLine;
+        }
+    }
     return null;
 }
 
@@ -247,41 +317,46 @@ function extractStructuredDate(text) {
 function preprocessOCRText(text) {
     if (!text) return '';
     
-    console.log("=== DEBUG: preprocessOCRText INPUT ===");
-    console.log("Input length:", text.length);
-    console.log("First 200 chars:", text.substring(0, 200));
-    
-    // Basic cleaning only - DO NOT use aggressive regex replacements
+    // Remove PaddleOCR warning messages first
     let cleaned = text
+        .replace(/\[2025\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}\] ppocr WARNING:.*?\n/g, '')
         .replace(/\r\n/g, '\n')
         .replace(/\r/g, '\n')
         .replace(/\t/g, ' ');
-        // Remove the .replace(/\s+/g, ' ') that was collapsing everything
     
-    // Only fix VERY specific OCR errors, one at a time
+    // Fix common OCR errors specific to medical lab reports
     const corrections = {
-        'Hemogiobin': 'Hemoglobin',
-        'Hematocnt': 'Hematocrit', 
-        'Test Narme': 'Test Name',  // Fix the OCR error we saw
+        'Test Narme': 'Test Name',
+        'Sodiurm': 'Sodium',
+        'MfuL': 'M/uL',
+        'KfuL': 'K/uL', 
+        'ngfmL': 'ng/mL',
+        'ngfdL': 'ng/dL',
+        "mm'hr": 'mm/hr',
+        'mIU/L': 'mIU/L',
+        'ALT{SGPT}': 'ALT (SGPT)',
+        'AST(SGOT}': 'AST (SGOT)',
+        'c200': '<200',
+        'c100': '<100',
+        'c130': '<130',
+        'Hermoglobin': 'Hemoglobin',
         'Muttiple': 'Multiple',
         'indicales': 'indicates',
-        'Elevaled': 'Elevated',
-        'Madical': 'Medical',
-        'Licans8': 'License'
+        'Elevaled': 'Elevated'
     };
     
-    // Apply corrections carefully
+    // Apply corrections
     for (const [wrong, correct] of Object.entries(corrections)) {
-        // Use word boundaries to avoid corrupting other text
-        const regex = new RegExp(`\\b${wrong}\\b`, 'gi');
+        const regex = new RegExp(escapeRegex(wrong), 'gi');
         cleaned = cleaned.replace(regex, correct);
     }
     
-    console.log("=== DEBUG: preprocessOCRText OUTPUT ===");
-    console.log("Output length:", cleaned.length);
-    console.log("First 200 chars:", cleaned.substring(0, 200));
-    
     return cleaned;
+}
+
+// Helper function to escape regex special characters
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // Helper function to map test names to standard biomarker names
@@ -295,13 +370,15 @@ function mapToStandardBiomarker(testName) {
         'White Blood Cell Count': 'WBC',
         'Red Blood Cell Count': 'RBC',
         'Total Cholesterol': 'Total Cholesterol',
-        'HDL Cholesterol': 'HDL-C',
+        'HDL Cholesterol': 'HDL-C',      // Fixed mapping
         'LDL Cholesterol': 'LDL-C',
+        'Non-HDL Cholesterol': 'Non-HDL-C',  // Added separate mapping
         'Triglycerides': 'Triglycerides',
         'Glucose': 'Glucose Random',
         'Blood Urea Nitrogen': 'BUN',
         'Creatinine': 'Creatinine',
         'Sodium': 'Sodium',
+        'Sodiurm': 'Sodium',  // Handle OCR error
         'Potassium': 'Potassium',
         'Chloride': 'Chloride',
         'Carbon Dioxide': 'Bicarbonate',
@@ -310,21 +387,25 @@ function mapToStandardBiomarker(testName) {
         'Albumin': 'Albumin',
         'Total Bilirubin': 'Bilirubin',
         'Alkaline Phosphatase': 'ALP',
+        'ALT (SGPT)': 'ALT',
+        'AST (SGOT)': 'AST',
         'Free T4': 'T4 Free',
         'TSH': 'TSH',
+        'eGFR': 'eGFR',
         'Vitamin D, 25-Hydroxy': 'Vitamin D',
+        'Vitamin D,': 'Vitamin D',  // Handle parsing error
         'Vitamin B12': 'Vitamin B12',
         'Folate': 'Folate',
         'C-Reactive Protein, High Sensitivity': 'CRP',
         'Erythrocyte Sedimentation Rate': 'ESR'
     };
     
-    // Direct mapping
+    // Direct mapping first
     if (mapping[testName]) {
         return mapping[testName];
     }
     
-    // Partial matching
+    // Partial matching for fuzzy matches
     for (const [fullName, shortName] of Object.entries(mapping)) {
         if (testName.toLowerCase().includes(fullName.toLowerCase()) || 
             fullName.toLowerCase().includes(testName.toLowerCase())) {
@@ -345,5 +426,6 @@ module.exports = {
   normalizeTestName,
   extractStructuredDate,
   preprocessOCRText,
-  mapToStandardBiomarker
+  mapToStandardBiomarker,
+  inferUnitFromTestName
 };
