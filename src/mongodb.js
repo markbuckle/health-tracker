@@ -323,6 +323,10 @@ const registerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    hasCompletedWelcome: {
+      type: Boolean,
+      default: false,
+    },
     profile: {
       type: profileSchema,
       default: () => ({}),

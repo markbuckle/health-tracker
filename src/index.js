@@ -1608,7 +1608,11 @@ app.post("/login", (req, res, next) => {
   console.log("Login attempt received for username:", req.body.uname);
   
   passport.authenticate("local", (err, user, info) => {
-    console.log("Passport auth result:", { err, user: user ? 'exists' : 'null', info });
+    console.log("Passport auth result:", { 
+      err, 
+      user: user ? 'exists' : 'null', 
+      info 
+    });
     
     if (err) { 
       console.error("Login error:", err);
@@ -1625,9 +1629,63 @@ app.post("/login", (req, res, next) => {
         return next(err); 
       }
       console.log("Login successful for user:", user.uname);
-      return res.redirect('/welcome');
+      
+      // Check if user has completed welcome tutorial
+      if (!user.hasCompletedWelcome) {
+        console.log("First-time user, redirecting to welcome");
+        return res.redirect('/welcome');
+      } else {
+        console.log("Returning user, redirecting to profile");
+        return res.redirect('/profile');
+      }
     });
   })(req, res, next);
+});
+
+app.post("/complete-welcome", checkAuth, async (req, res) => {
+  try {
+    // Update the user's hasCompletedWelcome status
+    await registerCollection.findByIdAndUpdate(
+      req.user._id,
+      { hasCompletedWelcome: true },
+      { new: true }
+    );
+    
+    console.log("Welcome tutorial completed for user:", req.user.uname);
+    
+    // Respond with success
+    res.json({ 
+      success: true, 
+      message: "Welcome tutorial completed",
+      redirectUrl: "/profile"
+    });
+    
+  } catch (error) {
+    console.error("Error completing welcome tutorial:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Error completing welcome tutorial" 
+    });
+  }
+});
+
+app.get("/skip-welcome", checkAuth, async (req, res) => {
+  try {
+    // Mark welcome as completed even though user skipped
+    await registerCollection.findByIdAndUpdate(
+      req.user._id,
+      { hasCompletedWelcome: true },
+      { new: true }
+    );
+    
+    console.log("User skipped welcome tutorial:", req.user.uname);
+    res.redirect('/profile');
+    
+  } catch (error) {
+    console.error("Error skipping welcome tutorial:", error);
+    // Still redirect to profile even if update failed
+    res.redirect('/profile');
+  }
 });
 
 app.post("/update-profile", checkAuth, async (req, res) => {
