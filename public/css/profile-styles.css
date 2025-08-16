@@ -257,6 +257,17 @@
   margin-bottom: 1rem;
   margin-left: 1rem;
 }
+.header-container-2 {
+  margin: auto;
+  margin-left: 10rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem; /* Add right padding */
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: space-between; /* Change from flex-start to space-between */
+  align-items: center;
+  width: 100%; /* Ensure it takes full width */
+}
 .header-container-3 {
   background: transparent;
   display: flex;
@@ -696,6 +707,45 @@
 .subheading {
   color: #777;
 }
+.tutorial-button-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Push to the right */
+  margin-right: 0; /* Remove right margin since we're using margin-left: auto */
+}
+.tutorial-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #374151;
+  text-decoration: none;
+  font-family: "Poppins-Medium", sans-serif;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.tutorial-button:hover {
+  background-color: #5cb15d;
+  border-color: #5cb15d;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
+}
+.tutorial-icon {
+  width: 16px;
+  height: 16px;
+  transition: filter 0.2s ease;
+}
+.tutorial-button:hover .tutorial-icon {
+  filter: brightness(0) invert(1); /* Makes icon white on hover */
+}
+.tutorial-text {
+  font-weight: 500;
+}
 
 @media screen and (max-width: 991px) {
   .header-container-3 {
@@ -999,5 +1049,25 @@
   .medsandsups-entry.entry-card {
     max-width: 400px;
     min-width: 300px;
+  }
+  .tutorial-button-container {
+    margin-right: 1rem;
+  }
+  .tutorial-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  .tutorial-text {
+    display: none; /* Hide text on mobile, show only icon */
+  }
+  .tutorial-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .tutorial-button {
+    padding: 0.35rem 0.6rem;
   }
 }
