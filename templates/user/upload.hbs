@@ -177,13 +177,16 @@
                     <button id="processFiles" class="process-button" disabled>Upload File(s)</button>
                   </div>
                   <div class="sample-pdf-section">
-                    <h4>Try with our sample report</h4>
+                    <h4>Try with our sample reports</h4>
                     <div class="sample-pdf-preview">
                       <img src="/images/sample-report-preview.png" alt="Sample medical report preview">
                       <button class="use-sample-btn" data-sample-file="/samples/jane-smith-lab-report.pdf">
-                        Use This Sample
+                        Use Sample Reports (2 files)
                       </button>
                     </div>
+                    <p style="font-size: 0.75rem; color: #64748b; text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
+                      Loads two Jane Smith lab reports from different dates to demonstrate trend tracking
+                    </p>
                   </div>
                 </div>
                 <div class="upload-page-text-container">
@@ -552,22 +555,22 @@
                 statusDiv.textContent = 'Initializing OCR engine...';
               }
               
-              estimatedProgress = 5;
+              estimatedProgress = 1;
               if (progressFill) {
-                progressFill.style.width = '5%';
-                progressText.textContent = '5%';
+                progressFill.style.width = '1%';
+                progressText.textContent = '1%';
               }
               
               clearInterval(progressInterval);
               progressInterval = setInterval(() => {
-                if (!processingCompleted && estimatedProgress < 90) {
+                if (!processingCompleted && estimatedProgress < 99) {
                   estimatedProgress += 1;
                   if (progressFill) {
                     progressFill.style.width = estimatedProgress + '%';
                     progressText.textContent = Math.round(estimatedProgress) + '%';
                   }
                 }
-              }, 333);
+              }, 1000);
             }
             // Handle page processing
             else if (message.includes('Processing page')) {
@@ -654,7 +657,7 @@
         const progressRange = endProgress - startProgress;
 
         const interval = setInterval(() => {
-          progress += 2; // Increase by 2% every 500ms
+          progress += 1; // Increase by 1% every 2000ms
           const currentProgress = startProgress + (progress / 100) * progressRange;
           
           if (progress < 95) {
@@ -760,61 +763,81 @@
         useSampleBtn.addEventListener('click', async function(e) {
           e.preventDefault();
           
-          const sampleFilePath = this.dataset.sampleFile;
+          // Define both sample files
+          const sampleFiles = [
+            {
+              path: '/samples/jane-smith-lab-report.pdf',
+              name: 'jane-smith-lab-report-2025-07-28.pdf'
+            },
+            {
+              path: '/samples/jane-smith-lab-report-follow-up.pdf',
+              name: 'jane-smith-lab-report-2026-01-28.pdf'
+            }
+          ];
           
           try {
             // Show loading state
             const originalContent = this.innerHTML;
             this.style.opacity = '0.7';
             this.style.pointerEvents = 'none';
-            this.innerHTML = '⌛ Loading sample...';
+            this.innerHTML = '⌛ Loading samples...';
             
-            // Fetch the sample PDF file
-            const response = await fetch(sampleFilePath);
-            
-            if (!response.ok) {
-              throw new Error('Could not load sample file');
-            }
-            
-            // Convert response to blob
-            const blob = await response.blob();
+            // Load both files
+            for (const sampleFileInfo of sampleFiles) {
+              try {
+                // Fetch the sample PDF file
+                const response = await fetch(sampleFileInfo.path);
+                
+                if (!response.ok) {
+                  console.warn(`Could not load ${sampleFileInfo.name}`);
+                  continue; // Skip this file but continue with others
+                }
+                
+                // Convert response to blob
+                const blob = await response.blob();
 
-            // Mobile-compatible file creation
-            let sampleFile;
-            try {
-              sampleFile = new File([blob], 'jane-smith-lab-report.pdf', {
-                type: 'application/pdf',
-                lastModified: Date.now()
-              });
-            } catch (e) {
-              sampleFile = blob;
-              sampleFile.name = 'jane-smith-lab-report.pdf';
-              sampleFile.lastModified = Date.now();
+                // Mobile-compatible file creation
+                let sampleFile;
+                try {
+                  sampleFile = new File([blob], sampleFileInfo.name, {
+                    type: 'application/pdf',
+                    lastModified: Date.now()
+                  });
+                } catch (e) {
+                  sampleFile = blob;
+                  sampleFile.name = sampleFileInfo.name;
+                  sampleFile.lastModified = Date.now();
+                }
+                
+                // Add the sample file using your existing logic
+                files.add(sampleFile);
+                
+                // Display the file EXACTLY like drag/drop does - matching your handleFiles function
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                // Create the exact same structure as drag/drop files
+                fileItem.innerHTML = `
+                  <span class="file-name">${sampleFileInfo.name}</span>
+                  <span class="file-size">${(sampleFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                  <button class="remove-file" data-filename="${sampleFileInfo.name}">Remove</button>
+                `;
+                
+                // Add event listener for remove button - exactly like drag/drop files
+                const removeBtn = fileItem.querySelector('.remove-file');
+                removeBtn.addEventListener('click', () => {
+                  files.delete(sampleFile);
+                  fileItem.remove();
+                  updateProcessButton();
+                });
+                
+                fileList.appendChild(fileItem);
+                
+              } catch (fileError) {
+                console.error(`Error loading ${sampleFileInfo.name}:`, fileError);
+                // Continue with next file
+              }
             }
-            
-            // Add the sample file using your existing logic
-            files.add(sampleFile);
-            
-            // Display the file EXACTLY like drag/drop does - matching your handleFiles function
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            
-            // Create the exact same structure as drag/drop files
-            fileItem.innerHTML = `
-              <span class="file-name">jane-smith-lab-report.pdf</span>
-              <span class="file-size">${(sampleFile.size / 1024 / 1024).toFixed(2)} MB</span>
-              <button class="remove-file" data-filename="jane-smith-lab-report.pdf">Remove</button>
-            `;
-            
-            // Add event listener for remove button - exactly like drag/drop files
-            const removeBtn = fileItem.querySelector('.remove-file');
-            removeBtn.addEventListener('click', () => {
-              files.delete(sampleFile);
-              fileItem.remove();
-              updateProcessButton();
-            });
-            
-            fileList.appendChild(fileItem);
             
             // Update the process button using your existing function
             updateProcessButton();
@@ -835,10 +858,10 @@
             }, 2000);
             
           } catch (error) {
-            console.error('Error loading sample file:', error);
-            alert('Sorry, could not load the sample file. Please try uploading your own file.');
+            console.error('Error loading sample files:', error);
+            alert('Sorry, could not load the sample files. Please try uploading your own files.');
             
-            // Reset button state
+            // Reset button state on error
             this.style.opacity = '1';
             this.style.pointerEvents = 'auto';
             this.innerHTML = originalContent;
@@ -974,7 +997,7 @@
 
               setTimeout(() => {
                 window.location.reload();
-              }, 500);
+              }, 400);
             }, 1000);
             
           } else {
