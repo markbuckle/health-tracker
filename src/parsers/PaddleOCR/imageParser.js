@@ -174,9 +174,11 @@ function preprocessOCRText(text) {
     console.log("Input length:", text.length);
     console.log("First 200 chars:", text.substring(0, 200));
     
-    // Remove PaddleOCR warning messages FIRST
+    // IMPROVED: Remove PaddleOCR warning messages with better regex
     let cleaned = text
-        .replace(/\[\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}\] ppocr WARNING:.*?(\n|$)/g, '')
+        .split('\n')
+        .filter(line => !line.match(/\[\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}\] ppocr WARNING:/))
+        .join('\n')
         .replace(/\r\n/g, '\n')
         .replace(/\r/g, '\n')
         .replace(/\t/g, ' ');
@@ -287,15 +289,46 @@ function extractStructuredDate(text) {
  * Enhanced parseLabDataLine with fixes for remaining issues
  */
 function parseLabDataLine(line, allLines, lineIndex) {
-    // Skip page separators and junk lines
-    if (line.match(/^---\s*Page\s*\d+\s*---/i) || 
-        line.match(/Phone:|Address:|Practice:|Physician:|Medical License:|ABNORMAL VALUES/i)) {
-        return null;
-    }
-    
     console.log(`=== Parsing line ${lineIndex}: "${line}" ===`);
     
-    // Special handling for specific problematic lines
+    // SPECIAL HANDLING: Extract Chloride from page separator line
+    if (line.match(/---\s*Page.*Chloride.*\d+.*mmol\/L/i)) {
+        const chlorideMatch = line.match(/Chloride\s+([\d\.]+)\s+(mmol\/L)\s+([\d\.\s\-]+)/i);
+        if (chlorideMatch) {
+            console.log(`  Special Chloride parsing from page line: ${chlorideMatch[1]}`);
+            return {
+                testName: 'Chloride',
+                value: parseFloat(chlorideMatch[1]),
+                unit: chlorideMatch[2],
+                referenceRange: chlorideMatch[3].trim(),
+                flag: '',
+                confidence: 0.9
+            };
+        }
+    }
+    
+    // SPECIAL HANDLING: Extract Calcium from scrambled line
+    if (line.match(/Calcium.*Test Name.*[\d\.]+.*Result.*Units.*mg\/dL/i)) {
+        const calciumMatch = line.match(/Calcium.*?([\d\.]+).*?mg\/dL.*?([\d\.\s\-]+)/i);
+        if (calciumMatch) {
+            console.log(`  Special Calcium parsing from scrambled line: ${calciumMatch[1]}`);
+            return {
+                testName: 'Calcium',
+                value: parseFloat(calciumMatch[1]),
+                unit: 'mg/dL',
+                referenceRange: calciumMatch[2] ? calciumMatch[2].trim() : '8.5 - 10.5',
+                flag: '',
+                confidence: 0.9
+            };
+        }
+    }
+    
+    // Skip page separators and junk lines (but not ones with lab data)
+    if (line.match(/^---\s*Page\s*\d+\s*---\s*$/) || 
+        line.match(/^(Phone:|Address:|Practice:|Physician:|Medical License:|ABNORMAL VALUES)/) ||
+        line.match(/Test Name.*Result.*Units.*Reference Range.*Flag/i)) {
+        return null;
+    }
     
     // Handle eGFR special case first
     if (line.match(/eGFR\s+>?\s*\d+/i)) {
@@ -394,6 +427,10 @@ function parseLabDataLine(line, allLines, lineIndex) {
                 confidence: 0.9
             };
         }
+    }
+
+    if (line.match(/^---\s*Page\s*\d+\s*---.*Phone:/i)) {
+        return null;
     }
     
     // Enhanced patterns with better handling
@@ -533,12 +570,40 @@ function parseStructuredLabReport(text) {
             continue;
         }
         
-        // Skip header and non-data lines
-        if (line.match(/Test Name|Result|Units|Reference Range|Flag|Patient Name|Date of Birth|Collection Date|HEALTHLYNC|LABORATORY|Phone:|Address:|Practice:|Physician:|Medical License:|ABNORMAL VALUES|--- Page/i)) {
+        // CHANGED: Process lines that contain lab data even if they have other content
+        // Don't skip lines that might have lab data mixed with other content
+        const shouldSkip = line.match(/^(Test Name.*Result.*Units.*Reference Range.*Flag|Patient Name|Date of Birth|HEALTHLYNC|LABORATORY)$/i) ||
+                          line.match(/^(Phone:|Address:|Practice:)/) ||
+                          line.length < 8;
+        
+        if (shouldSkip) {
             continue;
         }
         
-        // Parse potential lab data lines
+        // ALWAYS try to parse lines that contain Calcium or Chloride, regardless of other content
+        if (line.toLowerCase().includes('calcium') || line.toLowerCase().includes('chloride')) {
+            console.log(`Force processing line with Calcium/Chloride: "${line}"`);
+            const parsed = parseLabDataLine(line, lines, i);
+            if (parsed) {
+                console.log(`Parsed: ${parsed.testName} = ${parsed.value} ${parsed.unit}`);
+                
+                // Map to standard name
+                const standardName = mapToStandardBiomarker(parsed.testName);
+                
+                results[standardName] = {
+                    value: parsed.value,
+                    unit: parsed.unit,
+                    rawText: line,
+                    referenceRange: parsed.referenceRange,
+                    confidence: parsed.confidence,
+                    flag: parsed.flag,
+                    section: currentSection
+                };
+            }
+            continue; // Don't process this line again below
+        }
+        
+        // Parse other potential lab data lines
         if (line.length > 10) {
             const parsed = parseLabDataLine(line, lines, i);
             if (parsed) {
