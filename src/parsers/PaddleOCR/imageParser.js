@@ -289,9 +289,11 @@ function extractStructuredDate(text) {
  * Enhanced parseLabDataLine with fixes for remaining issues
  */
 function parseLabDataLine(line, allLines, lineIndex) {
-    console.log(`=== Parsing line ${lineIndex}: "${line}" ===`);
+    if (!line || typeof line !== 'string') return null;
     
-    // SPECIAL HANDLING: Extract Chloride from page separator line
+    console.log(`=== Parsing line ${lineIndex || 'unknown'}: "${line}" ===`);
+    
+    // SPECIAL HANDLING FIRST: Extract Chloride from page separator line
     if (line.match(/---\s*Page.*Chloride.*\d+.*mmol\/L/i)) {
         const chlorideMatch = line.match(/Chloride\s+([\d\.]+)\s+(mmol\/L)\s+([\d\.\s\-]+)/i);
         if (chlorideMatch) {
@@ -305,6 +307,14 @@ function parseLabDataLine(line, allLines, lineIndex) {
                 confidence: 0.9
             };
         }
+    }
+
+    // THEN: Skip pure page markers (without lab data)
+    if (line.match(/^---\s*Page\s*\d+\s*---\s*$/) || 
+        line.match(/Page\s*\d+\s*of\s*\d+/i) ||
+        line.match(/^\d+\s*---\s*$/)) {
+        console.log(`  Skipping page marker: "${line}"`);
+        return null;
     }
     
     // SPECIAL HANDLING: Extract Calcium from scrambled line
