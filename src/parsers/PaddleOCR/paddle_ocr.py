@@ -41,7 +41,7 @@ def process_pdf_page_simple(pdf_path, page_num, ocr):
         page = doc[page_num]
         
         # Render page at moderate resolution
-        zoom = 1.5  # Reduced from 2.0
+        zoom = 1.3  # Reduced from 2.0
         mat = fitz.Matrix(zoom, zoom)
         pix = page.get_pixmap(matrix=mat)
         
