@@ -323,7 +323,7 @@ function parseLabDataLine(line, allLines, lineIndex) {
                     testName: 'LDL Cholesterol',
                     value: parseFloat(ldlMatch[1]),
                     unit: ldlMatch[2],
-                    referenceRange: ldlMatch[3] ? ldlMatch[3].trim() : '<100',
+                    referenceRange: ldlMatch[3] ? ldlMatch[3].trim() : '0-100',
                     flag: '',
                     confidence: 0.9
                 };
@@ -687,7 +687,7 @@ function parseLabDataLine(line, allLines, lineIndex) {
                     referenceRange = '0-200';  // Convert to range format for bar charts
                 }
                 if (referenceRange === '100' && testName.toLowerCase().includes('ldl')) {
-                    referenceRange = '<100';
+                    referenceRange = '0-100';
                 }
                 if (referenceRange === '130' && testName.toLowerCase().includes('non-hdl')) {
                     referenceRange = '<130';
