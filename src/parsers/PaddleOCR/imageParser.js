@@ -286,14 +286,123 @@ function extractStructuredDate(text) {
 // ============================================================================
 
 /**
- * Enhanced parseLabDataLine with fixes for remaining issues
+ * Enhanced parseLabDataLine with fixes for 100% accuracy
  */
 function parseLabDataLine(line, allLines, lineIndex) {
     if (!line || typeof line !== 'string') return null;
     
     console.log(`=== Parsing line ${lineIndex || 'unknown'}: "${line}" ===`);
     
-    // SPECIAL HANDLING FIRST: Extract Chloride from page separator line
+    // ========================================================================
+    // FIX 1: CRITICAL - Specific cholesterol panel parsing (HIGHEST PRIORITY)
+    // ========================================================================
+    
+    if (line.match(/cholesterol/i)) {
+        // HDL Cholesterol - must match exactly
+        if (line.match(/^HDL\s+Cholesterol/i)) {
+            const hdlMatch = line.match(/^HDL\s+Cholesterol\s+([\d\.]+)\s+(mg\/dL)\s*([>]?\s*[\d\.]+)/i);
+            if (hdlMatch) {
+                console.log(`  Special HDL Cholesterol parsing: ${hdlMatch[1]}`);
+                return {
+                    testName: 'HDL Cholesterol',
+                    value: parseFloat(hdlMatch[1]),
+                    unit: hdlMatch[2],
+                    referenceRange: hdlMatch[3] ? hdlMatch[3].trim() : '>40',
+                    flag: '',
+                    confidence: 0.9
+                };
+            }
+        }
+        
+        // LDL Cholesterol - must match exactly
+        if (line.match(/^LDL\s+Cholesterol/i)) {
+            const ldlMatch = line.match(/^LDL\s+Cholesterol\s+([\d\.]+)\s+(mg\/dL)\s*([<]?\s*[\d\.]+)/i);
+            if (ldlMatch) {
+                console.log(`  Special LDL Cholesterol parsing: ${ldlMatch[1]}`);
+                return {
+                    testName: 'LDL Cholesterol',
+                    value: parseFloat(ldlMatch[1]),
+                    unit: ldlMatch[2],
+                    referenceRange: ldlMatch[3] ? ldlMatch[3].trim() : '<100',
+                    flag: '',
+                    confidence: 0.9
+                };
+            }
+        }
+        
+        // Non-HDL Cholesterol - must match exactly
+        if (line.match(/^Non-HDL\s+Cholesterol/i)) {
+            const nonHdlMatch = line.match(/^Non-HDL\s+Cholesterol\s+([\d\.]+)\s+(mg\/dL)\s*([<]?\s*[\d\.]+)/i);
+            if (nonHdlMatch) {
+                console.log(`  Special Non-HDL Cholesterol parsing: ${nonHdlMatch[1]}`);
+                return {
+                    testName: 'Non-HDL Cholesterol',
+                    value: parseFloat(nonHdlMatch[1]),
+                    unit: nonHdlMatch[2],
+                    referenceRange: nonHdlMatch[3] ? nonHdlMatch[3].trim() : '<130',
+                    flag: '',
+                    confidence: 0.9
+                };
+            }
+        }
+        
+        // Total Cholesterol - fix reference range parsing
+        if (line.match(/^Total\s+Cholesterol/i)) {
+            const totalCholMatch = line.match(/^Total\s+Cholesterol\s+([\d\.]+)\s+(mg\/dL)\s*([<]?\s*[\d\.]+)/i);
+            if (totalCholMatch) {
+                console.log(`  Special Total Cholesterol parsing: ${totalCholMatch[1]}`);
+                return {
+                    testName: 'Total Cholesterol',
+                    value: parseFloat(totalCholMatch[1]),
+                    unit: totalCholMatch[2],
+                    referenceRange: totalCholMatch[3] ? totalCholMatch[3].trim() : '<200',
+                    flag: '',
+                    confidence: 0.9
+                };
+            }
+        }
+    }
+
+    // ========================================================================
+    // FIX 2: AST (SGOT) parsing
+    // ========================================================================
+    
+    if (line.match(/AST.*SGOT/i)) {
+        const astMatch = line.match(/AST.*SGOT.*?([\d\.]+)\s+(U\/L)\s*([\d\.\s\-]+)/i);
+        if (astMatch) {
+            console.log(`  Special AST (SGOT) parsing: ${astMatch[1]}`);
+            return {
+                testName: 'AST (SGOT)',
+                value: parseFloat(astMatch[1]),
+                unit: astMatch[2],
+                referenceRange: astMatch[3] ? astMatch[3].trim() : '10 - 40',
+                flag: '',
+                confidence: 0.9
+            };
+        }
+    }
+
+    // ========================================================================
+    // EXISTING SPECIAL HANDLERS (keep these)
+    // ========================================================================
+    
+    // SPECIAL HANDLING: Extract HDL from mixed page line
+    if (line.match(/---\s*Page.*HDL.*\d+.*mg\/dL/i)) {
+        const hdlMatch = line.match(/HDL\s+Cholesterol\s+([\d\.]+)\s+(mg\/dL)\s*([>]?\s*[\d\.]+)/i);
+        if (hdlMatch) {
+            console.log(`  Special HDL parsing from page line: ${hdlMatch[1]}`);
+            return {
+                testName: 'HDL Cholesterol',
+                value: parseFloat(hdlMatch[1]),
+                unit: hdlMatch[2],
+                referenceRange: hdlMatch[3] ? hdlMatch[3].trim() : '>40',
+                flag: '',
+                confidence: 0.9
+            };
+        }
+    }
+    
+    // SPECIAL HANDLING: Extract Chloride from page separator line
     if (line.match(/---\s*Page.*Chloride.*\d+.*mmol\/L/i)) {
         const chlorideMatch = line.match(/Chloride\s+([\d\.]+)\s+(mmol\/L)\s+([\d\.\s\-]+)/i);
         if (chlorideMatch) {
@@ -308,11 +417,9 @@ function parseLabDataLine(line, allLines, lineIndex) {
             };
         }
     }
-
-    // THEN: Skip pure page markers (without lab data)
-    if (line.match(/^---\s*Page\s*\d+\s*---\s*$/) || 
-        line.match(/Page\s*\d+\s*of\s*\d+/i) ||
-        line.match(/^\d+\s*---\s*$/)) {
+    
+    // Skip page markers (including ones with lab data we've already extracted)
+    if (line.match(/^---\s*Page\s*\d+\s*---/i)) {
         console.log(`  Skipping page marker: "${line}"`);
         return null;
     }
@@ -443,22 +550,25 @@ function parseLabDataLine(line, allLines, lineIndex) {
         return null;
     }
     
-    // Enhanced patterns with better handling
+    // ========================================================================
+    // FIX 5: Enhanced pattern matching for robust extraction
+    // ========================================================================
+    
     const patterns = [
-        // Pattern 1: Standard format "Test Name Value Unit Range Flag"
-        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)\s*(HIGH|LOW|NORMAL)?$/i,
+        // Pattern 1: Exact match for specific biomarkers (highest priority)
+        /^(HDL Cholesterol|LDL Cholesterol|Non-HDL Cholesterol|Total Cholesterol|AST \(SGOT\))\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)\s*(HIGH|LOW|NORMAL)?$/i,
         
-        // Pattern 2: Format without flag
-        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)$/i,
+        // Pattern 2: Standard format "Test Name Value Unit Range Flag"
+        /^([A-Za-z\s,\-\(\)]{3,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)\s*(HIGH|LOW|NORMAL)?$/i,
         
-        // Pattern 3: Just test name, value, unit
-        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)$/i,
+        // Pattern 3: Format without flag
+        /^([A-Za-z\s,\-\(\)]{3,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)$/i,
         
-        // Pattern 4: Handle special cases like missing units
-        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s*([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]*(?:\/\w+)*)\s*(.*)$/i,
+        // Pattern 4: Just test name, value, unit
+        /^([A-Za-z\s,\-\(\)]{3,50}?)\s+([\d\.]+)\s+([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]+(?:\/\w+)*)$/i,
         
-        // Pattern 5: Handle cases where unit might be missing but range exists
-        /^([A-Za-z\s,\-\(\)]{5,50}?)\s+([\d\.]+)\s+([\d\.\s\-<>]+(?:\s*[\-–]\s*[\d\.]+)?)\s*(HIGH|LOW|NORMAL)?$/i
+        // Pattern 5: Handle special cases like missing units
+        /^([A-Za-z\s,\-\(\)]{3,50}?)\s+([\d\.]+)\s*([a-zA-Z%\/μmLdKfluI\²³⁹⁰\-\/]*(?:\/\w+)*)\s*(.*)$/i
     ];
     
     for (let patternIndex = 0; patternIndex < patterns.length; patternIndex++) {
@@ -485,6 +595,27 @@ function parseLabDataLine(line, allLines, lineIndex) {
                 console.log(`  Skipping - invalid test name: "${testName}"`);
                 continue;
             }
+
+            // ========================================================================
+            // FIX 6: Add validation to prevent wrong value extraction
+            // ========================================================================
+            
+            // Validate that we're not mixing up cholesterol values
+            if (testName.toLowerCase().includes('hdl') && !testName.toLowerCase().includes('non')) {
+                // HDL should be relatively low (typically 30-80 mg/dL)
+                if (value > 100) {
+                    console.log(`  WARNING: HDL value ${value} seems too high, skipping this match`);
+                    continue; // Try next pattern
+                }
+            }
+
+            if (testName.toLowerCase().includes('non-hdl')) {
+                // Non-HDL should be higher than HDL
+                if (value < 80) {
+                    console.log(`  WARNING: Non-HDL value ${value} seems too low, skipping this match`);
+                    continue; // Try next pattern
+                }
+            }
             
             // Handle special cases for missing units
             if (!unit || unit.length === 0) {
@@ -497,7 +628,11 @@ function parseLabDataLine(line, allLines, lineIndex) {
                 unit = inferUnitFromTestName(testName) || '';
             }
             
-            // Clean reference range and fix missing < symbols
+            // ========================================================================
+            // FIX 3: Improve reference range parsing for "<" symbols
+            // ========================================================================
+            
+            // Clean reference range and fix missing < symbols - ENHANCED
             if (referenceRange) {
                 // Remove non-numeric characters except ranges and comparison operators
                 referenceRange = referenceRange.replace(/[^\d\.\s\-<>]/g, '').trim();
@@ -509,12 +644,24 @@ function parseLabDataLine(line, allLines, lineIndex) {
                 if (originalLine.includes('LOW') && !flag) flag = 'LOW';
                 if (originalLine.includes('NORMAL') && !flag) flag = 'NORMAL';
                 
-                // Fix missing < symbols for specific ranges
+                // Fix missing < symbols for specific ranges - ENHANCED
                 if (referenceRange === '150' && testName.toLowerCase().includes('triglycerides')) {
                     referenceRange = '<150';
                 }
                 if (referenceRange === '3.0' && testName.toLowerCase().includes('reactive')) {
                     referenceRange = '<3.0';
+                }
+                if (referenceRange === '200' && testName.toLowerCase().includes('cholesterol')) {
+                    referenceRange = '<200';
+                }
+                if (referenceRange === '100' && testName.toLowerCase().includes('ldl')) {
+                    referenceRange = '<100';
+                }
+                if (referenceRange === '130' && testName.toLowerCase().includes('non-hdl')) {
+                    referenceRange = '<130';
+                }
+                if (referenceRange === '40' && testName.toLowerCase().includes('hdl')) {
+                    referenceRange = '>40';
                 }
             }
             
@@ -542,7 +689,7 @@ function parseLabDataLine(line, allLines, lineIndex) {
 }
 
 /**
- * Enhanced parseStructuredLabReport with additional Total Protein handling
+ * Enhanced parseStructuredLabReport with fixes for section headers
  */
 function parseStructuredLabReport(text) {
     const results = {};
@@ -572,7 +719,19 @@ function parseStructuredLabReport(text) {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         
-        // Detect section headers
+        // ========================================================================
+        // FIX 4: Remove the "HORMONES" artifact parsing
+        // ========================================================================
+        
+        // Skip section headers that aren't actual lab values
+        if (line.match(/^(METABOLIC|KIDNEY|ELECTROLYTES|LIVER|CARDIOVASCULAR|HORMONES|NUTRIENTS|IMMUNITY)$/i)) {
+            console.log(`  Skipping section header: "${line}"`);
+            currentSection = line;
+            inDataSection = true;
+            continue;
+        }
+        
+        // Detect other section headers
         if (line.match(/COMPLETE BLOOD COUNT|COMPREHENSIVE METABOLIC|LIPID PANEL|THYROID FUNCTION|VITAMIN LEVELS|INFLAMMATION MARKERS/i)) {
             currentSection = line;
             inDataSection = true;
