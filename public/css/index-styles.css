@@ -906,7 +906,7 @@
 }
 .hover-titles {
   position: absolute;
-  right: 75px;
+  right: 12%;
   top: 45%;
   transform: translateY(-50%);
   display: flex;
@@ -1009,6 +1009,9 @@
 }
 /* Large Desktop (1400px and above) */
 @media screen and (min-width: 1400px) {
+  .hover-titles {
+    right: 28%;
+  }
   .hero-container {
     max-width: 45rem;
   }
@@ -1516,7 +1519,7 @@
     align-items: center;
   }
   .hover-title {
-    width: 200px;
+    width: 6rem;
     text-align: center;
     padding: 10px 16px;
     font-size: 12px;
@@ -2049,7 +2052,7 @@
   }
   
   .hover-title {
-    padding: 12px 18px;
+    padding: 12px 6px;
     font-size: 15px;
     animation: slideInUp 0.6s ease forwards;
     transform: translateY(20px);
