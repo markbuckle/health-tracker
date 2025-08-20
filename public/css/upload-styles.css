@@ -1088,6 +1088,55 @@
   font-weight: 400;
 }
 
+/* ALERT styles */
+
+.success-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.success-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #518458;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.success-details {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: #555;
+  white-space: pre-line;
+  border-left: 4px solid #518458;
+}
+
+.success-close-btn {
+  background: #518458;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 1rem;
+}
+
+.success-close-btn:hover {
+  background: #456b4d;
+}
+
 @media screen and (max-width: 991px) {
   .lab-result-card {
     padding: 0.5rem 0.5rem 0 0.5rem;
@@ -1352,6 +1401,7 @@
     font-size: 0.9rem; /* Smaller mobile heading */
     margin-bottom: 0.5rem;
   }
+  
 }
 
 /* Very small screens */
@@ -1402,5 +1452,5 @@
     width: 55%;
     padding: 0.5rem 1rem; /* Smaller padding */
     font-size: 0.75rem; /* Smaller font */
-  }
+  } 
 }

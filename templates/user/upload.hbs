@@ -513,17 +513,26 @@
               <div class="success-title">${title}</div>
               <div class="success-message">${message}</div>
               ${details ? `<div class="success-details">${details}</div>` : ''}
-              <button class="success-close-btn" onclick="hideSuccessOverlay()">Continue</button>
+              <button id="successContinueBtn" class="success-close-btn">Continue</button>
             `;
+            
+            // Add event listener to the continue button immediately after creating it
+            const continueBtn = container.querySelector('#successContinueBtn');
+            if (continueBtn) {
+              continueBtn.addEventListener('click', hideSuccessOverlay);
+              console.log('Continue button event listener added'); // Debug log
+            }
           }
           overlay.style.display = 'flex';
         }
       }
 
       function hideSuccessOverlay() {
+        console.log('hideSuccessOverlay called'); // Debug log
         const overlay = document.getElementById('loadingOverlay');
         if (overlay) {
           overlay.style.display = 'none';
+          
           // Reset to original loader content for next time
           const container = overlay.querySelector('.loader-container');
           if (container) {
@@ -551,6 +560,9 @@
           }, 500);
         }
       }
+      
+      window.hideSuccessOverlay = hideSuccessOverlay;
+      
       // Local environment progress tracking (with WebSocket)
       function setupLocalProgressTracking() {
         try {
