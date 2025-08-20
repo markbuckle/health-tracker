@@ -228,6 +228,8 @@
   background-color: #f2f9f1;
   transition: all 0.3s ease;
   cursor: pointer;
+  margin-left: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .file-upload-area:hover {
@@ -257,6 +259,7 @@
   font-size: 0.9rem;
   color: #1e293b;
   font-family: "Poppins-Regular", sans-serif;
+  margin-top: 0.5rem;
 }
 
 .browse-button {
@@ -269,6 +272,7 @@
   font-family: "Poppins-Regular", sans-serif;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin: 1rem 0;
 }
 
 .browse-button:hover {
@@ -278,10 +282,12 @@
 .file-limits {
   font-size: 0.8rem;
   color: #64748b;
+  margin-bottom: 1rem;
 }
 
 .file-list {
   margin-top: 0.6rem;
+  margin-left: 0.5rem;
 }
 
 .file-item {
@@ -329,6 +335,7 @@
   font-size: 0.8rem;
   font-family: "Poppins-Regular", sans-serif;
   margin-left: 15.3rem;
+  margin-top: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -957,8 +964,8 @@
 /* Sample PDF Section Styles */
 .upload-section-container {
   display: flex;
-  gap: 2rem;
-  align-items: center; /* Center vertically */
+  gap: 1rem;
+  align-items: top; /* Center vertically */
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
@@ -1005,7 +1012,7 @@
   width: 100%;
   max-width: 180px; /* Smaller image */
   height: auto;
-  border: 2px solid #e2e8f0;
+  border: 1.5px solid #e2e8f0;
   border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -1024,7 +1031,7 @@
   border: none;
   border-radius: 0.5rem;
   padding: 0.65rem 1.25rem; /* Slightly smaller padding */
-  font-size: 0.85rem; /* Smaller font */
+  font-size: 0.75rem; /* Smaller font */
   font-family: "Poppins-Regular", sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1048,10 +1055,10 @@
 }
 
 /* Add icon to button */
-.use-sample-btn::before {
+/* .use-sample-btn::before {
   content: "📄";
   font-size: 1rem;
-}
+} */
 
 /* Additional helper class for drag and drop indication */
 .sample-pdf-section.drag-active {
@@ -1449,7 +1456,7 @@
     max-width: 120px; /* Smaller very mobile image */
   }
   .use-sample-btn {
-    width: 55%;
+    width: 65%;
     padding: 0.5rem 1rem; /* Smaller padding */
     font-size: 0.75rem; /* Smaller font */
   } 

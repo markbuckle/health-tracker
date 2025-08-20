@@ -718,10 +718,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #f8f9fa;
-  border: 1px solid #e5e7eb;
+  background-color: #d1e1d1c9;
+  border: 1px solid rgb(173, 189, 173);
   border-radius: 8px;
-  color: #374151;
+  color: #667e70;
   text-decoration: none;
   font-family: "Poppins-Medium", sans-serif;
   font-size: 0.875rem;
@@ -729,10 +729,11 @@
   cursor: pointer;
 }
 .tutorial-button:hover {
-  background-color: #5cb15d;
-  border-color: #5cb15d;
-  color: white;
+  background-color: #74c275b7;
+  border-color: #518d52b7;
+  color: rgb(84, 95, 79);
   transform: translateY(-1px);
+  font-size: 0.9rem;
   box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
 }
 .tutorial-icon {
@@ -1057,9 +1058,9 @@
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
   }
-  .tutorial-text {
-    display: none; /* Hide text on mobile, show only icon */
-  }
+  /* .tutorial-text {
+    display: none; /* Hide text on mobile, show only icon
+  } */
   .tutorial-icon {
     width: 18px;
     height: 18px;
