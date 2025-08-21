@@ -7,60 +7,58 @@ console.log('=== OCR Parser Debug Info ===');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('VERCEL:', process.env.VERCEL);
 console.log('OCR_IMPLEMENTATION:', process.env.OCR_IMPLEMENTATION);
-console.log('OCR_SERVICE_URL:', process.env.OCR_SERVICE_URL);
+console.log('GOOGLE_CLOUD_PROJECT_ID:', process.env.GOOGLE_CLOUD_PROJECT_ID);
 console.log('================================');
 
 (function() {
-    // Use an IIFE to isolate variables
     const isProductionMode = process.env.NODE_ENV === 'production' || process.env.VERCEL;
     const ocrImplementation = process.env.OCR_IMPLEMENTATION || 'PaddleOCR';
-    const hasOcrServiceUrl = !!process.env.OCR_SERVICE_URL;
-    const externalOcrServiceEnabled = hasOcrServiceUrl && !isProductionMode;
+    const hasGoogleConfig = !!(process.env.GOOGLE_CLOUD_PROJECT_ID && 
+        (process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GOOGLE_SERVICE_ACCOUNT_KEY));
 
     console.log(`OCR Parser - Environment: ${isProductionMode ? 'Production' : 'Development'}`);
     console.log(`OCR Parser - Implementation: ${ocrImplementation}`);
-    console.log(`OCR Parser - Has OCR_SERVICE_URL: ${hasOcrServiceUrl}`);
-    console.log(`OCR Parser - External Service Enabled: ${externalOcrServiceEnabled}`);
+    console.log(`OCR Parser - Has Google Config: ${hasGoogleConfig}`);
 
     let ocrParserModule;
 
     try {
-        if (isProductionMode) {
-            console.log('OCR Parser: Production mode detected - OCR disabled');
-            ocrParserModule = {
-                extractFromPDF: async (filePath) => {
-                    console.log('OCR Parser: Returning production fallback response');
-                    return {
-                        labValues: {},
-                        testDate: new Date(),
-                        processingErrors: ['OCR processing is disabled in production environment']
-                    };
-                },
-                parseLabValues: (text) => ({}),
-                extractTestDate: (text) => new Date(),
-                interpretConfidence: (confidence) => 'disabled'
-            };
-        } else if (externalOcrServiceEnabled) {
-            console.log('OCR Parser: Attempting to load external OCR service');
-            // This should NOT execute since you don't have OCR_SERVICE_URL set
-            throw new Error('External OCR service should not be enabled');
-        } else {
-            console.log(`OCR Parser: Loading local ${ocrImplementation} implementation`);
-            if (ocrImplementation === 'PaddleOCR') {
-                ocrParserModule = require('./PaddleOCR/labParser');
-                console.log('OCR Parser: PaddleOCR loaded successfully');
-            } else {
-                throw new Error(`Unsupported OCR implementation: ${ocrImplementation}`);
+        if (ocrImplementation === 'GoogleVision') {
+            if (!hasGoogleConfig) {
+                throw new Error('Google Cloud Vision configuration missing. Check GOOGLE_CLOUD_PROJECT_ID and credentials.');
             }
+            
+            console.log('OCR Parser: Loading Google Vision implementation');
+            ocrParserModule = require('./GoogleVision/smartOcrRouter');
+            console.log('OCR Parser: Google Vision loaded successfully');
+            
+        } else if (ocrImplementation === 'PaddleOCR') {
+            if (isProductionMode) {
+                console.log('OCR Parser: Production mode detected - PaddleOCR disabled');
+                throw new Error('PaddleOCR is disabled in production. Use GoogleVision instead.');
+            }
+            
+            console.log('OCR Parser: Loading PaddleOCR implementation');
+            ocrParserModule = require('./PaddleOCR/labParser');
+            console.log('OCR Parser: PaddleOCR loaded successfully');
+            
+        } else {
+            throw new Error(`Unsupported OCR implementation: ${ocrImplementation}`);
         }
+        
     } catch (error) {
-        console.error(`OCR Parser: Failed to load:`, error.message);
+        console.error(`OCR Parser: Failed to load ${ocrImplementation}:`, error.message);
+        
+        // Fallback module
         ocrParserModule = {
             extractFromPDF: async (filePath) => {
-                console.log('OCR Parser: Using error fallback');
+                console.log('OCR Parser: Using fallback - no OCR processing');
                 return {
                     labValues: {},
                     testDate: new Date(),
+                    rawText: '',
+                    confidence: 0,
+                    provider: 'fallback',
                     processingErrors: [`OCR failed to initialize: ${error.message}`]
                 };
             },
@@ -70,51 +68,60 @@ console.log('================================');
         };
     }
 
-    // Export functions
+    // Export functions with consistent interface
     module.exports = {
         extractFromPDF: async function(filePath) {
-            console.log('OCR Parser: extractFromPDF called with:', filePath);
+            console.log(`OCR Parser: extractFromPDF called with: ${filePath}`);
+            console.log(`OCR Parser: Using implementation: ${ocrImplementation}`);
+            
             try {
                 const result = await ocrParserModule.extractFromPDF(filePath);
+                
                 console.log('OCR Parser: extractFromPDF result:', {
                     labValueCount: Object.keys(result.labValues || {}).length,
-                    hasErrors: !!(result.processingErrors && result.processingErrors.length > 0),
-                    errors: result.processingErrors
+                    textLength: result.rawText ? result.rawText.length : 0,
+                    confidence: result.confidence,
+                    provider: result.provider,
+                    hasErrors: !!(result.processingErrors && result.processingErrors.length > 0)
                 });
+                
                 return result;
+                
             } catch (error) {
                 console.error('OCR Parser: extractFromPDF error:', error.message);
                 return {
                     labValues: {},
                     testDate: new Date(),
-                    processingErrors: [`OCR extraction failed: ${error.message}`]
+                    rawText: '',
+                    confidence: 0,
+                    provider: ocrImplementation.toLowerCase(),
+                    processingErrors: [error.message]
                 };
             }
         },
+        
         parseLabValues: function(text) {
-            try {
-                return ocrParserModule.parseLabValues(text);
-            } catch (error) {
-                console.error('OCR Parser: parseLabValues error:', error.message);
-                return {};
-            }
+            return ocrParserModule.parseLabValues(text);
         },
+        
         extractTestDate: function(text) {
-            try {
-                return ocrParserModule.extractTestDate(text);
-            } catch (error) {
-                console.error('OCR Parser: extractTestDate error:', error.message);
-                return new Date();
-            }
+            return ocrParserModule.extractTestDate(text);
         },
+        
         interpretConfidence: function(confidence) {
-            try {
-                return ocrParserModule.interpretConfidence(confidence);
-            } catch (error) {
-                console.error('OCR Parser: interpretConfidence error:', error.message);
-                return 'error';
-            }
+            return ocrParserModule.interpretConfidence(confidence);
         },
-        implementation: isProductionMode ? 'production-fallback' : ocrImplementation
+        
+        // Utility functions
+        getCurrentImplementation: () => ocrImplementation,
+        isProductionMode: () => isProductionMode,
+        hasValidConfig: () => {
+            if (ocrImplementation === 'GoogleVision') {
+                return hasGoogleConfig;
+            } else if (ocrImplementation === 'PaddleOCR') {
+                return !isProductionMode; // PaddleOCR only works locally
+            }
+            return false;
+        }
     };
 })();

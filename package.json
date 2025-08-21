@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.39.0",
+    "@google-cloud/documentai": "9.3.0",
+    "@google-cloud/vision": "5.3.3",
     "@huggingface/inference": "4.3.2",
     "axios": "1.8.4",
     "connect-mongo": "^5.0.0",

@@ -14,3 +14,5 @@ notes.md
 .vercel
 .vscode
 railway-rag-api/archive/
+config/
+*.json
