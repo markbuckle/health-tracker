@@ -1,8 +1,8 @@
-// src/parsers/biomarkerParser.js - IMPROVED VERSION
-// Prioritizes accuracy while maintaining flexibility
+// src/parsers/biomarkerParser.js - SIMPLE FIX
+// Go back to what was working, just remove false positives
 
 /**
- * Universal biomarker parser with improved accuracy
+ * Universal biomarker parser - simplified approach
  * @param {string} ocrText - Raw OCR text from any provider
  * @returns {Object} Extracted biomarkers with values, units, and reference ranges
  */
@@ -14,48 +14,14 @@ function parseUniversalBiomarkers(ocrText) {
     return {};
   }
   
-  let labPatterns = {};
-  let biomarkerData = {};
+  // Use the smart router fallback patterns that were working perfectly
+  const results = parseBasicPatternsEnhanced(ocrText);
   
-  // Try to import existing patterns and data
-  try {
-    const patterns = require('./labPatterns');
-    labPatterns = patterns.labPatterns || {};
-    console.log(`Universal Parser: Loaded ${Object.keys(labPatterns).length} lab patterns`);
-    
-    try {
-      const data = require('./biomarkerData');
-      biomarkerData = data.biomarkerData || data;
-      console.log(`Universal Parser: Loaded biomarker reference data`);
-    } catch (bioDataError) {
-      console.log('Universal Parser: No biomarkerData.js found, using patterns only');
-    }
-    
-  } catch (error) {
-    console.error('Universal Parser: Could not load labPatterns:', error.message);
-    return fallbackBasicParsing(ocrText);
-  }
-  
-  const results = {};
-  
-  // PRIORITY 1: Try structured parsing first (most accurate for your PDFs)
-  const structuredResults = parseStructuredFormat(ocrText, biomarkerData);
-  Object.assign(results, structuredResults);
-  
-  // PRIORITY 2: Add missing biomarkers with additional patterns
+  // Add any missing biomarkers with additional patterns
   const additionalResults = parseAdditionalBiomarkers(ocrText);
-  // Only add if not already found by structured parsing
-  for (const [name, data] of Object.entries(additionalResults)) {
-    if (!results[name]) {
-      results[name] = data;
-    }
-  }
+  Object.assign(results, additionalResults);
   
-  // PRIORITY 3: Use lab patterns only for biomarkers not yet found
-  const patternResults = parseWithLabPatterns(ocrText, labPatterns, results);
-  Object.assign(results, patternResults);
-  
-  // Clean up results - remove obvious false positives
+  // Clean up obvious false positives
   const cleanedResults = cleanupResults(results, ocrText);
   
   const totalFound = Object.keys(cleanedResults).length;
@@ -69,117 +35,146 @@ function parseUniversalBiomarkers(ocrText) {
 }
 
 /**
- * Parse structured table-like format (HIGHEST PRIORITY - most accurate)
+ * Enhanced version of the basic patterns that were working
  */
-function parseStructuredFormat(text, biomarkerData) {
+function parseBasicPatternsEnhanced(text) {
+  console.log('Universal Parser: Using enhanced basic patterns...');
+  
   const results = {};
   
-  // Look for table-like structures with Test Name | Result | Units | Reference Range
-  const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-  
-  let inDataSection = false;
-  let processedCount = 0;
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    
-    // Skip header lines
-    if (line.match(/^(Test Name|Result|Units|Reference Range|Category|Flag)/i)) {
-      inDataSection = true;
-      continue;
+  // These patterns were working perfectly - keep them exactly the same
+  const biomarkerPatterns = {
+    'Hemoglobin': {
+      regex: /(?:Hemoglobin|Hgb)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'g/dL'
+    },
+    'Hematocrit': {
+      regex: /(?:Hematocrit|Hct)\s*:?\s*(\d+\.?\d*)/i,
+      unit: '%'
+    },
+    'Glucose': {
+      regex: /(?:Glucose|GLU)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'Total Cholesterol': {
+      regex: /(?:Total Cholesterol|CHOL)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'HDL Cholesterol': {
+      regex: /(?:HDL|HDL Cholesterol)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'LDL Cholesterol': {
+      regex: /(?:LDL|LDL Cholesterol)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'Triglycerides': {
+      regex: /(?:Triglycerides|TRIG)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'Creatinine': {
+      regex: /(?:Creatinine|CREA)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'BUN': {
+      regex: /(?:BUN|Blood Urea Nitrogen)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'Sodium': {
+      regex: /(?:Sodium|NA)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mEq/L'
+    },
+    'Potassium': {
+      regex: /(?:Potassium|K)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mEq/L'
+    },
+    'Chloride': {
+      regex: /(?:Chloride|CL)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mEq/L'
+    },
+    'Albumin': {
+      regex: /(?:Albumin|ALB)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'g/dL'
+    },
+    'Total Bilirubin': {
+      regex: /(?:Total Bilirubin|Bilirubin)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'ALT': {
+      regex: /(?:ALT|SGPT|Alanine Aminotransferase)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'AST': {
+      regex: /(?:AST|SGOT|Aspartate Aminotransferase)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'Alkaline Phosphatase': {
+      regex: /(?:Alkaline Phosphatase|ALP)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'TSH': {
+      regex: /(?:TSH|Thyroid Stimulating Hormone)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mIU/L'
+    },
+    'Free T4': {
+      regex: /(?:Free T4|FT4)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'ng/dL'
+    },
+    'Vitamin D': {
+      regex: /(?:Vitamin D|25-Hydroxy)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'ng/mL'
+    },
+    'Vitamin B12': {
+      regex: /(?:Vitamin B12|B12)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'pg/mL'
+    },
+    'C-Reactive Protein': {
+      regex: /(?:C-Reactive Protein|CRP)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/L'
     }
-    
-    // Skip section headers
-    if (line.match(/^(METABOLIC|KIDNEY|ELECTROLYTES|LIVER|CARDIOVASCULAR|HORMONES|NUTRIENTS|IMMUNITY)/i)) {
-      continue;
-    }
-    
-    if (inDataSection && line.length > 10) {
-      const parsed = parseStructuredLine(line, biomarkerData);
-      if (parsed) {
-        console.log(`Structured Parse: ${parsed.testName} = ${parsed.value} ${parsed.unit}`);
-        results[parsed.testName] = {
-          value: parsed.value,
-          unit: parsed.unit,
-          rawText: line,
-          referenceRange: parsed.referenceRange,
-          flag: parsed.flag,
-          confidence: 0.95,
-          source: 'structured'
-        };
-        processedCount++;
+  };
+  
+  // Normalize text for better matching
+  const normalizedText = text.replace(/\s+/g, ' ').trim();
+  console.log(`Universal Parser: Searching for biomarkers in ${normalizedText.length} character text`);
+  
+  // Try to match each biomarker pattern
+  let matchCount = 0;
+  for (const [biomarkerName, pattern] of Object.entries(biomarkerPatterns)) {
+    try {
+      const match = pattern.regex.exec(normalizedText);
+      if (match && match[1]) {
+        const value = parseFloat(match[1]);
+        if (!isNaN(value)) {
+          console.log(`Universal Parser: Found ${biomarkerName} = ${value} ${pattern.unit}`);
+          
+          results[biomarkerName] = {
+            value: value,
+            unit: pattern.unit,
+            rawText: match[0].trim(),
+            referenceRange: null,
+            confidence: 0.8,
+            source: 'enhanced-basic'
+          };
+          matchCount++;
+        }
       }
+    } catch (error) {
+      console.error(`Universal Parser: Error parsing ${biomarkerName}:`, error.message);
     }
   }
   
-  console.log(`Universal Parser: Found ${processedCount} biomarkers using structured parsing`);
+  console.log(`Universal Parser: Found ${matchCount} biomarkers using enhanced basic patterns`);
   return results;
 }
 
 /**
- * Parse a single line from structured format
- */
-function parseStructuredLine(line, biomarkerData) {
-  // Enhanced patterns with better biomarker name matching
-  const patterns = [
-    // Specific biomarker patterns for your PDFs
-    /^(Glucose)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Creatinine)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(eGFR)\s+(>?\d+\.?\d*)\s+(mL\/min\/1\.73m²)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Sodium)\s+(\d+\.?\d*)\s+(mmol\/L)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Potassium)\s+(\d+\.?\d*)\s+(mmol\/L)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Albumin)\s+(\d+\.?\d*)\s+(g\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Total Bilirubin)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Alkaline Phosphatase)\s+(\d+\.?\d*)\s+(U\/L)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(ALT \(SGPT\))\s+(\d+\.?\d*)\s+(U\/L)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(AST \(SGOT\))\s+(\d+\.?\d*)\s+(U\/L)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Total Cholesterol)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Triglycerides)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(HDL Cholesterol)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(LDL Cholesterol)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Non-HDL Cholesterol)\s+(\d+\.?\d*)\s+(mg\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(TSH)\s+(\d+\.?\d*)\s+(mIU\/L)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Free T4)\s+(\d+\.?\d*)\s+(ng\/dL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Vitamin D, 25-Hydroxy)\s+(\d+\.?\d*)\s+(ng\/mL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Vitamin B12)\s+(\d+\.?\d*)\s+(pg\/mL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(Folate)\s+(\d+\.?\d*)\s+(ng\/mL)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    /^(C-Reactive Protein, High Sensitivity)\s+(\d+\.?\d*)\s+(mg\/L)\s+([0-9\s\-<>\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/i,
-    
-    // Generic fallback pattern
-    /^([A-Za-z\s\-(),]+?)\s+(\d+\.?\d*)\s+([a-zA-Z%\/\^²2μµ]+)\s+([<>\d\s\-\.]+)?\s*([A-Z]+)?\s*([A-Z]*)?/
-  ];
-  
-  for (const pattern of patterns) {
-    const match = line.match(pattern);
-    if (match) {
-      const testName = match[1].trim();
-      const value = parseFloat(match[2]);
-      const unit = match[3];
-      const referenceRange = match[4] && !match[4].match(/^[A-Z]+$/) ? match[4].trim() : null;
-      const flag = match[5] && match[5].match(/^(HIGH|LOW|NORMAL)$/) ? match[5] : null;
-      
-      if (!isNaN(value) && testName.length > 2) {
-        return {
-          testName: standardizeBiomarkerName(testName),
-          value: value,
-          unit: unit,
-          referenceRange: referenceRange,
-          flag: flag
-        };
-      }
-    }
-  }
-  
-  return null;
-}
-
-/**
- * Parse additional biomarkers not caught by structured parsing
+ * Parse additional biomarkers with specific patterns
  */
 function parseAdditionalBiomarkers(text) {
   const results = {};
   
-  // Only look for biomarkers commonly missed by structured parsing
+  // Additional patterns for biomarkers we're missing
   const additionalPatterns = {
     'eGFR': {
       regex: /eGFR\s+(>?\d+\.?\d*)\s+mL\/min/im,
@@ -188,6 +183,10 @@ function parseAdditionalBiomarkers(text) {
     'Non-HDL Cholesterol': {
       regex: /Non-HDL Cholesterol\s+(\d+\.?\d*)\s+mg\/dL/im,
       unit: 'mg/dL'
+    },
+    'Folate': {
+      regex: /Folate\s+(\d+\.?\d*)\s+ng\/mL/im,
+      unit: 'ng/mL'
     }
   };
   
@@ -221,77 +220,21 @@ function parseAdditionalBiomarkers(text) {
 }
 
 /**
- * Parse using existing labPatterns.js - but only for biomarkers not already found
- */
-function parseWithLabPatterns(text, labPatterns, alreadyFound) {
-  const results = {};
-  
-  if (!labPatterns || Object.keys(labPatterns).length === 0) {
-    return results;
-  }
-  
-  // Create a whitelist of biomarkers that are safe to use from labPatterns
-  const safePatterns = [
-    'TSH', 'Free T4', 'Vitamin D', 'Vitamin B12', 'Folate', 'C-Reactive Protein'
-  ];
-  
-  const normalizedText = text.replace(/\s+/g, ' ').trim();
-  let matchCount = 0;
-  
-  for (const [biomarkerName, pattern] of Object.entries(labPatterns)) {
-    try {
-      // Skip if already found by structured parsing
-      if (alreadyFound[biomarkerName]) continue;
-      
-      // Only use safe patterns to avoid unit conflicts
-      if (!safePatterns.includes(biomarkerName)) continue;
-      
-      if (!pattern.regex) continue;
-      
-      const match = pattern.regex.exec(normalizedText);
-      if (match && match[1]) {
-        const value = parseFloat(match[1]);
-        if (!isNaN(value)) {
-          console.log(`Safe Pattern Match: ${biomarkerName} = ${value} ${pattern.standardUnit || ''}`);
-          
-          results[biomarkerName] = {
-            value: value,
-            unit: pattern.standardUnit || '',
-            rawText: match[0].trim(),
-            referenceRange: null,
-            confidence: 0.8,
-            source: 'labPattern-safe'
-          };
-          matchCount++;
-        }
-      }
-    } catch (error) {
-      console.error(`Error parsing ${biomarkerName}:`, error.message);
-    }
-  }
-  
-  console.log(`Universal Parser: Found ${matchCount} biomarkers using safe lab patterns`);
-  return results;
-}
-
-/**
  * Clean up results - remove obvious false positives
  */
 function cleanupResults(results, originalText) {
   const cleaned = {};
   
-  // Biomarkers that shouldn't appear in typical lab reports
+  // Remove biomarkers that are clearly false positives
   const falsePositivePatterns = [
-    'Free Testosterone', 'Selenium', 'Arsenic', 'Lead', 'Mercury'
+    'Free Testosterone', 'Selenium', 'Arsenic', 'Lead', 'Mercury', 'Cadmium', 'Aluminum'
   ];
   
   for (const [name, data] of Object.entries(results)) {
-    // Skip obvious false positives unless they're clearly mentioned in the text
+    // Skip obvious false positives
     if (falsePositivePatterns.includes(name)) {
-      if (!originalText.toLowerCase().includes(name.toLowerCase())) {
-        console.log(`Cleanup: Removing likely false positive: ${name}`);
-        continue;
-      }
+      console.log(`Universal Parser: Removing false positive: ${name}`);
+      continue;
     }
     
     // Keep this biomarker
@@ -299,71 +242,6 @@ function cleanupResults(results, originalText) {
   }
   
   return cleaned;
-}
-
-/**
- * Standardize biomarker names
- */
-function standardizeBiomarkerName(name) {
-  const nameMap = {
-    'Total Cholesterol': 'Total Cholesterol',
-    'HDL Cholesterol': 'HDL Cholesterol', 
-    'LDL Cholesterol': 'LDL Cholesterol',
-    'Triglycerides': 'Triglycerides',
-    'Glucose': 'Glucose',
-    'Creatinine': 'Creatinine',
-    'Sodium': 'Sodium',
-    'Potassium': 'Potassium',
-    'Albumin': 'Albumin',
-    'Total Bilirubin': 'Total Bilirubin',
-    'ALT (SGPT)': 'ALT',
-    'AST (SGOT)': 'AST',
-    'Alkaline Phosphatase': 'Alkaline Phosphatase',
-    'TSH': 'TSH',
-    'Free T4': 'Free T4',
-    'Vitamin D, 25-Hydroxy': 'Vitamin D',
-    'Vitamin B12': 'Vitamin B12',
-    'C-Reactive Protein, High Sensitivity': 'C-Reactive Protein',
-    'Non-HDL Cholesterol': 'Non-HDL Cholesterol',
-    'Folate': 'Folate',
-    'eGFR': 'eGFR'
-  };
-  
-  return nameMap[name] || name;
-}
-
-/**
- * Fallback basic parsing if labPatterns can't be loaded
- */
-function fallbackBasicParsing(text) {
-  console.log('Universal Parser: Using fallback basic parsing');
-  
-  const basicPatterns = {
-    'Total Cholesterol': /Total Cholesterol\s+(\d+\.?\d*)\s+mg\/dL/i,
-    'HDL Cholesterol': /HDL Cholesterol\s+(\d+\.?\d*)\s+mg\/dL/i,
-    'LDL Cholesterol': /LDL Cholesterol\s+(\d+\.?\d*)\s+mg\/dL/i,
-    'Triglycerides': /Triglycerides\s+(\d+\.?\d*)\s+mg\/dL/i,
-    'Glucose': /Glucose\s+(\d+\.?\d*)\s+mg\/dL/i,
-    'Creatinine': /Creatinine\s+(\d+\.?\d*)\s+mg\/dL/i
-  };
-  
-  const results = {};
-  
-  for (const [name, pattern] of Object.entries(basicPatterns)) {
-    const match = text.match(pattern);
-    if (match) {
-      results[name] = {
-        value: parseFloat(match[1]),
-        unit: 'mg/dL',
-        rawText: match[0],
-        referenceRange: null,
-        confidence: 0.7,
-        source: 'fallback'
-      };
-    }
-  }
-  
-  return results;
 }
 
 /**
@@ -399,7 +277,5 @@ function extractUniversalTestDate(text) {
 
 module.exports = {
   parseUniversalBiomarkers,
-  extractUniversalTestDate,
-  parseStructuredFormat,
-  standardizeBiomarkerName
+  extractUniversalTestDate
 };
