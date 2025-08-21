@@ -1,4 +1,4 @@
-// src/parsers/GoogleVision/smartOcrRouter.js - WORKING VERSION
+// src/parsers/GoogleVision/smartOcrRouter.js - COMPLETE VERSION WITH UNIVERSAL PARSER
 const vision = require('@google-cloud/vision');
 const { DocumentProcessorServiceClient } = require('@google-cloud/documentai');
 const fs = require('fs');
@@ -161,17 +161,40 @@ async function processImageWithVision(filePath) {
 }
 
 /**
- * Simple biomarker parsing function
+ * Parse biomarkers using shared universal parser
  * @param {string} text - Raw OCR text
  * @returns {Object} Parsed lab values
  */
 function parseLabValues(text) {
-  console.log('Smart OCR: Starting basic biomarker parsing...');
+  console.log('Smart OCR: Starting biomarker parsing with universal parser...');
   
   if (!text || text.length === 0) {
     console.log('Smart OCR: No text provided for parsing');
     return {};
   }
+  
+  // Try to use the shared universal parser first
+  try {
+    const { parseUniversalBiomarkers } = require('../biomarkerParser');
+    const results = parseUniversalBiomarkers(text);
+    
+    if (Object.keys(results).length > 0) {
+      console.log(`Smart OCR: Universal parser found ${Object.keys(results).length} biomarkers`);
+      return results;
+    }
+  } catch (error) {
+    console.log('Smart OCR: Universal parser not available, using fallback:', error.message);
+  }
+  
+  // Fallback to basic patterns if universal parser fails
+  return parseBasicPatterns(text);
+}
+
+/**
+ * Fallback basic biomarker parsing
+ */
+function parseBasicPatterns(text) {
+  console.log('Smart OCR: Using basic pattern fallback...');
   
   const results = {};
   
@@ -224,6 +247,70 @@ function parseLabValues(text) {
     'Chloride': {
       regex: /(?:Chloride|CL)\s*:?\s*(\d+\.?\d*)/i,
       unit: 'mEq/L'
+    },
+    'Albumin': {
+      regex: /(?:Albumin|ALB)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'g/dL'
+    },
+    'Total Bilirubin': {
+      regex: /(?:Total Bilirubin|Bilirubin)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'ALT': {
+      regex: /(?:ALT|SGPT|Alanine Aminotransferase)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'AST': {
+      regex: /(?:AST|SGOT|Aspartate Aminotransferase)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'Alkaline Phosphatase': {
+      regex: /(?:Alkaline Phosphatase|ALP)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'TSH': {
+      regex: /(?:TSH|Thyroid Stimulating Hormone)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mIU/L'
+    },
+    'Free T4': {
+      regex: /(?:Free T4|FT4)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'ng/dL'
+    },
+    'Vitamin D': {
+      regex: /(?:Vitamin D|25-Hydroxy)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'ng/mL'
+    },
+    'Vitamin B12': {
+      regex: /(?:Vitamin B12|B12)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'pg/mL'
+    },
+    'C-Reactive Protein': {
+      regex: /(?:C-Reactive Protein|CRP)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/L'
+    },
+    'Glucose': {
+      regex: /(?:^|\s)Glucose\s+(\d+\.?\d*)\s+mg\/dL/im,
+      unit: 'mg/dL'
+    },
+    'eGFR': {
+      regex: /(?:^|\s)eGFR\s+(>?\d+\.?\d*)\s+mL\/min/im,
+      unit: 'mL/min/1.73m²'
+    },
+    'ALT': {
+      regex: /(?:ALT|SGPT|Alanine Aminotransferase)\s*(?:\(SGPT\))?\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'AST': {
+      regex: /(?:AST|SGOT|Aspartate Aminotransferase)\s*(?:\(SGOT\))?\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'U/L'
+    },
+    'Non-HDL Cholesterol': {
+      regex: /(?:Non-HDL Cholesterol|Non HDL)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'mg/dL'
+    },
+    'Folate': {
+      regex: /(?:Folate|Folic Acid)\s*:?\s*(\d+\.?\d*)/i,
+      unit: 'ng/mL'
     }
   };
   
@@ -246,7 +333,8 @@ function parseLabValues(text) {
             unit: pattern.unit,
             rawText: match[0].trim(),
             referenceRange: null,
-            confidence: 0.8
+            confidence: 0.8,
+            source: 'basic'
           };
           matchCount++;
         }
@@ -272,7 +360,15 @@ function extractTestDate(text) {
     return new Date();
   }
   
-  // Simple date patterns
+  // Try universal date extractor first
+  try {
+    const { extractUniversalTestDate } = require('../biomarkerParser');
+    return extractUniversalTestDate(text);
+  } catch (error) {
+    console.log('Smart OCR: Universal date parser not available, using fallback');
+  }
+  
+  // Fallback date patterns
   const datePatterns = [
     /Collection Date:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
     /Date:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
