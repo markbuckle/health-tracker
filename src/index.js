@@ -810,6 +810,33 @@ app.get("/upload", checkAuth, async (req, res) => {
   }
 });
 
+// app.get("/upload", checkAuth, async (req, res) => {
+//   try {
+//     // Fetch the uploaded user document with files
+//     const user = await registerCollection.findById(req.user._id).lean();
+
+//     console.log("User data for upload page:", {
+//       files: user.files?.map((f) => ({
+//         id: f._id,
+//         name: f.originalName,
+//         hasLabValues: !!f.labValues,
+//         labValueCount: f.labValues ? Object.keys(f.labValues).length : 0,
+//       })),
+//     });
+
+//     // FIXED: Keep your original properties AND add the new ones
+//     res.render("user/upload", {
+//       naming: user.uname,           // ← Keep this (original)
+//       user: user,                   // ← Keep this (original)
+//       isLocal: !isVercel,          // ← Add this (new)
+//       ocrImplementation: process.env.OCR_IMPLEMENTATION || 'PaddleOCR'  // ← Add this (new)
+//     });
+//   } catch (error) {
+//     console.error("Error fetching user data:", error);
+//     res.status(500).send("Error loading upload page");
+//   }
+// });
+
 app.get("/migrate-biomarkers", checkAuth, async (req, res) => {
   try {
     const user = await registerCollection.findById(req.user._id);
@@ -2186,8 +2213,7 @@ const fileFilter = (req, file, cb) => {
 // This import will automatically use whichever OCR implementation is configured
 const { extractFromPDF } = require('./parsers');
 
-app.post(
-  "/upload-files",
+app.post("/upload-files",
   checkAuth,
   upload.array("files"),
   async (req, res) => {

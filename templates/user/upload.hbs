@@ -1134,6 +1134,275 @@
       console.log(`Progress tracking: ${isLocalEnvironment ? 'WebSocket (Real-time)' : 'Simulated'}`);
     });  
   </script>
+  <script> // Google Vision Enhanced Progress Tracking
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if we're using Google Vision implementation
+      const isGoogleVision = '{{ocrImplementation}}' === 'GoogleVision';
+      
+      if (!isGoogleVision) {
+        console.log('Using PaddleOCR - Google Vision progress tracking disabled');
+        return; // Exit early if not using Google Vision
+      }
+      
+      console.log('Google Vision progress tracking enabled');
+      
+      // GOOGLE VISION: Enhanced WebSocket progress tracking
+      function setupGoogleVisionProgressTracking() {
+        try {
+          const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          const ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+          const statusDiv = document.getElementById('processingStatus');
+          const documentDiv = document.getElementById('documentStatus');
+          const progressFill = document.getElementById('progressFill');
+          const progressText = document.getElementById('progressText');
+
+          ws.onopen = () => {
+            console.log('WebSocket connected for Google Vision progress tracking');
+          };
+
+          ws.onmessage = function (event) {
+            const message = event.data;
+            console.log('Google Vision WebSocket message:', message);
+
+            try {
+              // Try to parse as JSON for structured progress updates
+              const progressData = JSON.parse(message);
+              
+              if (progressData.type === 'progress') {
+                // Handle structured progress updates from Google Vision
+                if (documentDiv) {
+                  documentDiv.textContent = `Processing document ${progressData.fileIndex} of ${progressData.totalFiles}`;
+                }
+                
+                if (statusDiv) {
+                  statusDiv.textContent = progressData.status;
+                }
+                
+                if (progressFill && progressText) {
+                  const progress = Math.min(progressData.progress, 99); // Cap at 99% until complete
+                  progressFill.style.width = progress + '%';
+                  progressText.textContent = progress + '%';
+                }
+                
+                return;
+              }
+            } catch (e) {
+              // Not JSON, handle as text message
+            }
+
+            // Handle text-based progress messages for Google Vision
+            if (message.includes('Processing file')) {
+              const match = message.match(/Processing file (\d+) of (\d+)/);
+              if (match && documentDiv) {
+                documentDiv.textContent = `Processing document ${match[1]} of ${match[2]}`;
+                
+                if (statusDiv) {
+                  statusDiv.textContent = 'Initializing Google Document AI...';
+                }
+                
+                // Reset progress for new file
+                if (progressFill && progressText) {
+                  progressFill.style.width = '0%';
+                  progressText.textContent = '0%';
+                }
+              }
+            }
+            else if (message.includes('Document AI: Making API call')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Sending to Google Document AI...';
+              }
+              updateGoogleVisionProgress(30);
+            }
+            else if (message.includes('Document AI: Extracted')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Processing OCR results...';
+              }
+              updateGoogleVisionProgress(70);
+            }
+            else if (message.includes('Universal parser found')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Biomarker extraction complete';
+              }
+              updateGoogleVisionProgress(95);
+            }
+            else if (message.includes('Found') && message.includes('biomarkers')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Analysis complete';
+              }
+              updateGoogleVisionProgress(98);
+            }
+            else if (message.includes('Files saved successfully')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'All files processed successfully!';
+              }
+              
+              // Complete the progress bar
+              if (progressFill && progressText) {
+                progressFill.style.width = '100%';
+                progressText.textContent = '100%';
+              }
+            }
+            else if (message.includes('Error')) {
+              if (statusDiv) {
+                statusDiv.textContent = 'Processing error occurred';
+              }
+            }
+          };
+
+          ws.onerror = (error) => {
+            console.error('Google Vision WebSocket error:', error);
+          };
+
+          ws.onclose = () => {
+            console.log('Google Vision WebSocket connection closed');
+          };
+
+          return ws;
+        } catch (error) {
+          console.error('Failed to setup Google Vision WebSocket:', error);
+          return null;
+        }
+      }
+
+      // GOOGLE VISION: Enhanced progress update function
+      function updateGoogleVisionProgress(percentage, mainText, subText) {
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const statusDiv = document.getElementById('processingStatus');
+        const documentDiv = document.getElementById('documentStatus');
+        
+        if (progressFill) {
+          progressFill.style.width = Math.min(percentage, 100) + '%';
+        }
+        
+        if (progressText) {
+          progressText.textContent = Math.round(Math.min(percentage, 100)) + '%';
+        }
+        
+        if (statusDiv && mainText) {
+          statusDiv.textContent = mainText;
+        }
+        
+        if (documentDiv && subText) {
+          documentDiv.textContent = subText;
+        }
+      }
+
+      // GOOGLE VISION: Override the existing processFilesLocal function for Google Vision
+      const originalProcessButton = document.querySelector('.process-button');
+      if (originalProcessButton) {
+        // Remove existing event listeners and add Google Vision version
+        const newProcessButton = originalProcessButton.cloneNode(true);
+        originalProcessButton.parentNode.replaceChild(newProcessButton, originalProcessButton);
+        
+        newProcessButton.addEventListener('click', async function() {
+          const files = document.querySelectorAll('.file-item');
+          if (files.length === 0) {
+            alert('Please select files to process');
+            return;
+          }
+          
+          // Get files from the file input or stored files
+          const fileInput = document.querySelector('#fileInput');
+          const formData = new FormData();
+          
+          // Add files to form data
+          if (fileInput && fileInput.files) {
+            for (let i = 0; i < fileInput.files.length; i++) {
+              formData.append('files', fileInput.files[i]);
+            }
+          }
+
+          try {
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+              loadingOverlay.style.display = 'flex';
+            }
+
+            // Setup Google Vision WebSocket for real-time progress
+            const ws = setupGoogleVisionProgressTracking();
+
+            // Start the upload with Google Vision progress tracking
+            const response = await fetch('/upload-files', {
+              method: 'POST',
+              body: formData
+            });
+
+            // Clean up WebSocket
+            if (ws) {
+              setTimeout(() => ws.close(), 1000);
+            }
+
+            if (response.ok) {
+              const result = await response.json();
+              
+              // Wait a moment for final progress updates
+              setTimeout(() => {
+                // Update to 100% right before showing success
+                updateGoogleVisionProgress(100, 'Complete!', 'Processing finished');
+                
+                setTimeout(() => {
+                  // Show success message
+                  showGoogleVisionSuccess('Success!', 'Files processed successfully using Google Document AI!');
+                }, 300);
+              }, 1500);
+              
+            } else {
+              throw new Error('Upload failed');
+            }
+          } catch (error) {
+            console.error('Google Vision upload error:', error);
+            alert('Error processing files: ' + error.message);
+            
+            // Hide loading overlay on error
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+              loadingOverlay.style.display = 'none';
+            }
+          }
+        });
+      }
+
+      // GOOGLE VISION: Success overlay function
+      function showGoogleVisionSuccess(title, message, details) {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+          const container = overlay.querySelector('.loader-container');
+          if (container) {
+            container.innerHTML = `
+              <div class="success-icon">✅</div>
+              <div class="success-title">${title}</div>
+              <div class="success-message">${message}</div>
+              ${details ? `<div class="success-details">${details}</div>` : ''}
+              <button id="googleVisionSuccessBtn" class="success-close-btn">Continue</button>
+            `;
+            
+            // Add event listener to the continue button
+            const continueBtn = container.querySelector('#googleVisionSuccessBtn');
+            if (continueBtn) {
+              continueBtn.addEventListener('click', function() {
+                overlay.style.display = 'none';
+                
+                // Reset and reload
+                setTimeout(() => {
+                  window.location.reload();
+                }, 500);
+              });
+            }
+          }
+          overlay.style.display = 'flex';
+        }
+      }
+
+      // Make functions globally accessible for debugging
+      window.setupGoogleVisionProgressTracking = setupGoogleVisionProgressTracking;
+      window.updateGoogleVisionProgress = updateGoogleVisionProgress;
+      
+      console.log('Google Vision progress tracking setup complete');
+    });
+  </script>
   <script> // Biomarker editor
     window.showBiomarkerDetails = function (name, value, unit, range, sourceDoc) {
       const modal = document.getElementById('biomarkerDetailsModal');
