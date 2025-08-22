@@ -905,6 +905,17 @@
   opacity: 0.7;
 }
 .hover-titles {
+  position: relative;
+  right: auto;
+  top: auto;
+  transform: none;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  z-index: 3;
+  flex-shrink: 0; /* Prevent titles from shrinking */
+}
+/* .hover-titles {
   position: absolute;
   right: 12%;
   top: 45%;
@@ -913,7 +924,7 @@
   flex-direction: column;
   gap: 25px;
   z-index: 3;
-}
+} */
 /* Individual hover title */
 .hover-title {
   background: white;
@@ -1009,9 +1020,9 @@
 }
 /* Large Desktop (1400px and above) */
 @media screen and (min-width: 1400px) {
-  .hover-titles {
+  /* .hover-titles {
     right: 28%;
-  }
+  } */
   .hero-container {
     max-width: 45rem;
   }
@@ -1113,7 +1124,6 @@
     bottom: -200vh !important;
   }
   .hover-titles {
-    right: 15px; /* Adjusted for smaller laptop */
     gap: 20px;
   }
   .hover-title {
@@ -1278,7 +1288,7 @@
     flex-direction: column;
     text-align: center;
   } */
-  .hover-titles {
+  /* .hover-titles {
     position: static;
     transform: none;
     flex-direction: row;
@@ -1287,7 +1297,7 @@
     margin-top: 30px;
     right: auto;
     gap: 15px;
-  }
+  } */
   .hover-title {
     animation: slideInUp 0.6s ease forwards;
     transform: translateY(30px);
@@ -1301,10 +1311,10 @@
   .laptop-image-container {
       max-width: 800px; /* Even smaller on tablets */
   }
-  .hover-titles {
+  /* .hover-titles {
       right: 10px;
       gap: 18px;
-  }
+  } */
   .hover-title {
       padding: 10px 16px;
       font-size: 13px;
@@ -1991,7 +2001,7 @@
     justify-content: center;
   }
   
-  .hover-titles {
+  /* .hover-titles {
     position: static;
     transform: none;
     flex-direction: row;
@@ -2000,7 +2010,7 @@
     gap: 12px;
     flex-wrap: wrap;
     max-width: 100%;
-  }
+  } */
   
   .hover-title {
     padding: 10px 16px;
@@ -2041,7 +2051,7 @@
     justify-content: center;
   }
   
-  .hover-titles {
+  /* .hover-titles {
     position: static;
     transform: none;
     flex-direction: row;
@@ -2049,7 +2059,7 @@
     margin-top: 25px;
     gap: 15px;
     max-width: 100%;
-  }
+  } */
   
   .hover-title {
     padding: 12px 6px;
