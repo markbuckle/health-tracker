@@ -716,28 +716,36 @@ body.menu-open .hero-title {
   }
   .mobile-nav-links-horizontal .mobile-nav-link {
     flex: 0 0 auto !important; /* Size based on content */
-    padding: 6px 12px !important; /* More generous padding for nav links */
+    padding: 8px 14px !important; /* Slightly bigger padding */
     text-align: center !important;
-    font-size: 11px !important; /* Readable size */
+    font-size: 12px !important; /* Bigger font for non-scrolled */
     white-space: nowrap !important;
     max-width: none !important;
+  }
+  .mobile-nav-links-horizontal .auth-button {
+    border-radius: 4px !important; /* Slightly bigger border radius */
+    padding: 8px 12px !important; /* Bigger button padding */
+    font-size: 12px !important; /* Bigger font to match nav links */
+    flex: 0 0 auto !important; /* Size based on content */
+    min-width: 55px !important; /* Slightly bigger button width */
+    white-space: nowrap !important;
   }
   .mobile-nav-links-horizontal .mobile-nav-link,
   .mobile-nav-links-horizontal .auth-button {
     flex: 0 1 auto !important; /* Don't force equal widths */
     padding: 6px 8px !important; /* Balanced padding */
     text-align: center !important;
-    font-size: 10px !important; /* Smaller font for better fit */
     white-space: nowrap !important; /* Prevent text wrapping */
     max-width: none !important; /* Remove width restrictions */
   }
-  .mobile-nav-links-horizontal .auth-button {
-    border-radius: 3px !important; /* Small border radius */
-    padding: 6px 8px !important; /* Compact button padding */
-    font-size: 11px !important; /* Match nav links */
-    flex: 0 0 auto !important; /* Size based on content */
-    min-width: 50px !important; /* Minimal button width */
-    white-space: nowrap !important;
+  .header-scrolled .mobile-nav-links-horizontal .mobile-nav-link,
+  .header-scrolled .mobile-nav-links-horizontal .auth-button {
+    font-size: 11px !important;
+    padding: 6px 4px !important;
+  }
+  .header-scrolled .mobile-nav-links-horizontal .auth-button {
+    padding: 6px 4px !important;
+    min-width: 45px !important;
   }
 }
 
@@ -922,8 +930,7 @@ body.menu-open .hero-title {
   }
   .mobile-nav-links-horizontal .mobile-nav-link,
   .mobile-nav-links-horizontal .auth-button {
-    font-size: 10px !important; /* Even smaller on very small screens */
-    padding: 5px 1px !important;
+    font-size: 12px !important; /* Even smaller on very small screens */
   }
 }
 
