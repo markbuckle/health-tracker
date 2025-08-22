@@ -1413,7 +1413,15 @@
   color: #0f172a;
   font-family: "Poppins-Medium", sans-serif;
 }
-
+/* .mobile-show {
+  display: none; /* Hide by default 
+} */
+.mobile-show {
+  display: none;
+}
+.mobile-hide {
+  display: block;
+}
 
 @media (max-width: 1024px) {
   .wellness-summary-card {
@@ -1801,14 +1809,11 @@
     max-width: 280px;
     justify-content: center;
   }
-  .hero-title .hero-text:nth-child(3), /* "personalized" */
-  .hero-title .hero-text:nth-child(4)  /* "health portal" */ {
-    display: inline !important;
-    white-space: normal !important;
-    margin-bottom: 0 !important;
+  .mobile-hide {
+    display: none !important;
   }
-  .hero-title .hero-text:nth-child(3)::after {
-    content: " ";
+  .mobile-show {
+    display: block !important;
   }
 }
 
