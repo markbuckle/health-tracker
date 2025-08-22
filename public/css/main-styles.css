@@ -435,7 +435,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px; /* Consistent gap between laptop and titles */
+  gap: 0; /* Consistent gap between laptop and titles */
 }
 
 .content-container-2 {

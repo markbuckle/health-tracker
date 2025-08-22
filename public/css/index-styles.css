@@ -1298,12 +1298,28 @@
     right: auto;
     gap: 15px;
   } */
+  .hover-titles {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+  }
   .hover-title {
+    padding: 8px 14px;
+    font-size: 13px;
+    white-space: nowrap;
     animation: slideInUp 0.6s ease forwards;
     transform: translateY(30px);
   }
+  .inner-content-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 85%;
+  }
   .laptop-image-container {
-    max-width: 550px; /* Smaller on mobile-like screens */
+    max-width: 80%; /* Smaller on mobile-like screens */
   }
 }
 
@@ -1524,18 +1540,29 @@
   .feedback-widget.open .feedback-form-container {
     margin-bottom: 3.5rem;
   }
+  .inner-content-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    width: 95%;
+  }
+  .laptop-image-container {
+    max-width: 90%; /* Much bigger laptop on mobile */
+  }
   .hover-titles {
     flex-direction: column;
     align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px; /* Limit width so buttons don't get too wide */
   }
   .hover-title {
-    width: 6rem;
-    text-align: center;
     padding: 10px 16px;
-    font-size: 12px;
-  }
-  .laptop-image-container {
-    max-width: 600px; /* Even smaller on mobile */
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+    max-width: 200px; /* Smaller buttons on mobile */
+    white-space: nowrap;
   }
 }
 
