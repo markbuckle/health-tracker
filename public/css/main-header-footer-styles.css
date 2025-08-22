@@ -605,7 +605,7 @@ body.menu-open .hero-title {
     margin: 0 !important;
   }
   .logo-block img {
-    max-height: 35px !important;
+    max-height: 40px !important;
     margin: 0 !important;
     transform: none !important;
     transition: max-height 0.3s ease !important;
