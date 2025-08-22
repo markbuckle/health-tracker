@@ -8,45 +8,10 @@ const isProductionEnv = process.env.NODE_ENV === 'production';
 
 console.log(`Environment: ${isVercel ? 'Vercel Production' : 'Local Development'}`);
 
-// Only use external OCR service if explicitly configured and not in production
-const OCR_SERVICE_URL = process.env.OCR_SERVICE_URL; // Remove the fallback URL
-const useExternalOCR = OCR_SERVICE_URL && !isVercel && !isProductionEnv;
+// Import Google Vision OCR parser
+const { extractFromPDF: googleVisionExtractFromPDF } = require('./parsers/GoogleVision/smartOcrRouter');
 
 const { processBiomarkersForStorage } = require('./utilities/biomarkerProcessor');
-
-// External OCR service connectivity test
-// if (useExternalOCR) {
-//   console.log('External OCR service configured for development environment');
-  
-//   const testConnectivity = async () => {
-//     try {
-//       console.log(`Testing external OCR service connectivity: ${OCR_SERVICE_URL}/health`);
-//       const fetch = require('node-fetch');
-//       const response = await fetch(`${OCR_SERVICE_URL}/health`, { 
-//         timeout: 5000 
-//       });
-      
-//       if (response.ok) {
-//         const data = await response.json();
-//         console.log('External OCR service is healthy:', data);
-//       } else {
-//         console.error('External OCR service health check failed:', response.status);
-//       }
-//     } catch (error) {
-//       console.error('External OCR service connectivity test failed:', error.message);
-//     }
-//   };
-
-//   testConnectivity();
-// } else {
-//   console.log('External OCR service disabled in production environment');
-// }
-
-if (useExternalOCR) {
-  console.log('External OCR service configured for development environment');
-} else {
-  console.log('External OCR service disabled in production environment');
-}
 
 // Configure storage based on environment
 let storage;
@@ -102,38 +67,40 @@ const upload = multer({
 });
 
 // Helper function to handle file processing in both environments
-async function processUploadedFile(file, extractFromPDF) {
+async function processUploadedFile(file, extractFromPDF, fileIndex = 0, totalFiles = 1, progressCallback = null) {
   let filePath;
   let tempFilePath = null;
   
   try {
     if (isVercel) {
-      // Production: Use Digital Ocean OCR service
-      console.log('Vercel environment: Using Digital Ocean OCR service');
+      // Production: Use Google Vision with memory buffer
+      console.log('Vercel environment: Using Google Vision with memory storage');
       
-      const extractedData = await processWithDigitalOceanOCR(file);
+      // Create temporary file from memory buffer for Google Vision
+      const tempDir = '/tmp';
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      tempFilePath = path.join(tempDir, uniqueSuffix + path.extname(file.originalname));
       
-      // console.log("Extracted data:", {
-      //   numLabValues: Object.keys(extractedData.labValues || {}).length,
-      //   testDate: extractedData.testDate,
-      //   hasErrors: !!(extractedData.processingErrors && extractedData.processingErrors.length > 0)
-      // });
-
+      // Write buffer to temp file
+      fs.writeFileSync(tempFilePath, file.buffer);
+      console.log(`Created temp file for Vercel: ${tempFilePath}`);
+      
+      const extractedData = await googleVisionExtractFromPDF(tempFilePath, fileIndex, totalFiles, progressCallback);
+      
       const processedLabValues = processBiomarkersForStorage(extractedData.labValues);
 
       // Create file object for database
       const fileObject = {
         filename: file.filename || file.originalname,
         originalName: file.originalname,
-        path: file.path || null,
+        path: null, // No persistent path in Vercel
         size: file.size,
         mimetype: file.mimetype,
         uploadDate: new Date(),
         testDate: extractedData.testDate || new Date(),
-        labValues: extractedData.labValues || {},
-        extractionMethod: isVercel ? 'digital-ocean-ocr' : 'local-ocr',
+        labValues: processedLabValues,
+        extractionMethod: 'google-vision-vercel',
         processingErrors: extractedData.processingErrors || [],
-        labValues: processedLabValues, // ← Use processed data
         biomarkerProcessingComplete: true,
         totalBiomarkersProcessed: Object.keys(processedLabValues).length
       };
@@ -141,17 +108,19 @@ async function processUploadedFile(file, extractFromPDF) {
       return fileObject;
       
     } else {
-      // Local development: Use existing logic
+      // Local development: Use Google Vision with disk storage
       filePath = file.path;
       console.log(`Processing file from disk: ${filePath}`);
       
-      const extractedData = await extractFromPDF(filePath);
+      const extractedData = await googleVisionExtractFromPDF(filePath, fileIndex, totalFiles, progressCallback);
       
       console.log("Extracted data:", {
         numLabValues: Object.keys(extractedData.labValues || {}).length,
         testDate: extractedData.testDate,
         hasErrors: !!(extractedData.processingErrors && extractedData.processingErrors.length > 0)
       });
+      
+      const processedLabValues = processBiomarkersForStorage(extractedData.labValues);
       
       // Create file object for database
       const fileObject = {
@@ -162,9 +131,11 @@ async function processUploadedFile(file, extractFromPDF) {
         mimetype: file.mimetype,
         uploadDate: new Date(),
         testDate: extractedData.testDate || new Date(),
-        labValues: extractedData.labValues || {},
-        extractionMethod: 'local-ocr',
-        processingErrors: extractedData.processingErrors || []
+        labValues: processedLabValues,
+        extractionMethod: 'google-vision-local',
+        processingErrors: extractedData.processingErrors || [],
+        biomarkerProcessingComplete: true,
+        totalBiomarkersProcessed: Object.keys(processedLabValues).length
       };
       
       return fileObject;
@@ -174,8 +145,8 @@ async function processUploadedFile(file, extractFromPDF) {
     console.error('File processing error:', error);
     throw error;
   } finally {
-    // Clean up temp file only in local environment
-    if (tempFilePath && !isVercel) {
+    // Clean up temp file in Vercel environment
+    if (tempFilePath && isVercel) {
       try {
         fs.unlinkSync(tempFilePath);
         console.log(`Cleaned up temp file: ${tempFilePath}`);
@@ -183,72 +154,6 @@ async function processUploadedFile(file, extractFromPDF) {
         console.error('Error cleaning up temp file:', cleanupError);
       }
     }
-  }
-}
-
-// Add this new function to call your Digital Ocean OCR service
-async function processWithDigitalOceanOCR(file) {
-  const fetch = require('node-fetch');
-  const FormData = require('form-data');
-  
-  try {
-    console.log(`Sending file to Digital Ocean OCR: ${file.originalname}`);
-    
-    // Create form data for the Digital Ocean OCR service
-    const formData = new FormData();
-    
-    // Convert buffer to a readable stream
-    const { Readable } = require('stream');
-    const bufferStream = new Readable();
-    bufferStream.push(file.buffer);
-    bufferStream.push(null);
-    
-    formData.append('file', bufferStream, {
-      filename: file.originalname,
-      contentType: file.mimetype,
-    });
-    
-    // Call Digital Ocean OCR service directly
-    const response = await fetch('http://147.182.149.140:8000/parse', {
-      method: 'POST',
-      body: formData,
-      headers: formData.getHeaders(),
-      timeout: 120000, // 2 minute timeout
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Digital Ocean OCR error:', errorText);
-      throw new Error(`OCR service returned ${response.status}: ${errorText}`);
-    }
-    
-    const result = await response.json();
-    console.log('Digital Ocean OCR processing completed successfully');
-    console.log('OCR Result:', {
-      success: result.success,
-      lab_values_count: Object.keys(result.lab_values || {}).length,
-      has_text: !!result.text,
-      test_date: result.test_date
-    });
-    
-    return {
-      labValues: result.lab_values || {},
-      testDate: result.test_date ? new Date(result.test_date) : new Date(),
-      extractionMethod: 'digital-ocean-ocr',
-      processingErrors: result.success ? [] : [result.error || 'OCR processing failed'],
-      rawText: result.text || ''
-    };
-    
-  } catch (error) {
-    console.error('Error calling Digital Ocean OCR:', error);
-    
-    // Fallback: save file without OCR but indicate the error
-    return {
-      labValues: {},
-      testDate: new Date(),
-      extractionMethod: 'failed',
-      processingErrors: [`Digital Ocean OCR failed: ${error.message}`]
-    };
   }
 }
 
