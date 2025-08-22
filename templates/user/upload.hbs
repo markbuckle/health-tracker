@@ -1137,7 +1137,7 @@
   <script> // Google Vision Enhanced Progress Tracking
     document.addEventListener('DOMContentLoaded', function() {
       // Check if we're using Google Vision implementation
-      const isGoogleVision = '{{ocrImplementation}}' === 'GoogleVision';
+      // const isGoogleVision = '{{ocrImplementation}}' === 'GoogleVision';
       
       if (!isGoogleVision) {
         console.log('Using PaddleOCR - Google Vision progress tracking disabled');
@@ -1972,6 +1972,26 @@
         });
       }
     });
+</script>
+<script>
+  console.log('Template values check:');
+  console.log('isLocal value:', {{isLocal}});
+  console.log('isLocal type:', typeof {{isLocal}});
+  console.log('ocrImplementation:', '{{ocrImplementation}}');
+</script>
+<script>
+// Safe environment detection without template variables that could break
+const isLocalEnvironment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1' || 
+                          window.location.hostname.includes('localhost');
+
+// We'll detect Google Vision from server response later
+const isGoogleVision = false; // Start with PaddleOCR, detect Google Vision when needed
+
+console.log('Environment check:', {
+  isGoogleVision: isGoogleVision,
+  isLocal: isLocalEnvironment
+});
 </script>
 </body>
 

@@ -786,30 +786,6 @@ app.get("/profile", checkAuth, (req, res) => {
   });
 });
 
-app.get("/upload", checkAuth, async (req, res) => {
-  try {
-    // Fetch the uploaded user document with files
-    const user = await registerCollection.findById(req.user._id).lean();
-
-    console.log("User data for upload page:", {
-      files: user.files?.map((f) => ({
-        id: f._id,
-        name: f.originalName,
-        hasLabValues: !!f.labValues,
-        labValueCount: f.labValues ? Object.keys(f.labValues).length : 0,
-      })),
-    });
-
-    res.render("user/upload", {
-      naming: user.uname,
-      user: user,
-    });
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    res.status(500).send("Error loading upload page");
-  }
-});
-
 // app.get("/upload", checkAuth, async (req, res) => {
 //   try {
 //     // Fetch the uploaded user document with files
@@ -824,18 +800,44 @@ app.get("/upload", checkAuth, async (req, res) => {
 //       })),
 //     });
 
-//     // FIXED: Keep your original properties AND add the new ones
 //     res.render("user/upload", {
-//       naming: user.uname,           // ← Keep this (original)
-//       user: user,                   // ← Keep this (original)
-//       isLocal: !isVercel,          // ← Add this (new)
-//       ocrImplementation: process.env.OCR_IMPLEMENTATION || 'PaddleOCR'  // ← Add this (new)
+//       naming: user.uname,
+//       user: user
 //     });
 //   } catch (error) {
 //     console.error("Error fetching user data:", error);
 //     res.status(500).send("Error loading upload page");
 //   }
 // });
+
+app.get("/upload", checkAuth, async (req, res) => {
+  try {
+    // Fetch the uploaded user document with files
+    const user = await registerCollection.findById(req.user._id).lean();
+
+    console.log("User data for upload page:", {
+      files: user.files?.map((f) => ({
+        id: f._id,
+        name: f.originalName,
+        hasLabValues: !!f.labValues,
+        labValueCount: f.labValues ? Object.keys(f.labValues).length : 0,
+      })),
+    });
+
+    // FIXED: Import the isVercel variable from your existing code
+    const { isVercel } = require('./multerConfig'); // This should already be defined there
+
+    res.render("user/upload", {
+      naming: user.uname,
+      user: user,
+      isLocal: !isVercel,
+      ocrImplementation: process.env.OCR_IMPLEMENTATION || 'PaddleOCR'
+    });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).send("Error loading upload page");
+  }
+});
 
 app.get("/migrate-biomarkers", checkAuth, async (req, res) => {
   try {
