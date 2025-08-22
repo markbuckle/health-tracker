@@ -970,6 +970,12 @@
   transform: translateX(-8px) scale(1.02);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
 }
+.mobile-show {
+  display: none !important;
+}
+.mobile-hide {
+  display: block !important;
+}
 /* Animation keyframes */
 @keyframes slideInRight {
   to {
@@ -977,25 +983,6 @@
       transform: translateX(0);
   }
 }
-/* Additional styles for better integration */
-/* .dashboard-section-title {
-    text-align: center;
-    margin-bottom: 40px;
-    font-family: "Poppins-Bold", sans-serif;
-    font-size: clamp(24px, 4vw, 36px);
-    color: #333;
-}
-
-.dashboard-section-subtitle {
-    text-align: center;
-    margin-bottom: 50px;
-    font-family: "Poppins-Regular", sans-serif;
-    font-size: clamp(16px, 2.5vw, 18px);
-    color: #666;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-} */
 /* Handle screen readers and accessibility */
  @media (prefers-reduced-motion: reduce) {
   .slider-track,
@@ -1337,6 +1324,18 @@
   }
 }
 
+@media screen and (min-width: 768px) {
+  .hero-title .hero-text.mobile-show {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  .hero-title .hero-text.mobile-hide {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
 /* Large Mobile (767px) */
 @media screen and (max-width: 767px) {
   .use-cases-section {
@@ -1564,7 +1563,17 @@
     max-width: 200px; /* Smaller buttons on mobile */
     white-space: nowrap;
   }
+  .hero-title .hero-text.mobile-hide {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  .hero-title .hero-text.mobile-show {
+    display: block !important;
+    visibility: visible !important;
+  }
 }
+
 
 @keyframes slideInUp {
   to {

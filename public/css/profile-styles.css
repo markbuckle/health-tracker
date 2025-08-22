@@ -721,7 +721,7 @@
   background-color: #d1e1d1c9;
   border: 1px solid rgb(173, 189, 173);
   border-radius: 8px;
-  color: #667e70;
+  color: #57615b;
   text-decoration: none;
   font-family: "Poppins-Medium", sans-serif;
   font-size: 0.875rem;
@@ -731,7 +731,7 @@
 .tutorial-button:hover {
   background-color: #74c275b7;
   border-color: #518d52b7;
-  color: rgb(84, 95, 79);
+  color: rgb(60, 68, 57);
   transform: translateY(-1px);
   font-size: 0.9rem;
   box-shadow: 0 2px 4px rgba(92, 177, 93, 0.2);
@@ -886,6 +886,7 @@
   }
   .edit-button-modal {
     font-size: 9px;
+    max-width: 11rem !important;
   }
   .profile-intro-container {
     display: block;
@@ -961,7 +962,7 @@
     width: auto;
   }
   .history-buttons-container {
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
     margin: 1rem 0.5rem;
     align-items: stretch;

@@ -1413,15 +1413,6 @@
   color: #0f172a;
   font-family: "Poppins-Medium", sans-serif;
 }
-/* .mobile-show {
-  display: none; /* Hide by default 
-} */
-.mobile-show {
-  display: none;
-}
-.mobile-hide {
-  display: block;
-}
 
 @media (max-width: 1024px) {
   .wellness-summary-card {
@@ -1478,6 +1469,7 @@
     padding: 0.875rem 1rem;
   }
 }
+
 /* Responsive design for action buttons */
 @media screen and (max-width: 767px) {
   .dashboard-content {
@@ -1808,12 +1800,6 @@
     width: 100%;
     max-width: 280px;
     justify-content: center;
-  }
-  .mobile-hide {
-    display: none !important;
-  }
-  .mobile-show {
-    display: block !important;
   }
 }
 
