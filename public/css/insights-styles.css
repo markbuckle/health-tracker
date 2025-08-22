@@ -1786,24 +1786,29 @@
  .no-data-state {
     padding: 2rem 1.5rem;
   }
-  
   .no-data-title {
     font-size: 1.3rem;
   }
-  
   .no-data-subtitle {
     font-size: 1rem;
   }
-  
   .no-data-actions {
     flex-direction: column;
     align-items: center;
   }
-  
   .action-button-primary {
     width: 100%;
     max-width: 280px;
     justify-content: center;
+  }
+  .hero-title .hero-text:nth-child(3), /* "personalized" */
+  .hero-title .hero-text:nth-child(4)  /* "health portal" */ {
+    display: inline !important;
+    white-space: normal !important;
+    margin-bottom: 0 !important;
+  }
+  .hero-title .hero-text:nth-child(3)::after {
+    content: " ";
   }
 }
 
