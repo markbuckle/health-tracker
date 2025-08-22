@@ -459,9 +459,17 @@
       const files = new Set();
 
       // Detect environment - check if we're running locally or in production
-      const isLocalEnvironment = window.location.hostname === 'localhost' || 
-                                window.location.hostname === '127.0.0.1' || 
-                                window.location.hostname.includes('localhost');
+      // const isLocalEnvironment = window.location.hostname === 'localhost' || 
+                                // window.location.hostname === '127.0.0.1' || 
+                               // window.location.hostname.includes('localhost');
+
+      const isLocalEnvironment = {{isLocal}};
+      const ocrImplementation = '{{ocrImplementation}}';
+
+      console.log('Using template variables:', {
+        isLocal: isLocalEnvironment,
+        ocrImplementation: ocrImplementation
+      });
 
       console.log(`Environment detected: ${isLocalEnvironment ? 'Local' : 'Production'}`);
 

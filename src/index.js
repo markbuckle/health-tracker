@@ -2215,6 +2215,94 @@ const fileFilter = (req, file, cb) => {
 // This import will automatically use whichever OCR implementation is configured
 const { extractFromPDF } = require('./parsers');
 
+// app.post("/upload-files",
+//   checkAuth,
+//   upload.array("files"),
+//   async (req, res) => {
+//     try {
+//       if (!req.files || req.files.length === 0) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "No files were uploaded.",
+//         });
+//       }
+
+//       const user = await registerCollection.findById(req.user._id);
+//       if (!user) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "User not found",
+//         });
+//       }
+
+//       const uploadedFiles = [];
+//       const totalFiles = req.files.length;
+
+//       console.log(`Processing ${totalFiles} files in ${isVercel ? 'Vercel' : 'local'} environment`);
+
+//       for (let fileIndex = 0; fileIndex < req.files.length; fileIndex++) {
+//         console.log(`Processing file ${fileIndex + 1} of ${totalFiles}`);
+
+//         const file = req.files[fileIndex];
+        
+//         try {
+//           // Use the hybrid processing function
+//           const fileObject = await processUploadedFile(file, extractFromPDF);
+//           uploadedFiles.push(fileObject);
+
+//         } catch (error) {
+//           console.error(`Error processing file ${file.originalname}:`, error);
+          
+//           uploadedFiles.push({
+//             filename: file.filename || file.originalname,
+//             originalName: file.originalname,
+//             path: isVercel ? null : (file.path || null),
+//             size: file.size,
+//             mimetype: file.mimetype,
+//             uploadDate: new Date(),
+//             testDate: null,
+//             labValues: {},
+//             extractionMethod: "failed",
+//             processingErrors: [error.message],
+//           });
+//         }
+//       }
+
+//       // Save to database
+//       if (!user.files) {
+//         user.files = [];
+//       }
+
+//       user.files.push(...uploadedFiles);
+//       console.log("Saving files count:", uploadedFiles.length);
+
+//       await user.save();
+//       console.log("Files saved successfully");
+
+//       // Return success response with environment info
+//       res.json({
+//         success: true,
+//         message: "Files uploaded and processed successfully",
+//         files: uploadedFiles,
+//         environment: isVercel ? 'production' : 'development',
+//         processedCount: uploadedFiles.filter(f => f.extractionMethod !== 'failed').length,
+//         failedCount: uploadedFiles.filter(f => f.extractionMethod === 'failed').length
+//       });
+
+//     } catch (error) {
+//       console.error("File upload error:", error);
+//       res.status(500).json({
+//         success: false,
+//         message: "Error processing files",
+//         error: error.message,
+//         environment: isVercel ? 'production' : 'development'
+//       });
+//     }
+//   }
+// );
+
+// Add this route to src/index.js
+
 app.post("/upload-files",
   checkAuth,
   upload.array("files"),
@@ -2246,8 +2334,40 @@ app.post("/upload-files",
         const file = req.files[fileIndex];
         
         try {
-          // Use the hybrid processing function
-          const fileObject = await processUploadedFile(file, extractFromPDF);
+          // ENHANCED: Create progress callback for Google Vision
+          const progressCallback = (progress, status, substatus) => {
+            // Send progress update via WebSocket
+            connections.forEach((client) => {
+              if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                  type: 'progress',
+                  fileIndex: fileIndex + 1,
+                  totalFiles: totalFiles,
+                  progress: Math.round(progress),
+                  status: status,
+                  substatus: substatus
+                }));
+              }
+            });
+          };
+
+          // Use enhanced extractFromPDF with progress tracking
+          const ocrResult = await extractFromPDF(file.path, fileIndex, totalFiles, progressCallback);
+          
+          // Process the result into file object format
+          const fileObject = {
+            filename: file.filename || file.originalname,
+            originalName: file.originalname,
+            path: isVercel ? null : (file.path || null),
+            size: file.size,
+            mimetype: file.mimetype,
+            uploadDate: new Date(),
+            testDate: ocrResult.testDate || new Date(),
+            labValues: ocrResult.labValues || {},
+            extractionMethod: "google-vision",
+            processingErrors: ocrResult.processingErrors || [],
+          };
+
           uploadedFiles.push(fileObject);
 
         } catch (error) {
@@ -2301,7 +2421,6 @@ app.post("/upload-files",
   }
 );
 
-// Add this route to src/index.js
 app.post("/delete-selected-files", checkAuth, async (req, res) => {
   try {
     const { fileIds } = req.body;
