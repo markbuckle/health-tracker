@@ -708,10 +708,19 @@ body.menu-open .hero-title {
     margin: 0.5rem 0 !important;
   }
   .mobile-nav-links-horizontal {
-    width: 98% !important; /* Use more of the available space */
-    gap: 2px !important; /* Minimal gap for tighter layout */
-    padding: 6px 0 !important; /* Reduced vertical padding */
-    justify-content: space-between !important; /* Even distribution */
+    width: 96% !important; /* Slightly reduce width */
+    gap: 8px !important; /* Consistent gap between all items */
+    padding: 8px 0 !important; /* Balanced vertical padding */
+    justify-content: center !important; /* Center all items */
+    align-items: center !important;
+  }
+  .mobile-nav-links-horizontal .mobile-nav-link {
+    flex: 0 0 auto !important; /* Size based on content */
+    padding: 6px 12px !important; /* More generous padding for nav links */
+    text-align: center !important;
+    font-size: 11px !important; /* Readable size */
+    white-space: nowrap !important;
+    max-width: none !important;
   }
   .mobile-nav-links-horizontal .mobile-nav-link,
   .mobile-nav-links-horizontal .auth-button {
@@ -723,10 +732,12 @@ body.menu-open .hero-title {
     max-width: none !important; /* Remove width restrictions */
   }
   .mobile-nav-links-horizontal .auth-button {
-    border-radius: 3px !important; /* Even smaller border radius */
-    padding: 6px 6px !important; /* Reduce horizontal padding to make narrower */
-    min-width: 45px !important; /* Set a smaller minimum width */
-    flex: 0 0 auto !important; /* Don't grow, just use content width */
+    border-radius: 3px !important; /* Small border radius */
+    padding: 6px 8px !important; /* Compact button padding */
+    font-size: 11px !important; /* Match nav links */
+    flex: 0 0 auto !important; /* Size based on content */
+    min-width: 50px !important; /* Minimal button width */
+    white-space: nowrap !important;
   }
 }
 
