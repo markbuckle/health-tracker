@@ -708,23 +708,25 @@ body.menu-open .hero-title {
     margin: 0.5rem 0 !important;
   }
   .mobile-nav-links-horizontal {
-    width: 95% !important; /* Increased from 90% for better use of space */
-    gap: 4px !important; /* Reduced from 8px for tighter spacing */
-    padding: 8px 0 !important; /* Reduced from 5px 0 */
-    justify-content: space-evenly !important; /* Better distribution */
+    width: 98% !important; /* Use more of the available space */
+    gap: 2px !important; /* Minimal gap for tighter layout */
+    padding: 6px 0 !important; /* Reduced vertical padding */
+    justify-content: space-between !important; /* Even distribution */
   }
   .mobile-nav-links-horizontal .mobile-nav-link,
   .mobile-nav-links-horizontal .auth-button {
-    flex: 1 !important;
-    padding: 6px 2px !important; /* More balanced padding */
+    flex: 0 1 auto !important; /* Don't force equal widths */
+    padding: 6px 8px !important; /* Balanced padding */
     text-align: center !important;
-    font-size: 11px !important; /* Slightly smaller for better fit */
+    font-size: 10px !important; /* Smaller font for better fit */
+    white-space: nowrap !important; /* Prevent text wrapping */
+    max-width: none !important; /* Remove width restrictions */
   }
   .mobile-nav-links-horizontal .auth-button {
-    border-radius: 4px !important; /* Reduced from default border-radius */
-    padding: 6px 4px !important; /* Slightly more horizontal padding for buttons */
-    min-width: auto !important; /* Remove min-width constraints */
-    width: auto !important; /* Let flex handle the width */
+    border-radius: 3px !important; /* Even smaller border radius */
+    padding: 6px 6px !important; /* Reduce horizontal padding to make narrower */
+    min-width: 45px !important; /* Set a smaller minimum width */
+    flex: 0 0 auto !important; /* Don't grow, just use content width */
   }
 }
 
