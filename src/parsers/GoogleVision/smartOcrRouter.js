@@ -89,13 +89,13 @@ async function processPdfWithDocumentAI(filePath, progressTracker) {
       }
     };
     
-    progressTracker.updateProgress(30, 'Sending to Google Document AI...', 'Uploading document for OCR processing');
+    progressTracker.updateProgress(30, 'Initializing OCR engine...', 'Uploading document for OCR processing');
     progressTracker.log('Document AI: Making API call...');
     
     // Make the API call with progress simulation
     const progressInterval = setInterval(() => {
       const currentProgress = Math.min(progressTracker.baseProgress + 60, progressTracker.baseProgress + progressTracker.fileProgressRange * 0.8);
-      progressTracker.updateProgress(60, 'Processing with Google AI...', 'Extracting text and analyzing document structure');
+      progressTracker.updateProgress(60, 'Parsing...', 'Extracting text and analyzing document structure');
     }, 500);
     
     const [result] = await documentAIClient.processDocument(request);

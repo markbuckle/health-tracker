@@ -25,6 +25,7 @@ const ragRoutes = require("./db/routes/ragRoutes");
 // const { extractFromPDF } = require('./parsers/PaddleOCR/labParser');
 const fetch = require("node-fetch");
 const { processBiomarkersForStorage, migrateExistingFilesToProcessedData } = require('./utilities/biomarkerProcessor');
+const { extractFromPDF: enhancedExtractFromPDF } = require('./parsers/GoogleVision/smartOcrRouter');
 
 // express app setup
 const app = express();
@@ -2212,9 +2213,6 @@ const fileFilter = (req, file, cb) => {
 //   },
 // });
 
-// This import will automatically use whichever OCR implementation is configured
-const { extractFromPDF } = require('./parsers');
-
 // app.post("/upload-files",
 //   checkAuth,
 //   upload.array("files"),
@@ -2336,6 +2334,7 @@ app.post("/upload-files",
         try {
           // ENHANCED: Create progress callback for Google Vision
           const progressCallback = (progress, status, substatus) => {
+            console.log('🔥 PROGRESS CALLBACK CALLED:', progress, status, substatus); // ← ADD THIS LINE
             // Send progress update via WebSocket
             connections.forEach((client) => {
               if (client.readyState === WebSocket.OPEN) {
@@ -2352,8 +2351,11 @@ app.post("/upload-files",
           };
 
           // Use enhanced extractFromPDF with progress tracking
-          const ocrResult = await extractFromPDF(file.path, fileIndex, totalFiles, progressCallback);
+          // const ocrResult = await extractFromPDF(file.path, fileIndex, totalFiles, progressCallback);
           
+          const ocrResult = await enhancedExtractFromPDF(file.path, fileIndex, totalFiles, progressCallback);
+          console.log('🔥 extractFromPDF called successfully');
+
           // Process the result into file object format
           const fileObject = {
             filename: file.filename || file.originalname,
