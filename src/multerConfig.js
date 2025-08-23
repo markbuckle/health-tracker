@@ -9,18 +9,26 @@ const isProductionEnv = process.env.NODE_ENV === 'production';
 
 console.log(`Environment: ${isVercel ? 'Vercel Production' : 'Local Development'}`);
 
-// Import Google Vision OCR parser - FIXED IMPORT PATH
-let googleVisionExtractFromPDF;
+// Import OCR parser - FIXED TO USE MAIN PARSER INDEX
+let extractFromPDFFunction;
 try {
-  // Import the correct function from your Google Vision parser
-  const visionParser = require('./parsers/GoogleVision/visionParser');
-  googleVisionExtractFromPDF = visionParser.extractFromPDF;
-  console.log('✅ Google Vision parser loaded successfully');
+  // Import the main parser which handles the implementation switching
+  const mainParser = require('./parsers/index');
+  extractFromPDFFunction = mainParser.extractFromPDF;
+  console.log('✅ OCR parser loaded successfully from main index');
 } catch (error) {
-  console.error('❌ Failed to load Google Vision parser:', error.message);
+  console.error('❌ Failed to load OCR parser:', error.message);
   // Fallback function to prevent crashes
-  googleVisionExtractFromPDF = async (filePath) => {
-    throw new Error('Google Vision parser not available');
+  extractFromPDFFunction = async (filePath) => {
+    console.error('OCR parser not available, returning empty result');
+    return {
+      labValues: {},
+      testDate: new Date(),
+      rawText: '',
+      confidence: 0,
+      provider: 'not-available',
+      processingErrors: ['OCR parser not available']
+    };
   };
 }
 
@@ -133,9 +141,9 @@ async function processUploadedFile(file, extractFromPDF, fileIndex = 0, totalFil
       }
     };
     
-    // Call Google Vision OCR with the correct file path
-    console.log(`🚀 Calling Google Vision OCR with file: ${filePath}`);
-    const extractedData = await googleVisionExtractFromPDF(filePath);
+    // Call the correct OCR function with the file path
+    console.log(`🚀 Calling OCR parser with file: ${filePath}`);
+    const extractedData = await extractFromPDFFunction(filePath);
     console.log(`🔥 extractFromPDF called successfully`);
     
     // Process the biomarkers
