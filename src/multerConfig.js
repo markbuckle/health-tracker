@@ -141,9 +141,9 @@ async function processUploadedFile(file, extractFromPDF, fileIndex = 0, totalFil
       }
     };
     
-    // Call the correct OCR function with the file path
+    // Call the correct OCR function with progress callback
     console.log(`🚀 Calling OCR parser with file: ${filePath}`);
-    const extractedData = await extractFromPDFFunction(filePath);
+    const extractedData = await extractFromPDFFunction(filePath, fileIndex, totalFiles, enhancedProgressCallback);
     console.log(`🔥 extractFromPDF called successfully`);
     
     // Process the biomarkers
