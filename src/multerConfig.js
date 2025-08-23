@@ -1,3 +1,4 @@
+// src/multerConfig.js - FIXED VERSION with proper file path handling
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -8,8 +9,20 @@ const isProductionEnv = process.env.NODE_ENV === 'production';
 
 console.log(`Environment: ${isVercel ? 'Vercel Production' : 'Local Development'}`);
 
-// Import Google Vision OCR parser
-const { extractFromPDF: googleVisionExtractFromPDF } = require('./parsers/GoogleVision/smartOcrRouter');
+// Import Google Vision OCR parser - FIXED IMPORT PATH
+let googleVisionExtractFromPDF;
+try {
+  // Import the correct function from your Google Vision parser
+  const visionParser = require('./parsers/GoogleVision/visionParser');
+  googleVisionExtractFromPDF = visionParser.extractFromPDF;
+  console.log('✅ Google Vision parser loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load Google Vision parser:', error.message);
+  // Fallback function to prevent crashes
+  googleVisionExtractFromPDF = async (filePath) => {
+    throw new Error('Google Vision parser not available');
+  };
+}
 
 const { processBiomarkersForStorage } = require('./utilities/biomarkerProcessor');
 
@@ -66,15 +79,21 @@ const upload = multer({
   },
 });
 
-// Helper function to handle file processing in both environments
+// FIXED: Helper function to handle file processing in both environments
 async function processUploadedFile(file, extractFromPDF, fileIndex = 0, totalFiles = 1, progressCallback = null) {
   let filePath;
   let tempFilePath = null;
   
   try {
+    console.log(`🔄 Processing file ${fileIndex + 1} of ${totalFiles}: ${file.originalname}`);
+    
     if (isVercel) {
-      // Production: Use Google Vision with memory buffer
-      console.log('Vercel environment: Using Google Vision with memory storage');
+      // Production: Create temporary file from memory buffer
+      console.log('📱 Vercel environment: Creating temporary file from buffer');
+      
+      if (!file.buffer) {
+        throw new Error('File buffer is missing - check multer memory storage configuration');
+      }
       
       // Create temporary file from memory buffer for Google Vision
       const tempDir = '/tmp';
@@ -83,75 +102,93 @@ async function processUploadedFile(file, extractFromPDF, fileIndex = 0, totalFil
       
       // Write buffer to temp file
       fs.writeFileSync(tempFilePath, file.buffer);
-      console.log(`Created temp file for Vercel: ${tempFilePath}`);
+      console.log(`✅ Created temp file for Vercel: ${tempFilePath} (${file.buffer.length} bytes)`);
       
-      const extractedData = await googleVisionExtractFromPDF(tempFilePath, fileIndex, totalFiles, progressCallback);
-      
-      const processedLabValues = processBiomarkersForStorage(extractedData.labValues);
-
-      // Create file object for database
-      const fileObject = {
-        filename: file.filename || file.originalname,
-        originalName: file.originalname,
-        path: null, // No persistent path in Vercel
-        size: file.size,
-        mimetype: file.mimetype,
-        uploadDate: new Date(),
-        testDate: extractedData.testDate || new Date(),
-        labValues: processedLabValues,
-        extractionMethod: 'google-vision-vercel',
-        processingErrors: extractedData.processingErrors || [],
-        biomarkerProcessingComplete: true,
-        totalBiomarkersProcessed: Object.keys(processedLabValues).length
-      };
-      
-      return fileObject;
+      // Use the temporary file path
+      filePath = tempFilePath;
       
     } else {
-      // Local development: Use Google Vision with disk storage
+      // Local development: Use the file path from disk storage
+      if (!file.path) {
+        throw new Error('File path is missing - check multer disk storage configuration');
+      }
+      
       filePath = file.path;
-      console.log(`Processing file from disk: ${filePath}`);
-      
-      const extractedData = await googleVisionExtractFromPDF(filePath, fileIndex, totalFiles, progressCallback);
-      
-      console.log("Extracted data:", {
-        numLabValues: Object.keys(extractedData.labValues || {}).length,
-        testDate: extractedData.testDate,
-        hasErrors: !!(extractedData.processingErrors && extractedData.processingErrors.length > 0)
-      });
-      
-      const processedLabValues = processBiomarkersForStorage(extractedData.labValues);
-      
-      // Create file object for database
-      const fileObject = {
-        filename: file.filename || file.originalname,
-        originalName: file.originalname,
-        path: file.path || null,
-        size: file.size,
-        mimetype: file.mimetype,
-        uploadDate: new Date(),
-        testDate: extractedData.testDate || new Date(),
-        labValues: processedLabValues,
-        extractionMethod: 'google-vision-local',
-        processingErrors: extractedData.processingErrors || [],
-        biomarkerProcessingComplete: true,
-        totalBiomarkersProcessed: Object.keys(processedLabValues).length
-      };
-      
-      return fileObject;
+      console.log(`💾 Local environment: Using disk file: ${filePath}`);
     }
     
+    // Verify file exists before processing
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`File does not exist at path: ${filePath}`);
+    }
+    
+    const fileStats = fs.statSync(filePath);
+    console.log(`📊 File stats: ${fileStats.size} bytes`);
+    
+    // Progress callback for logging
+    const enhancedProgressCallback = (progress, status, substatus) => {
+      console.log(`🔥 PROGRESS CALLBACK CALLED: ${progress.toFixed(1)} ${status} ${substatus || ''}`);
+      if (progressCallback) {
+        progressCallback(progress, status, substatus);
+      }
+    };
+    
+    // Call Google Vision OCR with the correct file path
+    console.log(`🚀 Calling Google Vision OCR with file: ${filePath}`);
+    const extractedData = await googleVisionExtractFromPDF(filePath);
+    console.log(`🔥 extractFromPDF called successfully`);
+    
+    // Process the biomarkers
+    const processedLabValues = processBiomarkersForStorage(extractedData.labValues || {});
+    
+    // Create file object for database
+    const fileObject = {
+      filename: file.filename || file.originalname,
+      originalName: file.originalname,
+      path: isVercel ? null : filePath, // No persistent path in Vercel
+      size: file.size,
+      mimetype: file.mimetype,
+      uploadDate: new Date(),
+      testDate: extractedData.testDate || new Date(),
+      labValues: processedLabValues,
+      extractionMethod: isVercel ? 'google-vision-vercel' : 'google-vision-local',
+      processingErrors: extractedData.processingErrors || [],
+      biomarkerProcessingComplete: true,
+      totalBiomarkersProcessed: Object.keys(processedLabValues).length
+    };
+    
+    console.log(`✅ File processing completed successfully`);
+    console.log(`📊 Extracted ${Object.keys(processedLabValues).length} biomarkers`);
+    
+    return fileObject;
+    
   } catch (error) {
-    console.error('File processing error:', error);
-    throw error;
+    console.error('❌ File processing error:', error.message);
+    console.error('Stack trace:', error.stack);
+    
+    // Return a failed file object instead of throwing
+    return {
+      filename: file.filename || file.originalname,
+      originalName: file.originalname,
+      path: isVercel ? null : (file.path || null),
+      size: file.size,
+      mimetype: file.mimetype,
+      uploadDate: new Date(),
+      testDate: null,
+      labValues: {},
+      extractionMethod: 'failed',
+      processingErrors: [error.message],
+      biomarkerProcessingComplete: false,
+      totalBiomarkersProcessed: 0
+    };
   } finally {
     // Clean up temp file in Vercel environment
-    if (tempFilePath && isVercel) {
+    if (tempFilePath && isVercel && fs.existsSync(tempFilePath)) {
       try {
         fs.unlinkSync(tempFilePath);
-        console.log(`Cleaned up temp file: ${tempFilePath}`);
+        console.log(`🧹 Cleaned up temp file: ${tempFilePath}`);
       } catch (cleanupError) {
-        console.error('Error cleaning up temp file:', cleanupError);
+        console.error('⚠️ Error cleaning up temp file:', cleanupError.message);
       }
     }
   }
@@ -201,6 +238,7 @@ const multerErrorHandler = (error, req, res, next) => {
     });
   }
   
+  console.error('Unexpected error in file upload:', error);
   next(error);
 };
 
