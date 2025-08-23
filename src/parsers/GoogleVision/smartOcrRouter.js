@@ -1,4 +1,4 @@
-// src/parsers/GoogleVision/smartOcrRouter.js - ENHANCED WITH PROGRESS TRACKING
+// src/parsers/GoogleVision/smartOcrRouter.js - DEBUG VERSION with parameter validation
 
 const vision = require('@google-cloud/vision');
 const { DocumentProcessorServiceClient } = require('@google-cloud/documentai');
@@ -51,11 +51,134 @@ class ProgressTracker {
 }
 
 /**
+ * MAIN FUNCTION - Extract lab values from file with full parameter validation
+ * @param {string} filePath - Path to the file to process (REQUIRED)
+ * @param {number} fileIndex - Index of current file (optional)
+ * @param {number} totalFiles - Total number of files (optional)  
+ * @param {function} progressCallback - Progress callback function (optional)
+ * @returns {Promise<Object>} Lab extraction results
+ */
+async function extractFromPDF(filePath, fileIndex = 0, totalFiles = 1, progressCallback = null) {
+  // CRITICAL: Parameter validation
+  console.log(`🔍 DEBUG: extractFromPDF called with parameters:`);
+  console.log(`  - filePath: ${filePath} (type: ${typeof filePath})`);
+  console.log(`  - fileIndex: ${fileIndex} (type: ${typeof fileIndex})`);
+  console.log(`  - totalFiles: ${totalFiles} (type: ${typeof totalFiles})`);
+  console.log(`  - progressCallback: ${progressCallback ? 'provided' : 'null'} (type: ${typeof progressCallback})`);
+  
+  // Validate required parameter
+  if (!filePath || typeof filePath !== 'string') {
+    const error = new Error(`Invalid filePath parameter: expected string, got ${typeof filePath} with value: ${filePath}`);
+    console.error('❌ CRITICAL ERROR:', error.message);
+    throw error;
+  }
+  
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    const error = new Error(`File does not exist: ${filePath}`);
+    console.error('❌ FILE NOT FOUND:', error.message);
+    throw error;
+  }
+  
+  const progressTracker = new ProgressTracker(fileIndex, totalFiles, progressCallback);
+  progressTracker.log(`=== Smart OCR: Starting lab extraction for ${filePath} ===`);
+  
+  try {
+    // Extract text using smart routing with progress
+    progressTracker.log(`🚀 Calling extractTextFromFile with validated filePath: ${filePath}`);
+    const ocrResult = await extractTextFromFile(filePath, fileIndex, totalFiles, progressCallback);
+    
+    // Parse biomarkers from the extracted text
+    progressTracker.log('Smart OCR: Starting biomarker parsing...');
+    const labValues = parseLabValues(ocrResult.text, progressTracker);
+    const testDate = extractTestDate(ocrResult.text);
+    
+    // Return consistent format
+    const result = {
+      labValues: labValues,
+      testDate: testDate,
+      rawText: ocrResult.text,
+      confidence: ocrResult.confidence,
+      provider: ocrResult.provider,
+      processingErrors: []
+    };
+    
+    const labCount = Object.keys(labValues).length;
+    const finalMessage = `Smart OCR: Extraction completed using ${ocrResult.provider}`;
+    
+    progressTracker.log(finalMessage);
+    progressTracker.log(`Smart OCR: Found ${labCount} biomarkers`);
+    progressTracker.log(`Smart OCR: Text length: ${ocrResult.text.length} characters`);
+    progressTracker.log(`Smart OCR: Confidence: ${(ocrResult.confidence * 100).toFixed(1)}%`);
+    progressTracker.updateProgress(100, 'File processing complete!', `Successfully extracted ${labCount} biomarkers`);
+    
+    if (labCount > 0) {
+      progressTracker.log(`Smart OCR: Biomarkers found: ${JSON.stringify(Object.keys(labValues))}`);
+    }
+    
+    return result;
+    
+  } catch (error) {
+    const errorMessage = 'Smart OCR extraction failed: ' + error.message;
+    progressTracker.log(errorMessage);
+    console.error('❌ Full error details:', error.stack);
+    
+    return {
+      labValues: {},
+      testDate: new Date(),
+      rawText: '',
+      confidence: 0,
+      provider: 'smart-ocr-error',
+      processingErrors: [error.message]
+    };
+  }
+}
+
+/**
+ * Extract text from file with enhanced progress tracking and parameter validation
+ */
+async function extractTextFromFile(filePath, fileIndex = 0, totalFiles = 1, progressCallback = null) {
+  console.log(`🔍 DEBUG: extractTextFromFile called with:`);
+  console.log(`  - filePath: ${filePath} (type: ${typeof filePath})`);
+  
+  // CRITICAL: Validate filePath parameter again
+  if (!filePath || typeof filePath !== 'string') {
+    throw new Error(`extractTextFromFile: Invalid filePath parameter: ${filePath}`);
+  }
+  
+  const progressTracker = new ProgressTracker(fileIndex, totalFiles, progressCallback);
+  
+  progressTracker.log(`=== Smart OCR: Processing file ${filePath} ===`);
+  progressTracker.updateProgress(1, 'Starting file processing...', `File ${fileIndex + 1} of ${totalFiles}`);
+  
+  // Detect file type
+  const fileType = detectFileType(filePath);
+  progressTracker.log(`Smart OCR: Detected file type: ${fileType}`);
+  
+  let ocrResult;
+  
+  if (fileType === 'pdf') {
+    ocrResult = await processPdfWithDocumentAI(filePath, progressTracker);
+  } else if (fileType === 'image') {
+    ocrResult = await processImageWithVision(filePath, progressTracker);
+  } else {
+    throw new Error(`Unsupported file type: ${fileType}`);
+  }
+  
+  progressTracker.updateProgress(95, 'Processing complete', `Successfully processed ${fileType} file`);
+  progressTracker.log(`Smart OCR: Text extraction complete - ${ocrResult.text.length} characters`);
+  
+  return ocrResult;
+}
+
+/**
  * Process PDF using Document AI with progress tracking
  */
 async function processPdfWithDocumentAI(filePath, progressTracker) {
+  console.log(`🔍 DEBUG: processPdfWithDocumentAI called with filePath: ${filePath}`);
+  
   progressTracker.log('Smart OCR: Using Document AI for PDF processing');
-  progressTracker.updateProgress(5, 'Initializing Document AI...', `Processing file ${progressTracker.fileIndex + 1} of ${progressTracker.totalFiles}`);
+  progressTracker.updateProgress(5, 'Initializing Document AI...', `Processing file with path: ${filePath}`);
   
   if (!documentAIClient) {
     throw new Error('Document AI client not initialized');
@@ -94,7 +217,7 @@ async function processPdfWithDocumentAI(filePath, progressTracker) {
     
     // Make the API call with progress simulation
     const progressInterval = setInterval(() => {
-      const currentProgress = Math.min(progressTracker.baseProgress + 60, progressTracker.baseProgress + progressTracker.fileProgressRange * 0.8);
+      const currentProgress = Math.min(60, 80);
       progressTracker.updateProgress(60, 'Parsing...', 'Extracting text and analyzing document structure');
     }, 500);
     
@@ -147,8 +270,10 @@ async function processPdfWithDocumentAI(filePath, progressTracker) {
  * Process image using Google Cloud Vision API with progress tracking
  */
 async function processImageWithVision(filePath, progressTracker) {
+  console.log(`🔍 DEBUG: processImageWithVision called with filePath: ${filePath}`);
+  
   progressTracker.log('Smart OCR: Using Vision API for image processing');
-  progressTracker.updateProgress(5, 'Initializing Vision API...', `Processing file ${progressTracker.fileIndex + 1} of ${progressTracker.totalFiles}`);
+  progressTracker.updateProgress(5, 'Initializing Vision API...', `Processing image: ${path.basename(filePath)}`);
   
   if (!visionClient) {
     throw new Error('Vision API client not initialized');
@@ -192,158 +317,10 @@ async function processImageWithVision(filePath, progressTracker) {
   }
 }
 
-/**
- * Extract text from file with enhanced progress tracking
- */
-async function extractTextFromFile(filePath, fileIndex = 0, totalFiles = 1, progressCallback = null) {
-  const progressTracker = new ProgressTracker(fileIndex, totalFiles, progressCallback);
-  
-  progressTracker.log(`=== Smart OCR: Processing file ${filePath} ===`);
-  progressTracker.updateProgress(1, 'Starting file processing...', `File ${fileIndex + 1} of ${totalFiles}`);
-  
-  // Detect file type
-  const fileType = detectFileType(filePath);
-  progressTracker.log(`Smart OCR: Detected file type: ${fileType}`);
-  
-  let ocrResult;
-  
-  if (fileType === 'pdf') {
-    ocrResult = await processPdfWithDocumentAI(filePath, progressTracker);
-  } else if (fileType === 'image') {
-    ocrResult = await processImageWithVision(filePath, progressTracker);
-  } else {
-    throw new Error(`Unsupported file type: ${fileType}`);
-  }
-  
-  progressTracker.updateProgress(95, 'Processing complete', `Successfully processed ${fileType} file`);
-  progressTracker.log(`Smart OCR: Completed using ${ocrResult.provider}`);
-  
-  return ocrResult;
-}
-
-/**
- * Parse biomarkers with progress tracking
- */
-function parseLabValues(text, progressTracker) {
-  if (progressTracker) {
-    progressTracker.updateProgress(96, 'Parsing biomarkers...', 'Analyzing extracted text for lab values');
-    progressTracker.log('Smart OCR: Starting biomarker parsing with universal parser...');
-  } else {
-    console.log('Smart OCR: Starting biomarker parsing with universal parser...');
-  }
-  
-  if (!text || text.length === 0) {
-    console.log('Smart OCR: No text provided for parsing');
-    return {};
-  }
-  
-  // Try to use the shared universal parser first
-  try {
-    const { parseUniversalBiomarkers } = require('../biomarkerParser');
-    const results = parseUniversalBiomarkers(text);
-    
-    if (Object.keys(results).length > 0) {
-      const message = `Smart OCR: Universal parser found ${Object.keys(results).length} biomarkers`;
-      if (progressTracker) {
-        progressTracker.log(message);
-        progressTracker.updateProgress(98, 'Biomarker extraction complete', `Found ${Object.keys(results).length} lab values`);
-      } else {
-        console.log(message);
-      }
-      return results;
-    }
-  } catch (error) {
-    console.log('Smart OCR: Universal parser not available, using fallback:', error.message);
-  }
-  
-  // Fallback to basic patterns if universal parser fails
-  return parseBasicPatterns(text);
-}
-
-/**
- * Enhanced extractFromPDF with proper progress tracking
- */
-async function extractFromPDF(filePath, fileIndex = 0, totalFiles = 1, progressCallback = null) {
-  const progressTracker = progressCallback ? new ProgressTracker(fileIndex, totalFiles, progressCallback) : null;
-  
-  if (progressTracker) {
-    progressTracker.log(`=== Smart OCR: Starting lab extraction for ${filePath} ===`);
-  } else {
-    console.log(`=== Smart OCR: Starting lab extraction for ${filePath} ===`);
-  }
-  
-  try {
-    // Extract text using smart routing with progress
-    const ocrResult = await extractTextFromFile(filePath, fileIndex, totalFiles, progressCallback);
-    
-    // Parse biomarkers from the extracted text
-    if (progressTracker) {
-      progressTracker.log('Smart OCR: Starting biomarker parsing...');
-    } else {
-      console.log('Smart OCR: Starting biomarker parsing...');
-    }
-    
-    const labValues = parseLabValues(ocrResult.text, progressTracker);
-    const testDate = extractTestDate(ocrResult.text);
-    
-    // Return consistent format
-    const result = {
-      labValues: labValues,
-      testDate: testDate,
-      rawText: ocrResult.text,
-      confidence: ocrResult.confidence,
-      provider: ocrResult.provider,
-      processingErrors: []
-    };
-    
-    const labCount = Object.keys(labValues).length;
-    const finalMessage = `Smart OCR: Extraction completed using ${ocrResult.provider}`;
-    
-    if (progressTracker) {
-      progressTracker.log(finalMessage);
-      progressTracker.log(`Smart OCR: Found ${labCount} biomarkers`);
-      progressTracker.log(`Smart OCR: Text length: ${ocrResult.text.length} characters`);
-      progressTracker.log(`Smart OCR: Confidence: ${(ocrResult.confidence * 100).toFixed(1)}%`);
-      progressTracker.updateProgress(100, 'File processing complete!', `Successfully extracted ${labCount} biomarkers`);
-    } else {
-      console.log(finalMessage);
-      console.log(`Smart OCR: Found ${labCount} biomarkers`);
-      console.log(`Smart OCR: Text length: ${ocrResult.text.length} characters`);
-      console.log(`Smart OCR: Confidence: ${(ocrResult.confidence * 100).toFixed(1)}%`);
-    }
-    
-    if (labCount > 0) {
-      const biomarkerList = `Smart OCR: Biomarkers found: ${JSON.stringify(Object.keys(labValues))}`;
-      if (progressTracker) {
-        progressTracker.log(biomarkerList);
-      } else {
-        console.log(biomarkerList);
-      }
-    }
-    
-    return result;
-    
-  } catch (error) {
-    const errorMessage = 'Smart OCR extraction failed: ' + error.message;
-    if (progressTracker) {
-      progressTracker.log(errorMessage);
-    } else {
-      console.error(errorMessage);
-    }
-    
-    return {
-      labValues: {},
-      testDate: new Date(),
-      rawText: '',
-      confidence: 0,
-      provider: 'smart-ocr-error',
-      processingErrors: [error.message]
-    };
-  }
-}
-
-// Helper functions (kept the same)
+// Helper functions
 function detectFileType(filePath) {
+  console.log(`🔍 DEBUG: detectFileType called with: ${filePath}`);
+  
   const extension = path.extname(filePath).toLowerCase();
   
   if (extension === '.pdf') {
@@ -355,13 +332,30 @@ function detectFileType(filePath) {
   }
 }
 
+function parseLabValues(text, progressTracker) {
+  console.log(`🔍 DEBUG: parseLabValues called with text length: ${text?.length || 0}`);
+  
+  if (progressTracker) {
+    progressTracker.log('Smart OCR: Starting biomarker parsing...');
+  }
+  
+  try {
+    // Try to load the biomarker parser
+    const { parseLabValues: universalParser } = require('../biomarkerParser');
+    return universalParser(text);
+  } catch (error) {
+    console.log('Smart OCR: Universal biomarker parser not available, using basic fallback');
+    return parseBasicPatterns(text);
+  }
+}
+
 function parseBasicPatterns(text) {
   console.log('Smart OCR: Using basic pattern fallback...');
   return {}; // Implement basic fallback if needed
 }
 
 function extractTestDate(text) {
-  console.log('Smart OCR: Extracting test date...');
+  console.log(`🔍 DEBUG: extractTestDate called with text length: ${text?.length || 0}`);
   
   if (!text || typeof text !== 'string') {
     return new Date();
