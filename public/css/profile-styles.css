@@ -262,7 +262,7 @@
   margin-left: 10rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem; /* Add right padding */
-  padding-top: 0.5rem;
+  padding-top: 1.1rem;
   display: flex;
   justify-content: space-between; /* Change from flex-start to space-between */
   align-items: center;
@@ -752,9 +752,8 @@
   .header-container-3 {
     width: auto;
   }
-  .personal-history-container {
-    max-width: auto;
-    margin: 0 0.5rem 1rem 0.5rem;
+  .header-container-2 {
+    margin-top: 1rem;
   }
   .personal-history-entry {
     gap: 0;

@@ -1,3 +1,4 @@
+{{!-- templates/partials/mobileUserHeader.hbs --}}
 <header id="mobile-header" class="mobile-header">
     <div class="mobile-header-container">
         <!-- Logo on the left -->
@@ -7,51 +8,24 @@
             </a>
         </div>
         
-        <!-- Hamburger button with improved HTML structure -->
-        <button type="button" class="mobile-menu-toggle" id="hamburger-button" aria-label="Menu" aria-expanded="false">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-    </div>
-    
-    <!-- Mobile menu that will push content down -->
-    <nav class="mobile-menu">
-        <a id="Profile-mobile" href="/profile" class="page-link">
-            <img loading="lazy" src="images/user.svg" alt="Profile Icon" class="nav-icon">
-            <div class="page-link-text-block">
+        <!-- Navigation - Always visible, no hamburger menu -->
+        <nav class="mobile-nav">
+            <a id="Profile-mobile" href="/profile" class="page-link">
+                <img loading="lazy" src="images/user.svg" alt="Profile Icon" class="nav-icon">
                 <span class="page-link-text-span">Profile</span>
-            </div>
-        </a>
-        <a id="Upload-mobile" href="/upload" class="page-link">
-            <img src="images/file-text.svg" loading="lazy" alt="Upload Icon" class="nav-icon">
-            <div class="page-link-text-block">
+            </a>
+            <a id="Upload-mobile" href="/upload" class="page-link">
+                <img src="images/file-text.svg" loading="lazy" alt="Upload Icon" class="nav-icon">
                 <span class="page-link-text-span">Upload</span>
-            </div>
-        </a>
-        <a id="Reports-mobile" href="/reports" class="page-link">
-            <img src="images/clipboard.svg" loading="lazy" alt="Reports Icon" class="nav-icon">
-            <div class="page-link-text-block">
+            </a>
+            <a id="Reports-mobile" href="/reports" class="page-link">
+                <img src="images/clipboard.svg" loading="lazy" alt="Reports Icon" class="nav-icon">
                 <span class="page-link-text-span">Reports</span>
-            </div>
-        </a>
-        <a id="Insights-mobile" href="/insights" class="page-link">
-            <img src="images/layout.svg" loading="lazy" alt="Insights Icon" class="nav-icon">
-            <div class="page-link-text-block">
+            </a>
+            <a id="Insights-mobile" href="/insights" class="page-link">
+                <img src="images/layout.svg" loading="lazy" alt="Insights Icon" class="nav-icon">
                 <span class="page-link-text-span">Insights</span>
-            </div>
-        </a>
-        <a href="/how-it-works" class="page-link">
-            <img src="images/help-circle.svg" loading="lazy" alt="Help Icon" class="nav-icon">
-            <div class="page-link-text-block">
-                <span class="page-link-text-span">Help</span>
-            </div>
-        </a>
-        <a id="Log-out-mobile" href="/" class="page-link">
-            <img src="images/unlock.svg" loading="lazy" alt="Logout Icon" class="nav-icon">
-            <div class="page-link-text-block">
-                <span class="page-link-text-span">Log out</span>
-            </div>
-        </a>
-    </nav>
+            </a>
+        </nav>
+    </div>
 </header>

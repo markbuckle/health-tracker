@@ -1291,7 +1291,7 @@ label[for="customBloodType"] {
   }
   .heading2 {
     font-size: 1.75rem;
-    margin-top: 2.5rem;
+    margin-top: 5.5rem;
   }
   .subheading {
     font-size: 1.1rem;
@@ -1349,6 +1349,7 @@ label[for="customBloodType"] {
     height: 3.2rem;
   }
   .mobile-header-logo .header-logo {
+    margin-top: 0.25rem;
     max-height: 1.8rem;
     max-width: 90px;
   }
