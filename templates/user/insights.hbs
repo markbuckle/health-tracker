@@ -1140,50 +1140,45 @@
         }
 
         // Animate the chart bars
-        function animateChartBars(labsData) {
+        function animateChartBarsPercentage(labsData) {
           const chartBars = document.querySelectorAll('.chart-bar');
-          if (chartBars.length < 4) return; // Now expecting 4 bars
+          if (chartBars.length < 4) return;
           
-          // Get the max value for scaling
-          const maxValue = Math.max(
-            labsData.inRange || 0, 
-            labsData.outOfRange || 0, 
-            labsData.improving || 0,
-            labsData.declining || 0  // Include declining in max calculation
-          );
+          // Get all values
+          const inRangeValue = labsData.inRange || 0;
+          const improvingValue = labsData.improving || 0;
+          const outOfRangeValue = labsData.outOfRange || 0;
+          const decliningValue = labsData.declining || 0;
           
-          // Base height of the tallest bar
+          // Calculate total biomarkers
+          const totalBiomarkers = inRangeValue + improvingValue + outOfRangeValue + decliningValue;
+          
+          // Base height settings
           const maxBarHeight = 180;
+          const minBarHeight = 8;
           
-          // Apply heights with animation
+          // Apply heights with animation - using percentage of total
           setTimeout(() => {
-            // In Range
-            const inRangeValue = labsData.inRange || 0;
-            chartBars[0].style.height = inRangeValue > 0 ? `${maxBarHeight}px` : '10px';
-            
-            // Improving
-            const improvingValue = labsData.improving || 0;
-            chartBars[1].style.height = improvingValue > 0 ? 
-              `${Math.max(calculateBarHeight(improvingValue, maxValue), 40)}px` : '10px';
-            
-            // Out of Range
-            const outOfRangeValue = labsData.outOfRange || 0;
-            chartBars[2].style.height = outOfRangeValue > 0 ? 
-              `${Math.max(calculateBarHeight(outOfRangeValue, maxValue), 40)}px` : '10px';
-            
-            // Declining
-            const decliningValue = labsData.declining || 0;
-            chartBars[3].style.height = decliningValue > 0 ? 
-              `${Math.max(calculateBarHeight(decliningValue, maxValue), 40)}px` : '10px';
+            chartBars[0].style.height = `${calculatePercentageHeight(inRangeValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
+            chartBars[1].style.height = `${calculatePercentageHeight(improvingValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
+            chartBars[2].style.height = `${calculatePercentageHeight(outOfRangeValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
+            chartBars[3].style.height = `${calculatePercentageHeight(decliningValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
           }, 300);
           
-          // Helper function to calculate bar height based on value
-          function calculateBarHeight(value, maxValue) {
-            if (value === 0) return 10; // Fixed height for zero values
-            return Math.max(Math.round(maxBarHeight * (value / maxValue)), 40);
+          // Calculate height based on percentage of total biomarkers
+          function calculatePercentageHeight(value, total, maxHeight, minHeight) {
+            if (value === 0 || total === 0) return minHeight;
+            
+            // Calculate percentage of total
+            const percentage = value / total;
+            
+            // Scale from minHeight to maxHeight based on percentage
+            const scaledHeight = minHeight + (maxHeight - minHeight) * percentage;
+            
+            return Math.round(scaledHeight);
           }
         }
-
+        
         // Info button modal functionality
         const labsInfoButton = labSummaryTab.querySelector('.info-button');
         if (labsInfoButton) {

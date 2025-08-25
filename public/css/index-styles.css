@@ -175,7 +175,7 @@
 }
 .laptop-image-container {
   position: relative;
-  max-width: 800px; /* Reduced from 600px */
+  max-width: 900px; /* Reduced from 600px */
   width: 100%;
   z-index: 2;
 }
@@ -976,6 +976,9 @@
 .mobile-hide {
   display: block !important;
 }
+.inner-content-container {
+  width: 90%;
+}
 /* Animation keyframes */
 @keyframes slideInRight {
   to {
@@ -1118,7 +1121,7 @@
     font-size: 14px;
   }
   .laptop-image-container {
-    max-width: 800px; /* Smaller on this breakpoint */
+    max-width: 850px; /* Smaller on this breakpoint */
   }
 }
 
@@ -1306,7 +1309,7 @@
     width: 85%;
   }
   .laptop-image-container {
-    max-width: 80%; /* Smaller on mobile-like screens */
+    max-width: 100%; /* Smaller on mobile-like screens */
   }
 }
 
@@ -1546,7 +1549,7 @@
     width: 95%;
   }
   .laptop-image-container {
-    max-width: 90%; /* Much bigger laptop on mobile */
+    max-width: 100%; /* Much bigger laptop on mobile */
   }
   .hover-titles {
     flex-direction: column;
@@ -1560,7 +1563,7 @@
     font-size: 14px;
     text-align: center;
     width: 100%;
-    max-width: 200px; /* Smaller buttons on mobile */
+    max-width: 7rem; /* Smaller buttons on mobile */
     white-space: nowrap;
   }
   .hero-title .hero-text.mobile-hide {

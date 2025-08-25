@@ -947,7 +947,7 @@
 .chart-bar.in-range:not([style*="height: 10px"]) {
   background-color: #7db17f !important; /* Green */
 }
-.chart-bar.improving:not([style*="height: 10px"]) {
+.chart-bar.improving:not([style*="height: 9px"]) {
   background-color: #9ed3a0 !important; /* Light green */
 }
 .chart-bar.out-of-range:not([style*="height: 10px"]) {
