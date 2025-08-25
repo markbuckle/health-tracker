@@ -1,10 +1,10 @@
-// railway-rag-api/server.js
+// railway-rag-api/server.js - FIXED FOR FLY.IO
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;  // ← CHANGED: Fly.io expects port 3000
 
 // Middleware
 app.use(cors({
@@ -22,13 +22,13 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    service: 'RAG API'
+    service: 'RAG API - Fly.io'  // ← UPDATED
   });
 });
 
 // Test endpoint
 app.get('/api/rag/test', (req, res) => {
-  res.json({ message: "RAG API is working on Railway!" });
+  res.json({ message: "RAG API is working on Fly.io!" });  // ← UPDATED
 });
 
 // Main RAG endpoint
@@ -36,12 +36,12 @@ app.post('/api/rag/ask', async (req, res) => {
   try {
     console.log(`RAG API Request: ${req.method} ${req.path}`);
     
-    const { query, userContext, options = {} } = req.body; // Add userContext here
+    const { query, userContext, options = {} } = req.body;
 
-    console.log('🔍 Railway - Query:', query);
-    console.log('🔍 Railway - User context provided:', !!userContext);
+    console.log('🔍 Fly.io - Query:', query);  // ← UPDATED
+    console.log('🔍 Fly.io - User context provided:', !!userContext);
     if (userContext) {
-      console.log('🔍 Railway - User blood type:', userContext.profile?.bloodType);
+      console.log('🔍 Fly.io - User blood type:', userContext.profile?.bloodType);
     }
 
     if (!query) {
@@ -65,11 +65,11 @@ app.post('/api/rag/ask', async (req, res) => {
       response: result.response,
       sources: result.sources,
       timestamp: new Date().toISOString(),
-      contextUsed: !!userContext // Add this to track if context was used
+      contextUsed: !!userContext
     });
 
   } catch (error) {
-    console.error("Error in RAG endpoint (Railway):", error);
+    console.error("Error in RAG endpoint (Fly.io):", error);
     
     if (error.message === 'Request timeout') {
       res.status(504).json({ 
@@ -134,9 +134,10 @@ app.use('*', (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`🚀 RAG API Server running on port ${port}`);
-  console.log(`Health check: http://localhost:${port}/health`);
+// ← FIXED: Listen on 0.0.0.0 instead of localhost for Fly.io
+app.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 RAG API Server running on 0.0.0.0:${port}`);
+  console.log(`Health check: http://0.0.0.0:${port}/health`);
 });
 
 module.exports = app;

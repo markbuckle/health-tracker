@@ -1,0 +1,19 @@
+app = "your-health-rag-api"
+primary_region = "ord"
+
+[build]
+
+[env]
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3000        # ← Make sure this matches your server port
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[machine]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1
