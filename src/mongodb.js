@@ -1,4 +1,4 @@
-// mongoDB.js
+// src/mongodb.js - COMPLETE FIXED VERSION
 
 const mongoose = require("mongoose");
 
@@ -85,6 +85,11 @@ async function connectToMongoDB() {
   }
 }
 
+// FIXED: Create function to check connection status
+function getIsConnected() {
+  return isConnected && mongoose.connection.readyState === 1;
+}
+
 // Initialize connection (but don't await it at module level)
 if (!isVercel) {
   // Only auto-connect in local development
@@ -96,6 +101,7 @@ if (!isVercel) {
   });
 }
 
+// Schema definitions
 const personalHistorySchema = new mongoose.Schema(
   {
     personalCondition: {
@@ -287,7 +293,6 @@ const fileSchema = new mongoose.Schema({
     default: Date.now,
   },
   testDate: {
-    // Add this field
     type: Date,
     default: null,
   },
@@ -361,9 +366,8 @@ registerSchema.methods.calculateAge = function () {
   return age;
 };
 
-// const registerCollection = mongoose.model("users", registerSchema);
+// Create models
 const registerCollection = mongoose.model("User", registerSchema);
-
 
 const feedbackSchema = new mongoose.Schema({
   name: {
@@ -386,10 +390,11 @@ const feedbackSchema = new mongoose.Schema({
 
 const feedbackCollection = mongoose.model("Feedback", feedbackSchema);
 
+// FIXED: Export isConnected as a function instead of variable
 module.exports = {
   connectToMongoDB,
+  isConnected: getIsConnected,  // ← FIXED: Now a function
   registerCollection,
   feedbackCollection,
   mongoose,
-  isConnected: () => isConnected,
 };
