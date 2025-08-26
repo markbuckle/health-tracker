@@ -347,7 +347,7 @@ body.tutorial-active .highlight-nav {
   }
   .dashboard-content {
     margin-left: 0 !important;
-    padding-top: 3.5rem !important; /* Account for fixed mobile header */
+    padding-top: 5.5rem !important; /* Account for fixed mobile header */
   }
   body.menu-open .dashboard-content {
     padding-top: calc(60px + var(--mobile-menu-height, 0px)) !important;
@@ -355,9 +355,11 @@ body.tutorial-active .highlight-nav {
   }
   .steps-container2 {
     padding: 0 0.5rem;
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
   }
   .step-content {
-    padding: 1.25rem;
+    padding: 1.25rem 1rem;
   }
   .sidebar {
     display: none;
@@ -397,7 +399,7 @@ body.tutorial-active .highlight-nav {
     padding-top: 100px !important;
   }
   body.tutorial-active .steps-container2 {
-    padding-top: 75px !important;
+    padding-top: 0.5rem !important;
     z-index: 1700;
     position: relative;
   }
