@@ -21,6 +21,12 @@
   align-items: center;
   margin-bottom: 3rem;
 }
+.learning-header2 {
+  display: block;
+  text-align: center;
+  align-items: center;
+  margin-bottom: 3rem;
+}
 .learning-title {
   font-family: "Poppins-Bold", sans-serif;
   font-size: clamp(30px, 5vw, 42px);
@@ -153,11 +159,11 @@
 /* Section Description Text */
 .section-description {
   text-align: center;
-  margin: 0 0 2.5rem 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .description-text {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: #64748b;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -541,6 +547,9 @@
   .learning-header {
     padding-top: 0rem;
   }
+  .learning-header2 {
+    padding-top: 0rem;
+  }
   
   .podcast-container,
   .books-container {
@@ -606,6 +615,11 @@
   }
   
   .learning-header {
+    padding-top: 1rem;
+    width: 100%;
+    text-align: center;
+  }
+  .learning-header2 {
     padding-top: 1rem;
     width: 100%;
     text-align: center;
@@ -691,15 +705,20 @@
   }
   .learning-title {
     font-size: 28px;
+    padding-top: 0;
+    margin-top: 0.5rem;
   }
   .learning-subtitle {
-    max-width: 70%;
+    max-width: 95%;
     font-size: clamp(16px, 2vw, 18px);
     margin: 1rem auto; /* Ensure centering */
     margin-bottom: 0;
   }
   .learning-header {
     margin-bottom: 2rem;
+  }
+  .learning-header2 {
+    margin-bottom: 4rem;
   }
   .podcast-container {
     max-width: 90%;
@@ -746,6 +765,9 @@
   }
   .biomarker-item {
     padding: 0.75rem 1rem;
+  }
+  .section-description {
+    margin-bottom: 0.5rem;
   }
 }
 
