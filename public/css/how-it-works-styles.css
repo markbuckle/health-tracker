@@ -238,8 +238,8 @@
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    #4379ba 10%,
-    #4379ba 90%,
+    #4379ba 25%,
+    #4379ba 75%,
     transparent 100%
   );
   z-index: 1;
@@ -347,7 +347,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(60px);
   }
   to {
     opacity: 1;
@@ -555,8 +555,8 @@
     left: 0;
   }
   .steps-container::before {
-    left: 50%;
-    transform: translateX(-50%);
+    left: 1.5;
+    /* transform: translateX(-50%); */
     width: 2px;
     top: -2rem; /* Start timeline above the content */
     bottom: -2rem; /* Extend below as well */
