@@ -721,6 +721,9 @@ body.menu-open .hero-title {
     font-size: 12px !important; /* Bigger font for non-scrolled */
     white-space: nowrap !important;
     max-width: none !important;
+    touch-action: manipulation;
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .mobile-nav-links-horizontal .auth-button {
     border-radius: 4px !important; /* Slightly bigger border radius */
@@ -746,6 +749,58 @@ body.menu-open .hero-title {
   .header-scrolled .mobile-nav-links-horizontal .auth-button {
     padding: 6px 4px !important;
     min-width: 45px !important;
+  }
+  .mobile-nav-link.pressed {
+    color: #5cb15d !important;
+    background-color: rgba(92, 177, 93, 0.1);
+    transform: scale(0.98);
+  }
+  .mobile-nav-link.pressed::after {
+    width: 80% !important;
+    opacity: 1 !important;
+  }
+  /* NEW: JavaScript-triggered animation classes */
+  .mobile-nav-link.touch-feedback {
+    animation: touchFeedback 0.2s ease-out;
+  }
+
+  @keyframes touchFeedback {
+    0% {
+      transform: scale(1);
+      background-color: transparent;
+    }
+    50% {
+      transform: scale(0.96);
+      background-color: rgba(92, 177, 93, 0.1);
+    }
+    100% {
+      transform: scale(1);
+      background-color: transparent;
+    }
+  }
+  .mobile-nav-link.touch-feedback::after {
+    animation: underlineFeedback 0.4s ease-out;
+  }
+
+  @keyframes underlineFeedback {
+    0% {
+      width: 0;
+      opacity: 0;
+    }
+    50% {
+      width: 80%;
+      opacity: 1;
+    }
+    100% {
+      width: 0;
+      opacity: 0;
+    }
+  }
+
+  /* Ensure the separator doesn't interfere with touch events */
+  .mobile-nav-links-horizontal::after {
+    pointer-events: none;
+    z-index: 5;
   }
 }
 
