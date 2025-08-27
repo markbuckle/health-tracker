@@ -338,6 +338,10 @@ const registerSchema = new mongoose.Schema(
   }
 );
 
+function getIsConnected() {
+  return isConnected && mongoose.connection.readyState === 1;
+}
+
 // Add indexes for frequently queried fields
 registerSchema.index({ email: 1 });
 registerSchema.index({ uname: 1 });
@@ -391,5 +395,5 @@ module.exports = {
   registerCollection,
   feedbackCollection,
   mongoose,
-  isConnected: () => isConnected,
+  isConnected: getIsConnected
 };
