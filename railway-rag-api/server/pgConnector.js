@@ -1,4 +1,4 @@
-// src/db/pgConnector.js - Enhanced for Google AI OCR and Vercel optimization
+// src/db/pgConnector.js - Enhanced for Supabase, Google AI OCR and Vercel optimization
 const { Pool } = require("pg");
 const path = require("path");
 
@@ -39,7 +39,7 @@ console.log(`  - Final: ${isProduction ? 'Production' : 'Local Development'}`);
 let poolConfig;
 
 if (isLocal) {
-  // Local development configuration - force localhost
+  // Local development configuration - keep your existing localhost setup
   const localConnectionString = "postgresql://postgres:BroBeans_2317@localhost:5432/postgres";
   
   poolConfig = {
@@ -49,15 +49,15 @@ if (isLocal) {
   console.log('Using local PostgreSQL configuration');
   console.log(`Connection string: ${localConnectionString}`);
 } else {
-  // Production configuration (Vercel/Railway/Digital Ocean)
+  // Production configuration (Vercel/Railway/Digital Ocean with Supabase support)
   // Try multiple environment variables in order of preference
   const productionConnectionString = 
-    process.env.DATABASE_URL ||     // Railway's auto-created variable
+    process.env.DATABASE_URL ||     // Railway's auto-created variable OR Supabase connection
     process.env.POSTGRES_URI ||     // Your fallback
     process.env.POSTGRES_URL;       // Alternative
 
-    console.log('Connection source:', 
-    process.env.DATABASE_URL ? 'DATABASE_URL (Railway)' :
+  console.log('Connection source:', 
+    process.env.DATABASE_URL ? 'DATABASE_URL (Railway/Supabase)' :
     process.env.POSTGRES_URI ? 'POSTGRES_URI' : 
     process.env.POSTGRES_URL ? 'POSTGRES_URL' : 'NONE FOUND');
   
@@ -67,16 +67,24 @@ if (isLocal) {
     throw new Error('Production database connection string not configured');
   }
   
+  // Auto-detect if we're using Supabase and configure SSL accordingly
+  const isSupabase = productionConnectionString.includes('supabase.co');
+  
   poolConfig = {
     connectionString: productionConnectionString,
-    ssl: { rejectUnauthorized: false },
+    ssl: isSupabase ? { rejectUnauthorized: false } : { rejectUnauthorized: false }, // Keep SSL for all production
     max: isVercel ? 5 : 10, // Reduced max connections for Vercel
     idleTimeoutMillis: isVercel ? 10000 : 30000, // Shorter idle timeout for Vercel
     connectionTimeoutMillis: 15000, // Increased timeout for reliability
     acquireTimeoutMillis: 10000, // How long to wait for a connection from the pool
   };
+  
   console.log('Using production PostgreSQL configuration');
   console.log(`Connection string: ${productionConnectionString.substring(0, 30)}...`);
+  
+  if (isSupabase) {
+    console.log('🔗 Detected: Supabase database connection');
+  }
   
   // Log which environment we detected
   if (isVercel) console.log('📍 Detected: Vercel environment (optimized connection pool)');
@@ -98,6 +106,27 @@ async function initializeConnection() {
     console.log(`📊 Database time: ${result.rows[0].current_time}`);
     console.log(`📊 PostgreSQL version: ${result.rows[0].pg_version.split(' ')[0]}`);
     
+    // Check for pgvector extension (for RAG functionality)
+    try {
+      const vectorCheck = await client.query("SELECT * FROM pg_extension WHERE extname = 'vector'");
+      if (vectorCheck.rows.length > 0) {
+        console.log('✅ pgvector extension is available');
+        
+        // Check if medical_documents table exists
+        const tableCheck = await client.query("SELECT to_regclass('public.medical_documents') as table_exists");
+        if (tableCheck.rows[0].table_exists) {
+          const docCount = await client.query('SELECT COUNT(*) FROM medical_documents');
+          console.log(`📚 Medical documents available: ${docCount.rows[0].count}`);
+        } else {
+          console.warn('⚠️  medical_documents table not found - run setup script if needed');
+        }
+      } else {
+        console.warn('⚠️  pgvector extension not found - RAG functionality limited');
+      }
+    } catch (vectorError) {
+      console.warn('⚠️  Could not check pgvector extension:', vectorError.message);
+    }
+    
     // Initialize OCR results table if it doesn't exist (for Google AI OCR integration)
     await initializeOcrTables(client);
     
@@ -117,6 +146,8 @@ async function initializeConnection() {
       console.error('💡 Authentication failed - check username/password in connection string');
     } else if (err.code === 'ECONNABORTED') {
       console.error('💡 Connection timeout - check network connectivity and database availability');
+    } else if (err.code === '28P01') {
+      console.error('💡 Invalid username/password - check your connection string credentials');
     }
     
     return false;
@@ -195,7 +226,7 @@ async function initializeOcrTables(client) {
 // Initialize connection on startup
 initializeConnection();
 
-// Enhanced query helper function with Vercel optimizations
+// Enhanced query helper function with Vercel optimizations and vector support
 async function query(text, params) {
   const start = Date.now();
   let client;
@@ -208,7 +239,7 @@ async function query(text, params) {
     
     let processedParams = params;
     
-    // Special handling for vectors (keep for compatibility)
+    // Special handling for vectors (for pgvector/RAG functionality)
     if (params) {
       processedParams = params.map((param) => {
         if (
@@ -258,7 +289,7 @@ async function query(text, params) {
   }
 }
 
-// Enhanced test function with OCR table validation
+// Enhanced test function with OCR table validation and pgvector support
 async function testConnection() {
   try {
     const res = await query("SELECT NOW() as current_time, current_database() as db_name");
@@ -272,6 +303,15 @@ async function testConnection() {
       console.log('ℹ️ OCR tables not found - will be created on first use');
     }
     
+    // Test pgvector extension
+    let pgvectorAvailable = false;
+    try {
+      const vectorCheck = await query("SELECT * FROM pg_extension WHERE extname = 'vector'");
+      pgvectorAvailable = vectorCheck.rows.length > 0;
+    } catch (vectorError) {
+      console.log('ℹ️ pgvector extension not available');
+    }
+    
     return {
       connected: true,
       timestamp: res.rows[0].current_time,
@@ -279,6 +319,7 @@ async function testConnection() {
       environment: isLocal ? 'local' : 'production',
       platform: isVercel ? 'vercel' : isRailway ? 'railway' : isProduction ? 'digital-ocean' : 'local',
       ocr_tables_ready: ocrTablesExist,
+      pgvector_available: pgvectorAvailable,
       google_ai_ready: !!(process.env.GOOGLE_CLOUD_PROJECT_ID && 
         (process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GOOGLE_SERVICE_ACCOUNT_KEY))
     };
@@ -290,12 +331,13 @@ async function testConnection() {
       environment: isLocal ? 'local' : 'production',
       platform: isVercel ? 'vercel' : isRailway ? 'railway' : isProduction ? 'digital-ocean' : 'local',
       ocr_tables_ready: false,
+      pgvector_available: false,
       google_ai_ready: false
     };
   }
 }
 
-// Production utilities (enhanced for Vercel)
+// Production utilities (enhanced for Vercel and RAG functionality)
 const utils = {
   // Get a client from the pool (for transactions)
   getClient: async () => {
@@ -322,7 +364,7 @@ const utils = {
     };
   },
   
-  // OCR-specific utilities
+  // OCR-specific utilities (keep your existing functionality)
   saveOcrResult: async (filename, text, confidence, provider = 'google-ai', processingTime = 0) => {
     const insertQuery = `
       INSERT INTO ocr_results (filename, extracted_text, confidence_score, processing_provider, processing_time_ms, character_count)
@@ -352,6 +394,61 @@ const utils = {
     
     const result = await query(selectQuery, [limit]);
     return result.rows;
+  },
+  
+  // RAG-specific utilities for pgvector
+  searchSimilarDocuments: async (queryEmbedding, options = {}) => {
+    const {
+      threshold = 0.7,
+      limit = 5,
+      categories = null
+    } = options;
+    
+    try {
+      const result = await query(`
+        SELECT 
+          id,
+          title,
+          content,
+          1 - (embedding <=> $1) AS similarity,
+          categories,
+          source,
+          created_at
+        FROM medical_documents 
+        WHERE 
+          ($3::text[] IS NULL OR categories && $3::text[]) AND
+          1 - (embedding <=> $1) > $2
+        ORDER BY embedding <=> $1
+        LIMIT $4
+      `, [queryEmbedding, threshold, categories, limit]);
+      
+      return result.rows;
+    } catch (error) {
+      console.error('Error in similarity search:', error);
+      throw error;
+    }
+  },
+  
+  addMedicalDocument: async (doc) => {
+    try {
+      const result = await query(`
+        INSERT INTO medical_documents 
+        (title, content, source, categories, embedding)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id
+      `, [
+        doc.title,
+        doc.content,
+        doc.source || 'Unknown',
+        doc.categories || [],
+        doc.embedding
+      ]);
+      
+      return result.rows[0].id;
+    } catch (error) {
+      console.error('Error adding medical document:', error);
+      throw error;
+    }
   }
 };
 
@@ -383,7 +480,7 @@ if (isVercel) {
   }, VERCEL_TIMEOUT);
 }
 
-// Export based on environment
+// Export based on environment (keeping your existing interface)
 module.exports = {
   query,
   testConnection,
