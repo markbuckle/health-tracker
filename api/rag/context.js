@@ -20,9 +20,6 @@ export default async function handler(req, res) {
   try {
     console.log('🔍 USER CONTEXT ENDPOINT CALLED (Production)');
     
-    // For now, let's hardcode your user ID for testing
-    const hardcodedUserId = "68401daf362c3d1af8918e62";
-    
     // Import and connect to MongoDB with proper error handling
     let connectToMongoDB, registerCollection, isConnected;
     try {
@@ -65,6 +62,8 @@ export default async function handler(req, res) {
     let user;
     try {
       console.log(`🔍 Querying user: ${hardcodedUserId}`);
+      console.log('🔍 Available collections:', await mongoose.connection.db.listCollections().toArray());
+      console.log('🔍 User count in collection:', await registerCollection.countDocuments());
       
       user = await Promise.race([
         registerCollection.findById(hardcodedUserId).lean(),
