@@ -52,10 +52,14 @@ if (isLocal) {
   // Production configuration (Vercel/Railway/Digital Ocean)
   // Try multiple environment variables in order of preference
   const productionConnectionString = 
-    process.env.POSTGRES_URI ||     // Your current setup
-    process.env.POSTGRES_URL ||     // Railway standard
-    process.env.DATABASE_URL ||     // Vercel/Heroku standard
-    process.env.DB_URL;             // Alternative
+    process.env.DATABASE_URL ||     // Railway's auto-created variable
+    process.env.POSTGRES_URI ||     // Your fallback
+    process.env.POSTGRES_URL;       // Alternative
+
+    console.log('Connection source:', 
+    process.env.DATABASE_URL ? 'DATABASE_URL (Railway)' :
+    process.env.POSTGRES_URI ? 'POSTGRES_URI' : 
+    process.env.POSTGRES_URL ? 'POSTGRES_URL' : 'NONE FOUND');
   
   if (!productionConnectionString) {
     console.error('❌ No production database connection string found!');
