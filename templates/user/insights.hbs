@@ -938,30 +938,36 @@
 
         async function sendToRAG(query) {
           try {
-            // STEP 1: Get user context first
-            console.log('🔍 Getting user context...');
+            // STEP 1: Get current user ID first
+            console.log('Getting current user ID...');
+            const userIdResponse = await fetch("/api/current-user");
+            const { userId } = await userIdResponse.json();
+            
+            // STEP 2: Get user context with userId
+            console.log('Getting user context...');
             let userContext = null;
             
             try {
               const contextResponse = await fetch("/api/rag/context", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: userId })
               });
               
               if (contextResponse.ok) {
                 const contextData = await contextResponse.json();
                 userContext = contextData.userContext;
-                console.log('✅ User context retrieved:', userContext);
+                console.log('User context retrieved:', userContext);
               } else {
-                console.error('❌ Failed to get user context:', contextResponse.status);
+                console.error('Failed to get user context:', contextResponse.status);
               }
             } catch (contextError) {
-              console.error('❌ Error getting user context:', contextError);
+              console.error('Error getting user context:', contextError);
             }
             
-            // STEP 2: Send to RAG with context
-            console.log('🔍 Sending query with context to RAG...');
-            console.log('🔍 User context being sent:', userContext); // Add this debug line
+            // STEP 3: Send to RAG with context
+            console.log('Sending query with context to RAG...');
+            console.log('User context being sent:', userContext);
             
             const response = await fetch("/api/rag/ask", {
               method: "POST",
@@ -970,12 +976,12 @@
               },
               body: JSON.stringify({ 
                 query,
-                userContext: userContext  // Make sure this is explicitly set
+                userContext: userContext
               }),
             });
 
             const data = await response.json();
-            console.log('📋 RAG response:', data);
+            console.log('RAG response:', data);
 
             // Remove typing indicator
             removeTypingIndicator();
@@ -989,7 +995,7 @@
             console.error("Error:", error);
             removeTypingIndicator();
             addMessage(
-              "Sorry, I couldn't process your request. Please try again later.",
+              "Sorry, I couldn't process your request. Please try again.",
               "assistant"
             );
           }
@@ -1178,7 +1184,7 @@
             return Math.round(scaledHeight);
           }
         }
-        
+
         // Info button modal functionality
         const labsInfoButton = labSummaryTab.querySelector('.info-button');
         if (labsInfoButton) {

@@ -3117,6 +3117,13 @@ app.get('/api/test-endpoint', (req, res) => {
 
 app.use("/api/rag", ragRoutes);
 
+app.get('/api/current-user', checkAuth, (req, res) => {
+  res.json({ 
+    userId: req.user._id,
+    authenticated: true 
+  });
+});
+
 server.listen(port, async () => {
   console.log(`Server is running on port ${port}`);
   
