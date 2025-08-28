@@ -938,37 +938,45 @@
 
         async function sendToRAG(query) {
           try {
-            // STEP 1: Get current user ID first
+            // STEP 1: Try to get current user ID
             console.log('Getting current user ID...');
-            const userIdResponse = await fetch("/api/current-user");
-            const { userId } = await userIdResponse.json();
-            
-            // STEP 2: Get user context with userId
-            console.log('Getting user context...');
-            let userContext = null;
+            let userId = null;
             
             try {
-              const contextResponse = await fetch("/api/rag/context", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: userId })
-              });
-              
-              if (contextResponse.ok) {
-                const contextData = await contextResponse.json();
-                userContext = contextData.userContext;
-                console.log('User context retrieved:', userContext);
+              const userIdResponse = await fetch("/api/current-user");
+              if (userIdResponse.ok) {
+                const userData = await userIdResponse.json();
+                userId = userData.userId;
+                console.log('User ID retrieved:', userId);
               } else {
-                console.error('Failed to get user context:', contextResponse.status);
+                console.log('User not authenticated, proceeding without context');
               }
-            } catch (contextError) {
-              console.error('Error getting user context:', contextError);
+            } catch (userError) {
+              console.log('Error getting user ID, proceeding without context:', userError);
             }
             
-            // STEP 3: Send to RAG with context
-            console.log('Sending query with context to RAG...');
-            console.log('User context being sent:', userContext);
+            // STEP 2: Get user context only if we have a userId
+            let userContext = null;
             
+            if (userId) {
+              try {
+                const contextResponse = await fetch("/api/rag/context", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ userId: userId })
+                });
+                
+                if (contextResponse.ok) {
+                  const contextData = await contextResponse.json();
+                  userContext = contextData.userContext;
+                  console.log('User context retrieved:', userContext);
+                }
+              } catch (contextError) {
+                console.error('Error getting user context:', contextError);
+              }
+            }
+            
+            // STEP 3: Send to RAG with context (if available)
             const response = await fetch("/api/rag/ask", {
               method: "POST",
               headers: {
@@ -981,8 +989,7 @@
             });
 
             const data = await response.json();
-            console.log('RAG response:', data);
-
+            
             // Remove typing indicator
             removeTypingIndicator();
 
@@ -991,6 +998,7 @@
 
             // Store sources for info button
             window.lastSources = data.sources;
+            
           } catch (error) {
             console.error("Error:", error);
             removeTypingIndicator();
