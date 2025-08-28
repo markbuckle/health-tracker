@@ -23,8 +23,8 @@
     ],
     "routes": [
         {
-            "src": "/api/simple-test",
-            "dest": "/api/simple-test.js"
+            "src": "/api/feedback",
+            "dest": "/src/index.js"
         },
         {
             "src": "/api/rag/ask",
