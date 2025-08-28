@@ -75,8 +75,9 @@ if (isLocal) {
     ssl: isSupabase ? { rejectUnauthorized: false } : { rejectUnauthorized: false }, // Keep SSL for all production
     max: isVercel ? 5 : 10, // Reduced max connections for Vercel
     idleTimeoutMillis: isVercel ? 10000 : 30000, // Shorter idle timeout for Vercel
-    connectionTimeoutMillis: 15000, // Increased timeout for reliability
+    connectionTimeoutMillis: 30000, // Increased timeout for reliability
     acquireTimeoutMillis: 10000, // How long to wait for a connection from the pool
+    query_timeout: 30000,
   };
   
   console.log('Using production PostgreSQL configuration');

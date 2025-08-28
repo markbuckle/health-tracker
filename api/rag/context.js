@@ -20,13 +20,25 @@ export default async function handler(req, res) {
   try {
     console.log('🔍 USER CONTEXT ENDPOINT CALLED (Production)');
     
+    // Extract userId from request body
+    const { userId } = req.body;
+    
+    if (!userId) {
+      console.log('❌ No userId provided in request');
+      return res.status(400).json({ 
+        error: 'Missing userId', 
+        message: 'userId is required in request body'
+      });
+    }
+    
     // Import and connect to MongoDB with proper error handling
-    let connectToMongoDB, registerCollection, isConnected;
+    let connectToMongoDB, registerCollection, isConnected, mongoose;
     try {
       const mongoModule = await import('../../src/mongodb.js');
       connectToMongoDB = mongoModule.connectToMongoDB;
       registerCollection = mongoModule.registerCollection;
       isConnected = mongoModule.isConnected;
+      mongoose = mongoModule.default || mongoModule.mongoose;
       console.log('📊 MongoDB module imported successfully');
     } catch (importError) {
       console.error('❌ MongoDB import failed:', importError);
@@ -61,12 +73,15 @@ export default async function handler(req, res) {
     // Query user with timeout and proper error handling
     let user;
     try {
-      console.log(`🔍 Querying user: ${hardcodedUserId}`);
-      console.log('🔍 Available collections:', await mongoose.connection.db.listCollections().toArray());
-      console.log('🔍 User count in collection:', await registerCollection.countDocuments());
+      console.log(`🔍 Querying user: ${userId}`);
+      
+      if (mongoose && mongoose.connection && mongoose.connection.db) {
+        console.log('🔍 Available collections:', await mongoose.connection.db.listCollections().toArray());
+        console.log('🔍 User count in collection:', await registerCollection.countDocuments());
+      }
       
       user = await Promise.race([
-        registerCollection.findById(hardcodedUserId).lean(),
+        registerCollection.findById(userId).lean(),
         new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Query timeout')), 5000)
         )
@@ -88,9 +103,6 @@ export default async function handler(req, res) {
       console.log('❌ User not found in database');
       return res.status(404).json({ error: 'User not found' });
     }
-    
-    // Rest of your existing code for processing user data...
-    // (Keep all the familyHistoryDetails, lifestyleDetails, etc. processing)
     
     // Extract family history with full details
     let familyHistoryDetails = [];
