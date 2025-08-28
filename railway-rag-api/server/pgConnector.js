@@ -467,17 +467,12 @@ process.on('SIGTERM', async () => {
 });
 
 // Vercel-specific: Handle function timeout
-if (isVercel) {
-  // Set a timeout to gracefully close connections before Vercel times out the function
-  const VERCEL_TIMEOUT = 25000; // 25 seconds (Vercel free tier has 10s limit, pro has 60s)
-  
+// Don't run Vercel timeout code if we're on Railway
+if (isVercel && !isRailway) {
+  const VERCEL_TIMEOUT = 25000;
   setTimeout(async () => {
     console.log('⏰ Approaching Vercel timeout, closing connections...');
-    try {
-      await utils.end();
-    } catch (error) {
-      console.error('Error during timeout cleanup:', error.message);
-    }
+    await utils.end();
   }, VERCEL_TIMEOUT);
 }
 
