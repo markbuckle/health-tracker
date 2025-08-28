@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
         break;
       case 'error':
         if (buttonText) {
-          buttonText.textContent = 'Try sending feedback again';
+          buttonText.textContent = '';
         }
         toggleBtn.classList.add('error-state');
         toggleBtn.classList.remove('success-state');
