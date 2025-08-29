@@ -249,20 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
-// Additional utility functions for better mobile experience
-function improveScrollingExperience() {
-    // Prevent elastic scroll on mobile nav when menu is open
-    document.addEventListener('touchmove', function(e) {
-        const mobileNav = document.querySelector('.mobile-nav.open');
-        if (mobileNav && !mobileNav.contains(e.target)) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-}
-
-// Initialize scroll improvements
-document.addEventListener('DOMContentLoaded', improveScrollingExperience);
-
 // Export functions for external use if needed
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
