@@ -13,3 +13,4 @@ src/generateSecret.js
 notes.md
 .vercelcopy
 .vercel
+api/rag-vercel/ask.js
