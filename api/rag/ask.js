@@ -1,7 +1,4 @@
-// api/rag/ask.js (optimized with top-level imports)
-// Move imports to module level to avoid repeated loading on cold starts
-const { performRag, performRagWithContext } = require('../lib/medicalKnowledge');
-
+// api/rag/ask.js (updated to call Supabase Edge Function)
 export default async function handler(req, res) {
   // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,14 +18,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const startTime = Date.now();
     const { query, userContext, options } = req.body;
     
-    console.log('Vercel RAG request received:', {
-      query: query?.substring(0, 50) + '...',
-      hasUserContext: !!userContext,
-      timestamp: new Date().toISOString()
-    });
+    console.log('Vercel proxy calling Supabase Edge Function');
+    console.log('Query:', query);
+    console.log('User context provided:', !!userContext);
     
     if (!query) {
       return res.status(400).json({
@@ -37,54 +31,59 @@ export default async function handler(req, res) {
       });
     }
 
-    // Add timeout protection (Vercel free tier has 10s limit)
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Request timeout')), 9000)
-    );
+    // Call Supabase Edge Function
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase configuration missing');
+    }
 
-    // Use context-aware RAG if userContext is provided
-    const ragPromise = userContext 
-      ? performRagWithContext(query, userContext, options || {})
-      : performRag(query, options || {});
-
-    const result = await Promise.race([ragPromise, timeoutPromise]);
-
-    const duration = Date.now() - startTime;
-    console.log('RAG request completed:', {
-      duration: `${duration}ms`,
-      hasResponse: !!result.response,
-      sourcesCount: result.sources?.length || 0
+    const edgeFunctionUrl = `${supabaseUrl}/functions/v1/rag-chat`;
+    
+    const response = await fetch(edgeFunctionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+        'apikey': supabaseAnonKey
+      },
+      body: JSON.stringify({
+        query,
+        userContext,
+        options: options || {}
+      })
     });
 
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Supabase Edge Function error:', response.status, errorData);
+      
+      return res.status(response.status).json({
+        error: 'Edge Function error',
+        message: errorData.error || 'Failed to process query',
+        details: errorData.details || null
+      });
+    }
+
+    const result = await response.json();
+    
     res.status(200).json({
       success: true,
       response: result.response,
       sources: result.sources,
       timestamp: new Date().toISOString(),
-      service: 'vercel',
-      contextUsed: !!userContext,
-      processingTime: `${duration}ms`
+      service: 'supabase-edge',
+      contextUsed: result.contextUsed
     });
 
   } catch (error) {
-    console.error('RAG request error:', {
-      message: error.message,
-      stack: error.stack?.substring(0, 200) + '...'
-    });
+    console.error('Proxy error:', error);
     
-    if (error.message === 'Request timeout') {
-      res.status(504).json({ 
-        success: false,
-        error: 'Request timeout',
-        message: 'The request took too long to process. Please try a simpler query.'
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-        message: 'Failed to process your request',
-        details: error.message
-      });
-    }
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to process your request',
+      details: error.message
+    });
   }
 }
