@@ -1,4 +1,4 @@
-// lib/pgConnector.js - Vercel-optimized version
+// lib/pgConnector.js - Vercel-optimized version with connection pooling
 const { Pool } = require('pg');
 
 // Vercel environment - always production
@@ -11,11 +11,21 @@ const poolConfig = {
   connectionTimeoutMillis: 10000,
 };
 
-const pool = new Pool(poolConfig);
+// Cache the pool to reuse across function invocations
+let cachedPool = null;
 
-// Enhanced query helper function optimized for Vercel
+function getPool() {
+  if (!cachedPool) {
+    cachedPool = new Pool(poolConfig);
+    console.log('Created new database pool');
+  }
+  return cachedPool;
+}
+
+// Enhanced query helper function optimized for Vercel with cached pool
 async function query(text, params) {
   const start = Date.now();
+  const pool = getPool(); // Use cached pool
   
   try {
     let processedParams = params;
@@ -58,10 +68,11 @@ async function query(text, params) {
   }
 }
 
-// Health check function
+// Health check function using cached pool
 async function healthCheck() {
   try {
-    const result = await query('SELECT NOW() as timestamp, 1 as status');
+    const pool = getPool(); // Use cached pool
+    const result = await pool.query('SELECT NOW() as timestamp, 1 as status');
     return {
       status: 'healthy',
       timestamp: result.rows[0].timestamp,
