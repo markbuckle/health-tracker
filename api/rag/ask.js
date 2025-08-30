@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     }
 
     // Import and call the local functions directly
-    const { performRag, performRagWithContext } = require('../../lib/medicalKnowledgeService');
+    const { performRag, performRagWithContext } = require('../lib/medicalKnowledgeService');
     
     const result = userContext 
       ? await performRagWithContext(query, userContext, options || {})
