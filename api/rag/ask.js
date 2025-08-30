@@ -1,4 +1,4 @@
-// api/rag/ask.js
+// api/rag/ask.js (updated to call local Vercel function)
 export default async function handler(req, res) {
   // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,12 +18,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { query, userContext, options } = req.body; // Add userContext here
+    const { query, userContext, options } = req.body;
     
-    console.log('🔍 Vercel proxy received:');
-    console.log('🔍 Query:', query);
-    console.log('🔍 User context provided to proxy:', !!userContext);
-    console.log('🔍 User context details:', userContext ? 'Has data' : 'No data');
+    console.log('Vercel proxy received:');
+    console.log('Query:', query);
+    console.log('User context provided to proxy:', !!userContext);
+    console.log('User context details:', userContext ? 'Has data' : 'No data');
     
     if (!query) {
       return res.status(400).json({
@@ -32,58 +32,37 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log('Proxying RAG request to Railway...');
-
-    const railwayUrl = process.env.RAILWAY_RAG_URL;
-    console.log('Calling Railway API:', railwayUrl);
+    console.log('Calling local Vercel RAG function...');
     
-    const ragResponse = await fetch(`${railwayUrl}/api/rag/ask`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Vercel-Proxy/1.0'
-      },
-      body: JSON.stringify({
-        query,
-        userContext, // IMPORTANT: Forward the user context to Railway
-        options: options || {}
-      })
+    // Import and call the local function directly
+    const { performRag, performRagWithContext } = require('../../lib/medicalKnowledgeService');
+    
+    // Use context-aware RAG if userContext is provided
+    const result = userContext 
+      ? await performRagWithContext(query, userContext, options || {})
+      : await performRag(query, options || {});
+
+    console.log('Local RAG function result:', { 
+      hasResponse: !!result.response,
+      sourcesCount: result.sources?.length || 0
     });
 
-    console.log('🔍 Sent to Railway:', { 
-      query, 
-      hasUserContext: !!userContext,
-      options: options || {} 
-    });
-
-    if (!ragResponse.ok) {
-      const errorData = await ragResponse.json().catch(() => ({}));
-      console.error('Railway API error:', ragResponse.status, errorData);
-      
-      return res.status(ragResponse.status).json({
-        error: 'RAG service error',
-        message: errorData.error || 'Failed to process query',
-        details: errorData.details || null
-      });
-    }
-
-    const result = await ragResponse.json();
-    
     res.status(200).json({
       success: true,
       response: result.response,
       sources: result.sources,
-      timestamp: result.timestamp,
-      service: 'railway',
-      contextUsed: !!userContext // Add this for debugging
+      timestamp: new Date().toISOString(),
+      service: 'vercel-direct',
+      contextUsed: !!userContext
     });
 
   } catch (error) {
-    console.error('Proxy error:', error);
+    console.error('Local RAG function error:', error);
     
     res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to process your request'
+      message: 'Failed to process your request',
+      details: error.message
     });
   }
 }
