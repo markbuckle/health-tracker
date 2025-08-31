@@ -46,6 +46,8 @@
   -webkit-text-fill-color: transparent;
   padding-top: 2rem;
 }
+
+/* Create a separate element for the shine effect */
 .learning-title::before {
   content: attr(data-text);
   position: absolute;
@@ -68,7 +70,7 @@
   color: transparent;
   -webkit-text-fill-color: transparent;
   animation: shine-text-once 3s forwards;
-  animation-delay: 0s; /* Delay before the shine starts */
+  animation-delay: 0s;
 }
 
 @keyframes shine-text-once {
