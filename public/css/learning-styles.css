@@ -30,7 +30,7 @@
 .learning-title {
   font-family: "Poppins-Bold", sans-serif;
   font-size: clamp(30px, 5vw, 42px);
-  margin-bottom: 0.5rem;
+  margin-bottom: 4rem;
   position: relative;
   display: inline-block;
   background-image: linear-gradient(
@@ -52,7 +52,7 @@
   content: attr(data-text);
   position: absolute;
   left: 0;
-  top: 0;
+  top: 32px;
   width: 100%;
   height: 100%;
   background-image: linear-gradient(

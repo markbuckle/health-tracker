@@ -16,4 +16,3 @@ notes.md
 railway-rag-api/archive/
 config/
 *.json
-api/rag-vercel/ask.js

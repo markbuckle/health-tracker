@@ -1144,6 +1144,23 @@
   background: #456b4d;
 }
 
+.ocr-training-note {
+  text-align: center;
+  margin: 1.5rem 1rem;
+  padding: 0.75rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.ocr-training-note p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
 @media screen and (max-width: 991px) {
   .lab-result-card {
     padding: 0.5rem 0.5rem 0 0.5rem;

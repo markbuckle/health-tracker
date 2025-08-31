@@ -9,7 +9,7 @@
 .username-heading {
   margin: 1rem auto 0.3rem 1.5rem;
   font-family: "Poppins-SemiBold", sans-serif;
-  font-size: 24px;
+  font-size: 22px;
 }
 .edit-icon {
   color: #8b8c92;
@@ -1012,7 +1012,7 @@
   }
   .username-heading {
     margin: 1rem auto 0rem 1rem;
-    font-size: 22px;
+    font-size: 20px;
   }
   .family-history-container {
     margin: 0 0.5rem 1rem 0.5rem;
@@ -1068,5 +1068,11 @@
   .tutorial-icon {
     width: 18px;
     height: 18px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+   .username-heading {
+    font-size: 18px;
   }
 }
