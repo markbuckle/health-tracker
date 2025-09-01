@@ -8,7 +8,7 @@
 }
 .username-heading {
   margin: 1rem auto 0.3rem 1.5rem;
-  font-family: "Poppins-SemiBold", sans-serif;
+  font-family: "Poppins-Regular", sans-serif;
   font-size: 22px;
 }
 .edit-icon {
@@ -872,7 +872,7 @@
     justify-content: center;
   }
   .text-block {
-    font-size: 9px;
+    font-size: 10px;
     text-wrap: nowrap;
   }
   .profile-section {
