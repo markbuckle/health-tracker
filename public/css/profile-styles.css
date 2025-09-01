@@ -854,7 +854,7 @@
   }
   .header-container-2 {
     margin-left: 0 !important;
-    padding: 1.1rem !important;
+    padding: 0.7rem !important;
     padding-bottom: 0.5rem !important;
   }
   .in-page-menu {
@@ -1074,5 +1074,11 @@
 @media screen and (max-width: 480px) {
    .username-heading {
     font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 376px) {
+  .text-block {
+    font-size: 9px;
   }
 }
