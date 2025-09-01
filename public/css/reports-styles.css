@@ -149,10 +149,6 @@
     padding-right: 0;
     font-size: 10px;
   }
-  .biomarker-table-top._3-columns {
-    grid-template-columns: 0.25fr 0.1fr 0.2fr 0.7fr;
-    height: 4rem;
-  }
   .html-embed {
     padding: 0 0.25rem;
   }
@@ -163,11 +159,6 @@
   }
   .biomarker-result {
     font-size: 8px;
-  }
-  .table-headers-all {
-    padding: 0.25rem 0rem;
-    grid-template-columns: 0.25fr 0.1fr 0.2fr 0.7fr;
-    height: 2rem;
   }
   .caption-large {
     font-size: 10px;
@@ -200,5 +191,115 @@
     width: 100% !important;
     max-width: 100% !important;
     flex: 0 0 100% !important;
+  }
+  .table-headers._3-columns {
+    grid-template-columns: 1fr 0.3fr 1fr; /* Spread out evenly across 3 columns */
+    padding: 0.25rem 1rem;
+    gap: 1rem; /* Add more spacing between headers */
+  }
+  .table-headers-all {
+    grid-template-columns: 1fr 0.3fr 1fr; /* Match the 3-column layout */
+    padding: 0.25rem 1rem;
+    gap: 1rem;
+  }
+  .table-headers._3-columns .caption-large:nth-child(4),
+  .table-headers-all .caption-large:nth-child(4) {
+    display: none;
+  }
+  .biomarker-container {
+    margin-bottom: 1rem; /* Add space between biomarker entries */
+  }
+  .biomarker-table-top._3-columns {
+    display: grid;
+    grid-template-columns: 1fr 0.3fr 1fr; /* 3 columns to match headers */
+    grid-template-rows: auto auto; /* 2 rows - first for data, second for chart */
+    gap: 1rem 1rem; /* Vertical and horizontal gaps */
+    padding: 0.75rem 1rem;
+    height: auto; /* Remove fixed height */
+    align-items: center;
+  }
+  biomarker-table-top._3-columns .biomarker {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: left;
+    justify-content: flex-start;
+    padding-left: 0;
+    font-size: 12px;
+  }
+  .biomarker-table-top._3-columns .biomarker-dropdown {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+  }
+  .biomarker-table-top._3-columns .biomarker-result {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+    justify-content: flex-end;
+    font-size: 12px;
+    align-self: center; /* Center vertically in grid cell */
+    padding-right: 2.5rem; /* Add slight right padding for better spacing */
+  }
+  /* Position the bar chart in the second row, spanning all columns */
+  .biomarker-table-top._3-columns .html-embed.w-embed {
+    grid-column: 1 / -1; /* Span all columns */
+    grid-row: 2;
+    width: 100%;
+    padding: 0.5rem 0 0 0; /* Add top padding for separation */
+    margin-top: 0.5rem;
+  }
+  /* Ensure the SVG chart takes full width */
+  .biomarker-table-top._3-columns .html-embed.w-embed .svgBoxContainer {
+    width: 100%;
+  }
+  .biomarker-table-top._3-columns .html-embed.w-embed .svgBoxContent {
+    width: 100%;
+    max-width: 100%;
+  }
+  /* Adjust the biomarker dropdown stripes for better mobile display */
+  .biomarker-dropdown {
+    width: auto;
+    min-width: 1.5em;
+  }
+  /* Additional spacing adjustments */
+  .dropdown-content-bottom {
+    padding: 0.5rem;
+  }
+  /* Ensure consistent spacing in the category dropdowns */
+  .category-dropdown-list {
+    padding: 0.25rem;
+  }
+  /* Optional: Add a subtle border to separate the data row from chart row */
+  .biomarker-table-top._3-columns .html-embed.w-embed {
+    border-top: 1px solid #e5e5e5;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .biomarker-table-top._3-columns .biomarker {
+    align-self: center; /* Center vertically in grid cell */
+    padding-left: 1rem; /* Add slight left padding for better spacing */
+    min-height: 2.5rem;
+    padding-top: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .biomarker-table-top._3-columns {
+    padding: 0.5rem;
+    gap: 0rem 0.5rem;
+  }
+  .biomarker-table-top._3-columns .biomarker {
+    font-size: 11px;
+  }
+  .biomarker-table-top._3-columns .biomarker-result {
+    font-size: 11px;
+  }
+  .table-headers._3-columns,
+  .table-headers-all {
+    padding: 0.25rem 0.5rem;
+    gap: 0.5rem;
+  }
+  .caption-large {
+    font-size: 9px;
   }
 }
