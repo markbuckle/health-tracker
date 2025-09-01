@@ -802,6 +802,12 @@ body.menu-open .hero-title {
     pointer-events: none;
     z-index: 5;
   }
+  .footer-nav a::before {
+    display: none !important;
+  }
+  .footer-nav a:hover {
+    padding-left: 1rem !important;
+  }
 }
 
 /* Very small screens */

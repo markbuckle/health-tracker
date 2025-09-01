@@ -30,7 +30,7 @@
 .learning-title {
   font-family: "Poppins-Bold", sans-serif;
   font-size: clamp(30px, 5vw, 42px);
-  margin-bottom: 4rem;
+  margin-bottom: 1rem;
   position: relative;
   display: inline-block;
   background-image: linear-gradient(
@@ -686,10 +686,60 @@
   .learning-section-divider{
     margin: 1rem 0;
   }
-  
-  .learning-title::before {
-    animation-duration: 3.5s; /* Slightly slower on mobile */
+  .learning-title {
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: clamp(30px, 5vw, 42px);
+  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+  background-image: linear-gradient(
+    90deg,
+    var(--green-primary) 0%,
+    var(--green-primary) 100%
+  );
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  padding-top: 2rem;
+}
+.learning-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    var(--green-primary) 0%,
+    var(--green-primary) 45%,
+    
+#ffffff 50%,
+    var(--green-primary) 55%,
+    var(--green-primary) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shine-text-once 3s forwards;
+  animation-duration: 3.5s; /* Slightly slower on mobile */
+}
+
+@keyframes shine-text-once {
+  0% {
+    background-position: -100% 0;
   }
+  100% {
+    background-position: 200% 0;
+  }
+}
+  
 }
 
 @media screen and (max-width: 480px) {
