@@ -595,7 +595,7 @@
   }
   .step-content {
     padding: 1.5rem 1rem !important; /* Remove left padding since number is on top */
-    text-align: center; /* Center the text */
+    text-align: left; /* Center the text */
   }
   .step-title {
     font-size: 18px;
