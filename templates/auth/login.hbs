@@ -4,47 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    {{!-- <link rel="stylesheet" href="/css/styles.css"> --}}
     <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/authentication-styles.css" rel="stylesheet" type="text/css" />
 </head>
 <body class="login-register-body">
     <a href="/" class="authentication-logo" aria-label="Home">
         <img src="images/logo2_1.png" loading="lazy" alt="Company Logo">
-      </a>
+    </a>
     <div class="form-wrap">
         <div class="register-block">
-                <h1 class="heading">Log In</h1>
-                <form action="/login" method="post" class="register-form">
-                    <div class="inner-form-div">
-                        <label for="uname" class="form-label">Username</label>
-                        <input type="text" class="form-input" id="uname" name="uname" placeholder="" required>
-                    </div>
-                    <div class="inner-form-div">
-                        <label for="password" class="form-label">Password</label>
-                        <div class="password-wrap">
-                            <input type="password" class="form-input" id="password" name="password" placeholder="" required>
-                            <div class="password-toggle">
-                                {{> svg/eyeOpen }}
-                                {{> svg/eyeClose }}
-                            </div>
+            <h1 class="heading">Log In</h1>
+            
+            <!-- Alert Container -->
+            <div id="alert-container">
+                {{#if success}}
+                <div class="alert alert-success show">
+                    {{success}}
+                    <button class="alert-dismiss" onclick="dismissAlert(this)">&times;</button>
+                </div>
+                {{/if}}
+                
+                {{#if errors}}
+                <div class="alert alert-error show">
+                    {{#each errors}}
+                    <div>{{this}}</div>
+                    {{/each}}
+                    <button class="alert-dismiss" onclick="dismissAlert(this)">&times;</button>
+                </div>
+                {{/if}}
+            </div>
+            
+            <form action="/login" method="post" class="register-form" id="login-form">
+                <div class="inner-form-div">
+                    <label for="uname" class="form-label">Username</label>
+                    <input type="text" class="form-input" id="uname" name="uname" 
+                           value="{{uname}}" placeholder="" required>
+                </div>
+                <div class="inner-form-div">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" class="form-input" id="password" name="password" placeholder="" required>
+                        <div class="password-toggle">
+                            <!-- Your SVG eye icons here -->
+                            <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg class="eye-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                <line x1="1" y1="1" x2="23" y2="23"/>
+                            </svg>
                         </div>
                     </div>
-                    <div class="button-container">
-                        <button type="submit" class="button-basics auth-buttons button-blue" value="login">Sign In</button>
-                        <div class="standard-text">Dont have a account ?</div>
-                        <button type="button" class="button-basics auth-buttons button-green" onclick="window.location.href='/register'">Sign Up</button>
-                    </div>
-                </form>
+                </div>
+                <div class="button-container">
+                    <button type="submit" class="button-basics auth-buttons button-blue" value="login">Sign In</button>
+                    <div class="standard-text">Don't have an account?</div>
+                    <button type="button" class="button-basics auth-buttons button-green" onclick="window.location.href='/register'">Sign Up</button>
+                </div>
+            </form>
         </div>
     </div>
-        <script>
+
+    <script>
+        // Alert functions
+        function dismissAlert(button) {
+            const alert = button.parentElement;
+            alert.classList.add('dismissing');
+            setTimeout(() => alert.remove(), 300);
+        }
+
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alert-container');
+            container.querySelectorAll('.alert').forEach(alert => alert.remove());
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button class="alert-dismiss" onclick="dismissAlert(this)">&times;</button>
+            `;
+            
+            container.appendChild(alertDiv);
+            setTimeout(() => alertDiv.classList.add('show'), 10);
+        }
+
+        // Password toggle functionality
         document.querySelectorAll('.password-toggle').forEach(toggle => {
             toggle.addEventListener('click', () => {
                 const input = toggle.previousElementSibling;
                 input.type = input.type === 'password' ? 'text' : 'password';
                 toggle.classList.toggle('active');
             });
+        });
+
+        // Form validation
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            const username = document.getElementById('uname').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                e.preventDefault();
+                showAlert('Please fill in all fields', 'error');
+                return false;
+            }
+        });
+
+        // Auto-hide success messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const successAlert = document.querySelector('.alert-success');
+            if (successAlert) {
+                setTimeout(() => {
+                    const dismissBtn = successAlert.querySelector('.alert-dismiss');
+                    if (dismissBtn) dismissAlert(dismissBtn);
+                }, 4000);
+            }
         });
     </script>
 </body>
