@@ -372,6 +372,12 @@
     border: 1px solid #e9ecef;
     border-radius: 6px;
     font-size: 12px;
+    display: none; /* Hidden by default */
+    transition: opacity 0.3s ease;
+}
+
+.password-requirements.show {
+    display: block;
 }
 
 .requirement {

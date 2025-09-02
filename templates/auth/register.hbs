@@ -189,10 +189,34 @@
             
             // Password requirements validation
             if (passwordInput) {
+                const requirementsDiv = document.querySelector('.password-requirements');
+                
                 passwordInput.addEventListener('input', function() {
-                    const isValid = updatePasswordRequirements(this.value);
-                    this.classList.toggle('valid', isValid && this.value.length > 0);
-                    this.classList.toggle('invalid', !isValid && this.value.length > 0);
+                    const password = this.value;
+                    
+                    // Show requirements only when user starts typing
+                    if (password.length > 0) {
+                        requirementsDiv.classList.add('show');
+                        const isValid = updatePasswordRequirements(password);
+                        this.classList.toggle('valid', isValid);
+                        this.classList.toggle('invalid', !isValid);
+                    } else {
+                        // Hide requirements when field is empty
+                        requirementsDiv.classList.remove('show');
+                        this.classList.remove('valid', 'invalid');
+                        // Reset all requirement indicators to default state
+                        document.querySelectorAll('.requirement').forEach(req => {
+                            req.classList.remove('valid', 'invalid');
+                            req.querySelector('.requirement-icon').textContent = '❌';
+                        });
+                    }
+                });
+                
+                // Also show on focus if there's existing text
+                passwordInput.addEventListener('focus', function() {
+                    if (this.value.length > 0) {
+                        requirementsDiv.classList.add('show');
+                    }
                 });
             }
             
