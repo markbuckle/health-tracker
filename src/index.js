@@ -1599,37 +1599,92 @@ function createRecommendations(inputs) {
 // Authentication logic
 
 app.post("/register", async (req, res) => {
-  const data = {
-    fname: req.body.fname,
-    lname: req.body.lname,
-    email: req.body.email,
-    uname: req.body.uname,
-    password: req.body.password,
-    confirmPassword: req.body.confirmPassword,
-  };
+  const { fname, lname, email, uname, password, confirmPassword } = req.body;
 
   try {
-    const existingUser = await registerCollection.findOne({
-      uname: req.body.uname,
+    // Validation
+    const errors = [];
+
+    if (!fname || !lname || !email || !uname || !password || !confirmPassword) {
+      errors.push("All fields are required");
+    }
+
+    if (password !== confirmPassword) {
+      errors.push("Passwords do not match");
+    }
+
+    // Password requirements validation
+    if (password.length < 8) {
+      errors.push("Password must be at least 8 characters");
+    }
+    if (!/\d/.test(password)) {
+      errors.push("Password must contain at least 1 number");
+    }
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push("Password must contain at least 1 special character");
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push("Password must contain at least 1 uppercase letter");
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push("Please enter a valid email address");
+    }
+
+    // Username length validation
+    if (uname.length < 3) {
+      errors.push("Username must be at least 3 characters");
+    }
+
+    // Check for existing user
+    const existingUser = await registerCollection.findOne({ uname });
+    if (existingUser) {
+      errors.push("Username already exists");
+    }
+
+    // Check for existing email
+    const existingEmail = await registerCollection.findOne({ email });
+    if (existingEmail) {
+      errors.push("Email already registered");
+    }
+
+    if (errors.length > 0) {
+      return res.render("auth/register", {
+        errors,
+        fname,
+        lname,
+        email,
+        uname
+      });
+    }
+
+    // Create new user
+    const newUser = new registerCollection({
+      fname,
+      lname,
+      email,
+      uname,
+      password // In production, hash this password
     });
 
-    if (existingUser) {
-      return res.status(400).send("Username already exists");
-    }
-
-    if (req.body.password !== req.body.confirmPassword) {
-      return res.status(400).send("Passwords do not match");
-    }
-
-    const newUser = new registerCollection(data);
     await newUser.save();
 
-    res.status(201).render("auth/login", {
-      naming: req.body.uname,
+    res.render("auth/login", {
+      success: "Registration successful! Please log in.",
+      naming: uname
     });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred during registration");
+    console.error("Registration error:", error);
+    res.render("auth/register", {
+      errors: ["An error occurred during registration. Please try again."],
+      fname: req.body.fname,
+      lname: req.body.lname,
+      email: req.body.email,
+      uname: req.body.uname
+    });
   }
 });
 
@@ -1646,25 +1701,34 @@ app.post("/login", (req, res, next) => {
     
     if (err) { 
       console.error("Login error:", err);
-      return next(err); 
+      return res.render("auth/login", {
+        errors: ["An error occurred. Please try again."],
+        uname: req.body.uname
+      });
     }
+    
     if (!user) { 
       console.log("User not found or incorrect password");
-      return res.redirect('/login'); 
+      return res.render("auth/login", {
+        errors: [info.message || "Invalid username or password"],
+        uname: req.body.uname
+      });
     }
     
     req.logIn(user, async function(err) {
       if (err) { 
         console.error("Session login error:", err);
-        return next(err); 
+        return res.render("auth/login", {
+          errors: ["Login failed. Please try again."],
+          uname: req.body.uname
+        });
       }
+      
       console.log("Login successful for user:", user.uname);
       
       try {
-        // Check if this is the user's first login
         const isFirstLogin = !user.lastLogin;
         
-        // Update lastLogin to current time
         await registerCollection.findByIdAndUpdate(
           user._id,
           { lastLogin: new Date() }
@@ -1679,7 +1743,6 @@ app.post("/login", (req, res, next) => {
         }
       } catch (error) {
         console.error("Error updating lastLogin:", error);
-        // If there's an error, default to profile page
         return res.redirect('/profile');
       }
     });

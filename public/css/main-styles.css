@@ -948,7 +948,7 @@ label[for="customBloodType"] {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease;
-  z-index: 999;
+  z-index: 9999; /* Changed from 999 to 9999 */
   position: fixed;
   inset: 0%;
   justify-content: center;
@@ -963,17 +963,21 @@ label[for="customBloodType"] {
   opacity: 1;
   visibility: visible;
   display: flex;
+  z-index: 999;
 }
 .blood-type-modal .modal-card {
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
+  width: 95%;
+  max-width: 700px; /* Increased from 600px */
+  max-height: 95vh;/*Increased from 90vh to give more space */
+  min-height: 80vh; 
   overflow-y: auto;
+  margin: auto; /* Ensure it's centered */
 }
 .blood-type-modal .modal-description {
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6; /* Slightly increased line height */
   padding-right: 5px;
+  padding-bottom: 10px; /* Add bottom padding */
 }
 .blood-type-table-container {
   overflow-x: auto;
