@@ -25,8 +25,8 @@
                         <div class="password-wrap">
                             <input type="password" class="form-input" id="password" name="password" placeholder="" required>
                             <div class="password-toggle">
-                                <img id="eye-open" alt="" loading="lazy" class="eye-open">
-                                <img id="eye-close" alt="" loading="lazy" class="eye-close">
+                                {{> svg/eyeOpen }}
+                                {{> svg/eyeClose }}
                             </div>
                         </div>
                     </div>
@@ -38,5 +38,14 @@
                 </form>
         </div>
     </div>
+        <script>
+        document.querySelectorAll('.password-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const input = toggle.previousElementSibling;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                toggle.classList.toggle('active');
+            });
+        });
+    </script>
 </body>
 </html>

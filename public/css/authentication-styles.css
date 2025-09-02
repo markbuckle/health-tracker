@@ -262,6 +262,13 @@
   right: 8px;
   transform: translateY(-50%);
   cursor: pointer;
+  color: #828895;
+  transition: color 0.3s ease;
+  padding: 2px;
+}
+
+.password-toggle:hover {
+    color: #00b300;
 }
 
 .password-toggle.active .eye-open {
@@ -276,4 +283,6 @@
   display: block;
 }
 
-
+.password-toggle .eye-open {
+    display: block;
+}
