@@ -1522,5 +1522,49 @@
         
       })();
     </script>
+    <script>
+// Check if we can see any session cookies
+console.log('🔍 Checking session state...');
+console.log('All cookies:', document.cookie);
+
+// Check if session cookie exists
+const hasSessionCookie = document.cookie.includes('connect.sid') || 
+                        document.cookie.includes('session');
+console.log('Has session cookie:', hasSessionCookie);
+
+// Try to get current user with more debugging
+async function debugAuth() {
+  try {
+    console.log('🔍 Testing /api/current-user...');
+    const response = await fetch('/api/current-user', {
+      credentials: 'include',  // Important: include cookies
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
+    if (response.ok) {
+      const userData = await response.json();
+      console.log('✅ User authenticated:', userData);
+    } else if (response.status === 401) {
+      console.log('❌ User not authenticated (401)');
+    } else if (response.status === 302) {
+      console.log('❌ Redirected to login (302)');
+    } else {
+      console.log('❌ Unexpected status:', response.status);
+      const text = await response.text();
+      console.log('Response body:', text);
+    }
+  } catch (error) {
+    console.error('❌ Auth debug error:', error);
+  }
+}
+
+// Run the debug
+debugAuth();
+</script>
   </body>
 </html>

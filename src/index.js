@@ -631,12 +631,15 @@ app.use(
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
-      secure: process.env.NODE_ENV === "production" && process.env.VERCEL,
+      secure: process.env.NODE_ENV === "production" && 
+              process.env.VERCEL &&
+              process.env.FORCE_HTTPS !== 'false',
       httpOnly: true,
       sameSite: 'lax'
     },
     rolling: true,
-    proxy: true
+    proxy: true,
+    name: 'healthlync.session'
   })
 );
 
