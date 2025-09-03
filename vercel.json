@@ -27,6 +27,14 @@
             "dest": "/src/index.js"
         },
         {
+            "src": "/api/current-user",
+            "dest": "/src/index.js"
+        },
+        {
+            "src": "/api/auth-status",
+            "dest": "/src/index.js"
+        },
+        {
             "src": "/api/rag/ask",
             "dest": "/api/rag/ask.js"
         },

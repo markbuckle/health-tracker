@@ -1,4 +1,5 @@
 // api/rag/ask.js (updated to call Supabase Edge Function)
+// api/rag/ask.js (with debugging)
 export default async function handler(req, res) {
   // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,13 +19,20 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('🔍 VERCEL RAG ENDPOINT CALLED');
+    console.log('Environment variables check:');
+    console.log('- NEXT_PUBLIC_SUPABASE_URL:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('- NEXT_PUBLIC_SUPABASE_ANON_KEY:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+    
     const { query, userContext, options } = req.body;
     
-    console.log('Vercel proxy calling Supabase Edge Function');
-    console.log('Query:', query);
-    console.log('User context provided:', !!userContext);
+    console.log('Request details:');
+    console.log('- Query:', query);
+    console.log('- User context provided:', !!userContext);
+    console.log('- Options:', options);
     
     if (!query) {
+      console.log('❌ No query provided');
       return res.status(400).json({
         error: 'Query is required',
         message: 'Please provide a query parameter'
@@ -36,10 +44,22 @@ export default async function handler(req, res) {
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
     if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Supabase configuration missing');
+      console.error('❌ Supabase configuration missing');
+      console.error('SUPABASE_URL present:', !!supabaseUrl);
+      console.error('SUPABASE_ANON_KEY present:', !!supabaseAnonKey);
+      
+      return res.status(500).json({
+        error: 'Configuration error',
+        message: 'Supabase configuration missing',
+        debug: {
+          hasUrl: !!supabaseUrl,
+          hasKey: !!supabaseAnonKey
+        }
+      });
     }
 
     const edgeFunctionUrl = `${supabaseUrl}/functions/v1/rag-chat`;
+    console.log('🔗 Calling Supabase Edge Function:', edgeFunctionUrl);
     
     const response = await fetch(edgeFunctionUrl, {
       method: 'POST',
@@ -55,18 +75,27 @@ export default async function handler(req, res) {
       })
     });
 
+    console.log('📡 Supabase response status:', response.status);
+    console.log('📡 Supabase response ok:', response.ok);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Supabase Edge Function error:', response.status, errorData);
+      console.error('❌ Supabase Edge Function error:', response.status, errorData);
       
       return res.status(response.status).json({
         error: 'Edge Function error',
         message: errorData.error || 'Failed to process query',
-        details: errorData.details || null
+        details: errorData.details || null,
+        supabaseStatus: response.status
       });
     }
 
     const result = await response.json();
+    console.log('✅ Supabase response received:', {
+      hasResponse: !!result.response,
+      hasSources: !!result.sources,
+      contextUsed: result.contextUsed
+    });
     
     res.status(200).json({
       success: true,
@@ -78,12 +107,14 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Proxy error:', error);
+    console.error('❌ Vercel proxy error:', error);
+    console.error('Error stack:', error.stack);
     
     res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to process your request',
-      details: error.message
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
