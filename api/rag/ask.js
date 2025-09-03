@@ -1,5 +1,4 @@
-// api/rag/ask.js (updated to call Supabase Edge Function)
-// api/rag/ask.js (with debugging)
+// api/rag/ask.js - FIXED to use correct database
 export default async function handler(req, res) {
   // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,22 +19,33 @@ export default async function handler(req, res) {
 
   try {
     console.log('🔍 VERCEL RAG ENDPOINT CALLED');
-    console.log('Environment variables check:');
-    console.log('- NEXT_PUBLIC_SUPABASE_URL:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log('- NEXT_PUBLIC_SUPABASE_ANON_KEY:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+    console.log('🔧 Database Configuration Debug:');
+    console.log('- POSTGRES_URI exists:', !!process.env.POSTGRES_URI);
+    console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
+    console.log('- POSTGRES_URI host:', process.env.POSTGRES_URI ? new URL(process.env.POSTGRES_URI).hostname : 'none');
+    console.log('- DATABASE_URL host:', process.env.DATABASE_URL ? new URL(process.env.DATABASE_URL).hostname : 'none');
     
     const { query, userContext, options } = req.body;
     
     console.log('Request details:');
     console.log('- Query:', query);
     console.log('- User context provided:', !!userContext);
-    console.log('- Options:', options);
     
     if (!query) {
-      console.log('❌ No query provided');
       return res.status(400).json({
         error: 'Query is required',
         message: 'Please provide a query parameter'
+      });
+    }
+
+    // ✅ FIXED: Use the EXTERNAL database with medical documents
+    const externalDatabaseUrl = process.env.POSTGRES_URI || process.env.PRODUCTION_POSTGRES_URI;
+    
+    if (!externalDatabaseUrl) {
+      console.error('❌ External database URL not found');
+      return res.status(500).json({
+        error: 'Database configuration missing',
+        message: 'POSTGRES_URI not configured'
       });
     }
 
@@ -44,22 +54,26 @@ export default async function handler(req, res) {
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('❌ Supabase configuration missing');
-      console.error('SUPABASE_URL present:', !!supabaseUrl);
-      console.error('SUPABASE_ANON_KEY present:', !!supabaseAnonKey);
-      
-      return res.status(500).json({
-        error: 'Configuration error',
-        message: 'Supabase configuration missing',
-        debug: {
-          hasUrl: !!supabaseUrl,
-          hasKey: !!supabaseAnonKey
-        }
-      });
+      throw new Error('Supabase configuration missing');
     }
 
     const edgeFunctionUrl = `${supabaseUrl}/functions/v1/rag-chat`;
-    console.log('🔗 Calling Supabase Edge Function:', edgeFunctionUrl);
+    
+    // ✅ FIXED: Pass the CORRECT database connection
+    const requestBody = {
+      query,
+      userContext,
+      options: options || {},
+      // Pass YOUR external database connection
+      databaseConfig: {
+        connectionString: externalDatabaseUrl,  // This points to 117.181.141.111 with your medical docs
+        openaiApiKey: process.env.OPENAI_API_KEY
+      }
+    };
+    
+    console.log('🔗 Calling Supabase Edge Function...');
+    console.log('📍 Using database:', externalDatabaseUrl.substring(0, 50) + '...');
+    console.log('🔑 Has OpenAI key:', !!requestBody.databaseConfig.openaiApiKey);
     
     const response = await fetch(edgeFunctionUrl, {
       method: 'POST',
@@ -68,15 +82,10 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${supabaseAnonKey}`,
         'apikey': supabaseAnonKey
       },
-      body: JSON.stringify({
-        query,
-        userContext,
-        options: options || {}
-      })
+      body: JSON.stringify(requestBody)
     });
 
     console.log('📡 Supabase response status:', response.status);
-    console.log('📡 Supabase response ok:', response.ok);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -92,9 +101,9 @@ export default async function handler(req, res) {
 
     const result = await response.json();
     console.log('✅ Supabase response received:', {
-      hasResponse: !!result.response,
-      hasSources: !!result.sources,
-      contextUsed: result.contextUsed
+      hasResponse: !!result?.response,
+      hasSources: !!result?.sources,
+      sourcesCount: result?.sources?.length || 0
     });
     
     res.status(200).json({
@@ -102,7 +111,7 @@ export default async function handler(req, res) {
       response: result.response,
       sources: result.sources,
       timestamp: new Date().toISOString(),
-      service: 'supabase-edge',
+      service: 'supabase-edge-external-db',
       contextUsed: result.contextUsed
     });
 
@@ -113,8 +122,7 @@ export default async function handler(req, res) {
     res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to process your request',
-      details: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      details: error.message
     });
   }
 }
