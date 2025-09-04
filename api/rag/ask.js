@@ -1,4 +1,4 @@
-// api/rag/ask.js - FIXED to use correct database
+// api/rag/ask.js - MINIMAL FIX: Only change database connection
 export default async function handler(req, res) {
   // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -38,17 +38,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // ✅ FIXED: Use the EXTERNAL database with medical documents
-    const externalDatabaseUrl = process.env.POSTGRES_URI;
-    
-    if (!externalDatabaseUrl) {
-      console.error('❌ External database URL not found');
-      return res.status(500).json({
-        error: 'Database configuration missing',
-        message: 'POSTGRES_URI not configured'
-      });
-    }
-
     // Call Supabase Edge Function
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -59,21 +48,17 @@ export default async function handler(req, res) {
 
     const edgeFunctionUrl = `${supabaseUrl}/functions/v1/rag-chat`;
     
-    // ✅ FIXED: Pass the CORRECT database connection
+    // MINIMAL CHANGE: Tell edge function to use built-in Supabase database instead of external
     const requestBody = {
       query,
       userContext,
       options: options || {},
-      // Pass YOUR external database connection
-      databaseConfig: {
-        externalDatabaseUrl: process.env.POSTGRES_URI,  // This points to 117.181.141.111 with your medical docs
-        openaiApiKey: process.env.OPENAI_API_KEY
-      }
+      // Signal to edge function to use built-in database (not external)
+      useBuiltinDatabase: true
     };
     
     console.log('🔗 Calling Supabase Edge Function...');
-    console.log('📍 Using database:', externalDatabaseUrl.substring(0, 50) + '...');
-    console.log('🔑 Has OpenAI key:', !!requestBody.databaseConfig.openaiApiKey);
+    console.log('📍 Using built-in Supabase database');
     
     const response = await fetch(edgeFunctionUrl, {
       method: 'POST',
@@ -111,7 +96,7 @@ export default async function handler(req, res) {
       response: result.response,
       sources: result.sources,
       timestamp: new Date().toISOString(),
-      service: 'supabase-edge-external-db',
+      service: 'supabase-edge-builtin-db',
       contextUsed: result.contextUsed
     });
 
