@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     }
 
     // ✅ FIXED: Use the EXTERNAL database with medical documents
-    const externalDatabaseUrl = process.env.POSTGRES_URI || process.env.PRODUCTION_POSTGRES_URI;
+    const externalDatabaseUrl = process.env.POSTGRES_URI;
     
     if (!externalDatabaseUrl) {
       console.error('❌ External database URL not found');
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       options: options || {},
       // Pass YOUR external database connection
       databaseConfig: {
-        connectionString: externalDatabaseUrl,  // This points to 117.181.141.111 with your medical docs
+        externalDatabaseUrl: process.env.POSTGRES_URI,  // This points to 117.181.141.111 with your medical docs
         openaiApiKey: process.env.OPENAI_API_KEY
       }
     };
