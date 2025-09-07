@@ -1191,6 +1191,10 @@
     width: 14px;
     height: 14px;
   }
+  .biomarker-modal-content {
+    margin-left: 10rem;
+    width: 75%;
+  }
 }
 
 /* Mobile Responsive Styles for Upload Page */
@@ -1376,7 +1380,7 @@
   .biomarker-modal-content {
     width: 95%;
     margin: 5% auto;
-    margin-top: 4.2rem;
+    margin-top: 8rem;
     padding: 1rem;
     max-height: 85vh;
     overflow-y: auto;
