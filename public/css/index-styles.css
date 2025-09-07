@@ -1137,6 +1137,20 @@
       border: 2px solid #333;
   }
 }
+
+@media screen and (min-width: 2800px) {
+
+  .mobile {
+    max-width: 100%; /* Larger mobile image */
+    margin-top: 2rem;
+  }
+  .use-case-block {
+    min-height: 60vh;
+    height: 60vh;
+    margin-top: -10vh;
+    padding: 0 1.5rem;
+  }
+}
 /* Large Desktop (1400px and above) */
 @media screen and (min-width: 1400px) {
   /* .hover-titles {
@@ -1181,6 +1195,12 @@
     padding: 5rem 3rem;
     height: 115vh !important;
     margin-bottom: 300vh !important;
+  }
+  .use-case-block {
+    min-height: 70vh;
+    height: 70vh;
+    margin-top: -10vh;
+    padding: 0 1.5rem;
   }
 }
 
