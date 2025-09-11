@@ -631,15 +631,12 @@ app.use(
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
-      secure: process.env.NODE_ENV === "production" && 
-              process.env.VERCEL &&
-              process.env.FORCE_HTTPS !== 'false',
+      secure: process.env.NODE_ENV === "production" && process.env.VERCEL,
       httpOnly: true,
       sameSite: 'lax'
     },
     rolling: true,
-    proxy: true,
-    name: 'healthlync.session'
+    proxy: true
   })
 );
 
@@ -769,25 +766,65 @@ app.get("/credits", (req, res) => {
 });
 
 app.get("/profile", checkAuth, (req, res) => {
-  res.render("user/profile", {
+  // Helper functions to check completion status
+  function checkBasicInfoComplete(user) {
+    const profile = user.profile || {};
+    return !!(profile.age && profile.bloodType && profile.bloodType !== 'Unknown');
+  }
+
+  function checkHistoryComplete(user) {
+    const profile = user.profile || {};
+    return !!(profile.personalHistory?.length > 0 || profile.familyHistory?.length > 0);
+  }
+
+  function checkMonitoringComplete(user) {
+    const profile = user.profile || {};
+    return !!(profile.monitoring?.length > 0);
+  }
+
+  function checkLifestyleComplete(user) {
+    const profile = user.profile || {};
+    return !!(profile.lifestyle?.length > 0);
+  }
+
+  function checkMedsComplete(user) {
+    const profile = user.profile || {};
+    return !!(profile.medsandsups?.length > 0);
+  }
+
+  function calculateCompletionPercentage(user) {
+    const checks = [
+      checkBasicInfoComplete(user),
+      checkHistoryComplete(user),
+      checkMonitoringComplete(user),
+      checkLifestyleComplete(user),
+      checkMedsComplete(user)
+    ];
+    const completed = checks.filter(Boolean).length;
+    return Math.round((completed / checks.length) * 100);
+  }
+
+  // Prepare profile data with completion tracking
+  const profileData = {
     fname: req.user.fname,
     lname: req.user.lname,
     uname: req.user.uname,
-    user: req.user, // passes the entire user object
+    user: req.user,
     profile: req.user.profile || {},
     bloodType: [
-      "A+",
-      "A-",
-      "B+",
-      "B-",
-      "O+",
-      "O-",
-      "AB+",
-      "AB-",
-      "Unknown",
-      "Other",
+      "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-", "Unknown", "Other"
     ],
-  });
+    // Add completion tracking
+    basicInfoCompleted: checkBasicInfoComplete(req.user),
+    historyCompleted: checkHistoryComplete(req.user),
+    monitoringCompleted: checkMonitoringComplete(req.user),
+    lifestyleCompleted: checkLifestyleComplete(req.user),
+    medsCompleted: checkMedsComplete(req.user),
+    profileCompletionPercentage: calculateCompletionPercentage(req.user),
+    guidanceDismissed: req.user.guidanceDismissed || false
+  };
+
+  res.render("user/profile", profileData);
 });
 
 // app.get("/upload", checkAuth, async (req, res) => {
@@ -1602,92 +1639,37 @@ function createRecommendations(inputs) {
 // Authentication logic
 
 app.post("/register", async (req, res) => {
-  const { fname, lname, email, uname, password, confirmPassword } = req.body;
+  const data = {
+    fname: req.body.fname,
+    lname: req.body.lname,
+    email: req.body.email,
+    uname: req.body.uname,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+  };
 
   try {
-    // Validation
-    const errors = [];
-
-    if (!fname || !lname || !email || !uname || !password || !confirmPassword) {
-      errors.push("All fields are required");
-    }
-
-    if (password !== confirmPassword) {
-      errors.push("Passwords do not match");
-    }
-
-    // Password requirements validation
-    if (password.length < 8) {
-      errors.push("Password must be at least 8 characters");
-    }
-    if (!/\d/.test(password)) {
-      errors.push("Password must contain at least 1 number");
-    }
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-      errors.push("Password must contain at least 1 special character");
-    }
-    if (!/[A-Z]/.test(password)) {
-      errors.push("Password must contain at least 1 uppercase letter");
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      errors.push("Please enter a valid email address");
-    }
-
-    // Username length validation
-    if (uname.length < 3) {
-      errors.push("Username must be at least 3 characters");
-    }
-
-    // Check for existing user
-    const existingUser = await registerCollection.findOne({ uname });
-    if (existingUser) {
-      errors.push("Username already exists");
-    }
-
-    // Check for existing email
-    const existingEmail = await registerCollection.findOne({ email });
-    if (existingEmail) {
-      errors.push("Email already registered");
-    }
-
-    if (errors.length > 0) {
-      return res.render("auth/register", {
-        errors,
-        fname,
-        lname,
-        email,
-        uname
-      });
-    }
-
-    // Create new user
-    const newUser = new registerCollection({
-      fname,
-      lname,
-      email,
-      uname,
-      password // In production, hash this password
+    const existingUser = await registerCollection.findOne({
+      uname: req.body.uname,
     });
 
+    if (existingUser) {
+      return res.status(400).send("Username already exists");
+    }
+
+    if (req.body.password !== req.body.confirmPassword) {
+      return res.status(400).send("Passwords do not match");
+    }
+
+    const newUser = new registerCollection(data);
     await newUser.save();
 
-    res.render("auth/login", {
-      success: "Registration successful! Please log in.",
-      naming: uname
+    res.status(201).render("auth/login", {
+      naming: req.body.uname,
     });
-
   } catch (error) {
-    console.error("Registration error:", error);
-    res.render("auth/register", {
-      errors: ["An error occurred during registration. Please try again."],
-      fname: req.body.fname,
-      lname: req.body.lname,
-      email: req.body.email,
-      uname: req.body.uname
-    });
+    console.error(error);
+    res.status(500).send("An error occurred during registration");
   }
 });
 
@@ -1704,34 +1686,25 @@ app.post("/login", (req, res, next) => {
     
     if (err) { 
       console.error("Login error:", err);
-      return res.render("auth/login", {
-        errors: ["An error occurred. Please try again."],
-        uname: req.body.uname
-      });
+      return next(err); 
     }
-    
     if (!user) { 
       console.log("User not found or incorrect password");
-      return res.render("auth/login", {
-        errors: [info.message || "Invalid username or password"],
-        uname: req.body.uname
-      });
+      return res.redirect('/login'); 
     }
     
     req.logIn(user, async function(err) {
       if (err) { 
         console.error("Session login error:", err);
-        return res.render("auth/login", {
-          errors: ["Login failed. Please try again."],
-          uname: req.body.uname
-        });
+        return next(err); 
       }
-      
       console.log("Login successful for user:", user.uname);
       
       try {
+        // Check if this is the user's first login
         const isFirstLogin = !user.lastLogin;
         
+        // Update lastLogin to current time
         await registerCollection.findByIdAndUpdate(
           user._id,
           { lastLogin: new Date() }
@@ -1746,6 +1719,7 @@ app.post("/login", (req, res, next) => {
         }
       } catch (error) {
         console.error("Error updating lastLogin:", error);
+        // If there's an error, default to profile page
         return res.redirect('/profile');
       }
     });

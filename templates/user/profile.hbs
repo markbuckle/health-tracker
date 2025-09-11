@@ -71,22 +71,55 @@
       <div class="w-layout-grid main-grid">
         <div class="w-tabs" data-duration-in="300" data-duration-out="100">
           <div class="in-page-menu">
-            <a data-w-tab="Basic Info" class="in-page-link w-inline-block w-tab-link w--current">
-              <div class="text-block">Basic Info</div>
+            <a data-w-tab="Basic Info" class="in-page-link w-inline-block w-tab-link {{#if basicInfoCompleted}}completed{{else}}{{#unless historyCompleted}}w--current{{/unless}}{{/if}}" data-tab="Basic Info">
+                {{#if basicInfoCompleted}}
+                <div class="tab-status completed">✓</div>
+                {{else}}
+                <div class="tab-status {{#unless historyCompleted}}current{{else}}pending{{/unless}}">1</div>
+                {{/if}}
+                <div class="text-block">Basic Info</div>
             </a>
-            <a data-w-tab="History" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block">History</div>
+            
+            <a data-w-tab="History" class="in-page-link w-inline-block w-tab-link {{#if historyCompleted}}completed{{else}}{{#if basicInfoCompleted}}{{#unless monitoringCompleted}}next-recommended w--current{{/unless}}{{/if}}{{/if}}" data-tab="History">
+                {{#if basicInfoCompleted}}{{#unless historyCompleted}}<div class="completion-arrow">Complete this next!<button class="completion-arrow-close" onclick="event.stopPropagation(); hideCompletionArrow(this);">&times;</button></div>{{/unless}}{{/if}}
+                {{#if historyCompleted}}
+                <div class="tab-status completed">✓</div>
+                {{else}}
+                <div class="tab-status {{#if basicInfoCompleted}}{{#unless monitoringCompleted}}current{{else}}pending{{/unless}}{{else}}pending{{/if}}">2</div>
+                {{/if}}
+                <div class="text-block">History</div>
             </a>
-            <a data-w-tab="Monitoring" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block">Monitoring</div>
+            
+            <a data-w-tab="Monitoring" class="in-page-link w-inline-block w-tab-link {{#if monitoringCompleted}}completed{{else}}{{#if historyCompleted}}{{#unless lifestyleCompleted}}next-recommended w--current{{/unless}}{{/if}}{{/if}}" data-tab="Monitoring">
+                {{#if historyCompleted}}{{#unless monitoringCompleted}}<div class="completion-arrow">Complete this next!<button class="completion-arrow-close" onclick="event.stopPropagation(); hideCompletionArrow(this);">&times;</button></div>{{/unless}}{{/if}}
+                {{#if monitoringCompleted}}
+                <div class="tab-status completed">✓</div>
+                {{else}}
+                <div class="tab-status {{#if historyCompleted}}{{#unless lifestyleCompleted}}current{{else}}pending{{/unless}}{{else}}pending{{/if}}">3</div>
+                {{/if}}
+                <div class="text-block">Monitoring</div>
             </a>
-            <a data-w-tab="Lifestyle" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block">Lifestyle</div>
+            
+            <a data-w-tab="Lifestyle" class="in-page-link w-inline-block w-tab-link {{#if lifestyleCompleted}}completed{{else}}{{#if monitoringCompleted}}{{#unless medsCompleted}}next-recommended w--current{{/unless}}{{/if}}{{/if}}" data-tab="Lifestyle">
+                {{#if monitoringCompleted}}{{#unless lifestyleCompleted}}<div class="completion-arrow">Complete this next!<button class="completion-arrow-close" onclick="event.stopPropagation(); hideCompletionArrow(this);">&times;</button></div>{{/unless}}{{/if}}
+                {{#if lifestyleCompleted}}
+                <div class="tab-status completed">✓</div>
+                {{else}}
+                <div class="tab-status {{#if monitoringCompleted}}{{#unless medsCompleted}}current{{else}}pending{{/unless}}{{else}}pending{{/if}}">4</div>
+                {{/if}}
+                <div class="text-block">Lifestyle</div>
             </a>
-            <a data-w-tab="Meds-Sups" class="in-page-link w-inline-block w-tab-link">
-              <div class="text-block">Meds & Sups</div>
+            
+            <a data-w-tab="Meds-Sups" class="in-page-link w-inline-block w-tab-link {{#if medsCompleted}}completed{{else}}{{#if lifestyleCompleted}}next-recommended w--current{{/if}}{{/if}}" data-tab="Meds-Sups">
+                {{#if lifestyleCompleted}}{{#unless medsCompleted}}<div class="completion-arrow">Complete this next!<button class="completion-arrow-close" onclick="event.stopPropagation(); hideCompletionArrow(this);">&times;</button></div>{{/unless}}{{/if}}
+                {{#if medsCompleted}}
+                <div class="tab-status completed">✓</div>
+                {{else}}
+                <div class="tab-status {{#if lifestyleCompleted}}current{{else}}pending{{/if}}">5</div>
+                {{/if}}
+                <div class="text-block">Meds & Sups</div>
             </a>
-          </div>
+        </div>
 
           <div class="w-tab-content">
 
@@ -2094,6 +2127,312 @@
           });
         }
       });
+  </script>
+  <script> // Profile Tab Guidance JavaScript
+    class ProfileTabGuide {
+        constructor() {
+            this.tabOrder = ['Basic Info', 'History', 'Monitoring', 'Lifestyle', 'Meds-Sups'];
+            this.completedTabs = this.getCompletedTabs();
+            this.init();
+        }
+
+        init() {
+            this.updateTabStates();
+            this.setupEventListeners();
+            this.checkGuidanceDismissal();
+        }
+
+        // Get completed tabs from server data or localStorage
+        getCompletedTabs() {
+            // You can replace this with actual server data
+            // Example: return window.profileData?.completedTabs || [];
+            
+            // For now, check if data exists for each tab
+            const completed = [];
+            
+            // Check Basic Info completion
+            if (this.hasBasicInfo()) {
+                completed.push('Basic Info');
+            }
+            
+            // Check History completion
+            if (this.hasHistory()) {
+                completed.push('History');
+            }
+            
+            // Check Monitoring completion
+            if (this.hasMonitoring()) {
+                completed.push('Monitoring');
+            }
+            
+            // Check Lifestyle completion
+            if (this.hasLifestyle()) {
+                completed.push('Lifestyle');
+            }
+            
+            // Check Meds & Sups completion
+            if (this.hasMedsAndSups()) {
+                completed.push('Meds-Sups');
+            }
+            
+            return completed;
+        }
+
+        // Helper methods to check if each section has data
+        hasBasicInfo() {
+            // Check if basic info fields are filled
+            const age = document.getElementById('ageDisplay')?.textContent?.trim();
+            const bloodType = document.getElementById('bloodTypeDisplay')?.textContent?.trim();
+            return age && age !== '-' && age !== 'Birthdate not added' && 
+                  bloodType && bloodType !== '-';
+        }
+
+        hasHistory() {
+            // Check if any history entries exist
+            const personalHistory = document.querySelectorAll('.personal-history-entry').length > 0;
+            const familyHistory = document.querySelectorAll('.family-history-entry').length > 0;
+            return personalHistory || familyHistory;
+        }
+
+        hasMonitoring() {
+            // Check if monitoring data exists
+            const monitoringEntries = document.querySelectorAll('.monitoring-entry').length > 0;
+            return monitoringEntries;
+        }
+
+        hasLifestyle() {
+            // Check if lifestyle data exists
+            const lifestyleEntries = document.querySelectorAll('.lifestyle-entry').length > 0;
+            return lifestyleEntries;
+        }
+
+        hasMedsAndSups() {
+            // Check if meds and supplements data exists
+            const medsEntries = document.querySelectorAll('.medsandsups-entry').length > 0;
+            return medsEntries;
+        }
+
+        updateTabStates() {
+            const tabs = document.querySelectorAll('.in-page-link');
+            const progressFill = document.getElementById('progressBarFill');
+            const progressText = document.getElementById('progressPercentage');
+            
+            if (!tabs.length) return;
+            
+            // Calculate progress
+            const progress = (this.completedTabs.length / this.tabOrder.length) * 100;
+            
+            if (progressFill) {
+                progressFill.style.width = progress + '%';
+            }
+            
+            if (progressText) {
+                progressText.textContent = Math.round(progress) + '%';
+            }
+            
+            // Update tab states
+            tabs.forEach((tab, index) => {
+                const tabName = tab.getAttribute('data-tab');
+                const statusIndicator = tab.querySelector('.tab-status');
+                const arrow = tab.querySelector('.completion-arrow');
+                
+                if (!tabName || !statusIndicator) return;
+                
+                const isCompleted = this.completedTabs.includes(tabName);
+                const isNext = !isCompleted && this.completedTabs.length === index;
+                
+                // Remove all state classes
+                tab.classList.remove('completed', 'next-recommended');
+                statusIndicator.classList.remove('completed', 'current', 'pending');
+                
+                if (isCompleted) {
+                    tab.classList.add('completed');
+                    statusIndicator.classList.add('completed');
+                    statusIndicator.textContent = '✓';
+                    if (arrow) arrow.style.display = 'none';
+                } else if (isNext) {
+                    tab.classList.add('next-recommended');
+                    statusIndicator.classList.add('current');
+                    statusIndicator.textContent = index + 1;
+                    if (arrow) arrow.style.display = 'block';
+                } else {
+                    statusIndicator.classList.add('pending');
+                    statusIndicator.textContent = index + 1;
+                    if (arrow) arrow.style.display = 'none';
+                }
+            });
+            
+            // Hide guidance banner if all tabs completed
+            const banner = document.getElementById('tabGuidanceBanner');
+            if (banner && this.completedTabs.length === this.tabOrder.length) {
+                banner.style.display = 'none';
+            }
+        }
+
+        markTabCompleted(tabName) {
+            if (!this.completedTabs.includes(tabName)) {
+                this.completedTabs.push(tabName);
+                this.updateTabStates();
+                
+                // Save to server or localStorage
+                this.saveCompletedTabs();
+                
+                // Show celebration or next step guidance
+                this.showCompletionFeedback(tabName);
+            }
+        }
+
+        saveCompletedTabs() {
+            // Save to localStorage as fallback
+            localStorage.setItem('profileCompletedTabs', JSON.stringify(this.completedTabs));
+            
+            // TODO: Send to server
+            // fetch('/api/profile/update-completion', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ completedTabs: this.completedTabs })
+            // });
+        }
+
+        showCompletionFeedback(tabName) {
+            const nextTabIndex = this.tabOrder.indexOf(tabName) + 1;
+            
+            if (nextTabIndex < this.tabOrder.length) {
+                const nextTab = this.tabOrder[nextTabIndex];
+                this.showToast(`Great! Now complete the ${nextTab} section.`);
+            } else {
+                this.showToast('Profile completed! Your insights are now fully personalized.');
+            }
+        }
+
+        showToast(message) {
+            // Create a simple toast notification
+            const toast = document.createElement('div');
+            toast.className = 'profile-completion-toast';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                background-color: #5cb15d;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 1000;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        setupEventListeners() {
+            // Listen for form submissions to detect tab completion
+            document.addEventListener('submit', (e) => {
+                const form = e.target;
+                const activeTab = this.getActiveTab();
+                
+                // Mark tab as completed when form is successfully submitted
+                if (form && activeTab) {
+                    // Add a small delay to allow form processing
+                    setTimeout(() => {
+                        this.completedTabs = this.getCompletedTabs(); // Refresh from DOM
+                        this.updateTabStates();
+                    }, 500);
+                }
+            });
+
+            // Listen for tab changes
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.in-page-link')) {
+                    // Update states when switching tabs
+                    setTimeout(() => {
+                        this.completedTabs = this.getCompletedTabs();
+                        this.updateTabStates();
+                    }, 100);
+                }
+            });
+        }
+
+        getActiveTab() {
+            const activeTabElement = document.querySelector('.w-tab-link.w--current');
+            return activeTabElement ? activeTabElement.getAttribute('data-w-tab') : null;
+        }
+
+        checkGuidanceDismissal() {
+            if (localStorage.getItem('tabGuidanceDismissed') === 'true') {
+                const banner = document.getElementById('tabGuidanceBanner');
+                if (banner) {
+                    banner.style.display = 'none';
+                }
+            }
+        }
+
+        // Method to refresh completion status (call this after AJAX updates)
+        refresh() {
+            this.completedTabs = this.getCompletedTabs();
+            this.updateTabStates();
+        }
+    }
+
+    // Global functions for HTML onclick handlers
+    function dismissGuidance() {
+        const banner = document.getElementById('tabGuidanceBanner');
+        if (banner) {
+            banner.style.display = 'none';
+        }
+        localStorage.setItem('tabGuidanceDismissed', 'true');
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        // Only initialize on profile page
+        if (document.querySelector('.in-page-menu')) {
+            window.profileTabGuide = new ProfileTabGuide();
+        }
+    });
+
+    // Export for use in other scripts
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = ProfileTabGuide;
+    }
+
+    // Hide completion arrow
+    function hideCompletionArrow(button) {
+        const arrow = button.closest('.completion-arrow');
+        if (arrow) {
+            arrow.style.display = 'none';
+        }
+    }
+
+    // Hide arrow when clicking outside (updated to prevent conflicts)
+    document.addEventListener('click', function(e) {
+        // Don't hide if clicking on the close button or anywhere inside the arrow
+        if (!e.target.closest('.completion-arrow')) {
+            document.querySelectorAll('.completion-arrow').forEach(arrow => {
+                arrow.style.display = 'none';
+            });
+        }
+        // Stop propagation if clicking the close button specifically
+        if (e.target.classList.contains('completion-arrow-close')) {
+            e.stopPropagation();
+        }
+    });
   </script>
 
 </body>
