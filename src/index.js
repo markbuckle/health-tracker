@@ -631,12 +631,15 @@ app.use(
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
-      secure: process.env.NODE_ENV === "production" && process.env.VERCEL,
+      secure: process.env.NODE_ENV === "production" && 
+              process.env.VERCEL &&
+              process.env.FORCE_HTTPS !== 'false',
       httpOnly: true,
       sameSite: 'lax'
     },
     rolling: true,
-    proxy: true
+    proxy: true,
+    name: 'healthlync.session'
   })
 );
 
@@ -1639,20 +1642,47 @@ function createRecommendations(inputs) {
 // Authentication logic
 
 app.post("/register", async (req, res) => {
-  const data = {
-    fname: req.body.fname,
-    lname: req.body.lname,
-    email: req.body.email,
-    uname: req.body.uname,
-    password: req.body.password,
-    confirmPassword: req.body.confirmPassword,
-  };
+  const { fname, lname, email, uname, password, confirmPassword } = req.body;
 
   try {
-    const existingUser = await registerCollection.findOne({
-      uname: req.body.uname,
-    });
+    // Validation
+    const errors = [];
 
+    if (!fname || !lname || !email || !uname || !password || !confirmPassword) {
+      errors.push("All fields are required");
+    }
+
+    if (password !== confirmPassword) {
+      errors.push("Passwords do not match");
+    }
+
+    // Password requirements validation
+    if (password.length < 8) {
+      errors.push("Password must be at least 8 characters");
+    }
+    if (!/\d/.test(password)) {
+      errors.push("Password must contain at least 1 number");
+    }
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push("Password must contain at least 1 special character");
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push("Password must contain at least 1 uppercase letter");
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push("Please enter a valid email address");
+    }
+
+    // Username length validation
+    if (uname.length < 3) {
+      errors.push("Username must be at least 3 characters");
+    }
+
+    // Check for existing user
+    const existingUser = await registerCollection.findOne({ uname });
     if (existingUser) {
       return res.status(400).send("Username already exists");
     }
@@ -1661,15 +1691,30 @@ app.post("/register", async (req, res) => {
       return res.status(400).send("Passwords do not match");
     }
 
-    const newUser = new registerCollection(data);
+    // Create new user
+    const newUser = new registerCollection({
+      fname,
+      lname,
+      email,
+      uname,
+      password // In production, hash this password
+    });
+
     await newUser.save();
 
-    res.status(201).render("auth/login", {
-      naming: req.body.uname,
+    res.render("auth/login", {
+      success: "Registration successful! Please log in.",
+      naming: uname
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred during registration");
+    console.error("Registration error:", error);
+    res.render("auth/register", {
+      errors: ["An error occurred during registration. Please try again."],
+      fname: req.body.fname,
+      lname: req.body.lname,
+      email: req.body.email,
+      uname: req.body.uname
+    });
   }
 });
 
@@ -1686,18 +1731,28 @@ app.post("/login", (req, res, next) => {
     
     if (err) { 
       console.error("Login error:", err);
-      return next(err); 
+      return res.render("auth/login", {
+        errors: ["An error occurred. Please try again."],
+        uname: req.body.uname
+      });
     }
     if (!user) { 
       console.log("User not found or incorrect password");
-      return res.redirect('/login'); 
+      return res.render("auth/login", {
+        errors: [info.message || "Invalid username or password"],
+        uname: req.body.uname
+      });
     }
     
     req.logIn(user, async function(err) {
       if (err) { 
         console.error("Session login error:", err);
-        return next(err); 
+        return res.render("auth/login", {
+          errors: ["Login failed. Please try again."],
+          uname: req.body.uname
+        });
       }
+      
       console.log("Login successful for user:", user.uname);
       
       try {

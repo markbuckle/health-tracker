@@ -2267,6 +2267,7 @@
             if (banner && this.completedTabs.length === this.tabOrder.length) {
                 banner.style.display = 'none';
             }
+            this.updateAddButtonHighlights();
         }
 
         markTabCompleted(tabName) {
@@ -2367,6 +2368,14 @@
                     }, 100);
                 }
             });
+            
+            // Listen for add button clicks to remove highlights
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('[data-w-id*="-1234"]')) {
+                    // Remove highlight when add button is clicked
+                    e.target.closest('[data-w-id*="-1234"]').classList.remove('highlight-add-button');
+                }
+            });
         }
 
         getActiveTab() {
@@ -2388,6 +2397,47 @@
             this.completedTabs = this.getCompletedTabs();
             this.updateTabStates();
         }
+        updateAddButtonHighlights() {
+          // Remove existing highlights
+          document.querySelectorAll('.highlight-add-button').forEach(btn => {
+              btn.classList.remove('highlight-add-button');
+          });
+
+          // History tab logic
+          const personalHistoryEntries = document.querySelectorAll('.personal-history-entry').length;
+          const familyHistoryEntries = document.querySelectorAll('.family-history-entry').length;
+          
+          const personalHistoryBtn = document.querySelector('[data-w-id="personalHistory-1234"]');
+          const familyHistoryBtn = document.querySelector('[data-w-id="familyHistory-1234"]');
+
+          // If no personal history, highlight personal history button
+          if (personalHistoryEntries === 0 && personalHistoryBtn) {
+              personalHistoryBtn.classList.add('highlight-add-button');
+          }
+          // If personal history exists but no family history, highlight family history button
+          else if (personalHistoryEntries > 0 && familyHistoryEntries === 0 && familyHistoryBtn) {
+              familyHistoryBtn.classList.add('highlight-add-button');
+          }
+
+          // Similar logic for other tabs
+          const monitoringEntries = document.querySelectorAll('.monitoring-entry').length;
+          const monitoringBtn = document.querySelector('[data-w-id="Monitoring-1234"]');
+          if (monitoringEntries === 0 && monitoringBtn) {
+              monitoringBtn.classList.add('highlight-add-button');
+          }
+
+          const lifestyleEntries = document.querySelectorAll('.lifestyle-entry').length;
+          const lifestyleBtn = document.querySelector('[data-w-id="Lifestyle-1234"]');
+          if (lifestyleEntries === 0 && lifestyleBtn) {
+              lifestyleBtn.classList.add('highlight-add-button');
+          }
+
+          const medsEntries = document.querySelectorAll('.medsandsups-entry').length;
+          const medsBtn = document.querySelector('[data-w-id="MedsAndSups-1234"]');
+          if (medsEntries === 0 && medsBtn) {
+              medsBtn.classList.add('highlight-add-button');
+          }
+      }
     }
 
     // Global functions for HTML onclick handlers

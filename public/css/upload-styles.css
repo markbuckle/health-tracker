@@ -1160,6 +1160,182 @@
   color: #64748b;
   line-height: 1.4;
 }
+/* Upload tabs styled like profile tabs - Fixed version */
+.in-page-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin-top: 10px;
+    margin-bottom: 0.5rem;
+    margin-left: 0;
+    margin-right: 0;
+    gap: 0.4rem;
+    contain: layout;
+}
+.in-page-link {
+    color: #1c1c1c !important;
+    background-color: #e1e6f0 !important;
+    border: 1px solid #b7b7b7 !important;
+    border-radius: 100px !important;
+    flex: none !important;
+    width: auto !important;
+    min-width: 4rem !important;
+    text-align: center !important;
+    margin-left: 0 !important;
+    margin-right: 0.4em !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    transition: background-color 0.3s ease !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    font-family: inherit !important;
+    max-width: 100% !important;
+}
+.in-page-link:hover {
+    background-color: #b8b7b7 !important;
+}
+.in-page-link.w--current {
+    background-color: #cfcfcf !important;
+    color: rgb(18, 18, 18) !important;
+}
+.in-page-link.w--current:hover {
+    background-color: #cfcfcf !important;
+}
+.upload-tab-number {
+    background-color: white !important;
+    color: #488e49 !important;
+    border: 1px solid #488e49 !important;
+    border-radius: 50% !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.7rem !important;
+    font-weight: bold !important;
+    margin-right: 0.4rem !important;
+    flex-shrink: 0 !important;
+    font-family: "Poppins-SemiBold", sans-serif !important;
+    box-sizing: border-box !important;
+}
+.upload-tab-highlight {
+    background-color: #fff3cd !important;
+    border-color: #ffc107 !important;
+    color: #856404 !important;
+    animation: gentle-pulse-upload 2s infinite;
+}
+.upload-tab-highlight .upload-tab-number {
+    background-color: #ffffff !important;
+    color: #41b149fe !important;
+    border: 1px solid #41b149fe !important;
+}
+.upload-tab-highlight.w--current {
+    background-color: #fff3cd !important;
+}
+.upload-tab-completed {
+    background-color: #e8f5e8 !important;
+    border-color: #5cb15d !important;
+    color: #2d5a2e !important;
+}
+.upload-tab-completed .upload-tab-number {
+    background-color: #5cb15d !important;
+    color: white !important;
+    font-size: 0 !important; /* Hide the number */
+}
+.upload-tab-completed .upload-tab-number::after {
+    content: "✓" !important;
+    font-size: 0.7rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.file-output-message {
+    position: absolute;
+    /* position: relative; */
+    top: -3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #5cb15d;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+.file-output-message::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 0.5rem solid transparent;
+    border-top-color: #5cb15d;
+}
+.file-output-message-close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 11;
+}
+.file-output-message-close:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.file-output-tooltip {
+    position: absolute;
+    top: -2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #5cb15d;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    display: none;
+}
+.file-output-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 0.5rem solid transparent;
+    border-top-color: #5cb15d;
+}
+
+@keyframes gentle-pulse-upload {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.1);
+    }
+}
+
+#fileOutputTab {
+    position: relative;
+}
 
 @media screen and (max-width: 991px) {
   .lab-result-card {
@@ -1429,7 +1605,25 @@
     font-size: 0.9rem; /* Smaller mobile heading */
     margin-bottom: 0.5rem;
   }
-  
+  .in-page-menu {
+          margin: 0.5rem 0rem 0.5rem 0.5rem; /* Adjusted mobile margins */
+          gap: 0.25rem;
+  }
+  .in-page-link {
+      padding: 0.2rem 0.6rem;
+      font-size: 0.85rem;
+  }
+  .upload-tab-number {
+      width: 0.9rem;
+      height: 0.9rem;
+      font-size: 0.65rem;
+      margin-right: 0.3rem;
+  }
+  .file-output-message {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.3rem;
+      margin-left: 0.3rem;
+  }
 }
 
 /* Very small screens */

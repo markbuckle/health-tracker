@@ -106,14 +106,20 @@
     <div class="w-layout-grid main-grid">
       <div data-duration-in="300" data-duration-out="100" data-current="All projects" data-easing="ease"
         class="tabs w-tabs">
-        <div class="in-page-menu w-tab-menu">
-          <a data-w-tab="Uploads" class="in-page-link w-inline-block w-tab-link w--current">
-            <div class="text-block">Upload Files</div>
-          </a>
-          <a data-w-tab="Output" class="in-page-link w-inline-block w-tab-link">
-            <div class="text-block">File Output</div>
-          </a>
-        </div>
+          <div class="in-page-menu w-tab-menu">
+              <a data-w-tab="Uploads" class="in-page-link w-inline-block w-tab-link w--current" id="uploadFilesTab">
+                  <div class="upload-tab-number">1</div>
+                  <div class="text-block">Upload Files</div>
+              </a>
+              <a data-w-tab="Output" class="in-page-link w-inline-block w-tab-link" id="fileOutputTab">
+                <div class="file-output-message" id="fileOutputMessage" style="display: none;">
+                    See your file output here
+                    <button class="file-output-message-close" onclick="event.stopPropagation(); hideFileOutputMessage();">&times;</button>
+                </div>
+                <div class="upload-tab-number">2</div>
+                <div class="text-block">File Output</div>
+              </a>
+          </div>
 
         <div class="labs-content w-tab-content">
 
@@ -1116,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log(`Max file size: ${isLocalEnvironment ? '200MB' : '50MB'}`);
   console.log(`Progress tracking: ${isLocalEnvironment ? 'WebSocket (Real-time)' : 'Simulated'}`);
 });  
-</script>
+  </script>
   <script> // Biomarker editor
     window.showBiomarkerDetails = function (name, value, unit, range, sourceDoc) {
       const modal = document.getElementById('biomarkerDetailsModal');
@@ -1559,7 +1565,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   </script>
-  <!-- Add this script at the VERY END of your file, just before the closing </body> tag -->
   <script>
     (function() {
       // Wait for the page to be fully loaded
@@ -1686,7 +1691,151 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
     });
-</script>
+  </script>
+  <script> // Upload tab state management
+    class UploadTabGuide {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        this.updateTabStates();
+        this.setupEventListeners();
+        this.debugFileDetection();
+      }
+
+      updateTabStates() {
+        const uploadFilesTab = document.getElementById('uploadFilesTab');
+        const fileOutputTab = document.getElementById('fileOutputTab');
+        const fileOutputMessage = document.getElementById('fileOutputMessage');
+        
+        const hasUploadedFiles = this.hasFiles();
+        console.log('=== UPDATE TAB STATES DEBUG ===');
+        console.log('fileOutputMessage element:', fileOutputMessage);
+        console.log('hasUploadedFiles:', hasUploadedFiles);
+
+        if (!hasUploadedFiles) {
+          if (uploadFilesTab) {
+            uploadFilesTab.classList.add('upload-tab-highlight');
+            uploadFilesTab.classList.remove('upload-tab-completed');
+          }
+          if (fileOutputMessage) fileOutputMessage.style.display = 'none';
+        } else {
+          if (uploadFilesTab) {
+            uploadFilesTab.classList.remove('upload-tab-highlight');
+            uploadFilesTab.classList.add('upload-tab-completed');
+          }
+          if (fileOutputMessage) {
+            fileOutputMessage.style.display = 'inline-block';
+            console.log('Setting message to display: inline-block');
+            console.log('Message computed style:', window.getComputedStyle(fileOutputMessage).display);
+          }
+        }
+      }
+
+      hasFiles() {
+        const fileRows = document.querySelectorAll(
+          '.file-list-row, .upload-entry, .file-item, .lab-result-card, ' +
+          'tbody tr, .uploaded-documents-list .file-list-row'
+        );
+        
+        const uploadedDocsSection = document.querySelector('.uploaded-documents-list');
+        const hasFileTable = uploadedDocsSection && uploadedDocsSection.children.length > 1;
+        
+        const noFilesMessage = document.querySelector('.no-files-message');
+        const hasNoFilesMessage = noFilesMessage && noFilesMessage.style.display !== 'none';
+        
+        console.log('File detection:', {
+          fileRows: fileRows.length,
+          hasFileTable: hasFileTable,
+          hasNoFilesMessage: hasNoFilesMessage
+        });
+        
+        return fileRows.length > 0 && !hasNoFilesMessage;
+      }
+
+      debugFileDetection() {
+        console.log('=== FILE DETECTION DEBUG ===');
+        console.log('All file rows:', document.querySelectorAll('.file-list-row'));
+        console.log('Lab result cards:', document.querySelectorAll('.lab-result-card'));
+        console.log('Upload entries:', document.querySelectorAll('.upload-entry'));
+        console.log('File items:', document.querySelectorAll('.file-item'));
+        console.log('Uploaded docs list:', document.querySelector('.uploaded-documents-list'));
+        console.log('No files message:', document.querySelector('.no-files-message'));
+        console.log('Has files result:', this.hasFiles());
+      }
+
+      setupEventListeners() {
+        // Listen for file uploads to update states
+        const uploadForm = document.querySelector('form[enctype="multipart/form-data"]');
+        if (uploadForm) {
+          uploadForm.addEventListener('submit', () => {
+            setTimeout(() => {
+              this.updateTabStates();
+            }, 1000);
+          });
+        }
+
+        // Listen for tab changes
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('.w-tab-link')) {
+            setTimeout(() => {
+              this.updateTabStates();
+            }, 100);
+          }
+        });
+
+        // Listen for file deletions
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('.delete-file-button, .delete-button')) {
+            setTimeout(() => {
+              this.updateTabStates();
+            }, 500);
+          }
+        });
+
+        // Listen for successful file uploads via page reload detection
+        window.addEventListener('load', () => {
+          this.updateTabStates();
+        });
+
+        // MOVED INSIDE THE CLASS - Hide message when clicking outside
+        document.addEventListener('click', (e) => {
+          const fileOutputMessage = document.getElementById('fileOutputMessage');
+          if (fileOutputMessage && fileOutputMessage.style.display !== 'none') {
+            if (!e.target.closest('.file-output-message')) {
+              hideFileOutputMessage();
+            }
+          }
+        });
+
+        // Handle close button clicks
+        document.addEventListener('click', (e) => {
+          if (e.target.classList.contains('file-output-message-close')) {
+            e.stopPropagation();
+            hideFileOutputMessage();
+          }
+        });
+      }
+    }
+
+    // Global function to hide the file output message
+    function hideFileOutputMessage() {
+      const fileOutputMessage = document.getElementById('fileOutputMessage');
+      if (fileOutputMessage) {
+        fileOutputMessage.style.display = 'none';
+      }
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Upload tab guide initializing...');
+      if (document.querySelector('.w-tab-menu')) {
+        window.uploadTabGuide = new UploadTabGuide();
+        console.log('Upload tab guide initialized');
+      }
+    });
+  </script>
 </body>
 
 </html>
