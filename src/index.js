@@ -18,7 +18,8 @@ require("dotenv").config();
 // const EventEmitter = require('events'); // for the processing files modal
 // const processEmitter = new EventEmitter(); // for the processing files modal
 const WebSocket = require("ws");
-const { calculateRangePositions } = require("../public/js/rangeCalculations");
+// const { calculateRangePositions } = require("../public/js/rangeCalculations");
+const { calculateRangePositions, calculateAdaptiveRangePositions } = require("../public/js/rangeCalculations");
 const { biomarkerData, markerCategories, getRecommendableBiomarkers } = require("./parsers/biomarkerData");
 const { Resend } = require("resend"); // npm install resend
 const ragRoutes = require("./db/routes/ragRoutes");
@@ -392,8 +393,17 @@ hbs.registerHelper("multiply", function (a, b) {
   return a * b;
 });
 
-hbs.registerHelper("calculateRangeScaling", function (min, max) {
-  return calculateRangePositions(parseFloat(min), parseFloat(max));
+// hbs.registerHelper("calculateRangeScaling", function (min, max) {
+//   return calculateRangePositions(parseFloat(min), parseFloat(max));
+// });
+hbs.registerHelper("calculateRangeScaling", function (min, max, value) {
+  // First, add the adaptive scaling function if you haven't already
+  if (typeof calculateAdaptiveRangePositions === 'undefined') {
+    // You need to add the adaptive function here or import it
+    return calculateRangePositions(parseFloat(min), parseFloat(max));
+  }
+  
+  return calculateAdaptiveRangePositions(parseFloat(min), parseFloat(max), parseFloat(value));
 });
 
 hbs.registerHelper("concat", function (...args) {
@@ -1053,7 +1063,7 @@ app.get("/insights", checkAuth, async (req, res) => {
     // Define biomarkers from your existing biomarkerData
     const biomarkers = Object.keys(biomarkerData);
 
-    // Now this will work
+    // Calculate biomarker summary
     const biomarkerSummary = calculateBiomarkerSummary(user.files, biomarkers);
 
     // Calculate all inputs in one object
@@ -1106,6 +1116,22 @@ app.get("/insights", checkAuth, async (req, res) => {
   } catch (error) {
     console.error("Error generating insights:", error);
     res.status(500).send("Error loading insights page");
+  }
+});
+
+app.get("/chatbot", checkAuth, async (req, res) => {
+  try {
+    const user = await registerCollection.findById(req.user._id);
+
+    res.render("user/chatbot", {
+      naming: req.user.uname,
+      fname: req.user.fname,
+      lname: req.user.lname,
+      user: req.user
+    });
+  } catch (error) {
+    console.error("Error loading chatbot page:", error);
+    res.status(500).send("Error loading chatbot page");
   }
 });
 

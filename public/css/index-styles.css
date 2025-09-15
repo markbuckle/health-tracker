@@ -1173,7 +1173,7 @@
   .btn-primary {
     width: 10rem;
     padding: 1.2rem 2.5rem;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
   .quote-1 {
     font-size: 2.2rem;
@@ -1215,7 +1215,7 @@
   .btn-primary {
     width: 8rem;
     padding: 1rem 2rem;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     margin-top: 0.75rem;
   }
   .quote-1 {
@@ -1241,7 +1241,7 @@
   }
   .btn-primary {
     padding: 0.9rem 1.8rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
   .quote-1 {
     font-size: 1.8rem;
@@ -1339,7 +1339,7 @@
     margin-bottom: 2rem !important;
     width: auto !important;
     max-width: none !important;
-    font-size: 1rem;
+    font-size: 0.9rem;
     padding: 0.6rem 1.4rem;
   }
   .quote-container-1,

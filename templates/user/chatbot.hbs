@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Insights</title>
+    <title>Chatbot</title>
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/user-styles.css" rel="stylesheet" type="text/css" />
@@ -59,7 +59,7 @@
       <a
         id="Insights"
         href="/insights"
-        class="page-link w-inline-block w--current"
+        class="page-link w-inline-block"
       >
         <img
           src="images/layout.svg"
@@ -74,7 +74,7 @@
       <a
         id="Chatbot"
         href="/chatbot"
-        class="page-link w-inline-block"
+        class="page-link w-inline-block w--current"
       >
         <img
           src="images/chatbot.svg"
@@ -104,9 +104,39 @@
     <section class="demo-header">
       <div class="header-container-2">
         <div>
-          <h2 class="heading2">Insights Dashboard</h2>
+          <h2 class="heading2">Chatbot</h2>
           <h3 class="subheading"></h3>
           <div class="spacer-block"></div>
+        </div>
+        <!-- Ask Tab Notification - Hidden by default -->
+        <div id="askTabNotification" class="ask-tab-notification" style="display: none;">
+          <div class="notification-container">
+            <div class="notification-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="notification-content">
+              <div class="notification-title">Reed is a work in progress</div>
+              <div class="notification-message">
+                Our AI health assistant is currently being trained and our database is small. We plan to improve Reed's knowledge base soon!
+              </div>
+            </div>
+            {{!-- <div class="notification-content">
+              <div class="notification-title">Reed is Temporarily Unavailable</div>
+              <div class="notification-message">
+                Our AI health assistant is currently experiencing technical difficulties in the production environment. We're working to restore full functionality soon. Thank you for your patience!
+              </div>
+            </div> --}}
+            <button class="notification-close" aria-label="Close notification">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -118,489 +148,79 @@
             <!-- Tab Menu -->
             <div class="in-page-menu w-tab-menu">
               <a
-                data-w-tab="LabsSummary"
-                class="in-page-link w-inline-block w-tab-link w--current"
-              >
-                <div class="text-block">Labs</div>
-              </a>
-              <a
-                data-w-tab="Scores"
+                data-w-tab="Ask"
                 class="in-page-link w-inline-block w-tab-link"
               >
-                <div class="text-block">Scores</div>
-              </a>
-              <a
-                data-w-tab="Actions"
-                class="in-page-link w-inline-block w-tab-link"
-              >
-                <div class="text-block">Actions</div>
+                <div class="text-block">Ask</div>
               </a>
             </div>
 
             <!-- Tab Content -->
             <div class="w-tab-content">
-              <!-- Labs Summary Tab -->
-              <div data-w-tab="LabsSummary" class="w-tab-pane w--tab-active">
-                <div class="wellness-summary-card">
-                  <!-- Hidden data element to store lab values -->
-                  <div 
-                    id="labSummaryData" 
-                    data-labs="{{json biomarkerSummary}}" 
-                    style="display: none">
-                  </div>
 
-                  <div class="labs-summary-header">
-                    <div class="labs-title-wrapper">
-                      <h2 class="insights-title">Labs Summary</h2>
-                      {{!-- <button class="info-button" aria-label="Show labs information">
-                        {{> svg/info}}
-                      {{!-- </button> --}} 
-                    </div>
-                  </div>
-
-                  <div class="lab-summary-container">
-                    {{#if biomarkerSummary}}
-                    <div class="lab-status-card">
-                      {{!-- <h3 class="lab-status-title">Labs Summary</h3> --}}
-                      
-                      <!-- Stats Container -->
-                      <div class="labs-stats-container">
-                        <!-- In Range -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number in-range" id="inRangeCount">
-                            <span class="count-number">{{biomarkerSummary.inRange}}</span>
-                          </div>
-                          <div class="lab-stat-label">In Range</div>
-                        </div>
-
-                        <!-- Improving -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number improving" id="improvingCount">
-                            <span class="count-number">{{biomarkerSummary.improving}}</span>
-                          </div>
-                          <div class="lab-stat-label">Improving</div>
-                        </div>
-
-                         <!-- Out of Range -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number out-of-range" id="outOfRangeCount">
-                            <span class="count-number">{{biomarkerSummary.outOfRange}}</span>
-                          </div>
-                          <div class="lab-stat-label">Out of Range</div>
-                        </div>
-
-                         <!-- Declining -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number declining" id="decliningCount">
-                            <span class="count-number">{{biomarkerSummary.declining}}</span>
-                          </div>
-                          <div class="lab-stat-label">Declining</div>
-                        </div>
-                      </div>
-
-                      <!-- Stats Chart -->
-                     <div class="lab-stats-chart {{#if (allZero biomarkerSummary)}}empty-state{{/if}}">
-                        <div class="chart-container">
-                          <!-- In Range Bar -->
-                          <div class="chart-bar in-range" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}180px{{/if}}; width: 22%;">
-                          </div>
-                          <!-- Improving Bar -->
-                          <div class="chart-bar improving" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
-                          </div>
-                          <!-- Out of Range Bar -->
-                          <div class="chart-bar out-of-range" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.outOfRange biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
-                          </div>
-                          <!-- Declining Bar -->
-                          <div class="chart-bar declining" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.declining biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
-                          </div>
-                        </div>
-                        <div class="chart-labels">
-                          <div class="chart-label">In Range</div>
-                          <div class="chart-label">Improving</div>
-                          <div class="chart-label">Out of Range</div>
-                          <div class="chart-label">Declining</div>
-                        </div>
-                        
-                        {{#if (allZero biomarkerSummary)}}
-                        <div class="empty-state-text">Upload lab results to see your biomarker data</div>
-                        {{/if}}
-                      </div>
-
-                      <!-- Action button -->
-                      <a href="/reports" class="lab-summary-action-btn">
-                        View all <span class="arrow-icon">→</span>
-                      </a>
-                    </div>
-                    {{else}}
-                    <div class="no-data-message">
-                      <p>No lab data available yet. Upload lab results to see your health metrics.</p>
-                      <a href="/upload" class="lab-summary-action-btn">Upload Labs</a>
-                    </div>
-                    {{/if}}
-                    <!-- Recent Labs Section -->
-                    <div class="recent-labs-section">
-                      <h3 class="recent-labs-title">Recent Lab Results</h3>
-                      
-                      {{#if recentFiles}}
-                        <div class="recent-labs-list">
-                          {{#each recentFiles}}
-                            <div class="recent-lab-item">
-                              <div class="lab-file-name">{{this.originalName}}</div>
-                              <div class="lab-align">
-                                <div class="lab-date">{{formatDate this.testDate}}</div>
-                                <div class="lab-stats">
-                                  <span class="lab-stat in-range">{{countInRange this.labValues}} in range</span>
-                                  <span class="lab-stat out-of-range">{{countOutOfRange this.labValues}} out of range</span>
-                                </div>
-                                <a href="/upload?tab=Output" class="view-lab-link">View</a>
-                              </div>
-                            </div>
-                          {{/each}}
-                        </div>
-                      {{else}}
-                        <div class="no-recent-labs">
-                          <p>No lab results uploaded yet.</p>
-                          <a href="/upload" class="upload-labs-btn">Upload Labs</a>
-                        </div>
-                      {{/if}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Labs Info Modal -->
-              <div class="modal-wrapper labs-info-modal">
-                <div class="modal-background"></div>
-                <div class="modal-card">
-                  <div class="modal-header">
-                    <a class="modal-return-button w-inline-block w--current" aria-current="page">
-                      {{> svg/backArrow}}
-                    </a>
-                    <h1 class="modal-button">Labs Summary Information</h1>
-                  </div>
-
-                  <div class="modal-description">
-                    <p>This summary provides an overview of your lab biomarkers:</p>
-                    <ul>
-                      <li><strong>In Range:</strong> The number of biomarkers that fall within the normal reference range.</li>
-                      <li><strong>Out of Range:</strong> Biomarkers that are either higher or lower than the normal reference range.</li>
-                      <li><strong>Improving:</strong> Biomarkers that were previously out of range but are now trending toward the normal range based on your latest results.</li>
-                    </ul>
-                    <p>Regular monitoring of these values can help you track your health progress over time.</p>
-                  </div>
-
-                  <div class="modal-footer">
-                    <a href="/insights" aria-current="page" class="cancel-button cancel-space">Close</a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Scores Tab -->
-              <div data-w-tab="Scores" class="w-tab-pane">
-                <div class="wellness-summary-card">
-                  <!-- Hidden data element -->
-                  <div
-                    id="wellnessData"
-                    data-scores="{{json scores}}"
-                    data-recommendations="{{json recommendations}}"
-                    style="display: none"
-                  ></div>
-
-                  <div class="insights-header">
-                    <div class="insights-title-wrapper">
-                      <h2 class="insights-title">Wellness Score Inputs</h2>
+              <!-- Ask Tab -->
+              <div data-w-tab="Ask" class="w-tab-pane">
+                <div class="chatbot-card">
+                  <div class="ask-wrapper">
+                    <div class="ask-header">
+                      <h2 class="ask-title">Ask Reed</h2>
                       <button
                         class="info-button"
-                        aria-label="Show wellness information"
+                        aria-label="Show RAG information"
                       >
                         {{> svg/info}}
                       </button>
                     </div>
-                  </div>
 
-                  <div class="wellness-content">
-                    <!-- Left side: Categories -->
-                    <div class="wellness-categories">
-                      <!-- Prevention Section -->
-                      <div class="category-section">
-                        <div class="category-header">
-                          <h3>Inputs</h3>
-                          <div class="category-score">
-                            <span id="totalScore"
-                              >{{calculateCompletionPercentage
-                              scores.inputs}}</span
-                            >%
+                    <!-- Chat interface container -->
+                    <div class="chat-container">
+                      <!-- Messages will appear here -->
+                      <div id="chat-messages" class="chat-messages">
+                        <div class="chat-message system-message">
+                          <div class="message-content">
+                            <p>
+                              Hi there! I'm Reed, your health assistant. I can
+                              answer questions about cardiovascular health,
+                              cholesterol, exercise, and other health topics.
+                              How can I help you today?
+                            </p>
                           </div>
                         </div>
-                        <div class="metric-list">
-                          {{#each scores.inputs}}
-                          <div class="metric-item" data-metric="{{@key}}">
-                            <span class="metric-name">{{@key}}</span>
-                            <div class="metric-status">
-                              {{#if this}} {{> svg/checkCircle}} {{else}}
-                              <span class="incomplete">× </span>
-                              {{/if}}
-                            </div>
-                            <span class="metric-arrow">›</span>
-                          </div>
-                          <div class="metric-dropdown">
-                            <div class="metric-detail">
-                              <span class="metric-label">Current Status:</span>
-                              <span
-                                class="metric-value {{#if this}}status-complete{{else}}status-incomplete{{/if}}"
-                              >
-                                {{#if this}}Completed{{else}}Incomplete{{/if}}
-                              </span>
-                            </div>
-                            <div class="metric-detail">
-                              <span class="metric-label">Description:</span>
-                              <span class="metric-value"
-                                >Track your {{@key}} to improve your wellness
-                                score</span
-                              >
-                            </div>
-                            <div class="metric-detail">
-                              <span class="metric-label">Action required:</span>
-                              <span class="metric-value">
-                                {{#unless this}} Add your {{@key}} information
-                                {{else}} Your {{@key}} information is complete
-                                {{/unless }}
-                              </span>
-                            </div>
-                            {{#unless this}}
-                            <a
-                              href="{{getMetricUrl @key}}"
-                              class="metric-action"
-                              >Update {{@key}}</a
-                            >
-                            {{/unless }}
-                          </div>
-                          {{/each}}
-                        </div>
+                        <div class="chatbot-resize-handle"></div>
                       </div>
-                    </div>
 
-                    <!-- Right side: Chart -->
-                    <div class="wellness-chart-container">
-                      <h3 class="chart-title">Overall Wellness Score</h3>
-                      <!-- Update the SVG part -->
-                      <div class="chart-wrapper">
-                        <svg viewBox="0 0 100 100" class="circular-chart">
-                          <!-- Background circle -->
-                          <circle cx="50" cy="50" r="45" fill="white" />
-
-                          <!-- Score circle -->
-                          <circle
-                            cx="50"
-                            cy="50"
-                            r="26"
+                      <!-- Input area -->
+                      <div class="chat-input-container">
+                        <textarea
+                          id="chat-input"
+                          class="chat-input"
+                          placeholder="Ask me about health topics..."
+                          rows="1"
+                        ></textarea>
+                        <button id="chat-submit" class="chat-submit-btn">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
                             fill="none"
-                            stroke="#eee"
-                            stroke-width="6"
-                            class="circle-bg"
-                          />
-                          <circle
-                            cx="50"
-                            cy="50"
-                            r="26"
-                            fill="none"
-                            stroke-width="6"
-                            class="circle-progress"
-                            id="scoreCircle"
-                          />
-                        </svg>
-
-                        <!-- Tooltip -->
-                        <div class="chart-tooltip"></div>
-
-                        <!-- Score circle overlaid on chart -->
-                        <div class="score-circle">
-                          <span class="score-number"
-                            >{{calculateCompletionPercentage
-                            scores.inputs}}</span
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
                           >
-                          <span class="score-max">/100</span>
-                        </div>
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon
+                              points="22 2 15 22 11 13 2 9 22 2"
+                            ></polygon>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-             
-              <!-- Actions Tab -->
-              <div data-w-tab="Actions" class="w-tab-pane">
-                <div class="wellness-summary-card">
-                  <div class="recommendations-wrapper">
-                    <div class="recommendations-header">
-                      <h2 class="insights-title">Recommended Actions</h2>
-                      <p class="recommendations-subtitle">
-                        Personalized recommendations based on your health profile and lab data
-                      </p>
-                    </div>
-
-                    <!-- Check if user has minimal data (no files AND low profile completion) -->
-                    {{#unless recentFiles}}
-                      {{#if (lt totalScore 25)}}
-                        <!-- No data state - show when user has no files and very low profile completion -->
-                        <div class="no-data-state">
-                          <p class="no-data-subtitle">
-                            Please enter data in your profile page and/or upload lab files to receive personalized health recommendations.
-                          </p>
-                          <div class="no-data-actions">
-                            <a href="/profile" class="action-button profile-button-primary">
-                              👤 Complete Your Profile
-                            </a>
-                            <a href="/upload" class="action-button upload-button-primary">
-                              📁 Upload Lab Results
-                            </a>
-                          </div>
-                        </div>
-                      {{/if}}
-                    {{else}}
-                      <!-- Debug information (you can remove this section once everything is working) -->
-                      <div class="debug-info">
-                        <p class="recommendation-count">Total recommendations: {{#if recommendations}}{{recommendations.length}}{{else}}0{{/if}}</p>
-                      </div>
-                      
-                      <!-- Recommendations list -->
-                      {{#if recommendations}}
-                        <div class="recommendations-list">
-                          {{#each recommendations as |recommendation|}}
-                            <div class="recommendation-item {{#if recommendation.priority}}{{recommendation.priority}}-priority{{/if}}">
-                              <div class="recommendation-text">
-                                {{#if recommendation.text}}
-                                  {{recommendation.text}}
-                                {{else}}
-                                  {{recommendation}}
-                                {{/if}}
-                              </div>
-                              {{#if recommendation.type}}
-                                <small class="recommendation-meta">
-                                  {{#if (eq recommendation.type 'biomarker')}}🧪{{else}}👤{{/if}}
-                                  {{#if (eq recommendation.type 'biomarker')}}Lab Test{{else}}Health Profile{{/if}}
-                                  {{#if recommendation.priority}}• Priority: {{recommendation.priority}}{{/if}}
-                                </small>
-                              {{/if}}
-                            </div>
-                          {{/each}}
-                        </div>
-                      {{else}}
-                        <!-- No recommendations state -->
-                        <div class="no-recommendations">
-                          <div class="no-recommendations-icon">🎉</div>
-                          <p class="no-recommendations-title"><strong>Great job!</strong> You're on top of your health tracking.</p>
-                          <p class="no-recommendations-subtitle">Upload recent lab results or complete more profile sections to get additional personalized recommendations.</p>
-                          <div class="no-recommendations-actions">
-                            <a href="/upload" class="action-button upload-button">📁 Upload Labs</a>
-                            <a href="/profile" class="action-button profile-button">👤 Complete Profile</a>
-                          </div>
-                        </div>
-                      {{/if}}
-                    {{/unless}}
-                    
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    {{!-- Wellness Info Modal--}}
-    <div class="modal-wrapper wellness-info">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <div class="modal-header">
-          <a
-            class="modal-return-button w-inline-block w--current"
-            aria-current="page"
-          >
-            {{> svg/backArrow}}
-          </a>
-          <h1 class="modal-button">Wellness Indicators</h1>
-        </div>
-
-        <div class="modal-description">
-          These "Wellness Scores" are a simple estimation of how well you're
-          doing at preventive health. Each preventive action is backed by hard
-          science, and you can follow the hyperlinks in each description to
-          learn more from the source. Don't worry if your score is low. This
-          usually just means you haven't entered much data or connected many
-          sources yet. To get the most out of your Wellness Score, click into
-          each score factor to learn what data you need to add and how to
-          improve it.
-        </div>
-
-        <div class="modal-footer">
-          <a
-            href="/insights"
-            aria-current="page"
-            class="cancel-button cancel-space"
-            >Close</a
-          >
-        </div>
-      </div>
-    </div>
-
-    {{!-- Wellness Metrics Modal--}}
-    <div class="modal-wrapper modal-wrapper-6">
-      <div class="modal-background"></div>
-      <div class="modal-card wellness-metrics">
-        <div class="modal-header">
-          <a
-            class="modal-return-button w-inline-block w--current"
-            data-w-id="e51537ba-0bb8-7d9d-b7be-455102aac1f4"
-            aria-current="page"
-          >
-            {{> svg/backArrow}}
-          </a>
-          <h1 class="modal-button">Wellness Score</h1>
-          <div class="score-circle">0</div>
-        </div>
-
-        <div class="metrics-section">
-          <h2 class="metrics-heading">Prevention</h2>
-          <div class="metrics-list">
-            <div class="metric-item">
-              <span>Medical checkup • last 2 years</span>
-              <span class="metric-status">✕</span>
-              <span class="metric-arrow">›</span>
-            </div>
-            <!-- Add other prevention metrics similarly -->
-          </div>
-
-          <h2 class="metrics-heading">Monitoring</h2>
-          <div class="metrics-list">
-            <div class="metric-item">
-              <span>Active provider connection</span>
-              <span class="metric-status">✕</span>
-              <span class="metric-arrow">›</span>
-            </div>
-            <!-- Add other monitoring metrics -->
-          </div>
-
-          <h2 class="metrics-heading">Actions</h2>
-          <div class="metrics-list">
-            <div class="metric-item">
-              <span>Sleep 7+ hours daily • last 7 days</span>
-              <span class="metric-arrow">›</span>
-            </div>
-            <!-- Add other action metrics -->
-          </div>
-        </div>
-        <div class="metrics-footer">
-          <small>Click on a score factor above to see details</small>
-          <small>Factors are personalized by age and sex</small>
-          <small
-            >The score is mainly preventive, it is not a complete picture of
-            your health</small
-          >
-          <small
-            >New factors and personal insights will be added over time</small
-          >
         </div>
       </div>
     </div>
@@ -608,7 +228,6 @@
     <section class="background report-background">
       <div class="w-layout-blockcontainer container-4 w-container"></div>
     </section>
-    
     <script
       src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6606de22e8c152e6b19be98a"
       type="text/javascript"
@@ -1442,47 +1061,47 @@
       })();
     </script>
     <script> // Check if we can see any session cookies
-      console.log('🔍 Checking session state...');
-      console.log('All cookies:', document.cookie);
+        console.log('🔍 Checking session state...');
+        console.log('All cookies:', document.cookie);
 
-      // Check if session cookie exists
-      const hasSessionCookie = document.cookie.includes('connect.sid') || 
-                              document.cookie.includes('session');
-      console.log('Has session cookie:', hasSessionCookie);
+        // Check if session cookie exists
+        const hasSessionCookie = document.cookie.includes('connect.sid') || 
+                                document.cookie.includes('session');
+        console.log('Has session cookie:', hasSessionCookie);
 
-      // Try to get current user with more debugging
-      async function debugAuth() {
+        // Try to get current user with more debugging
+        async function debugAuth() {
         try {
-          console.log('🔍 Testing /api/current-user...');
-          const response = await fetch('/api/current-user', {
+            console.log('🔍 Testing /api/current-user...');
+            const response = await fetch('/api/current-user', {
             credentials: 'include',  // Important: include cookies
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json'
             }
-          });
-          
-          console.log('Response status:', response.status);
-          console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-          
-          if (response.ok) {
+            });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+            
+            if (response.ok) {
             const userData = await response.json();
             console.log('✅ User authenticated:', userData);
-          } else if (response.status === 401) {
+            } else if (response.status === 401) {
             console.log('❌ User not authenticated (401)');
-          } else if (response.status === 302) {
+            } else if (response.status === 302) {
             console.log('❌ Redirected to login (302)');
-          } else {
+            } else {
             console.log('❌ Unexpected status:', response.status);
             const text = await response.text();
             console.log('Response body:', text);
-          }
+            }
         } catch (error) {
-          console.error('❌ Auth debug error:', error);
+            console.error('❌ Auth debug error:', error);
         }
-      }
+        }
 
-      // Run the debug
-      debugAuth();
-      </script>
+        // Run the debug
+        debugAuth();
+    </script>
   </body>
 </html>

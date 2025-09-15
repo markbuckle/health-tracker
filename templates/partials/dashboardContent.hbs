@@ -91,7 +91,7 @@
 
                                       {{!-- Range Bar Lengths, Colors, Shapes, etc --}}
                                       {{#with (parseReferenceRange this.referenceRange) as |range|}}
-                                      {{#with (calculateRangeScaling range.min range.max) as |scaling|}}
+                                      {{#with (calculateRangeScaling range.min range.max biomarker.value) as |scaling|}}
                                       <!-- Left red section (low range) -->
                                       <path d="M{{scaling.low.x}},36 
                                             h{{scaling.low.width}} 
@@ -270,7 +270,7 @@
 
                               {{!-- Range Bar Lengths, Colors, Shapes, etc --}}
                               {{#with (parseReferenceRange biomarker.referenceRange) as |range|}}
-                              {{#with (calculateRangeScaling range.min range.max) as |scaling|}}
+                              {{#with (calculateRangeScaling range.min range.max biomarker.value) as |scaling|}}
                               <!-- Left red section (low range) -->
                               <path d="M{{scaling.low.x}},36 
                                     h{{scaling.low.width}} 
@@ -305,20 +305,20 @@
 
                               <!-- Range numbers -->
 
-                              <!-- left value -->
-                              <text text-anchor="middle" class="jssN01" x="{{scaling.getLabelPosition 0}}" y="58"
+                              <!-- Scale minimum value (adaptive) -->
+                              <text text-anchor="middle" class="jssN01" x="{{scaling.getLabelPosition scaling.scaleMin}}" y="58"
                                 style="font-size: 12px;">
-                                0</text>
+                                {{#if scaling.isAdaptiveScale}}{{scaling.scaleMin}}{{else}}0{{/if}}</text>
                               <!-- Low/Normal threshold -->
                               <text text-anchor="middle" class="jssN01" x="{{scaling.getLabelPosition range.min}}"
                                 y="58" style="font-size: 12px;">{{range.min}}</text>
                               <!-- Normal/High transition -->
                               <text text-anchor="middle" class="jssN03"
-                                x="{{scaling.getLabelPosition range.max 'max'}}" y="58"
+                                x="{{scaling.getLabelPosition range.max}}" y="58"
                                 style="font-size: 12px;">{{range.max}}</text>
-                              <!-- High threshold -->
-                              <text text-anchor="middle" class="jssN03" x="{{scaling.getLabelPosition range.max}}"
-                                y="58" style="font-size: 12px;"></text>
+                              <!-- Scale maximum value (adaptive) -->
+                              <text text-anchor="middle" class="jssN03" x="{{scaling.getLabelPosition scaling.scaleMax}}" y="58"
+                                style="font-size: 12px;">{{#if scaling.isAdaptiveScale}}{{scaling.scaleMax}}{{/if}}</text>
 
                               <!-- Range labels -->
                               <text text-anchor="middle" class="jssT01"
@@ -400,4 +400,88 @@
       }
     });
   });
+</script>
+<script> // Improved bar chart range calculations with adaptive scaling
+    function calculateAdaptiveRangePositions(min, max, value) {
+        const svgWidth = 420;
+        const chartStart = 7;
+        const chartWidth = 405;
+
+        if (min === null || min === undefined || max === null || max === undefined || isNaN(min) || isNaN(max)) {
+            return null;
+        }
+
+        // Determine if we should use adaptive scaling
+        const normalRangeSize = max - min;
+        const distanceFromZero = min;
+        const shouldUseAdaptiveScaling = distanceFromZero > normalRangeSize * 2; // e.g., Sodium case
+
+        let scaleMin, scaleMax;
+
+        if (shouldUseAdaptiveScaling) {
+            // Strategy 1: Focus on the normal range with reasonable padding
+            const padding = normalRangeSize * 0.5; // 50% padding on each side
+            scaleMin = Math.max(0, min - padding);
+            scaleMax = max + padding;
+            
+            // Ensure the actual value is visible with some margin
+            if (value < scaleMin) {
+                scaleMin = Math.max(0, value - normalRangeSize * 0.2);
+            }
+            if (value > scaleMax) {
+                scaleMax = value + normalRangeSize * 0.2;
+            }
+        } else {
+            // Strategy 2: Traditional zero-based scaling for ranges close to zero
+            scaleMin = 0;
+            scaleMax = Math.max(max * 1.2, value * 1.1); // Ensure value fits with margin
+        }
+
+        const totalRange = scaleMax - scaleMin;
+        
+        const valueToX = (inputValue, type = 'normal') => {
+            if (typeof inputValue !== 'number') inputValue = parseFloat(inputValue);
+            if (isNaN(inputValue)) {
+                console.warn('Invalid value in valueToX:', inputValue);
+                return chartStart;
+            }
+
+            // Calculate relative position within our adaptive scale
+            const relativePosition = (inputValue - scaleMin) / totalRange;
+            return chartStart + (relativePosition * chartWidth);
+        };
+
+        // Calculate section widths based on adaptive scale
+        const lowSectionEnd = Math.max(scaleMin, min);
+        const normalSectionStart = min;
+        const normalSectionEnd = max;
+        const highSectionStart = max;
+
+        const scaling = {
+            low: {
+                x: chartStart,
+                width: valueToX(lowSectionEnd) - chartStart
+            },
+            normal: {
+                x: valueToX(normalSectionStart),
+                width: valueToX(normalSectionEnd) - valueToX(normalSectionStart)
+            },
+            high: {
+                x: valueToX(highSectionStart),
+                width: chartStart + chartWidth - valueToX(highSectionStart)
+            },
+            getMarkerPosition: function(inputValue) {
+                return valueToX(inputValue);
+            },
+            getLabelPosition: function(inputValue, position = 'normal') {
+                return valueToX(inputValue);
+            },
+            // Additional properties for the template
+            scaleMin: scaleMin,
+            scaleMax: scaleMax,
+            isAdaptiveScale: shouldUseAdaptiveScaling
+        };
+
+        return scaling;
+    }
 </script>
