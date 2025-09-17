@@ -1258,14 +1258,14 @@
 .file-output-message {
     position: absolute;
     /* position: relative; */
-    top: -2.3rem;
+    top: -2rem;
     left: 50%;
     transform: translateX(-50%);
     background-color: #5cb15da9;
     color: white;
     padding: 0.2rem 1rem;
     border-radius: 8px;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     white-space: nowrap;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 10;
@@ -1625,6 +1625,12 @@
       margin-left: 0.3rem;
       top: -2rem;
   }
+  .file-output-message-close {
+    top: -11px;
+    right: -11px;
+    width: 16px;
+    height: 16px;
+}
 }
 
 /* Very small screens */

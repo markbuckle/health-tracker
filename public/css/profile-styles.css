@@ -873,14 +873,14 @@
 .completion-arrow {
     position: absolute;
     /* position: relative; */
-    top: -2.5rem;
+    top: -2rem;
     left: 50%;
     transform: translateX(-50%);
     background-color: #5cb15daa;
-    color: white;
+    color: rgb(255, 255, 255);
     padding: 0.25rem 1rem;
     border-radius: 8px;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     white-space: nowrap;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 99;
@@ -1405,10 +1405,9 @@
     }
     
     .completion-arrow {
-        top: -2.25rem;
+        top: -1.9rem;
         padding: 0.15rem 0.5rem;
         border-radius: 8px;
-        font-size: 0.8rem;
         white-space: nowrap;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         z-index: 99;
@@ -1421,6 +1420,12 @@
     /* .completion-arrow::after {
         display: none;
     } */
+     .completion-arrow-close {
+        top: -11px;
+        right: -11px;
+        width: 16px;
+        height: 16px;
+    }
     
     .tab-sequence {
         gap: 0.5rem;
