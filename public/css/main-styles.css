@@ -517,6 +517,7 @@ html, body {
 
 .dashboard-content {
   margin-left: 10rem;
+  margin-top: 1.5rem;
   padding: 0 2rem 2rem 1.5rem;
   transition: margin-left 0.3s ease-in-out;
 }
@@ -1349,11 +1350,11 @@ label[for="customBloodType"] {
 /* Standard mobile */
 @media screen and (max-width: 480px) {
   .mobile-header-container {
-    padding: 0.6rem 1.2rem;
+    padding: 0.4rem 1.2rem !important;
     height: 3.2rem;
   }
   .mobile-header-logo .header-logo {
-    margin-top: 0.25rem;
+    margin-top: 0rem;
     max-height: 1.8rem;
     max-width: 90px;
   }

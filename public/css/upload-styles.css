@@ -1258,12 +1258,12 @@
 .file-output-message {
     position: absolute;
     /* position: relative; */
-    top: -3rem;
+    top: -2.3rem;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #5cb15d;
+    background-color: #5cb15da9;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.2rem 1rem;
     border-radius: 8px;
     font-size: 0.8rem;
     white-space: nowrap;
@@ -1277,7 +1277,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 0.5rem solid transparent;
-    border-top-color: #5cb15d;
+    border-top-color: #5cb15da3;
 }
 .file-output-message-close {
     position: absolute;
@@ -1376,7 +1376,7 @@
 /* Mobile Responsive Styles for Upload Page */
 @media screen and (max-width: 767px) {
   .dashboard-content {
-    margin-top: 0 !important;
+    margin-top: 1rem !important;
     margin-left: 0 !important;
     padding: 0px 0.5rem 2rem 0.5rem !important; /* Add top padding for fixed header */
     transition: padding-top 0.3s ease-in-out;
@@ -1606,8 +1606,8 @@
     margin-bottom: 0.5rem;
   }
   .in-page-menu {
-          margin: 0.5rem 0rem 0.5rem 0.5rem; /* Adjusted mobile margins */
-          gap: 0.25rem;
+    margin: 0.5rem 0rem 0.5rem 0rem; /* Adjusted mobile margins */
+    gap: 0.25rem;
   }
   .in-page-link {
       padding: 0.2rem 0.6rem;
@@ -1623,6 +1623,7 @@
       font-size: 0.65rem;
       padding: 0.15rem 0.3rem;
       margin-left: 0.3rem;
+      top: -2rem;
   }
 }
 

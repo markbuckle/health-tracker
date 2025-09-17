@@ -873,17 +873,17 @@
 .completion-arrow {
     position: absolute;
     /* position: relative; */
-    top: -3rem;
+    top: -2.5rem;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #5cb15d;
+    background-color: #5cb15daa;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.25rem 1rem;
     border-radius: 8px;
     font-size: 0.8rem;
     white-space: nowrap;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+    z-index: 99;
 }
 
 .completion-arrow::after {
@@ -893,7 +893,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 0.5rem solid transparent;
-    border-top-color: #5cb15d;
+    border-top-color: #5cb15d77;
 }
 .completion-arrow-close {
     position: absolute;
@@ -1164,7 +1164,7 @@
 @media screen and (max-width: 767px) {
   .dashboard-content {
     margin-left: 0 !important;
-    margin-top: 0 !important;
+    margin-top: 1rem !important;
     padding: 0px 0.5rem 1rem 0.5rem !important; /* Add top padding for fixed header */
     transition: padding-top 0.3s ease-in-out;
   }
@@ -1189,7 +1189,9 @@
     margin-top: 0.3em;
     flex-wrap: nowrap !important;
     /* max-width: 4.6rem; */
-    justify-content: center;
+    justify-items: center;
+    display: block;
+    align-items: center;
   }
   .text-block {
     font-size: 10px;
@@ -1402,15 +1404,23 @@
         padding: 0.75rem;
     }
     
-    /* .completion-arrow {
-        transform: none;
-        margin: 0.5rem 0;
-        display: inline-block;
-    } */
-    
-    .completion-arrow::after {
-        display: none;
+    .completion-arrow {
+        top: -2.25rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 99;
     }
+
+    .completion-arrow::after {
+        top: 100%;
+    }
+    
+    /* .completion-arrow::after {
+        display: none;
+    } */
     
     .tab-sequence {
         gap: 0.5rem;
@@ -1429,6 +1439,9 @@
         top: -1.5rem;
         font-size: 0.7rem;
         padding: 0.2rem 0.4rem;
+    }
+    .tab-status {
+      align-self: center;
     }
 }
 
