@@ -229,6 +229,7 @@ body.menu-open .dashboard-content {
   }
 }
 
+/* Base mobile styles (481px - 767px) */
 @media (max-width: 767px) {
   .sidebar {
     display: none !important; /* Force sidebar hidden */
@@ -242,7 +243,7 @@ body.menu-open .dashboard-content {
     z-index: 1000;
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    min-height: 115px; /* Increased to fit all elements */
+    min-height: 7rem; /* Reduced from 115px */
   }
   .hamburger-line {
     height: 1.5px;
@@ -255,7 +256,7 @@ body.menu-open .dashboard-content {
   }
   .dashboard-content {
     margin-left: 0 !important;
-    padding-top: 115px !important; /* Match header height */
+    padding-top: 105px !important; /* Match header height */
   }
   .welcome-card {
     margin: 1rem;
@@ -275,13 +276,13 @@ body.menu-open .dashboard-content {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 8px 15px 4px 15px; /* Reduced padding */
+    padding: 4px 15px 4px 15px;
     position: relative;
   }
 
   .mobile-header-logo {
     flex-shrink: 0;
-    margin-bottom: 4px; /* Reduced margin */
+    margin-bottom: 4px;
   }
 
   .mobile-header-logo-link {
@@ -291,16 +292,16 @@ body.menu-open .dashboard-content {
   /* Logo - Responsive */
   .header-logo {
     width: auto;
-    height: 32px; /* Slightly reduced */
+    height: 30px; /* Reduced from 32px */
   }
 
   /* Navigation Connector SVG */
   .nav-connector {
-    width: 100%;
-    height: 20px; /* Reduced height */
+    width: 96%;
+    height: 12px; /* Reduced from 20px */
     display: block;
     z-index: 1000;
-    margin: -18px 0 5px 0; /* Tighter margins */
+    margin: -19px 0 21px 0; /* Increased bottom margin for more space */
   }
 
   /* Mobile Navigation Container */
@@ -320,7 +321,7 @@ body.menu-open .dashboard-content {
     gap: 0;
     max-width: none !important;
     margin-top: -2px;
-    padding: 0 8px; /* Fixed padding */
+    padding: 0 8px;
   }
 
   /* Hide old mobile menu completely */
@@ -340,7 +341,7 @@ body.menu-open .dashboard-content {
     justify-content: center !important;
     text-decoration: none;
     color: #333;
-    padding: 6px 4px !important; /* Reduced padding */
+    padding: 5px 4px !important; /* Reduced padding */
     border-radius: 8px;
     transition: background-color 0.2s ease;
     flex: 1;
@@ -356,8 +357,8 @@ body.menu-open .dashboard-content {
 
   /* Navigation Icons */
   .nav-icon {
-    width: 24px !important;
-    height: 24px !important;
+    width: 20px !important; /* Reduced from 24px */
+    height: 20px !important;
     margin: 0 !important;
     margin-bottom: 3px !important;
     padding: 0 !important;
@@ -365,7 +366,7 @@ body.menu-open .dashboard-content {
 
   /* Navigation Text */
   .page-link-text-span {
-    font-size: 12px !important;
+    font-size: 11px !important; /* Reduced from 12px */
     font-weight: 500 !important;
     white-space: nowrap;
     margin: 0 !important;
@@ -382,131 +383,132 @@ body.menu-open .dashboard-content {
   }
 }
 
-/* Medium-small screens (481px - 600px) */
-@media screen and (min-width: 481px) and (max-width: 650px) {
+/* Medium-small screens (481px - 650px) */
+@media (max-width: 650px) {
   .mobile-header {
-    min-height: 110px;
+    min-height: 7rem; /* Reduced from 110px */
   }
   .dashboard-content {
-    padding-top: 110px !important;
+    padding-top: 100px !important;
   }
   .header-logo {
-    height: 38px;
+    height: 30px; /* Reduced from 38px */
   }
   .nav-connector {
-    height: 28px;
-    margin: -16px 0 5px 0;
+    width: 97%;
+    height: 10px; /* Reduced from 28px */
+    margin: -20px 0 22px 0; /* More space below connector */
   }
   .mobile-nav {
     padding: 0 12px;
   }
   .page-link {
-    padding: 10px 6px !important;
+    padding: 6px 6px !important; /* Reduced from 10px */
   }
   .nav-icon {
-    width: 26px !important;
-    height: 26px !important;
-    margin-bottom: 4px !important;
+    width: 18px !important; /* Reduced from 26px */
+    height: 18px !important;
+    margin-bottom: 3px !important;
   }
   .page-link-text-span {
-    font-size: 13px !important;
+    font-size: 12px !important; /* Reduced from 13px */
   }
 }
 
 /* Small screens (320px - 480px) */
 @media screen and (max-width: 480px) {
   .mobile-header {
-    min-height: 105px; /* Increased */
+    min-height: 95px; /* Reduced from 105px */
   }
   .dashboard-content {
-    padding-top: 105px !important;
+    padding-top: 95px !important;
   }
   .header-logo {
-    height: 28px;
+    height: 26px; /* Reduced from 28px */
   }
   .nav-connector {
-    height: 18px;
-    margin: -15px 0 4px 0;
+    height: 12px; /* Reduced from 18px */
+    margin: -18px 0 19px 0; /* More space below connector */
   }
   .mobile-nav {
     padding: 0 4px;
   }
   .page-link {
-    padding: 5px 2px !important;
+    padding: 4px 2px !important; /* Reduced from 5px */
     min-width: 0;
     max-width: none;
   }
   .nav-icon {
-    width: 20px !important;
-    height: 20px !important;
-    margin-bottom: 1px !important;
+    width: 18px !important; /* Reduced from 20px */
+    height: 18px !important;
+    margin-bottom: 2px !important;
   }
   .page-link-text-span {
-    font-size: 10px !important;
+    font-size: 9px !important; /* Reduced from 10px */
   }
 }
 
 /* Very small screens (320px - 389px) */
 @media screen and (max-width: 389px) {
   .mobile-header {
-    min-height: 98px; /* Increased */
+    min-height: 88px; /* Reduced from 98px */
   }
   .dashboard-content {
-    padding-top: 98px !important;
+    padding-top: 88px !important;
   }
   .header-logo {
-    height: 26px;
+    height: 24px; /* Reduced from 26px */
   }
   .nav-connector {
-    width: 102%;
-    height: 16px;
-    margin: -12px 0 3px 0;
+    width: 100%;
+    height: 10px; /* Reduced from 16px */
+    margin: -18px 0 22px 0; /* More space below connector */
   }
   .mobile-nav {
     padding: 0 2px;
   }
   .page-link {
-    padding: 4px 1px !important;
+    padding: 3px 1px !important; /* Reduced from 4px */
   }
   .nav-icon {
-    width: 18px !important;
-    height: 18px !important;
+    width: 16px !important; /* Reduced from 18px */
+    height: 16px !important;
     margin-bottom: 1px !important;
   }
   .page-link-text-span {
-    font-size: 9px !important;
+    font-size: 8px !important; /* Reduced from 9px */
   }
 }
 
 /* Extra small screens (below 350px) */
 @media screen and (max-width: 349px) {
   .mobile-header {
-    min-height: 92px; /* Increased */
+    min-height: 82px; /* Reduced from 92px */
   }
   .dashboard-content {
-    padding-top: 92px !important;
+    padding-top: 82px !important;
   }
   .header-logo {
-    height: 24px;
+    height: 22px; /* Reduced from 24px */
   }
   .nav-connector {
-    width: 104%;
-    height: 14px;
-    margin: -11px 0 1px 0;
+    width: 100%;
+    height: 10px; /* Reduced from 14px */
+    margin: -17px 0 23px 0; /* More space below connector */
   }
   .mobile-nav {
     padding: 0 1px;
   }
   .page-link {
-    padding: 3px 1px !important;
+    padding: 2px 1px !important; /* Reduced from 3px */
   }
   .nav-icon {
-    width: 16px !important;
-    height: 16px !important;
+    width: 14px !important; /* Reduced from 16px */
+    height: 14px !important;
     margin-bottom: 1px !important;
   }
   .page-link-text-span {
-    font-size: 8px !important;
+    font-size: 7px !important; /* Reduced from 8px */
     font-weight: 400 !important;
   }
 }

@@ -1350,7 +1350,7 @@ label[for="customBloodType"] {
 /* Standard mobile */
 @media screen and (max-width: 480px) {
   .mobile-header-container {
-    padding: 0.4rem 1.2rem !important;
+    padding: 0.2rem 1.2rem !important;
     height: 3.2rem;
   }
   .mobile-header-logo .header-logo {
