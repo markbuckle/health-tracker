@@ -202,14 +202,14 @@ body.tutorial-active .highlight-nav:not(.show) {
 /* Feature overview */
 .feature-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
   margin-top: 2rem;
 }
 .feature-item {
   background-color: #f9f9f9;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   text-align: center;
   transition: all 0.3s ease;
 }
@@ -220,18 +220,19 @@ body.tutorial-active .highlight-nav:not(.show) {
   cursor: pointer;
 }
 .feature-icon {
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: #5cb15d;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 .feature-title {
   font-family: "Poppins-SemiBold", sans-serif;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
 }
 .feature-description {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #666;
+  line-height: 1.4;
 }
 .steps-container2 {
   display: none;
@@ -256,6 +257,12 @@ body[data-reports-hover="true"] #Reports {
   border-radius: 10px;
 }
 body[data-insights-hover="true"] #Insights {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+body[data-chatbot-hover="true"] #Chatbot {
   background-color: #bcdcbe !important;
   z-index: 10000 !important;
   position: relative !important;
@@ -311,10 +318,46 @@ body.tutorial-active .highlight-nav {
   }
 }
 
+@media screen and (max-width: 1200px) {
+  .feature-overview {
+    gap: 0.8rem; /* Even smaller gap on smaller screens */
+  }
+  
+  .feature-item {
+    padding: 1rem;
+  }
+  
+  .feature-description {
+    font-size: 0.8rem;
+  }
+}
+
 @media screen and (max-width: 991px) {
   .steps-container2 {
     margin-left: 1rem;
     margin-right: 1rem;
+  }
+  .feature-overview {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    gap: 1.2rem;
+  }
+  
+  .feature-item {
+    padding: 1.5rem;
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .feature-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-description {
+    font-size: 0.9rem;
   }
 }
 
@@ -421,6 +464,16 @@ body.tutorial-active .highlight-nav {
     z-index: 1650 !important;
     display: block !important;
     visibility: visible !important;
+  }
+  .feature-overview {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1.5rem;
+  }
+  .feature-item {
+    padding: 1.5rem;
+  }
+  .feature-icon {
+    margin-bottom: 1rem;
   }
 }
 

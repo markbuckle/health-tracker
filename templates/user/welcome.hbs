@@ -91,6 +91,7 @@
     <div class="highlight-nav" id="highlightUpload"></div>
     <div class="highlight-nav" id="highlightReports"></div>
     <div class="highlight-nav" id="highlightInsights"></div>
+    <div class="highlight-nav" id="highlightChatbot"></div>
 
     <div class="dashboard-content">
       <!-- Welcome card -->
@@ -132,6 +133,13 @@
             <div class="feature-title">Insights</div>
             <div class="feature-description">
               Get personalized insights and recommendations
+            </div>
+          </div>
+          <div class="feature-item" data-target="Chatbot">
+            <div class="feature-icon">💬</div>
+            <div class="feature-title">Chatbot</div>
+            <div class="feature-description">
+              Ask questions to our AI Chatbot Reed
             </div>
           </div>
         </div>
@@ -232,8 +240,30 @@
               Let us connect the dots for you
             </div>
             <div class="actions">
-              <button class="button-next" id="step4Next">Let's Start!</button>
+              <button class="button-next" id="step4Next">Next</button>
               <button class="button-skip" id="skipTutorial4">
+                Skip Tutorial
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-container" id="step5">
+          <div class="step-content">
+            <div class="step-title">
+              <span class="welcome-step-number">5</span>
+              Ask our AI Chatbot
+            </div>
+            <div class="step-description">
+              Ask Reed health specific questions that are unique to you
+              <div class="highlight">
+                Our chatbot uses your input data plus our unique early health database to give you the best answers possible
+              </div>
+            </div>
+            <div class="actions">
+              <button class="button-next" id="step5Next">Let's Start!</button>
+              <button class="button-skip" id="skipTutorial5">
                 Skip Tutorial
               </button>
             </div>
@@ -261,34 +291,39 @@
         const uploadLink = document.getElementById("Upload") || document.getElementById("Upload-mobile");
         const reportsLink = document.getElementById("Reports") || document.getElementById("Reports-mobile");
         const insightsLink = document.getElementById("Insights") || document.getElementById("Insights-mobile");
+        const chatbotLink = document.getElementById("Chatbot") || document.getElementById("Chatbot-mobile");
 
         // Highlight elements
         const highlightProfile = document.getElementById("highlightProfile");
         const highlightUpload = document.getElementById("highlightUpload");
         const highlightReports = document.getElementById("highlightReports");
         const highlightInsights = document.getElementById("highlightInsights");
+        const highlightChatbot = document.getElementById("highlightChatbot");
 
         // Arrow elements
         const arrowToProfile = document.getElementById("arrowToProfile");
         const arrowToUpload = document.getElementById("arrowToUpload");
         const arrowToReports = document.getElementById("arrowToReports");
         const arrowToInsights = document.getElementById("arrowToInsights");
+        const arrowToChatbot = document.getElementById("arrowToChatbot");
 
         // Step elements
         const step1 = document.getElementById("step1");
         const step2 = document.getElementById("step2");
         const step3 = document.getElementById("step3");
         const step4 = document.getElementById("step4");
+        const step5 = document.getElementById("step5");
 
         // Next buttons
         const step1Next = document.getElementById("step1Next");
         const step2Next = document.getElementById("step2Next");
         const step3Next = document.getElementById("step3Next");
         const step4Next = document.getElementById("step4Next");
+        const step5Next = document.getElementById("step5Next");
 
         // Current step tracker
         let currentStep = 0;
-        const totalSteps = 4;
+        const totalSteps = 5;
         let tutorialActive = false;
 
         console.log('Tutorial elements found:', {
@@ -333,6 +368,7 @@
           const allUploadLinks = document.querySelectorAll("#Upload, #Upload-mobile");
           const allReportsLinks = document.querySelectorAll("#Reports, #Reports-mobile");
           const allInsightsLinks = document.querySelectorAll("#Insights, #Insights-mobile");
+          const allChatbotLinks = document.querySelectorAll("#Chatbot, #Chatbot-mobile");
 
           featureItems.forEach((item) => {
             const target = item.getAttribute("data-target");
@@ -351,6 +387,9 @@
               case "Insights":
                 targetLinks = allInsightsLinks;
                 break;
+              case "Chatbot":
+                targetLinks = allChatbotLinks;
+              break;
               default:
                 targetLinks = [];
             }
@@ -400,6 +439,8 @@
                   return mobileMenu.querySelector('.page-link:nth-child(3)'); // Third item
                 case 'Insights':
                   return mobileMenu.querySelector('.page-link:nth-child(4)'); // Fourth item
+                case 'Chatbot':
+                return mobileMenu.querySelector('.page-link:nth-child(5)'); // Fifth item
               }
             }
           }
@@ -421,7 +462,8 @@
             'Profile': 1,
             'Upload': 2, 
             'Reports': 3,
-            'Insights': 4
+            'Insights': 4,
+            'Chatbot': 5
           };
           return menuOrder[itemName] || 1;
         }
@@ -476,7 +518,7 @@
           console.log('Clearing highlights...');
           
           // Remove show class and hide all highlight elements
-          const allHighlights = [highlightProfile, highlightUpload, highlightReports, highlightInsights];
+          const allHighlights = [highlightProfile, highlightUpload, highlightReports, highlightInsights, highlightChatbot];
           
           allHighlights.forEach(highlight => {
             if (highlight) {
@@ -492,7 +534,8 @@
             "data-profile-hover",
             "data-upload-hover", 
             "data-reports-hover",
-            "data-insights-hover"
+            "data-insights-hover",
+            "data-chatbot-hover"
           ];
           
           hoverAttributes.forEach(attr => {
@@ -515,6 +558,7 @@
           if (step2) step2.style.display = "none";
           if (step3) step3.style.display = "none";
           if (step4) step4.style.display = "none";
+          if (step5) step5.style.display = "none";
 
           // Clear highlights and effects
           clearHighlights();
@@ -545,6 +589,12 @@
               const insightsNavItem = findNavItem("Insights", "Insights-mobile");
               highlightNavItem(insightsNavItem, highlightInsights);
               document.body.setAttribute("data-insights-hover", "true");
+              break;
+            case 5:
+              if (step5) step5.style.display = "block";
+              const chatbotNavItem = findNavItem("Chatbot", "Chatbot-mobile");
+              highlightNavItem(chatbotNavItem, highlightChatbot);
+              document.body.setAttribute("data-chatbot-hover", "true");
               break;
           }
 
@@ -614,7 +664,10 @@
           step3Next.addEventListener("click", () => showStep(4));
         }
         if (step4Next) {
-          step4Next.addEventListener("click", completeTutorial);
+          step4Next.addEventListener("click", () => showStep(5));
+        }
+        if (step5Next) {
+          step5Next.addEventListener("click", completeTutorial);
         }
 
         // Skip buttons
@@ -627,6 +680,7 @@
         const allUploadLinks = document.querySelectorAll("#Upload, #Upload-mobile");
         const allReportsLinks = document.querySelectorAll("#Reports, #Reports-mobile");
         const allInsightsLinks = document.querySelectorAll("#Insights, #Insights-mobile");
+        const allChatbotLinks = document.querySelectorAll("#Chatbot, #Chatbot-mobile");
 
         allProfileLinks.forEach(link => {
           link.addEventListener("click", (e) => {
@@ -658,6 +712,15 @@
         allInsightsLinks.forEach(link => {
           link.addEventListener("click", (e) => {
             if (currentStep === 4 && tutorialActive) {
+              e.preventDefault();
+              showStep(5);
+            }
+          });
+        });
+
+        allChatbotLinks.forEach(link => {
+          link.addEventListener("click", (e) => {
+            if (currentStep === 5 && tutorialActive) {
               e.preventDefault();
               completeTutorial();
             }
