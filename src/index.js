@@ -1807,6 +1807,23 @@ app.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
+app.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+      return res.redirect("/profile"); // Redirect back if there's an error
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Session destroy error:", err);
+        return res.redirect("/");
+      }
+      res.clearCookie('connect.sid'); // Clear the session cookie
+      res.redirect("/"); // Redirect to homepage after logout
+    });
+  });
+});
+
 app.post("/update-profile", checkAuth, async (req, res) => {
   try {
     const {

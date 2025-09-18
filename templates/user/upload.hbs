@@ -37,8 +37,8 @@
 
   <div class="sidebar">
     <div class="sidebar-logo-wrapper">
-      <a href="/" class="sidebar-logo-link">
-        <img src="images/logo2.png" loading="lazy" alt="Logo" class="sidebar-logo"></a>
+      <div class="sidebar-logo-link">
+        <img src="images/logo2.png" loading="lazy" alt="Logo" class="sidebar-logo"></div>
     </div>
     <div class="nav-divider-basics nav-divider-top"></div>
     <a id="Profile" href="/profile" class="page-link w-inline-block">
@@ -62,7 +62,7 @@
       <div class="page-link-text-block"><span class="page-link-text-span">Ask</span></div>
     </a>
     <div class="nav-divider-basics nav-divider-bottom"></div>
-    <a id="Log-out" href="/" class="page-link w-inline-block"><img src="images/unlock.svg" loading="lazy" alt="Icon"
+    <a id="Log-out" href="/logout" class="page-link w-inline-block" onclick="return confirmLogout(event)"><img src="images/unlock.svg" loading="lazy" alt="Icon"
         class="nav-icon">
       <div class="page-link-text-block"><span class="page-link-text-span">Log out</span></div>
     </a>
@@ -460,6 +460,8 @@
     crossorigin="anonymous"></script>
   <script src="js/main.js" type="text/javascript"></script>
   <script src="js/main-user.js" defer type="module"></script>
+  <script src="js/mobile-logout.js"></script>
+  <script src="js/sidebar-logout.js"></script>
   <script> // File Uploader - Works for both Local and Production
 document.addEventListener('DOMContentLoaded', function () {
   const dropZone = document.getElementById('dropZone');

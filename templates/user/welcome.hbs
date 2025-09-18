@@ -15,13 +15,13 @@
 
     <div class="sidebar">
       <div class="sidebar-logo-wrapper">
-        <a href="/" class="sidebar-logo-link">
+        <div class="sidebar-logo-link">
           <img
             src="images/logo2.png"
             loading="lazy"
             alt="Logo"
             class="sidebar-logo"
-        /></a>
+        /></div>
       </div>
       <div class="nav-divider-basics nav-divider-top"></div>
       <a id="Profile" href="/profile" class="page-link w-inline-block">
@@ -72,8 +72,8 @@
         <div class="page-link-text-block"><span class="page-link-text-span">Ask</span></div>
       </a>
       <div class="nav-divider-basics nav-divider-bottom"></div>
-      <a id="Log-out" href="/" class="page-link w-inline-block"
-        ><img
+      <a id="Log-out" href="/logout" class="page-link w-inline-block" onclick="return confirmLogout(event)">
+        <img
           src="images/unlock.svg"
           loading="lazy"
           alt="Icon"
@@ -243,6 +243,8 @@
     </div>
 
     <script src="js/main-user.js" defer type="module"></script>
+    <script src="js/mobile-logout.js"></script>
+    <script src="js/sidebar-logout.js"></script>
     <script> // Welcome animations
       document.addEventListener("DOMContentLoaded", () => {
         console.log('Welcome page script loading...');
