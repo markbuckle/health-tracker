@@ -209,6 +209,31 @@
 body.menu-open .dashboard-content {
   padding-top: 0;
 }
+/* Mobile current page highlighting - Blue for input pages */
+.mobile-nav #Profile-mobile.w--current,
+.mobile-nav #Upload-mobile.w--current {
+  background-color: #a4d5ec !important;
+}
+
+/* Mobile current page highlighting - Green for output pages */
+.mobile-nav #Reports-mobile.w--current,
+.mobile-nav #Insights-mobile.w--current,
+.mobile-nav #Chatbot-mobile.w--current {
+  background-color: #bcdcbe !important;
+}
+
+/* Desktop current page highlighting - Blue for input pages */
+#Profile.w--current,
+#Upload.w--current {
+  background-color: #a4d5ec !important;
+}
+
+/* Desktop current page highlighting - Green for output pages */
+#Reports.w--current,
+#Insights.w--current,
+#Chatbot.w--current {
+  background-color: #bcdcbe !important;
+}
 @media screen and (max-width: 991px) {
   .sidebar {
     display: flex !important;
@@ -636,7 +661,7 @@ body.menu-open .dashboard-content {
 /* Extra small screens (below 350px) */
 @media screen and (max-width: 349px) {
   .mobile-header {
-    min-height: 82px; /* Reduced from 92px */
+    min-height: 92px; /* Reduced from 92px */
   }
   .dashboard-content {
     padding-top: 82px !important;
