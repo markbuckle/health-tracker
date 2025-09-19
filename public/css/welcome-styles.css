@@ -278,14 +278,14 @@ body.tutorial-active .highlight-nav {
 /* Feature overview */
 .feature-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
   margin-top: 2rem;
 }
 .feature-item {
   text-align: center;
-  padding: 2rem 1rem;
-  border-radius: 16px;
+  padding: 1.25rem;
+  border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   border: 1px solid transparent;
@@ -294,24 +294,24 @@ body.tutorial-active .highlight-nav {
   background-color: rgba(92, 177, 93, 0.02);
   border-color: rgba(92, 177, 93, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 .feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
   display: block;
 }
 .feature-title {
   font-family: "Poppins-SemiBold", sans-serif;
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
   color: #333;
 }
 .feature-description {
   font-family: "Poppins-Regular", sans-serif;
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #666;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 /* DESKTOP HOVER EFFECTS - These were missing! */
