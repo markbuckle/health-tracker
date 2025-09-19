@@ -611,7 +611,7 @@ body.menu-open .dashboard-content {
   .nav-connector {
     width: 100%;
     height: 10px; /* Reduced from 16px */
-    margin: -18px 0 22px 0; /* More space below connector */
+    margin: -16px 0 24px 0; /* More space below connector */
   }
   .mobile-nav {
     padding: 0 2px;
