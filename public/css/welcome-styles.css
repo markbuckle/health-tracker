@@ -239,13 +239,15 @@ body.tutorial-active .highlight-nav:not(.show) {
 }
 /* Force override for sidebar links when hovering on features */
 body[data-profile-hover="true"] #Profile {
-  background-color: #bcdcbe !important;
+  background-color: #a4d5ec92 !important;
+  /* background-color: #bcdcbe !important; */
   z-index: 10000 !important;
   position: relative !important;
   border-radius: 10px;
 }
 body[data-upload-hover="true"] #Upload {
-  background-color: #bcdcbe !important;
+  background-color: #a4d5ec92 !important;
+  /* background-color: #bcdcbe !important; */
   z-index: 10000 !important;
   position: relative !important;
   border-radius: 10px;
