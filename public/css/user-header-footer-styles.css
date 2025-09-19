@@ -601,7 +601,7 @@ body.menu-open .dashboard-content {
 @media screen and (max-width: 389px) {
   /* .mobile-header {
     min-height: 88px; /* Reduced from 98px */
-  } */
+  /* } */
   .dashboard-content {
     padding-top: 88px !important;
   }

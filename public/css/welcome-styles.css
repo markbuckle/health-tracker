@@ -79,6 +79,8 @@
 .button-skip:hover {
   background-color: #f5f5f5;
 }
+
+/* Updated highlight navigation styles with support for blue highlights */
 .highlight-nav {
   position: absolute;
   background-color: rgba(92, 177, 93, 0.2);
@@ -88,13 +90,30 @@
   z-index: 90;
   display: none !important;
   visibility: hidden !important;
-  animation: pulse 2s infinite;
+  animation: pulse-green 2s infinite;
   top: 0;
   left: 0;
   width: 0;
   height: 0;
   transition: opacity 0.3s ease;
 }
+
+/* Blue highlight styles for input group AND individual input pages */
+#highlightInputGroup,
+#highlightProfile,
+#highlightUpload {
+  background-color: rgba(63, 177, 241, 0.2) !important;
+  border-color: #3fb1f1 !important;
+  animation: pulse-blue 2s infinite !important;
+}
+
+/* Green highlight styles for output group (explicit) */
+#highlightOutputGroup {
+  background-color: rgba(92, 177, 93, 0.2) !important;
+  border-color: #5cb15d !important;
+  animation: pulse-green 2s infinite !important;
+}
+
 body.tutorial-active .highlight-nav.show {
   display: block !important;
   visibility: visible !important;
@@ -105,6 +124,34 @@ body.tutorial-active .highlight-nav:not(.show) {
   visibility: hidden !important;
   opacity: 0;
 }
+
+/* Green pulse animation (renamed from original pulse) */
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(92, 177, 93, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0);
+  }
+}
+
+/* Blue pulse animation (new) */
+@keyframes pulse-blue {
+  0% {
+    box-shadow: 0 0 0 0 rgba(63, 177, 241, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(63, 177, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(63, 177, 241, 0);
+  }
+}
+
+/* Keep original pulse for backward compatibility */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(92, 177, 93, 0.4);
@@ -116,6 +163,7 @@ body.tutorial-active .highlight-nav:not(.show) {
     box-shadow: 0 0 0 0 rgba(92, 177, 93, 0);
   }
 }
+
 /* Arrow styles */
 .arrow {
   position: absolute;
@@ -130,6 +178,33 @@ body.tutorial-active .highlight-nav:not(.show) {
   height: 100%;
   filter: drop-shadow(0 2px 4px rgba(92, 177, 93, 0.3));
 }
+
+/* General tutorial highlighting and arrows on all screen sizes */
+body {
+  position: relative;
+  min-height: 100vh;
+}
+body.tutorial-active .arrow {
+  display: block !important;
+  visibility: visible !important;
+  animation: arrowFloat 2s ease-in-out infinite;
+}
+body.tutorial-active .highlight-nav {
+  display: block !important;
+  visibility: visible !important;
+}
+
+@keyframes arrowFloat {
+  0%, 100% { 
+    transform: translateY(0px);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
 /* Fade in animation */
 @keyframes fadeInUp {
   from {
@@ -199,55 +274,56 @@ body.tutorial-active .highlight-nav:not(.show) {
   color: #fff;
   font-size: 1rem;
 }
+
 /* Feature overview */
 .feature-overview {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   margin-top: 2rem;
 }
 .feature-item {
-  background-color: #f9f9f9;
-  border-radius: 12px;
-  padding: 1.25rem;
   text-align: center;
-  transition: all 0.3s ease;
+  padding: 2rem 1rem;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
 }
 .feature-item:hover {
-  /* transform: translateY(-5px); */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  border: 2px solid var(--green-primary);
-  cursor: pointer;
+  background-color: rgba(92, 177, 93, 0.02);
+  border-color: rgba(92, 177, 93, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 .feature-icon {
-  font-size: 1.8rem;
-  color: #5cb15d;
-  margin-bottom: 0.8rem;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  display: block;
 }
 .feature-title {
   font-family: "Poppins-SemiBold", sans-serif;
-  font-size: 1.1rem;
-  margin-bottom: 0.4rem;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #333;
 }
 .feature-description {
-  font-size: 0.85rem;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 1rem;
   color: #666;
-  line-height: 1.4;
+  line-height: 1.5;
 }
-.steps-container2 {
-  display: none;
-}
+
+/* DESKTOP HOVER EFFECTS - These were missing! */
 /* Force override for sidebar links when hovering on features */
 body[data-profile-hover="true"] #Profile {
   background-color: #a4d5ec92 !important;
-  /* background-color: #bcdcbe !important; */
   z-index: 10000 !important;
   position: relative !important;
   border-radius: 10px;
 }
 body[data-upload-hover="true"] #Upload {
   background-color: #a4d5ec92 !important;
-  /* background-color: #bcdcbe !important; */
   z-index: 10000 !important;
   position: relative !important;
   border-radius: 10px;
@@ -270,54 +346,21 @@ body[data-chatbot-hover="true"] #Chatbot {
   position: relative !important;
   border-radius: 10px;
 }
-/* Push content down when menu is open */
-body.menu-open .dashboard-content {
-  padding-top: calc(60px + var(--mobile-menu-height, 0px));
-  transition: padding-top 0.3s ease;
+/* NEW: Add hover effects for group highlights */
+body[data-input-group-hover="true"] #Profile,
+body[data-input-group-hover="true"] #Upload {
+  background-color: #a4d5ec92 !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
 }
-
-  /* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.8s forwards;
-}
-
-/* Fix for tutorial highlights and arrows on all screen sizes */
-.highlight-nav {
-  position: absolute;
-  background-color: rgba(92, 177, 93, 0.2);
-  border: 2px solid #5cb15d;
-  border-radius: 8px;
-  pointer-events: none;
-  z-index: 90;
-  animation: pulse 2s infinite;
-}
-body {
-  position: relative;
-  min-height: 100vh;
-}
-body.tutorial-active .arrow {
-  display: block !important;
-  visibility: visible !important;
-  animation: arrowFloat 2s ease-in-out infinite;
-}
-body.tutorial-active .highlight-nav {
-  display: block !important;
-  visibility: visible !important;
-}
-@keyframes arrowFloat {
-  0%, 100% { 
-    transform: translateY(0px);
-    opacity: 0.8;
-  }
-  50% { 
-    transform: translateY(-8px);
-    opacity: 1;
-  }
+body[data-output-group-hover="true"] #Reports,
+body[data-output-group-hover="true"] #Insights,
+body[data-output-group-hover="true"] #Chatbot {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
 }
 
 @media screen and (max-width: 1200px) {

@@ -56,7 +56,11 @@
           <span class="page-link-text-span">Reports</span>
         </div>
       </a>
-      <a id="Insights" href="/insights" class="page-link w-inline-block">
+      <a
+        id="Insights"
+        href="/insights"
+        class="page-link w-inline-block"
+      >
         <img
           src="images/layout.svg"
           loading="lazy"
@@ -67,9 +71,20 @@
           <span class="page-link-text-span">Insights</span>
         </div>
       </a>
-      <a id="Chatbot" href="/chatbot" class="page-link w-inline-block">
-        <img src="images/chatbot.svg" loading="lazy" alt="Icon" class="nav-icon">
-        <div class="page-link-text-block"><span class="page-link-text-span">Ask</span></div>
+      <a
+        id="Chatbot"
+        href="/chatbot"
+        class="page-link w-inline-block"
+      >
+        <img
+          src="images/chatbot.svg"
+          loading="lazy"
+          alt="Icon"
+          class="nav-icon"
+        />
+        <div class="page-link-text-block">
+          <span class="page-link-text-span">Ask</span>
+        </div>
       </a>
       <div class="nav-divider-basics nav-divider-bottom"></div>
       <a id="Log-out" href="/logout" class="page-link w-inline-block" onclick="return confirmLogout(event)">
@@ -86,12 +101,14 @@
       <div class="sidebar-bottom-spacer"></div>
     </div>
 
-    <!-- Highlight elements for navigation arrows -->
+    <!-- Highlight elements - Original plus new group highlights -->
     <div class="highlight-nav" id="highlightProfile"></div>
     <div class="highlight-nav" id="highlightUpload"></div>
     <div class="highlight-nav" id="highlightReports"></div>
     <div class="highlight-nav" id="highlightInsights"></div>
     <div class="highlight-nav" id="highlightChatbot"></div>
+    <div class="highlight-nav" id="highlightInputGroup"></div>
+    <div class="highlight-nav" id="highlightOutputGroup"></div>
 
     <div class="dashboard-content">
       <!-- Welcome card -->
@@ -151,11 +168,55 @@
           <div class="progress-bar" id="progressBar"></div>
         </div>
 
-        <!-- Step 1 -->
-        <div class="step-container" id="step1">
+        <!-- NEW Step 1: Input Pages Overview -->
+        <div class="step-container" id="stepInputOverview">
           <div class="step-content">
             <div class="step-title">
               <span class="welcome-step-number">1</span>
+              Input Your Data
+            </div>
+            <div class="step-description">
+              <div class="highlight">
+                The <strong>Profile</strong> and <strong>Upload</strong> pages are where you input your information and data.
+              </div>
+              These are the foundation pages where you provide your health information so we can create personalized insights for you.
+            </div>
+            <div class="actions">
+              <button class="button-next" id="stepInputOverviewNext">Next</button>
+              <button class="button-skip" id="skipTutorialInputOverview">
+                Skip Tutorial
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW Step 2: Output Pages Overview -->
+        <div class="step-container" id="stepOutputOverview">
+          <div class="step-content">
+            <div class="step-title">
+              <span class="welcome-step-number">2</span>
+              Get Your Results
+            </div>
+            <div class="step-description">
+              <div class="highlight">
+                The <strong>Reports</strong>, <strong>Insights</strong>, and <strong>Ask</strong> pages are where you get output and results.
+              </div>
+              These pages provide you with comprehensive analysis, personalized recommendations, and AI-powered assistance based on your data.
+            </div>
+            <div class="actions">
+              <button class="button-next" id="stepOutputOverviewNext">Next</button>
+              <button class="button-skip" id="skipTutorialOutputOverview">
+                Skip Tutorial
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- UPDATED Step 3 (was Step 1): Build a Profile -->
+        <div class="step-container" id="step1">
+          <div class="step-content">
+            <div class="step-title">
+              <span class="welcome-step-number">3</span>
               Build a Profile
             </div>
             <div class="step-description">
@@ -176,11 +237,11 @@
           </div>
         </div>
 
-        <!-- Step 2 -->
+        <!-- UPDATED Step 4 (was Step 2): Upload Files -->
         <div class="step-container" id="step2">
           <div class="step-content">
             <div class="step-title">
-              <span class="welcome-step-number">2</span>
+              <span class="welcome-step-number">4</span>
               Upload Files
             </div>
             <div class="step-description">
@@ -200,11 +261,11 @@
           </div>
         </div>
 
-        <!-- Step 3 -->
+        <!-- UPDATED Step 5 (was Step 3): Detailed Reports -->
         <div class="step-container" id="step3">
           <div class="step-content">
             <div class="step-title">
-              <span class="welcome-step-number">3</span>
+              <span class="welcome-step-number">5</span>
               Detailed Reports
             </div>
             <div class="step-description">
@@ -224,11 +285,11 @@
           </div>
         </div>
 
-        <!-- Step 4 -->
+        <!-- UPDATED Step 6 (was Step 4): Actionable Takeaways -->
         <div class="step-container" id="step4">
           <div class="step-content">
             <div class="step-title">
-              <span class="welcome-step-number">4</span>
+              <span class="welcome-step-number">6</span>
               Actionable Takeaways
             </div>
             <div class="step-description">
@@ -248,11 +309,11 @@
           </div>
         </div>
 
-        <!-- Step 5 -->
+        <!-- UPDATED Step 7 (was Step 5): Ask our AI Chatbot -->
         <div class="step-container" id="step5">
           <div class="step-content">
             <div class="step-title">
-              <span class="welcome-step-number">5</span>
+              <span class="welcome-step-number">7</span>
               Ask our AI Chatbot
             </div>
             <div class="step-description">
@@ -293,37 +354,43 @@
         const insightsLink = document.getElementById("Insights") || document.getElementById("Insights-mobile");
         const chatbotLink = document.getElementById("Chatbot") || document.getElementById("Chatbot-mobile");
 
-        // Highlight elements
+        // Highlight elements - Original plus new group highlights
         const highlightProfile = document.getElementById("highlightProfile");
         const highlightUpload = document.getElementById("highlightUpload");
         const highlightReports = document.getElementById("highlightReports");
         const highlightInsights = document.getElementById("highlightInsights");
         const highlightChatbot = document.getElementById("highlightChatbot");
+        const highlightInputGroup = document.getElementById("highlightInputGroup");
+        const highlightOutputGroup = document.getElementById("highlightOutputGroup");
 
-        // Arrow elements
+        // Arrow elements (kept from original)
         const arrowToProfile = document.getElementById("arrowToProfile");
         const arrowToUpload = document.getElementById("arrowToUpload");
         const arrowToReports = document.getElementById("arrowToReports");
         const arrowToInsights = document.getElementById("arrowToInsights");
         const arrowToChatbot = document.getElementById("arrowToChatbot");
 
-        // Step elements
+        // Step elements - Original plus new overview steps
+        const stepInputOverview = document.getElementById("stepInputOverview");
+        const stepOutputOverview = document.getElementById("stepOutputOverview");
         const step1 = document.getElementById("step1");
         const step2 = document.getElementById("step2");
         const step3 = document.getElementById("step3");
         const step4 = document.getElementById("step4");
         const step5 = document.getElementById("step5");
 
-        // Next buttons
+        // Next buttons - Original plus new overview buttons
+        const stepInputOverviewNext = document.getElementById("stepInputOverviewNext");
+        const stepOutputOverviewNext = document.getElementById("stepOutputOverviewNext");
         const step1Next = document.getElementById("step1Next");
         const step2Next = document.getElementById("step2Next");
         const step3Next = document.getElementById("step3Next");
         const step4Next = document.getElementById("step4Next");
         const step5Next = document.getElementById("step5Next");
 
-        // Current step tracker
+        // Current step tracker - UPDATED total steps
         let currentStep = 0;
-        const totalSteps = 5;
+        const totalSteps = 7;
         let tutorialActive = false;
 
         console.log('Tutorial elements found:', {
@@ -332,6 +399,8 @@
           stepsContainer: !!stepsContainer,
           profileLink: !!profileLink,
           highlightProfile: !!highlightProfile,
+          highlightInputGroup: !!highlightInputGroup,
+          highlightOutputGroup: !!highlightOutputGroup,
           arrowToProfile: !!arrowToProfile
         });
 
@@ -357,6 +426,45 @@
               mobileMenu.style.display = 'grid'; // Match your mobile menu display
             }
           }
+        }
+
+        // NEW: Function to highlight multiple navigation items
+        function highlightMultipleNavItems(navItems, highlightEl, color = 'green') {
+          if (!highlightEl || !navItems || navItems.length === 0) return;
+
+          // Get bounding rectangles of all nav items
+          const rects = navItems.map(item => item.getBoundingClientRect());
+          
+          if (rects.length === 0) return;
+
+          // Calculate combined bounding box
+          const minLeft = Math.min(...rects.map(r => r.left));
+          const maxRight = Math.max(...rects.map(r => r.right));
+          const minTop = Math.min(...rects.map(r => r.top));
+          const maxBottom = Math.max(...rects.map(r => r.bottom));
+
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+          // Position relative to document
+          highlightEl.style.position = 'absolute';
+          highlightEl.style.top = `${minTop + scrollTop - 5}px`;
+          highlightEl.style.left = `${minLeft + scrollLeft - 5}px`;
+          highlightEl.style.width = `${maxRight - minLeft + 10}px`;
+          highlightEl.style.height = `${maxBottom - minTop + 10}px`;
+          
+          // Set color based on type
+          if (color === 'blue') {
+            highlightEl.style.backgroundColor = 'rgba(63, 177, 241, 0.2)';
+            highlightEl.style.borderColor = '#3fb1f1';
+          } else {
+            // Default green
+            highlightEl.style.backgroundColor = 'rgba(92, 177, 93, 0.2)';
+            highlightEl.style.borderColor = '#5cb15d';
+          }
+          
+          // Show the highlight
+          highlightEl.classList.add('show');
         }
 
         // Initialize features hover synchronization
@@ -421,39 +529,43 @@
           }
         }
 
-        // Find the correct navigation item (desktop or mobile)
+        // Find the correct navigation item (desktop or mobile) - UPDATED
         function findNavItem(desktopId, mobileId) {
           const isMobile = window.innerWidth <= 768;
           
-          if (isMobile && tutorialActive) {
-            // For mobile tutorial, directly target mobile menu items by their structure
+          if (isMobile) {
+            // For mobile, look for the mobile header navigation items first
+            const mobileNavItem = document.getElementById(mobileId);
+            if (mobileNavItem) {
+              console.log('Found mobile nav item:', mobileId, mobileNavItem);
+              return mobileNavItem;
+            }
+            
+            // Fallback to mobile menu if it exists
             const mobileMenu = document.querySelector('.mobile-menu');
-            if (mobileMenu) {
-              // Map desktop IDs to mobile menu item positions
+            if (mobileMenu && tutorialActive) {
+              // Map desktop IDs to mobile menu item positions  
               switch(desktopId) {
                 case 'Profile':
-                  return mobileMenu.querySelector('.page-link:nth-child(1)'); // First item
+                  return mobileMenu.querySelector('.page-link:nth-child(1)');
                 case 'Upload':
-                  return mobileMenu.querySelector('.page-link:nth-child(2)'); // Second item  
+                  return mobileMenu.querySelector('.page-link:nth-child(2)');
                 case 'Reports':
-                  return mobileMenu.querySelector('.page-link:nth-child(3)'); // Third item
+                  return mobileMenu.querySelector('.page-link:nth-child(3)');
                 case 'Insights':
-                  return mobileMenu.querySelector('.page-link:nth-child(4)'); // Fourth item
+                  return mobileMenu.querySelector('.page-link:nth-child(4)');
                 case 'Chatbot':
-                return mobileMenu.querySelector('.page-link:nth-child(5)'); // Fifth item
+                  return mobileMenu.querySelector('.page-link:nth-child(5)');
+                default:
+                  return null;
               }
             }
-          }
-          
-          // ORIGINAL DESKTOP LOGIC UNCHANGED
-          const desktopItem = document.getElementById(desktopId);
-          const mobileItem = document.getElementById(mobileId);
-          
-          if (isMobile) {
-            return mobileItem || desktopItem;
           } else {
-            return desktopItem || mobileItem;
+            // Desktop - use ID selectors
+            return document.getElementById(desktopId) || document.getElementById(mobileId);
           }
+          
+          return null;
         }
 
         // Helper function to get mobile menu item index
@@ -492,11 +604,11 @@
           }
         }
 
-        // Highlight a navigation item
-        function highlightNavItem(navItem, highlightEl) {
+        // Highlight a navigation item - UPDATED to support blue color
+        function highlightNavItem(navItem, highlightEl, color = 'green') {
           if (!navItem || !highlightEl || !tutorialActive) return;
 
-          console.log('Highlighting nav item:', navItem.id || navItem.className);
+          console.log('Highlighting nav item:', navItem.id || navItem.className, 'with color:', color);
 
           const rect = navItem.getBoundingClientRect();
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -509,16 +621,29 @@
           highlightEl.style.width = `${rect.width + 10}px`;
           highlightEl.style.height = `${rect.height + 10}px`;
           
+          // Set color based on type
+          if (color === 'blue') {
+            highlightEl.style.backgroundColor = 'rgba(63, 177, 241, 0.2)';
+            highlightEl.style.borderColor = '#3fb1f1';
+          } else {
+            // Default green
+            highlightEl.style.backgroundColor = 'rgba(92, 177, 93, 0.2)';
+            highlightEl.style.borderColor = '#5cb15d';
+          }
+          
           // Use class-based showing
           highlightEl.classList.add('show');
         }
 
-        // Clear all highlights
+        // Clear all highlights - UPDATED
         function clearHighlights() {
           console.log('Clearing highlights...');
           
-          // Remove show class and hide all highlight elements
-          const allHighlights = [highlightProfile, highlightUpload, highlightReports, highlightInsights, highlightChatbot];
+          // Remove show class and hide all highlight elements - UPDATED
+          const allHighlights = [
+            highlightProfile, highlightUpload, highlightReports, highlightInsights, highlightChatbot,
+            highlightInputGroup, highlightOutputGroup
+          ];
           
           allHighlights.forEach(highlight => {
             if (highlight) {
@@ -527,15 +652,17 @@
           });
         }
 
-        // Clear all hover effects
+        // Clear all hover effects - UPDATED
         function clearHoverEffects() {
-          // Remove all hover attributes
+          // Remove all hover attributes - UPDATED
           const hoverAttributes = [
             "data-profile-hover",
             "data-upload-hover", 
             "data-reports-hover",
             "data-insights-hover",
-            "data-chatbot-hover"
+            "data-chatbot-hover",
+            "data-input-group-hover",
+            "data-output-group-hover"
           ];
           
           hoverAttributes.forEach(attr => {
@@ -543,7 +670,7 @@
           });
         }
 
-        // Show a specific step
+        // Show a specific step - UPDATED
         function showStep(stepNumber) {
           console.log('Showing step:', stepNumber);
           
@@ -552,8 +679,9 @@
             ensureMobileMenuOpen();
           }
           
-          // EXISTING LOGIC UNCHANGED - works for both desktop and mobile
-          // Hide all steps
+          // Hide all steps - UPDATED to include new steps
+          if (stepInputOverview) stepInputOverview.style.display = "none";
+          if (stepOutputOverview) stepOutputOverview.style.display = "none";
           if (step1) step1.style.display = "none";
           if (step2) step2.style.display = "none";
           if (step3) step3.style.display = "none";
@@ -564,33 +692,60 @@
           clearHighlights();
           clearHoverEffects();
 
-          // Show the current step and highlight appropriate nav item
+          // Show the current step and highlight appropriate nav items - UPDATED
           switch (stepNumber) {
             case 1:
+              if (stepInputOverview) stepInputOverview.style.display = "block";
+              // Highlight both Profile and Upload with blue
+              const inputNavItems = [
+                findNavItem("Profile", "Profile-mobile"),
+                findNavItem("Upload", "Upload-mobile")
+              ].filter(item => item !== null);
+              highlightMultipleNavItems(inputNavItems, highlightInputGroup, 'blue');
+              document.body.setAttribute("data-input-group-hover", "true");
+              break;
+              
+            case 2:
+              if (stepOutputOverview) stepOutputOverview.style.display = "block";
+              // Highlight Reports, Insights, and Chatbot with green
+              const outputNavItems = [
+                findNavItem("Reports", "Reports-mobile"),
+                findNavItem("Insights", "Insights-mobile"),
+                findNavItem("Chatbot", "Chatbot-mobile")
+              ].filter(item => item !== null);
+              highlightMultipleNavItems(outputNavItems, highlightOutputGroup, 'green');
+              document.body.setAttribute("data-output-group-hover", "true");
+              break;
+              
+            case 3:
               if (step1) step1.style.display = "block";
               const profileNavItem = findNavItem("Profile", "Profile-mobile");
-              highlightNavItem(profileNavItem, highlightProfile);
+              highlightNavItem(profileNavItem, highlightProfile, 'blue'); // Changed to blue
               document.body.setAttribute("data-profile-hover", "true");
               break;
-            case 2:
+              
+            case 4:
               if (step2) step2.style.display = "block";
               const uploadNavItem = findNavItem("Upload", "Upload-mobile");
-              highlightNavItem(uploadNavItem, highlightUpload);
+              highlightNavItem(uploadNavItem, highlightUpload, 'blue'); // Changed to blue
               document.body.setAttribute("data-upload-hover", "true");
               break;
-            case 3:
+              
+            case 5:
               if (step3) step3.style.display = "block";
               const reportsNavItem = findNavItem("Reports", "Reports-mobile");
               highlightNavItem(reportsNavItem, highlightReports);
               document.body.setAttribute("data-reports-hover", "true");
               break;
-            case 4:
+              
+            case 6:
               if (step4) step4.style.display = "block";
               const insightsNavItem = findNavItem("Insights", "Insights-mobile");
               highlightNavItem(insightsNavItem, highlightInsights);
               document.body.setAttribute("data-insights-hover", "true");
               break;
-            case 5:
+              
+            case 7:
               if (step5) step5.style.display = "block";
               const chatbotNavItem = findNavItem("Chatbot", "Chatbot-mobile");
               highlightNavItem(chatbotNavItem, highlightChatbot);
@@ -649,22 +804,31 @@
           }
         }
 
-        // Event listeners
+        // Event listeners - UPDATED with new overview buttons
         if (getStartedBtn) {
           getStartedBtn.addEventListener("click", startTutorial);
         }
 
+        // NEW: Event listeners for new overview steps
+        if (stepInputOverviewNext) {
+          stepInputOverviewNext.addEventListener("click", () => showStep(2));
+        }
+        if (stepOutputOverviewNext) {
+          stepOutputOverviewNext.addEventListener("click", () => showStep(3));
+        }
+
+        // UPDATED: Event listeners for existing steps (now steps 3-7)
         if (step1Next) {
-          step1Next.addEventListener("click", () => showStep(2));
+          step1Next.addEventListener("click", () => showStep(4));
         }
         if (step2Next) {
-          step2Next.addEventListener("click", () => showStep(3));
+          step2Next.addEventListener("click", () => showStep(5));
         }
         if (step3Next) {
-          step3Next.addEventListener("click", () => showStep(4));
+          step3Next.addEventListener("click", () => showStep(6));
         }
         if (step4Next) {
-          step4Next.addEventListener("click", () => showStep(5));
+          step4Next.addEventListener("click", () => showStep(7));
         }
         if (step5Next) {
           step5Next.addEventListener("click", completeTutorial);
@@ -675,7 +839,7 @@
           button.addEventListener("click", completeTutorial);
         });
 
-        // Navigation click handling
+        // Navigation click handling - UPDATED for new step numbers
         const allProfileLinks = document.querySelectorAll("#Profile, #Profile-mobile");
         const allUploadLinks = document.querySelectorAll("#Upload, #Upload-mobile");
         const allReportsLinks = document.querySelectorAll("#Reports, #Reports-mobile");
@@ -684,43 +848,43 @@
 
         allProfileLinks.forEach(link => {
           link.addEventListener("click", (e) => {
-            if (currentStep === 1 && tutorialActive) {
+            if (currentStep === 3 && tutorialActive) {  // Changed from 1 to 3
               e.preventDefault();
-              showStep(2);
+              showStep(4);  // Changed from 2 to 4
             }
           });
         });
 
         allUploadLinks.forEach(link => {
           link.addEventListener("click", (e) => {
-            if (currentStep === 2 && tutorialActive) {
+            if (currentStep === 4 && tutorialActive) {  // Changed from 2 to 4
               e.preventDefault();
-              showStep(3);
+              showStep(5);  // Changed from 3 to 5
             }
           });
         });
 
         allReportsLinks.forEach(link => {
           link.addEventListener("click", (e) => {
-            if (currentStep === 3 && tutorialActive) {
+            if (currentStep === 5 && tutorialActive) {  // Changed from 3 to 5
               e.preventDefault();
-              showStep(4);
+              showStep(6);  // Changed from 4 to 6
             }
           });
         });
 
         allInsightsLinks.forEach(link => {
           link.addEventListener("click", (e) => {
-            if (currentStep === 4 && tutorialActive) {
+            if (currentStep === 6 && tutorialActive) {  // Changed from 4 to 6
               e.preventDefault();
-              showStep(5);
+              showStep(7);  // Changed from 5 to 7
             }
           });
         });
 
         allChatbotLinks.forEach(link => {
           link.addEventListener("click", (e) => {
-            if (currentStep === 5 && tutorialActive) {
+            if (currentStep === 7 && tutorialActive) {  // Changed from 5 to 7
               e.preventDefault();
               completeTutorial();
             }
