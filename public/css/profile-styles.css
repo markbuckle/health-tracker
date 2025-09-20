@@ -1061,21 +1061,24 @@
     z-index: 10;
 }
 .profile-completion-modal {
-    position: absolute;
-    top: 4rem;
-    right: 1rem;
-    background: linear-gradient(135deg, #e8f5e8, #d1e1d1);
-    border: 2px solid #5cb15d;
+    /* Change from absolute to fixed positioning */
+    position: fixed;
+    top: 31%;
+    right: 45%;
+    background: linear-gradient(135deg, #e4e4e4, #d6d6d6);
+    border: 1px solid #747474;
     border-radius: 12px;
     padding: 1.5rem;
     max-width: 280px;
-    box-shadow: 0 8px 24px rgba(92, 177, 93, 0.25);
-    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(159, 159, 159, 0.25);
+    z-index: 1001; /* Higher z-index to ensure it's above everything */
     opacity: 0;
     transform: translateY(-10px) scale(0.95);
     transition: all 0.3s ease;
     pointer-events: none;
     display: none;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
 }
 
 .profile-completion-modal.show {
@@ -1586,11 +1589,101 @@
     .tab-status {
       align-self: center;
     }
+    .profile-completion-modal {
+        position: fixed;
+        top: 70%;
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -50%) scale(0.95);
+        max-width: 320px;
+        width: calc(100vw - 3rem);
+        padding: 1.5rem;
+        max-height: 80vh;
+    }
+    
+    .profile-completion-modal.show {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    
+    /* Remove the arrow since it's now centered */
+    .profile-completion-modal .modal-arrow {
+        display: none;
+    }
+    
+    .profile-completion-modal .modal-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .profile-completion-modal .modal-message {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 1.25rem;
+    }
+    
+    .profile-completion-modal .modal-buttons {
+        gap: 0.85rem;
+    }
+    
+    .profile-completion-modal .modal-button {
+        padding: 0.85rem 1.25rem;
+        font-size: 0.95rem;
+    }
+    
 }
 
 @media screen and (max-width: 480px) {
    .username-heading {
     font-size: 18px;
+  }
+  .profile-completion-modal {
+    position: fixed;
+    top: 70%;
+    left: 47%;
+    right: auto;
+    transform: translate(-50%, -50%) scale(0.95);
+    max-width: 70%;
+    width: calc(100vw - 4rem);
+    margin: 0 1rem;
+    padding: 1.25rem;
+    max-height: 85vh;
+    border-radius: 10px;
+  }
+  .profile-completion-modal.show {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .profile-completion-modal .modal-arrow {
+    display: none;
+  }
+  .profile-completion-modal .completion-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .profile-completion-modal .modal-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .profile-completion-modal .modal-message {
+    font-size: 0.85rem;
+    line-height: 1.35;
+    margin-bottom: 1rem;
+  }
+  .profile-completion-modal .modal-buttons {
+    gap: 0.75rem;
+  }
+  .profile-completion-modal .modal-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+  }
+  .profile-completion-modal .modal-close {
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1rem;
   }
 }
 
@@ -1611,4 +1704,30 @@
     gap: 0.25rem;
     align-items: flex-start;
   }
+  .profile-completion-modal {
+        width: calc(100vw - 1rem);
+        margin: 0 0.5rem;
+        padding: 1rem;
+    }
+    
+    .profile-completion-modal .modal-title {
+        font-size: 0.95rem;
+    }
+    
+    .profile-completion-modal .modal-message {
+        font-size: 0.8rem;
+    }
+    
+    .profile-completion-modal .modal-button {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .profile-completion-modal {
+        max-height: 90vh;
+        width: calc(100vw - 4rem);
+        margin: 0 2rem;
+    }
 }

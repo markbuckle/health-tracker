@@ -74,7 +74,7 @@
         <button class="modal-close" onclick="closeProfileCompletionModal()">&times;</button>
         
         <div class="modal-content">
-          <div class="completion-icon">🎉</div>
+          {{!-- <div class="completion-icon">🎉</div> --}}
           <div class="modal-title">Profile Complete!</div>
           <div class="modal-message">
             Great job! Your health profile is now complete. You can come back here anytime to add, edit or remove information.
@@ -2335,31 +2335,52 @@
         }
 
         showProfileCompletionModal() {
-            const modal = document.getElementById('profileCompletionModal');
-            if (modal) {
-                // Show the modal with animation
-                modal.style.display = 'block';
-                setTimeout(() => {
-                    modal.classList.add('show');
-                }, 10);
-                
-                // Store that we've shown the completion modal to avoid showing it again
-                localStorage.setItem('profileCompletionModalShown', 'true');
-            }
-        }
+          console.log('=== SHOWING PROFILE COMPLETION MODAL ===');
+          const modal = document.getElementById('profileCompletionModal');
+          console.log('Modal element found:', !!modal);
+          
+          if (modal) {
+              console.log('Modal current display:', modal.style.display);
+              console.log('Modal current classes:', modal.className);
+              
+              modal.style.display = 'block';
+              setTimeout(() => {
+                  modal.classList.add('show');
+                  console.log('Modal classes after adding show:', modal.className);
+              }, 10);
+              
+              // TEMP: Comment out for testing
+              // localStorage.setItem('profileCompletionModalShown', 'true');
+              console.log('Modal shown (localStorage disabled for testing)');
+          } else {
+              console.error('Modal element not found!');
+          }
+      }
 
         // Add this method to check and show modal on page load if profile is complete
         checkAndShowCompletionModal() {
-            // Only show if all tabs are completed and we haven't shown it before
-            const hasShownModal = localStorage.getItem('profileCompletionModalShown');
-            
-            if (this.completedTabs.length === this.tabOrder.length && !hasShownModal) {
-                // Small delay to ensure page is fully loaded
-                setTimeout(() => {
-                    this.showProfileCompletionModal();
-                }, 1000);
-            }
-        }
+          console.log('=== CHECKING COMPLETION MODAL ===');
+          console.log('Completed tabs:', this.completedTabs);
+          console.log('Total tabs required:', this.tabOrder.length);
+          console.log('All completed?', this.completedTabs.length === this.tabOrder.length);
+          
+          const hasShownModal = localStorage.getItem('profileCompletionModalShown');
+          console.log('Modal already shown?', hasShownModal);
+          
+          // TEMP: Comment out the localStorage check for testing
+          // if (this.completedTabs.length === this.tabOrder.length && !hasShownModal) {
+          if (this.completedTabs.length === this.tabOrder.length) {
+              console.log('Showing completion modal...');
+              setTimeout(() => {
+                  this.showProfileCompletionModal();
+              }, 1000);
+          } else {
+              console.log('Modal not shown because:', {
+                  allCompleted: this.completedTabs.length === this.tabOrder.length,
+                  alreadyShown: hasShownModal
+              });
+          }
+      }
 
         showToast(message) {
             // Create a simple toast notification
