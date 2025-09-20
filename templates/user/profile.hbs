@@ -67,6 +67,26 @@
           <span class="tutorial-text">Tutorial</span>
         </a>
       </div>
+
+      <!-- Profile Completion Modal -->
+      <div class="profile-completion-modal" id="profileCompletionModal">
+        <div class="modal-arrow"></div>
+        <button class="modal-close" onclick="closeProfileCompletionModal()">&times;</button>
+        
+        <div class="modal-content">
+          <div class="completion-icon">🎉</div>
+          <div class="modal-title">Profile Complete!</div>
+          <div class="modal-message">
+            Great job! Your health profile is now complete. You can come back here anytime to add, edit or remove information.
+            Head to the Upload page next to add your lab results and medical documents.
+          </div>
+          
+          <div class="modal-buttons">
+            <a href="/upload" class="modal-button primary">Go to Upload Page</a>
+            <button class="modal-button secondary" onclick="closeProfileCompletionModal()">Continue on Profile</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2006,71 +2026,71 @@
 
     // Profile Info Modal Functionality
     document.addEventListener('DOMContentLoaded', function() {
-  // Get references to the modal and button
-  const profileInfoModal = document.querySelector('.profile-info-modal');
-  const profileInfoButton = document.querySelector('.profile-info-button');
-  
-  // Function to open the modal
-  function openProfileInfoModal() {
-    if (!profileInfoModal) return;
-    
-    profileInfoModal.style.display = 'flex';
-    setTimeout(() => {
-      profileInfoModal.style.opacity = '1';
-      profileInfoModal.style.visibility = 'visible';
-    }, 10);
-  }
-  
-  // Function to close the modal
-  function closeProfileInfoModal() {
-    if (!profileInfoModal) return;
-    
-    profileInfoModal.style.opacity = '0';
-    profileInfoModal.style.visibility = 'hidden';
-    setTimeout(() => {
-      profileInfoModal.style.display = 'none';
-    }, 300); // Allow time for the opacity transition
-  }
-  
-  // Add click event to the info button
-  if (profileInfoButton) {
-    profileInfoButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation(); // Prevent event bubbling
-      openProfileInfoModal();
+      // Get references to the modal and button
+      const profileInfoModal = document.querySelector('.profile-info-modal');
+      const profileInfoButton = document.querySelector('.profile-info-button');
+      
+      // Function to open the modal
+      function openProfileInfoModal() {
+        if (!profileInfoModal) return;
+        
+        profileInfoModal.style.display = 'flex';
+        setTimeout(() => {
+          profileInfoModal.style.opacity = '1';
+          profileInfoModal.style.visibility = 'visible';
+        }, 10);
+      }
+      
+      // Function to close the modal
+      function closeProfileInfoModal() {
+        if (!profileInfoModal) return;
+        
+        profileInfoModal.style.opacity = '0';
+        profileInfoModal.style.visibility = 'hidden';
+        setTimeout(() => {
+          profileInfoModal.style.display = 'none';
+        }, 300); // Allow time for the opacity transition
+      }
+      
+      // Add click event to the info button
+      if (profileInfoButton) {
+        profileInfoButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation(); // Prevent event bubbling
+          openProfileInfoModal();
+        });
+      }
+      
+      // Add click events to close the modal
+      if (profileInfoModal) {
+        // Close when clicking the background
+        const modalBackground = profileInfoModal.querySelector('.modal-background');
+        if (modalBackground) {
+          modalBackground.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeProfileInfoModal();
+          });
+        }
+        
+        // Close when clicking the return button
+        const returnButton = profileInfoModal.querySelector('.modal-return-button');
+        if (returnButton) {
+          returnButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeProfileInfoModal();
+          });
+        }
+        
+        // Close when clicking the cancel button
+        const cancelButton = profileInfoModal.querySelector('.cancel-button');
+        if (cancelButton) {
+          cancelButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeProfileInfoModal();
+          });
+        }
+      }
     });
-  }
-  
-  // Add click events to close the modal
-  if (profileInfoModal) {
-    // Close when clicking the background
-    const modalBackground = profileInfoModal.querySelector('.modal-background');
-    if (modalBackground) {
-      modalBackground.addEventListener('click', function(e) {
-        e.preventDefault();
-        closeProfileInfoModal();
-      });
-    }
-    
-    // Close when clicking the return button
-    const returnButton = profileInfoModal.querySelector('.modal-return-button');
-    if (returnButton) {
-      returnButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        closeProfileInfoModal();
-      });
-    }
-    
-    // Close when clicking the cancel button
-    const cancelButton = profileInfoModal.querySelector('.cancel-button');
-    if (cancelButton) {
-      cancelButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        closeProfileInfoModal();
-      });
-    }
-  }
-});
   </script>
   <script> // file upload handler
       document.addEventListener('DOMContentLoaded', function() {
@@ -2146,6 +2166,7 @@
             this.updateTabStates();
             this.setupEventListeners();
             this.checkGuidanceDismissal();
+            this.checkAndShowCompletionModal();
         }
 
         // Get completed tabs from server data or localStorage
@@ -2308,7 +2329,35 @@
                 const nextTab = this.tabOrder[nextTabIndex];
                 this.showToast(`Great! Now complete the ${nextTab} section.`);
             } else {
-                this.showToast('Profile completed! Your insights are now fully personalized.');
+                // All tabs completed - show the special modal instead of just a toast
+                this.showProfileCompletionModal();
+            }
+        }
+
+        showProfileCompletionModal() {
+            const modal = document.getElementById('profileCompletionModal');
+            if (modal) {
+                // Show the modal with animation
+                modal.style.display = 'block';
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+                
+                // Store that we've shown the completion modal to avoid showing it again
+                localStorage.setItem('profileCompletionModalShown', 'true');
+            }
+        }
+
+        // Add this method to check and show modal on page load if profile is complete
+        checkAndShowCompletionModal() {
+            // Only show if all tabs are completed and we haven't shown it before
+            const hasShownModal = localStorage.getItem('profileCompletionModalShown');
+            
+            if (this.completedTabs.length === this.tabOrder.length && !hasShownModal) {
+                // Small delay to ensure page is fully loaded
+                setTimeout(() => {
+                    this.showProfileCompletionModal();
+                }, 1000);
             }
         }
 
@@ -2473,6 +2522,16 @@
         const arrow = button.closest('.completion-arrow');
         if (arrow) {
             arrow.style.display = 'none';
+        }
+    }
+
+    function closeProfileCompletionModal() {
+        const modal = document.getElementById('profileCompletionModal');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
         }
     }
 
