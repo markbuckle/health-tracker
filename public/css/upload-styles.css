@@ -1201,7 +1201,7 @@
     background-color: #b8b7b7 !important;
 }
 .in-page-link.w--current {
-    background-color: #cfcfcf !important;
+    background-color: #b2eeb2 !important;
     color: rgb(18, 18, 18) !important;
 }
 .in-page-link.w--current:hover {
@@ -1239,21 +1239,26 @@
     background-color: #fff3cd !important;
 }
 .upload-tab-completed {
-    background-color: #e8f5e8 !important;
-    border-color: #5cb15d !important;
-    color: #2d5a2e !important;
+    background-color: #e8f5e8 !important;  /* Light green background like Basic Info */
+    border-color: #5cb15d !important;      /* Green border */
+    color: #2d5a2e !important;             /* Dark green text */
 }
 .upload-tab-completed .upload-tab-number {
-    background-color: #5cb15d !important;
-    color: white !important;
-    font-size: 0 !important; /* Hide the number */
+    background-color: #5cb15d !important;  /* Green background for number circle */
+    color: white !important;               /* White checkmark */
+    font-size: 0 !important;               /* Hide the number */
 }
 .upload-tab-completed .upload-tab-number::after {
-    content: "✓" !important;
-    font-size: 0.7rem !important;
+    content: "✓" !important;               /* Show checkmark */
+    font-size: 0.7rem !important;          /* Size of checkmark */
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+}
+.upload-tab-completed:hover {
+    background-color: #e8f5e8 !important;  /* Keep same green on hover */
+    border-color: #5cb15d !important;
+    color: #2d5a2e !important;
 }
 .file-output-message {
     position: absolute;

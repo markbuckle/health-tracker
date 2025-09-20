@@ -1376,20 +1376,20 @@
     min-width: 300px;
   }
   .tutorial-button-container {
-    top: 7rem;
-    left: 45%;
+    top: 6.2rem;
+    left: 59%;
     z-index: 10;
   }
   .tutorial-button {
-    padding: 0.8rem 1.2rem;
-    font-size: 1rem;
+    padding: 1.1rem 1.8rem;
+    font-size: 1.2rem;
   }
   /* .tutorial-text {
     display: none; /* Hide text on mobile, show only icon
   } */
   .tutorial-icon {
-    width: 18px;
-    height: 18px;
+    width: 21px;
+    height: 21px;
   }
   .tab-guidance-banner {
         margin: 0.5rem;
