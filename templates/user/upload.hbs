@@ -266,7 +266,7 @@
         <div data-w-tab="Output" class="tab-pane-ongoing w-tab-pane">
           <div class="dropdown-wrapper user-content-bg">
             <div class="div-block-9">
-              <div class="upload-page-text-1">Data from uploaded file(s):</div>
+              <div class="upload-page-text-1">Please review the data from your uploaded file(s) to ensure it's accurate:</div>
 
               {{#if user.files}} {{!-- Check if user has any files in mongoDB - see registerSchema --}}
               {{#each user.files}} {{!-- Loop through each files  --}}
@@ -450,6 +450,25 @@
       <!-- Footer section -->
       <div style="padding: 16px 20px; border-top: 1px solid #e5e7eb; text-align: right;">
         <button id="simpleModalCloseButton" style="padding: 8px 16px; background-color: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Close</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Upload File Output Modal -->
+  <div class="upload-reports-modal" id="uploadReportsModal">
+    <div class="modal-arrow"></div>
+    <button class="modal-close" onclick="closeUploadReportsModal()">&times;</button>
+    
+    <div class="modal-content">
+      {{!-- <div class="completion-icon">📊</div> --}}
+      <div class="modal-title">Ready for Detailed Analysis?</div>
+      <div class="modal-message">
+        Once you've reviewed your uploaded files, head to the Reports page to see detailed analysis, trends, and insights from your lab data.
+      </div>
+      
+      <div class="modal-buttons">
+        <a href="/reports" class="modal-button primary">Go to Reports Page</a>
+        <button class="modal-button secondary" onclick="closeUploadReportsModal()">Continue Reviewing Files</button>
       </div>
     </div>
   </div>
@@ -1701,6 +1720,8 @@ document.addEventListener('DOMContentLoaded', function () {
   <script> // Upload tab state management
     class UploadTabGuide {
       constructor() {
+        this.fileOutputTimer = null;
+        this.fileOutputStartTime = null;
         this.init();
       }
 
@@ -1708,6 +1729,7 @@ document.addEventListener('DOMContentLoaded', function () {
         this.updateTabStates();
         this.setupEventListeners();
         this.debugFileDetection();
+        this.setupFileOutputTimer(); // This is now properly inside the class
       }
 
       updateTabStates() {
@@ -1805,7 +1827,7 @@ document.addEventListener('DOMContentLoaded', function () {
           this.updateTabStates();
         });
 
-        // MOVED INSIDE THE CLASS - Hide message when clicking outside
+        // Hide message when clicking outside
         document.addEventListener('click', (e) => {
           const fileOutputMessage = document.getElementById('fileOutputMessage');
           if (fileOutputMessage && fileOutputMessage.style.display !== 'none') {
@@ -1823,15 +1845,108 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         });
       }
-    }
 
-    // Global function to hide the file output message
+      // MOVED INSIDE CLASS: Modal timer methods
+      setupFileOutputTimer() {
+        // Listen for tab clicks to detect when user switches to File Output
+        document.addEventListener('click', (e) => {
+          const fileOutputTab = e.target.closest('#fileOutputTab');
+          if (fileOutputTab) {
+            console.log('File Output tab clicked');
+            this.startFileOutputTimer();
+          }
+          
+          // Reset timer if user clicks away from File Output tab
+          const uploadTab = e.target.closest('#uploadFilesTab');
+          if (uploadTab) {
+            console.log('Upload tab clicked - stopping timer');
+            this.stopFileOutputTimer();
+          }
+        });
+
+        // Also check on page load if we're already on File Output tab
+        const currentTab = document.querySelector('.w-tab-link.w--current');
+        if (currentTab && currentTab.id === 'fileOutputTab') {
+          this.startFileOutputTimer();
+        }
+      }
+
+
+      startFileOutputTimer() {
+        // Clear any existing timer
+        this.stopFileOutputTimer();
+        
+        // Don't start timer if modal was already shown
+        const hasShownModal = localStorage.getItem('uploadReportsModalShown');
+        if (hasShownModal) {
+          console.log('Upload reports modal already shown, not starting timer');
+          return;
+        }
+
+        // Only start timer if files have been uploaded
+        if (!this.hasFiles()) {
+          console.log('No files uploaded, not starting timer');
+          return;
+        }
+
+        console.log('Starting File Output timer...');
+        this.fileOutputStartTime = Date.now();
+        
+        this.fileOutputTimer = setTimeout(() => {
+          console.log('5 seconds elapsed on File Output tab - showing modal');
+          this.showUploadReportsModal();
+        }, 5000); // 5 seconds
+      }
+
+      stopFileOutputTimer() {
+        if (this.fileOutputTimer) {
+          console.log('Stopping File Output timer');
+          clearTimeout(this.fileOutputTimer);
+          this.fileOutputTimer = null;
+          this.fileOutputStartTime = null;
+        }
+      }
+
+      showUploadReportsModal() {
+        const modal = document.getElementById('uploadReportsModal');
+        if (modal) {
+          console.log('Showing upload reports modal');
+          modal.style.display = 'block';
+          setTimeout(() => {
+            modal.classList.add('show');
+          }, 10);
+          
+          // Mark as shown so it doesn't appear again
+          localStorage.setItem('uploadReportsModalShown', 'true');
+        } else {
+          console.error('Upload reports modal not found!');
+        }
+      }
+    } // END OF CLASS
+
+    // GLOBAL FUNCTIONS (outside the class)
     function hideFileOutputMessage() {
       const fileOutputMessage = document.getElementById('fileOutputMessage');
       if (fileOutputMessage) {
         fileOutputMessage.style.display = 'none';
       }
     }
+
+    function closeUploadReportsModal() {
+      const modal = document.getElementById('uploadReportsModal');
+      if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+          modal.style.display = 'none';
+        }, 300);
+      }
+    }
+
+    // Global utility function for testing
+    window.resetUploadModal = function() {
+      localStorage.removeItem('uploadReportsModalShown');
+      console.log('Upload modal reset - will show again after 5 seconds on File Output tab');
+    };
 
     // Initialize when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
@@ -1841,7 +1956,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Upload tab guide initialized');
       }
     });
-  </script>
+</script>
 </body>
 
 </html>
