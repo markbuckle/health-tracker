@@ -14,6 +14,26 @@
               <div class="text-block">All</div>
             </a>
           </div>
+          
+          <!-- ADD FILTER HERE -->
+          <div class="filter-container">
+            <select id="rangeFilter" class="range-filter-select">
+              <option value="all">All Results</option>
+              <option value="in-range">In Range</option>
+              <option value="out-of-range">Out of Range</option>
+            </select>
+            <div class="filter-stats">
+              <div class="filter-stat">
+                <div class="status-dot in-range"></div>
+                <span id="inRangeCount">0</span> In Range
+              </div>
+              <div class="filter-stat">
+                <div class="status-dot out-of-range"></div>
+                <span id="outOfRangeCount">0</span> Out of Range
+              </div>
+            </div>
+          </div>
+
           <div class="search-wrapper">
             <div class="search-container">
               <button class="search-icon">
@@ -54,7 +74,7 @@
                         {{#each ../biomarkerData as |biomarker biomarkerName|}}
                         {{#if (eq biomarker.category category.name)}}
                         {{#if biomarker.value}}
-                        <article class="biomarker-container">
+                        <article class="biomarker-container" data-range-status="{{getBiomarkerRangeStatus biomarker}}">
                           <div class="biomarker-container-hover">
                             <div>
                               <div class="w-layout-grid biomarker-table-top _3-columns">
@@ -233,7 +253,7 @@
 
                 {{#each biomarkerData as |biomarker biomarkerName|}}
                 {{#if biomarker.value}}
-                <article class="biomarker-container">
+                <article class="biomarker-container" data-range-status="{{getBiomarkerRangeStatus biomarker}}">
                   <div class="biomarker-container-hover">
                     <div>
                       <div class="w-layout-grid-all biomarker-table-top _3-columns">

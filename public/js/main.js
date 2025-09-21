@@ -121,6 +121,123 @@ function responsiveSidebar() {
 responsiveSidebar();
 
 // ---------------- REPORTS PAGE - DASHBOARD INTERACTIONS -------------------- //
+function initializeRangeFilter() {
+  const rangeFilter = document.getElementById('rangeFilter');
+  if (!rangeFilter) return;
+
+  // Function to apply filter to current active tab
+  function applyFilterToActiveTab() {
+    const filterValue = rangeFilter.value;
+    const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+    
+    if (!activeTab) return;
+    
+    if (activeTab.getAttribute('data-w-tab') === 'All') {
+      // Filter All tab
+      const containers = activeTab.querySelectorAll('.biomarker-container');
+      containers.forEach(container => {
+        const status = container.getAttribute('data-range-status');
+        if (filterValue === 'all' || status === filterValue) {
+          container.classList.remove('filtered-out');
+          container.style.display = '';
+        } else {
+          container.classList.add('filtered-out');
+          container.style.display = 'none';
+        }
+      });
+    } else {
+      // Filter Category tab
+      const categories = activeTab.querySelectorAll('.dropdown-content-top');
+      categories.forEach(category => {
+        const containers = category.querySelectorAll('.biomarker-container');
+        let hasVisible = false;
+        
+        containers.forEach(container => {
+          const status = container.getAttribute('data-range-status');
+          if (filterValue === 'all' || status === filterValue) {
+            container.classList.remove('filtered-out');
+            container.style.display = '';
+            hasVisible = true;
+          } else {
+            container.classList.add('filtered-out');
+            container.style.display = 'none';
+          }
+        });
+        
+        // Hide category if no visible biomarkers
+        if (hasVisible) {
+          category.classList.remove('filtered-out');
+          category.style.display = '';
+        } else {
+          category.classList.add('filtered-out');
+          category.style.display = 'none';
+        }
+      });
+    }
+    
+    updateFilterStats();
+  }
+
+  // Filter change event
+  rangeFilter.addEventListener('change', applyFilterToActiveTab);
+
+  // Update stats function
+  function updateFilterStats() {
+    const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+    if (!activeTab) return;
+    
+    const visible = activeTab.querySelectorAll('.biomarker-container:not(.filtered-out)');
+    
+    let inRange = 0, outOfRange = 0;
+    visible.forEach(container => {
+      const status = container.getAttribute('data-range-status');
+      if (status === 'in-range') inRange++;
+      else if (status === 'out-of-range') outOfRange++;
+    });
+    
+    const inRangeElement = document.getElementById('inRangeCount');
+    const outOfRangeElement = document.getElementById('outOfRangeCount');
+    
+    if (inRangeElement) inRangeElement.textContent = inRange;
+    if (outOfRangeElement) outOfRangeElement.textContent = outOfRange;
+  }
+
+  // Enhanced tab switching to reapply filters
+  const tabLinks = document.querySelectorAll('.w-tab-link');
+  
+  tabLinks.forEach((tabLink, index) => {
+    tabLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Remove current states
+      tabLinks.forEach(link => link.classList.remove('w--current'));
+      document.querySelectorAll('.w-tab-pane').forEach(pane => pane.classList.remove('w--tab-active'));
+      
+      // Add current state to clicked tab
+      tabLink.classList.add('w--current');
+      
+      // Find and activate the corresponding tab pane
+      const tabName = tabLink.getAttribute('data-w-tab');
+      const targetPane = document.querySelector(`[data-w-tab="${tabName}"].w-tab-pane`);
+      
+      if (targetPane) {
+        targetPane.classList.add('w--tab-active');
+      }
+      
+      // Reapply filter to newly active tab
+      setTimeout(() => {
+        applyFilterToActiveTab();
+      }, 50);
+    });
+  });
+  
+  // Initial filter application and stats update
+  setTimeout(() => {
+    applyFilterToActiveTab();
+  }, 100);
+}
+
+
 function initializeDashboard() {
   function initializeTabs() {
       const tabContainer = document.querySelector('.tabs.w-tabs');
@@ -152,6 +269,8 @@ function initializeDashboard() {
               tabPanes[index].classList.add('w--tab-active');
           });
       });
+  initializeRangeFilter();
+
   }
   
   function initializeDropdowns() {

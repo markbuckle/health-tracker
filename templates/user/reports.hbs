@@ -418,5 +418,206 @@
         });
       });
     </script>
+    <script> // Rangle Filter functionality
+      function initializeRangeFilter() {
+          const rangeFilter = document.getElementById('rangeFilter');
+          const searchInput = document.querySelector('.search-input');
+          
+          if (!rangeFilter || !searchInput) return;
+
+          // Initialize filter statistics
+          updateFilterStatistics();
+
+          // Range filter functionality
+          rangeFilter.addEventListener('change', function() {
+              const selectedRange = this.value;
+              const searchTerm = searchInput.value.toLowerCase();
+              applyFilters(selectedRange, searchTerm);
+          });
+
+          // Enhanced search functionality that works with range filter
+          searchInput.addEventListener('input', function(e) {
+              const searchTerm = e.target.value.toLowerCase();
+              const selectedRange = rangeFilter.value;
+              
+              // Handle clear button visibility (if you have one)
+              const clearIcon = document.querySelector('.clear-icon');
+              if (clearIcon) {
+                  if (searchTerm) {
+                      clearIcon.classList.remove('hidden');
+                      clearIcon.classList.add('visible');
+                  } else {
+                      clearIcon.classList.remove('visible');
+                      clearIcon.classList.add('hidden');
+                  }
+              }
+
+              applyFilters(selectedRange, searchTerm);
+          });
+
+          // Apply combined filters (range + search)
+          function applyFilters(rangeFilter, searchTerm) {
+              const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+              
+              if (!activeTab) return;
+              
+              if (activeTab.getAttribute('data-w-tab') === 'All') {
+                  // Filter "All" tab
+                  filterAllTab(activeTab, rangeFilter, searchTerm);
+              } else {
+                  // Filter "By category" tab
+                  filterCategoryTab(activeTab, rangeFilter, searchTerm);
+              }
+
+              // Update filter statistics after filtering
+              updateFilterStatistics();
+          }
+
+          function filterAllTab(activeTab, rangeFilter, searchTerm) {
+              const biomarkerContainers = activeTab.querySelectorAll('.biomarker-container');
+              
+              biomarkerContainers.forEach(container => {
+                  const rangeStatus = container.getAttribute('data-range-status');
+                  const text = container.textContent.toLowerCase();
+                  
+                  const matchesRange = rangeFilter === 'all' || rangeStatus === rangeFilter;
+                  const matchesSearch = !searchTerm || text.includes(searchTerm);
+                  
+                  if (matchesRange && matchesSearch) {
+                      container.classList.remove('filtered-out');
+                      container.style.display = '';
+                  } else {
+                      container.classList.add('filtered-out');
+                      container.style.display = 'none';
+                  }
+              });
+          }
+
+          function filterCategoryTab(activeTab, rangeFilter, searchTerm) {
+              const categoryContainers = activeTab.querySelectorAll('.dropdown-content-top');
+              
+              categoryContainers.forEach(categoryContainer => {
+                  const biomarkerContainers = categoryContainer.querySelectorAll('.biomarker-container');
+                  let hasVisibleBiomarkers = false;
+
+                  // Check each biomarker in the category
+                  biomarkerContainers.forEach(biomarkerContainer => {
+                      const rangeStatus = biomarkerContainer.getAttribute('data-range-status');
+                      const text = biomarkerContainer.textContent.toLowerCase();
+                      
+                      const matchesRange = rangeFilter === 'all' || rangeStatus === rangeFilter;
+                      const matchesSearch = !searchTerm || text.includes(searchTerm);
+                      
+                      if (matchesRange && matchesSearch) {
+                          biomarkerContainer.classList.remove('filtered-out');
+                          biomarkerContainer.style.display = '';
+                          hasVisibleBiomarkers = true;
+                      } else {
+                          biomarkerContainer.classList.add('filtered-out');
+                          biomarkerContainer.style.display = 'none';
+                      }
+                  });
+
+                  // Show/hide category based on visible biomarkers
+                  if (hasVisibleBiomarkers) {
+                      categoryContainer.classList.remove('filtered-out');
+                      categoryContainer.style.display = '';
+                      
+                      // Auto-expand if there are matches and search term
+                      if (searchTerm) {
+                          const dropdownList = categoryContainer.querySelector('.category-dropdown-list');
+                          const arrow = categoryContainer.querySelector('.dropdown-arrow');
+                          if (dropdownList) dropdownList.classList.add('w--open');
+                          if (arrow) arrow.style.transform = 'rotate(180deg)';
+                      }
+                  } else {
+                      categoryContainer.classList.add('filtered-out');
+                      categoryContainer.style.display = 'none';
+                  }
+              });
+          }
+
+          // Update the filter statistics display
+          function updateFilterStatistics() {
+              const activeTab = document.querySelector('.w-tab-pane.w--tab-active');
+              if (!activeTab) return;
+
+              const visibleBiomarkers = activeTab.querySelectorAll('.biomarker-container:not(.filtered-out)');
+              
+              let inRangeCount = 0;
+              let outOfRangeCount = 0;
+
+              visibleBiomarkers.forEach(container => {
+                  const rangeStatus = container.getAttribute('data-range-status');
+                  if (rangeStatus === 'in-range') {
+                      inRangeCount++;
+                  } else if (rangeStatus === 'out-of-range') {
+                      outOfRangeCount++;
+                  }
+              });
+
+              const inRangeElement = document.getElementById('inRangeCount');
+              const outOfRangeElement = document.getElementById('outOfRangeCount');
+              
+              if (inRangeElement) inRangeElement.textContent = inRangeCount;
+              if (outOfRangeElement) outOfRangeElement.textContent = outOfRangeCount;
+          }
+
+          // Enhanced tab switching to reapply filters
+          const tabLinks = document.querySelectorAll('.w-tab-link');
+          const tabPanes = document.querySelectorAll('.w-tab-pane');
+          
+          tabLinks.forEach((tabLink, index) => {
+              tabLink.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  
+                  // Update tab states
+                  tabLinks.forEach(link => link.classList.remove('w--current'));
+                  tabPanes.forEach(pane => pane.classList.remove('w--tab-active'));
+                  
+                  tabLink.classList.add('w--current');
+                  if (tabPanes[index]) {
+                      tabPanes[index].classList.add('w--tab-active');
+                  }
+                  
+                  // Reapply filters to new tab
+                  const selectedRange = rangeFilter.value;
+                  const searchTerm = searchInput.value.toLowerCase();
+                  applyFilters(selectedRange, searchTerm);
+              });
+          });
+
+          // Return the applyFilters function so it can be called externally if needed
+          return { applyFilters, updateFilterStatistics };
+      }
+
+      // Enhanced dashboard initialization that includes range filter
+      function initializeDashboardWithFilter() {
+          // Initialize existing dashboard functionality
+          initializeTabs();
+          initializeDropdowns();
+          initializeBiomarkers();
+          
+          // Initialize the new range filter
+          const filterFunctions = initializeRangeFilter();
+          
+          // Store filter functions globally if needed
+          window.labReportsFilter = filterFunctions;
+      }
+
+      // Update the main initialization to include filter
+      function initializeAll() {
+          initializeHeaderScroll();
+          initializeDashboardWithFilter(); // Use the enhanced version
+          
+          // Load charts if on reports page
+          if (document.getElementById('biomarker-trend') && typeof Plotly !== 'undefined') {
+              initializeBiomarkerChart();
+          }
+      }
+
+      // Make sure to call the enhanced initialization
+      document.addEventListener('DOMContentLoaded', initializeAll);
+    </script>
   </body>
 </html>

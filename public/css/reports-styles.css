@@ -86,6 +86,141 @@
   .biomarker-table-top._3-columns {
     width: auto;
   }
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: 1rem;
+  padding: 0.5rem 0;
+}
+.range-filter-select {
+  appearance: none;
+  background-color: #f8fafc;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 40px 10px 16px;
+  font-size: 14px;
+  font-family: "Poppins-Regular", sans-serif;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+.range-filter-select:hover {
+  background-color: #f1f5f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+.range-filter-select:focus {
+  outline: none;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+.range-filter-select:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  overflow: visible;
+}
+
+.filter-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 13px;
+  color: #64748b;
+  font-family: "Poppins-Regular", sans-serif;
+  padding: 6px 12px;
+  border-radius: 6px;
+  /* border: 1px solid #e2e8f0; */
+}
+.filter-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.in-range {
+  background-color: #85bb83; /* Green to match your bar charts */
+  box-shadow: 0 0 0 2px rgba(133, 187, 131, 0.2);
+}
+
+.status-dot.out-of-range {
+  background-color: #f0a7a7; /* Red/pink to match your bar charts */
+  box-shadow: 0 0 0 2px rgba(240, 167, 167, 0.2);
+}
+
+/* Count numbers */
+.filter-stats span {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Enhanced layout for in-page-container */
+.in-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem 0 0 0;
+}
+
+/* Keep existing search wrapper styles but improve alignment */
+.search-wrapper {
+  margin: 0;
+}
+
+.biomarker-container.filtered-out {
+  display: none !important;
+}
+
+.dropdown-content-top.filtered-out {
+  display: none !important;
+}
+
+/* Optional: Add a subtle animation when filters are applied */
+.biomarker-container {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.biomarker-container.filtered-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Improve the dropdown arrow styling */
+.range-filter-select::-ms-expand {
+  display: none; /* Hide default IE dropdown arrow */
+}
+
+
+@media (max-width: 1200px) {
+  .filter-container {
+    gap: 1rem;
+  }
+  
+  .filter-stats {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  
+  .range-filter-select {
+    min-width: 120px;
+    font-size: 13px;
+  }
+}
 
 @media screen and (max-width: 991px) {
   .dashboard-content {
@@ -121,6 +256,24 @@
   }
   .columns.w-row { 
     flex-wrap: nowrap;
+  }
+  .in-page-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .filter-container {
+    justify-content: center;
+    margin-left: 0;
+    gap: 0.75rem;
+  }
+  .filter-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .filter-stats::before {
+    display: none;
   }
 }
 
@@ -281,6 +434,19 @@
     min-height: 2.5rem;
     padding-top: 1rem;
   }
+   .filter-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .range-filter-select {
+    width: 100%;
+    min-width: auto;
+  }
+  .filter-stats {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -301,5 +467,13 @@
   }
   .caption-large {
     font-size: 9px;
+  }
+  .filter-stats {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
   }
 }
