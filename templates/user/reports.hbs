@@ -619,5 +619,33 @@
       // Make sure to call the enhanced initialization
       document.addEventListener('DOMContentLoaded', initializeAll);
     </script>
+    <script> // handle both tab and filter URL parameters
+      document.addEventListener('DOMContentLoaded', function() {
+          // Check for URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const filter = urlParams.get('filter');
+          const tab = urlParams.get('tab');
+          
+          // Switch to specified tab first
+          if (tab === 'all') {
+              const allTabButton = document.querySelector('[data-w-tab="All"]');
+              if (allTabButton) {
+                  allTabButton.click();
+              }
+          }
+          
+          // Then apply filter if specified
+          if (filter && (filter === 'in-range' || filter === 'out-of-range' || filter === 'all')) {
+              // Wait for page to load, then apply filter
+              setTimeout(() => {
+                  const rangeFilterSelect = document.querySelector('.range-filter-select');
+                  if (rangeFilterSelect) {
+                      rangeFilterSelect.value = filter;
+                      rangeFilterSelect.dispatchEvent(new Event('change'));
+                  }
+              }, 100);
+          }
+      });
+    </script>
   </body>
 </html>

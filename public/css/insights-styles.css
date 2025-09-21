@@ -1413,6 +1413,19 @@
   color: #0f172a;
   font-family: "Poppins-Medium", sans-serif;
 }
+.lab-stat-box[style*="cursor: pointer"] {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+}
+.lab-stat-box[style*="cursor: pointer"]:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.lab-stat-box[style*="cursor: pointer"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 @media (max-width: 1024px) {
   .wellness-summary-card {

@@ -321,8 +321,47 @@ hbs.registerHelper("parseReferenceRange", function (range) {
 hbs.registerHelper("calculateMarkerPosition", function (value, range) {
   if (!value || !range) return 126; // Default position
 
-  const rangeObj =
-    typeof range === "string" ? this.parseReferenceRange(range) : range;
+  // Create a shared function to parse reference ranges
+  function parseRangeForPosition(rangeStr) {
+    if (!rangeStr) return null;
+    
+    const str = rangeStr.toString().trim();
+    
+    // Handle greater than format
+    const greaterThanMatch = str.match(/^>\s*(\d+\.?\d*)$/);
+    if (greaterThanMatch) {
+      const minValue = parseFloat(greaterThanMatch[1]);
+      return {
+        min: minValue,
+        max: minValue * 3
+      };
+    }
+    
+    // Handle less than format
+    const lessThanMatch = str.match(/^<\s*(\d+\.?\d*)$/);
+    if (lessThanMatch) {
+      const maxValue = parseFloat(lessThanMatch[1]);
+      return {
+        min: 0,
+        max: maxValue
+      };
+    }
+    
+    // Handle standard "X.X-Y.Y" format
+    const cleanRange = str.replace(/\s+/g, "").replace("–", "-");
+    const matches = cleanRange.match(/^(\d+\.?\d*)-(\d+\.?\d*)$/);
+
+    if (!matches) {
+      return null;
+    }
+
+    return {
+      min: parseFloat(matches[1]),
+      max: parseFloat(matches[2])
+    };
+  }
+
+  const rangeObj = typeof range === "string" ? parseRangeForPosition(range) : range;
 
   if (!rangeObj) return 126;
 
@@ -335,6 +374,98 @@ hbs.registerHelper("calculateMarkerPosition", function (value, range) {
     startX +
     (usableWidth * (value - rangeObj.min)) / (rangeObj.max - rangeObj.min);
   return Math.min(Math.max(position, startX), totalWidth - startX);
+});
+
+// ===== ADD THESE HELPERS TO src/index.js =====
+
+// Helper to determine if a biomarker is in range
+hbs.registerHelper('isInRange', function(biomarker) {
+  if (!biomarker || !biomarker.value || !biomarker.referenceRange) {
+    return false;
+  }
+  
+  const value = parseFloat(biomarker.value);
+  if (isNaN(value)) return false;
+  
+  // Parse reference range
+  const rangeStr = biomarker.referenceRange.toString();
+  
+  // Handle different range formats
+  if (rangeStr.includes('-')) {
+    const cleanRange = rangeStr.replace(/\s+/g, '').replace(/[<>≤≥]/g, '');
+    const rangeParts = cleanRange.split('-');
+    
+    if (rangeParts.length === 2) {
+      const minValue = parseFloat(rangeParts[0]);
+      const maxValue = parseFloat(rangeParts[1]);
+      
+      if (!isNaN(minValue) && !isNaN(maxValue)) {
+        return value >= minValue && value <= maxValue;
+      }
+    }
+  }
+  
+  // Handle greater than format (e.g., ">20")
+  if (rangeStr.includes('>')) {
+    const match = rangeStr.match(/>\s*(\d+\.?\d*)/);
+    if (match) {
+      const minValue = parseFloat(match[1]);
+      return !isNaN(minValue) && value > minValue;
+    }
+  }
+  
+  // Handle less than format (e.g., "<10")
+  if (rangeStr.includes('<')) {
+    const match = rangeStr.match(/<\s*(\d+\.?\d*)/);
+    if (match) {
+      const maxValue = parseFloat(match[1]);
+      return !isNaN(maxValue) && value < maxValue;
+    }
+  }
+  
+  return false;
+});
+
+// Helper to get biomarker range status as string
+hbs.registerHelper('getBiomarkerRangeStatus', function(biomarker) {
+  if (!biomarker || !biomarker.value || !biomarker.referenceRange) {
+    return 'no-range';
+  }
+  
+  const value = parseFloat(biomarker.value);
+  const rangeStr = biomarker.referenceRange.toString();
+  
+  // Handle standard range format "X-Y"
+  if (rangeStr.includes('-')) {
+    const parts = rangeStr.replace(/\s+/g, '').split('-');
+    if (parts.length === 2) {
+      const min = parseFloat(parts[0]);
+      const max = parseFloat(parts[1]);
+      if (!isNaN(min) && !isNaN(max)) {
+        return (value >= min && value <= max) ? 'in-range' : 'out-of-range';
+      }
+    }
+  }
+  
+  // Handle "> X" format
+  if (rangeStr.includes('>')) {
+    const match = rangeStr.match(/>\s*(\d+\.?\d*)/);
+    if (match) {
+      const threshold = parseFloat(match[1]);
+      return value > threshold ? 'in-range' : 'out-of-range';
+    }
+  }
+  
+  // Handle "< X" format  
+  if (rangeStr.includes('<')) {
+    const match = rangeStr.match(/<\s*(\d+\.?\d*)/);
+    if (match) {
+      const threshold = parseFloat(match[1]);
+      return value < threshold ? 'in-range' : 'out-of-range';
+    }
+  }
+  
+  return 'no-range';
 });
 
 // biomarkerData helpers
@@ -426,7 +557,6 @@ hbs.registerHelper(
     );
   }
 );
-
 
 hbs.registerHelper(
   "hasBiomarkersInCategory", 
