@@ -241,7 +241,10 @@
                 if (title) title.style.visibility = "visible";
                 if (subtitle) subtitle.style.visibility = "visible";
                 if (mobileImage) mobileImage.style.visibility = "visible";
-                if (button) button.style.visibility = "visible";
+                const buttons = document.querySelectorAll('.btn-primary, .btn-secondary-outline');
+                buttons.forEach(button => {
+                  if (button) button.style.visibility = "visible";
+                });
                 
                 animationsHavePlayed = true;
               } else if (entry.isIntersecting && animationsHavePlayed) {

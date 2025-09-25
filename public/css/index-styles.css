@@ -1154,9 +1154,9 @@
   background-color: transparent;
   color: rgb(48, 176, 50);
   border-radius: 76px;
-  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+  padding: clamp(0.4rem, 2vw, 0.9rem) clamp(0.9rem, 4vw, 0.9rem);
   width: clamp(200px, 45%, 400px);
-  border: 2px solid black;
+  border: 1.4px solid black;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: var(--primary-font-size);
@@ -1172,6 +1172,32 @@
   color: #ffffff;
   transform: scale3d(1.02, 1.02, 1.01);
   box-shadow: 0 4px 20px rgba(127, 209, 130, 0.3);
+}
+.btn-primary,
+.btn-secondary-outline {
+  opacity: 0;
+  transform: scale(1.2); 
+  animation: dissolveIn 1.1s ease-out forwards;
+  animation-delay: 2.5s;
+  width: 9rem !important;
+  padding: 0.8rem 1.6rem !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Update the scrolled state as well */
+.btn-primary-scrolled,
+.btn-secondary-outline-scrolled {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Make sure both buttons are hidden initially */
+.button-container-hero .btn-primary,
+.button-container-hero .btn-secondary-outline {
+  visibility: hidden;
+  opacity: 0;
 }
 
 /* Animation keyframes */
