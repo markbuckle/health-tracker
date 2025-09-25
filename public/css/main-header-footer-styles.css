@@ -56,6 +56,7 @@
   display: flex;
   align-items: center;
   margin-right: 2rem;
+  margin-left: 0.5rem;
   height: var(--header-height-default);
   cursor: pointer;
   transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);

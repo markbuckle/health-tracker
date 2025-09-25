@@ -16,17 +16,31 @@
 
     <section class="hero content-container">
       <div class="hero-container">
-        <!-- Desktop: Text content on left -->
+        <!-- Desktop: Text content on left, Mobile: Text on top -->
         <div class="hero-content">
           <h1 class="hero-title">
-            <span class="hero-text">Your secure</span>
-            <span class="hero-text">and easy-to-use</span>
-            <span class="hero-text mobile-hide">personalized</span>
-            <span class="hero-text mobile-hide">health portal</span>
-            <span class="hero-text mobile-show">personalized health portal</span>
+            Transform Your Health Data
           </h1>
+          <p class="hero-subtitle">
+            Get personalized reports, AI-powered insights, and actionable recommendations to help you live a longer and healthier life - all in one secure platform
+          </p>
           <!-- Desktop button - hidden on mobile -->
-          <a href="/register" class="button-basics btn-primary desktop-only">
+          <div class="button-container-hero desktop-only">
+            <a href="/how-it-works" class="button-basics btn-secondary-outline">
+              <div class="flex-horizontal">HOW IT WORKS</div>
+            </a>
+            <a href="/register" class="button-basics btn-primary">
+              <div class="flex-horizontal">GET STARTED</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile button - OUTSIDE container, only shows on mobile -->
+        <div class="button-container-hero mobile-only">
+          <a href="/how-it-works" class="button-basics btn-secondary-outline">
+            <div class="flex-horizontal">HOW IT WORKS</div>
+          </a>
+          <a href="/register" class="button-basics btn-primary">
             <div class="flex-horizontal">GET STARTED</div>
           </a>
         </div>
@@ -40,10 +54,6 @@
         />
       </div>
       
-      <!-- Mobile button - OUTSIDE container, only shows on mobile -->
-      <a href="/register" class="button-basics btn-primary mobile-only">
-        <div class="flex-horizontal">GET STARTED</div>
-      </a>
     </section>
 
     <div class="wave-light-bg">
@@ -213,66 +223,57 @@
 
     <script src="js/main.js" defer type="module"></script>
     <script src="js/main-mobile.js" defer type="module"></script>
+    <script src="/js/feedbackWidget.js"></script>
     <script> // Animation handling
-      document.addEventListener("DOMContentLoaded", () => {
-        // Flag to track if animations have played during this session
+      document.addEventListener('DOMContentLoaded', function() {
         let animationsHavePlayed = false;
 
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
-              const title = entry.target;
-
               if (entry.isIntersecting && !animationsHavePlayed) {
-                // First time seeing the title - play animations
-                title.style.visibility = "visible";
-                
-                // Make image visible for animations
-                const mobileImage = document.querySelector(".mobile");
-                const button = document.querySelector(".btn-primary");
-                
+                // First time seeing the hero - play animations
+                const title = document.querySelector('.hero-title');
+                const subtitle = document.querySelector('.hero-subtitle');
+                const mobileImage = document.querySelector('.mobile');
+                const button = document.querySelector('.desktop-only');
+
+                if (title) title.style.visibility = "visible";
+                if (subtitle) subtitle.style.visibility = "visible";
                 if (mobileImage) mobileImage.style.visibility = "visible";
                 if (button) button.style.visibility = "visible";
                 
                 animationsHavePlayed = true;
               } else if (entry.isIntersecting && animationsHavePlayed) {
-                // Already seen the title - show without animations
-                title.style.visibility = "visible";
-
-                // Remove animations and show content immediately
-                document.querySelectorAll(".hero-text, .mobile").forEach((el) => {
+                // Already seen the hero - show without animations
+                document.querySelectorAll('.hero-title, .hero-subtitle, .mobile, .desktop-only').forEach((el) => {
                   el.style.animation = "none";
                   el.style.opacity = "1";
                   el.style.transform = "none";
                   el.style.visibility = "visible";
                 });
-
-                // Handle button - remove animations and show
-                const button = document.querySelector(".btn-primary");
-                if (button) {
-                  button.style.animation = "none";
-                  button.style.opacity = "1";
-                  button.style.transform = "none";
-                  button.style.visibility = "visible";
-                  button.style.display = "inline-flex";
-                }
-
-                // Handle secure-text element specifically
-                const secureText = document.querySelector(".secure-text");
-                if (secureText) {
-                  secureText.style.color = "#5cb15d";
-                }
               }
             });
           },
           {
-            threshold: 0.5,
+            threshold: 0.3,
           }
         );
 
-        observer.observe(document.querySelector(".hero-title"));
-        
-        // Removed resize listener since we no longer need to handle mobile/desktop button switching
+        const heroTitle = document.querySelector('.hero-title');
+        if (heroTitle) {
+          observer.observe(heroTitle);
+        }
+
+        // Handle reduced motion preference
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.querySelectorAll('.hero-title, .hero-subtitle, .mobile, .desktop-only').forEach((el) => {
+            el.style.animation = "none";
+            el.style.opacity = "1";
+            el.style.transform = "none";
+            el.style.visibility = "visible";
+          });
+        }
       });
     </script>
     <script> // Hero scrolling animation
@@ -593,6 +594,5 @@
         });
       })();
     </script> --}}
-    <script src="/js/feedbackWidget.js"></script>
   </body>
 </html>
