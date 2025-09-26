@@ -7,6 +7,7 @@
     <link href="css/main-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/main-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/index-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/how-it-works-styles.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
   </head>
 
@@ -26,7 +27,7 @@
           </p>
           <!-- Desktop button - hidden on mobile -->
           <div class="button-container-hero desktop-only">
-            <a href="/how-it-works" class="button-basics btn-secondary-outline">
+            <a href="#how-it-works-section" class="button-basics btn-secondary-outline" onclick="scrollToHowItWorks(event)">
               <div class="flex-horizontal">HOW IT WORKS</div>
             </a>
             <a href="/register" class="button-basics btn-primary">
@@ -37,7 +38,7 @@
 
         <!-- Mobile button - OUTSIDE container, only shows on mobile -->
         <div class="button-container-hero mobile-only">
-          <a href="/how-it-works" class="button-basics btn-secondary-outline">
+          <a href="#how-it-works-section" class="button-basics btn-secondary-outline" onclick="scrollToHowItWorks(event)">
             <div class="flex-horizontal">HOW IT WORKS</div>
           </a>
           <a href="/register" class="button-basics btn-primary">
@@ -193,6 +194,18 @@
     <div class="wave-light-bg">
       <div class="wave-pattern">
         {{> svg/wavePattern3}}
+      </div>
+    </div>
+
+    <div class="quote-background-2" id="how-it-works-section">
+      <div class="content-container quote-container-2">
+        <!-- React will mount here -->
+        <div id="index-react-steps-container">
+          <div style="padding: 2rem; text-align: center; color: #4379ba;">
+            <h2>Loading How It Works...</h2>
+            <p>If you see this message, React hasn't loaded yet.</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -597,5 +610,336 @@
         });
       })();
     </script> --}}
+    <!-- Load React from CDN that's allowed by CSP -->
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <!-- Plain JavaScript version without Babel -->
+    <script>
+
+      console.log('Index React script starting...');
+      console.log('React available:', typeof React !== 'undefined');
+      console.log('ReactDOM available:', typeof ReactDOM !== 'undefined');
+      
+      // Wait for DOM to be ready
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing index React component...');
+        
+        const { useState, useEffect, useRef, createElement: h } = React;
+
+        function IndexHowItWorksComponent() {
+          const [activeStep, setActiveStep] = useState(0);
+          const [visibleSteps, setVisibleSteps] = useState(new Set([0]));
+          const containerRef = useRef(null);
+          const stepRefs = useRef([]);
+
+          const steps = [
+            {
+              number: "01",
+              title: "Set up an account for free",
+              description: "Hit the 'Sign Up' button to get started."
+            },
+            {
+              number: "02",
+              title: "Import your health data",
+              description: "Upload your health information from labs and/or document scans."
+            },
+            {
+              number: "03",
+              title: "Use our dashboards and reports",
+              description: "Our reports make complex health information easy to understand. We set it up so that it provides feedback and actionable insights that is unique to you."
+            },
+            {
+              number: "04",
+              title: "Use our share feature (Optional)",
+              description: "Share your profile or specific results with your doctor to discuss issues and put together an action plan."
+            }
+          ];
+
+          useEffect(() => {
+            console.log('Setting up intersection observer...');
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  const stepIndex = parseInt(entry.target.dataset.stepIndex);
+                  
+                  if (entry.isIntersecting) {
+                    setVisibleSteps(prev => new Set([...prev, stepIndex]));
+                    setActiveStep(stepIndex);
+                  }
+                });
+              },
+              {
+                threshold: 0.6,
+                rootMargin: '-20% 0px -20% 0px'
+              }
+            );
+
+            stepRefs.current.forEach((ref) => {
+              if (ref) observer.observe(ref);
+            });
+
+            return () => observer.disconnect();
+          }, []);
+
+          const scrollToStep = (index) => {
+            stepRefs.current[index]?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          };
+
+          // Create the component using your index page styling
+          return h('div', {
+            style: { 
+              width: '100%',
+              paddingTop: '2rem',
+              paddingBottom: '2rem'
+            }
+          }, [
+            // Header section similar to your quote style
+            h('div', {
+              key: 'header',
+              style: {
+                textAlign: 'center',
+                marginBottom: '3rem'
+              }
+            }, [
+              h('h2', {
+                key: 'title',
+                style: { 
+                  fontSize: 'clamp(26px, 5vw, 36px)',
+                  fontWeight: 'bold',
+                  marginBottom: '1.5rem',
+                  color: '#333',
+                  fontFamily: 'Poppins-Bold, sans-serif',
+                  textShadow: '2px 2px 4px rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.4'
+                }
+              }, ''),
+              h('p', {
+                key: 'subtitle',
+                style: { 
+                  fontSize: 'clamp(16px, 3vw, 20px)',
+                  color: '#333',
+                  fontFamily: 'Poppins-Regular, sans-serif',
+                  maxWidth: '600px',
+                  margin: '0 auto',
+                  lineHeight: '1.6',
+                  textShadow: '1px 1px 2px rgba(255, 255, 255, 0.5)'
+                }
+              }, 'Take control of your health data with our simple four-step process')
+            ]),
+            
+            // Steps Container - more compact for index page
+            h('div', {
+              key: 'steps-container',
+              ref: containerRef,
+              style: {
+                position: 'relative',
+                maxWidth: '900px',
+                margin: '0 auto'
+              }
+            }, [
+              // Progress Line
+              h('div', {
+                key: 'progress-line',
+                style: {
+                  position: 'absolute',
+                  left: '2rem',
+                  top: 0,
+                  bottom: 0,
+                  width: '2px',
+                  background: 'linear-gradient(to bottom, transparent 0%, #b8b9bacc 35%, #b8b9bacc 65%, transparent 100%)',
+                  zIndex: 1
+                }
+              }),
+              
+              // Active Progress Line
+              h('div', {
+                key: 'active-progress-line',
+                style: {
+                  position: 'absolute',
+                  left: '2rem',
+                  top: 0,
+                  width: '2px',
+                  height: `${((activeStep + 1) / steps.length) * 100}%`,
+                  background: 'linear-gradient(to bottom, transparent 0%, #4379ba 25%, #63b1f1 75%, transparent 100%)',
+                  zIndex: 2,
+                  transition: 'all 1s ease-out'
+                }
+              }),
+
+              // Steps - more compact spacing for index page
+              ...steps.map((step, index) => 
+                h('div', {
+                  key: `step-${index}`,
+                  ref: (el) => stepRefs.current[index] = el,
+                  'data-step-index': index,
+                  style: {
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: '60vh', // Shorter than full page version
+                    padding: '0 3rem 0 3rem',
+                    marginTop: index === 0 ? 0 : '-8vh',
+                    opacity: visibleSteps.has(index) ? 1 : 0,
+                    transform: visibleSteps.has(index) ? 'translateY(-10px)' : 'translateY(40px)',
+                    transition: 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    zIndex: 2,
+                    cursor: 'pointer'
+                  },
+                  onClick: () => scrollToStep(index)
+                }, [
+                  // Step Number
+                  h('div', {
+                    key: 'step-number',
+                    style: {
+                      position: 'absolute',
+                      left: 0,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '3.5rem', // Slightly smaller for index
+                      height: '3.5rem',
+                      borderRadius: '50%',
+                      color: 'white',
+                      letterSpacing: '1px',
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      fontFamily: 'Poppins-Bold, sans-serif',
+                      background: visibleSteps.has(index) 
+                        ? 'linear-gradient(135deg, #4379ba, #63b1f1)'
+                        : '#b8b9bacc',
+                      boxShadow: visibleSteps.has(index) 
+                        ? '0 4px 10px rgba(67, 121, 186, 0.3)'
+                        : '0 2px 5px rgba(184, 185, 186, 0.3)',
+                      zIndex: 10,
+                      transition: 'all 0.5s ease'
+                    }
+                  }, step.number),
+
+                  // Step Content Card
+                  h('div', {
+                    key: 'step-card',
+                    style: {
+                      flex: 1,
+                      backgroundColor: 'white',
+                      borderRadius: '12px',
+                      padding: '1.5rem',
+                      marginLeft: '1.5rem',
+                      border: '0.5px solid #e5e7eb',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                      transition: 'all 0.6s ease',
+                      transform: visibleSteps.has(index) ? 'translateX(0)' : 'translateX(15px)'
+                    }
+                  }, [
+                    h('h3', {
+                      key: 'step-title',
+                      style: { 
+                        fontSize: 'clamp(18px, 2.5vw, 22px)',
+                        fontWeight: 600,
+                        marginBottom: '0.75rem',
+                        color: '#4379ba',
+                        fontFamily: 'Poppins-SemiBold, sans-serif'
+                      }
+                    }, step.title),
+                    h('p', {
+                      key: 'step-description',
+                      style: { 
+                        fontSize: 'clamp(14px, 2vw, 16px)',
+                        fontWeight: 400,
+                        lineHeight: 1.6,
+                        color: '#666',
+                        fontFamily: 'Poppins-Regular, sans-serif'
+                      }
+                    }, step.description)
+                  ])
+                ])
+              )
+            ]),
+
+            // CTA section at the bottom (like your original quote section)
+            h('div', {
+              key: 'cta-section',
+              style: {
+                textAlign: 'center',
+                marginTop: '3rem',
+                paddingTop: '2rem'
+              }
+            }, [
+              h('h3', {
+                key: 'cta-title',
+                style: {
+                  fontSize: 'clamp(20px, 4vw, 26px)',
+                  fontWeight: 600,
+                  marginBottom: '1.5rem',
+                  color: '#333',
+                  fontFamily: 'Poppins-SemiBold, sans-serif',
+                  textShadow: '1px 1px 2px rgba(255, 255, 255, 0.5)'
+                }
+              }, 'Ready to transform your health journey?'),
+              h('a', {
+                key: 'cta-button',
+                href: '/register',
+                style: {
+                  display: 'inline-block',
+                  backgroundColor: '#4379ba',
+                  color: 'white',
+                  padding: '0.75rem 2rem',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontFamily: 'Poppins-SemiBold, sans-serif',
+                  fontSize: 'clamp(14px, 2.5vw, 16px)',
+                  fontWeight: 600,
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(67, 121, 186, 0.3)'
+                },
+                onMouseOver: function() {
+                  this.style.backgroundColor = '#63b1f1';
+                  this.style.transform = 'translateY(-2px)';
+                  this.style.boxShadow = '0 6px 20px rgba(67, 121, 186, 0.4)';
+                },
+                onMouseOut: function() {
+                  this.style.backgroundColor = '#4379ba';
+                  this.style.transform = 'translateY(0)';
+                  this.style.boxShadow = '0 4px 12px rgba(67, 121, 186, 0.3)';
+                }
+              }, 'Get Started Today')
+            ])
+          ]);
+        }
+
+        // Mount the component - FIXED: Use correct container ID
+        try {
+          const container = document.getElementById('index-react-steps-container');
+          if (container) {
+            console.log('Container found, creating root...');
+            const root = ReactDOM.createRoot(container);
+            console.log('Root created, rendering component...');
+            root.render(React.createElement(IndexHowItWorksComponent));
+            console.log('Index component rendered successfully!');
+          } else {
+            console.error('Index container element not found! Looking for: index-react-steps-container');
+          }
+        } catch (error) {
+          console.error('Error mounting React component:', error);
+        }
+      });
+    </script>
+    <script> // How it works scroll function
+      function scrollToHowItWorks(event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        
+        const target = document.getElementById('how-it-works-section');
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }
+    </script>
   </body>
 </html>
