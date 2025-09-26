@@ -192,7 +192,7 @@
 .podcast-card {
   background-color: #fff;
   border-radius: 16px;
-  border: 2px solid var(--green-primary);
+  border: 1.3px solid var(--green-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
@@ -304,7 +304,7 @@
   margin-bottom: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  border: 2px solid transparent;
+  border: 1.3px solid transparent;
   transition: all 0.3s ease;
 }
 
@@ -328,7 +328,7 @@
 .biomarker-toggle {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--green-primary);
+  border: 1.3px solid var(--green-primary);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -476,7 +476,7 @@
   flex: 1;
   background-color: #fff;
   border-radius: 12px;
-  border: 1.5px solid #459845;
+  border: 1.3px solid #459845;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
