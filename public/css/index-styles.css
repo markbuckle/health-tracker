@@ -1151,12 +1151,12 @@
   flex-direction: row; /* Always side by side */
 }
 .btn-secondary-outline {
-  background-color: transparent;
-  color: rgb(48, 176, 50);
+  background-color: rgba(255, 255, 255, 0.603);
+  color: rgb(32, 126, 34);
   border-radius: 76px;
   padding: clamp(0.4rem, 2vw, 0.9rem) clamp(0.9rem, 4vw, 0.9rem);
   width: clamp(200px, 45%, 400px);
-  border: 1.4px solid black;
+  border: 0.1px solid rgb(104, 104, 104);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: "Poppins-SemiBold", sans-serif;
   font-size: var(--primary-font-size);
@@ -1168,7 +1168,7 @@
   box-shadow: none;
 }
 .btn-secondary-outline:hover {
-  background-color: var(--btn-primary-bg);
+  background-color: rgba(168, 168, 168, 0.603);
   color: #ffffff;
   transform: scale3d(1.02, 1.02, 1.01);
   box-shadow: 0 4px 20px rgba(127, 209, 130, 0.3);
@@ -1919,15 +1919,16 @@
     width: 100%;
   }
   .hero-content {
-    max-width: 95%;
-    margin-left: 0.5rem;
+    max-width: 89%;
+    margin-left: 0.3rem;
   }
   
   .hero-title {
     font-size: clamp(1.6rem, 6vw, 1.9rem);
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: clamp(2rem, 2.5vw, 2.5rem);
     line-height: 1.2;
+    letter-spacing: -0.03em;
   }
   
   .hero-subtitle {
