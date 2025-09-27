@@ -434,9 +434,12 @@
     min-height: 2.5rem;
     padding-top: 1rem;
   }
-   .filter-container {
-    flex-direction: column;
-    gap: 0.5rem;
+  .filter-container {
+    flex-direction: column-reverse;
+    gap: 0.25rem;
+    max-width: 65%;
+    align-self: center;
+    padding: 0;
   }
   .range-filter-select {
     width: 100%;
@@ -469,7 +472,7 @@
     font-size: 9px;
   }
   .filter-stats {
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.25rem;
   }
   .status-dot {
