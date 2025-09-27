@@ -57,6 +57,11 @@ export default async function handler(req, res) {
     //   useBuiltinDatabase: true
     // };
 
+    let userId = null;
+    if (userContext?.userId) {
+      userId = userContext.userId.toString();
+    }
+
     const requestBody = {
       query,
       userContext: userContext ? {
