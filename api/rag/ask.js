@@ -49,11 +49,21 @@ export default async function handler(req, res) {
     const edgeFunctionUrl = `${supabaseUrl}/functions/v1/rag-chat`;
     
     // MINIMAL CHANGE: Tell edge function to use built-in Supabase database instead of external
+    // const requestBody = {
+    //   query,
+    //   userContext,
+    //   options: options || {},
+    //   // Signal to edge function to use built-in database (not external)
+    //   useBuiltinDatabase: true
+    // };
+
     const requestBody = {
       query,
-      userContext,
+      userContext: userContext ? {
+        ...userContext,
+        userId: userId // Ensure userId is included
+      } : null,
       options: options || {},
-      // Signal to edge function to use built-in database (not external)
       useBuiltinDatabase: true
     };
     

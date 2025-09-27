@@ -27,7 +27,7 @@ const ragRoutes = require("./db/routes/ragRoutes");
 const fetch = require("node-fetch");
 const { processBiomarkersForStorage, migrateExistingFilesToProcessedData } = require('./utilities/biomarkerProcessor');
 const { extractFromPDF: enhancedExtractFromPDF } = require('./parsers/GoogleVision/smartOcrRouter');
-
+const { storeUserDocumentInSupabase } = require('./utilities/supabaseDocumentStorage');
 // express app setup
 const app = express();
 
@@ -2691,6 +2691,159 @@ const fileFilter = (req, file, cb) => {
 //   }
 // );
 
+// app.post("/upload-files",
+//   checkAuth,
+//   upload.array("files"),
+//   async (req, res) => {
+//     try {
+//       if (!req.files || req.files.length === 0) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "No files were uploaded.",
+//         });
+//       }
+
+//       const user = await registerCollection.findById(req.user._id);
+//       if (!user) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "User not found",
+//         });
+//       }
+
+//       const uploadedFiles = [];
+//       const totalFiles = req.files.length;
+
+//       console.log(`Processing ${totalFiles} files in ${isVercel ? 'Vercel' : 'local'} environment`);
+
+//       for (let fileIndex = 0; fileIndex < req.files.length; fileIndex++) {
+//         console.log(`Processing file ${fileIndex + 1} of ${totalFiles}`);
+
+//         const file = req.files[fileIndex];
+        
+//         try {
+//           // RESTORED: Original progress callback for WebSocket updates
+//           const progressCallback = (progress, status, substatus) => {
+//             console.log('🔥 PROGRESS CALLBACK CALLED:', progress, status, substatus);
+//             // Send progress update via WebSocket
+//             connections.forEach((client) => {
+//               if (client.readyState === WebSocket.OPEN) {
+//                 client.send(JSON.stringify({
+//                   type: 'progress',
+//                   fileIndex: fileIndex + 1,
+//                   totalFiles: totalFiles,
+//                   progress: Math.round(progress),
+//                   status: status,
+//                   substatus: substatus
+//                 }));
+//               }
+//             });
+//           };
+
+//           // FIXED: Handle file path properly for both environments
+//           let filePath;
+//           let tempFilePath = null;
+
+//           if (isVercel) {
+//             // Vercel: Create temp file from buffer
+//             if (!file.buffer) {
+//               throw new Error('File buffer is missing in Vercel environment');
+//             }
+            
+//             const tempDir = '/tmp';
+//             const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//             tempFilePath = path.join(tempDir, uniqueSuffix + path.extname(file.originalname));
+            
+//             fs.writeFileSync(tempFilePath, file.buffer);
+//             filePath = tempFilePath;
+//             console.log(`Created temp file for Vercel: ${filePath}`);
+//           } else {
+//             // Local: Use existing file path
+//             filePath = file.path;
+//             console.log(`Using local file path: ${filePath}`);
+//           }
+
+//           // Call OCR with the correct file path
+//           const ocrResult = await enhancedExtractFromPDF(filePath, fileIndex, totalFiles, progressCallback);
+//           console.log('🔥 extractFromPDF called successfully');
+
+//           // Process the result into file object format
+//           const fileObject = {
+//             filename: file.filename || file.originalname,
+//             originalName: file.originalname,
+//             path: isVercel ? null : (file.path || null),
+//             size: file.size,
+//             mimetype: file.mimetype,
+//             uploadDate: new Date(),
+//             testDate: ocrResult.testDate || new Date(),
+//             labValues: ocrResult.labValues || {},
+//             extractionMethod: "google-vision",
+//             processingErrors: ocrResult.processingErrors || [],
+//           };
+
+//           uploadedFiles.push(fileObject);
+
+//           // Clean up temp file if created
+//           if (tempFilePath && isVercel) {
+//             try {
+//               fs.unlinkSync(tempFilePath);
+//               console.log(`Cleaned up temp file: ${tempFilePath}`);
+//             } catch (cleanupError) {
+//               console.warn('Could not clean up temp file:', cleanupError.message);
+//             }
+//           }
+
+//         } catch (error) {
+//           console.error(`Error processing file ${file.originalname}:`, error);
+          
+//           uploadedFiles.push({
+//             filename: file.filename || file.originalname,
+//             originalName: file.originalname,
+//             path: isVercel ? null : (file.path || null),
+//             size: file.size,
+//             mimetype: file.mimetype,
+//             uploadDate: new Date(),
+//             testDate: null,
+//             labValues: {},
+//             extractionMethod: "failed",
+//             processingErrors: [error.message],
+//           });
+//         }
+//       }
+
+//       // Save to database
+//       if (!user.files) {
+//         user.files = [];
+//       }
+
+//       user.files.push(...uploadedFiles);
+//       console.log("Saving files count:", uploadedFiles.length);
+
+//       await user.save();
+//       console.log("Files saved successfully");
+
+//       // Return success response with environment info
+//       res.json({
+//         success: true,
+//         message: "Files uploaded and processed successfully",
+//         files: uploadedFiles,
+//         environment: isVercel ? 'production' : 'development',
+//         processedCount: uploadedFiles.filter(f => f.extractionMethod !== 'failed').length,
+//         failedCount: uploadedFiles.filter(f => f.extractionMethod === 'failed').length
+//       });
+
+//     } catch (error) {
+//       console.error("File upload error:", error);
+//       res.status(500).json({
+//         success: false,
+//         message: "Error processing files",
+//         error: error.message,
+//         environment: isVercel ? 'production' : 'development'
+//       });
+//     }
+//   }
+// );
+
 app.post("/upload-files",
   checkAuth,
   upload.array("files"),
@@ -2722,76 +2875,25 @@ app.post("/upload-files",
         const file = req.files[fileIndex];
         
         try {
-          // RESTORED: Original progress callback for WebSocket updates
-          const progressCallback = (progress, status, substatus) => {
-            console.log('🔥 PROGRESS CALLBACK CALLED:', progress, status, substatus);
-            // Send progress update via WebSocket
-            connections.forEach((client) => {
-              if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({
-                  type: 'progress',
-                  fileIndex: fileIndex + 1,
-                  totalFiles: totalFiles,
-                  progress: Math.round(progress),
-                  status: status,
-                  substatus: substatus
-                }));
-              }
-            });
-          };
-
-          // FIXED: Handle file path properly for both environments
-          let filePath;
-          let tempFilePath = null;
-
-          if (isVercel) {
-            // Vercel: Create temp file from buffer
-            if (!file.buffer) {
-              throw new Error('File buffer is missing in Vercel environment');
+          // Your existing OCR processing
+          const fileObject = await processUploadedFile(file, enhancedExtractFromPDF);
+          
+          // 🆕 NEW: Store in Supabase for RAG (add this block)
+          if (fileObject.labValues && Object.keys(fileObject.labValues).length > 0) {
+            console.log('🔄 Storing document in Supabase for RAG search...');
+            try {
+              await storeUserDocumentInSupabase(req.user._id, file, fileObject);
+              console.log('✅ Document stored in Supabase successfully');
+            } catch (supabaseError) {
+              console.error('⚠️ Failed to store in Supabase (continuing anyway):', supabaseError.message);
+              // Don't fail the upload if Supabase storage fails
             }
-            
-            const tempDir = '/tmp';
-            const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-            tempFilePath = path.join(tempDir, uniqueSuffix + path.extname(file.originalname));
-            
-            fs.writeFileSync(tempFilePath, file.buffer);
-            filePath = tempFilePath;
-            console.log(`Created temp file for Vercel: ${filePath}`);
           } else {
-            // Local: Use existing file path
-            filePath = file.path;
-            console.log(`Using local file path: ${filePath}`);
+            console.log('⏭️ No lab values found, skipping Supabase storage');
           }
-
-          // Call OCR with the correct file path
-          const ocrResult = await enhancedExtractFromPDF(filePath, fileIndex, totalFiles, progressCallback);
-          console.log('🔥 extractFromPDF called successfully');
-
-          // Process the result into file object format
-          const fileObject = {
-            filename: file.filename || file.originalname,
-            originalName: file.originalname,
-            path: isVercel ? null : (file.path || null),
-            size: file.size,
-            mimetype: file.mimetype,
-            uploadDate: new Date(),
-            testDate: ocrResult.testDate || new Date(),
-            labValues: ocrResult.labValues || {},
-            extractionMethod: "google-vision",
-            processingErrors: ocrResult.processingErrors || [],
-          };
+          // 🆕 END NEW BLOCK
 
           uploadedFiles.push(fileObject);
-
-          // Clean up temp file if created
-          if (tempFilePath && isVercel) {
-            try {
-              fs.unlinkSync(tempFilePath);
-              console.log(`Cleaned up temp file: ${tempFilePath}`);
-            } catch (cleanupError) {
-              console.warn('Could not clean up temp file:', cleanupError.message);
-            }
-          }
 
         } catch (error) {
           console.error(`Error processing file ${file.originalname}:`, error);
@@ -2811,7 +2913,7 @@ app.post("/upload-files",
         }
       }
 
-      // Save to database
+      // Save to database (your existing MongoDB logic)
       if (!user.files) {
         user.files = [];
       }
