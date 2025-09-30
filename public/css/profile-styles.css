@@ -1332,10 +1332,12 @@
     /* max-width: 4.6rem; */
     justify-items: center;
     display: block;
-    align-items: center;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 10px;
   }
   .text-block {
-    font-size: 10px;
+    font-size: 15px;
     text-wrap: nowrap;
   }
   .profile-section {
@@ -1588,6 +1590,7 @@
     }
     .tab-status {
       align-self: center;
+      align-self: stretch;
     }
     .profile-completion-modal {
         position: fixed;
