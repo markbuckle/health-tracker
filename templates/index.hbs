@@ -23,7 +23,7 @@
             Transform Your Health Data
           </h1>
           <p class="hero-subtitle">
-            Get personalized reports, AI-powered insights, and actionable recommendations to help you live a longer and healthier life - all in one secure platform
+            Get personalized reports,<br> AI-powered insights, <br>and recommendations to help you live a longer and healthier life - all in one secure platform
           </p>
           <!-- Desktop button - hidden on mobile -->
           <div class="button-container-hero desktop-only">
@@ -660,33 +660,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const getResponsiveSizes = () => {
       if (windowWidth <= 480) {
         return {
-          circleSize: '3rem',
-          circleFontSize: '1.3rem',
-          circleLeft: '0.75rem',
+          circleSize: '3.5rem',
+          circleFontSize: '1.4rem',
+          circleLeft: '0.5rem',
           lineLeft: '2.25rem',
           lineWidth: '2px',
-          blockPadding: '0 1rem 0 4.5rem',
-          cardMargin: '1rem'
+          blockPadding: '0 1rem 0 5rem',
+          cardMargin: '0.5rem',
+          marginTop: '-8vh'
         };
       } else if (windowWidth <= 767) {
         return {
-          circleSize: '3.25rem',
-          circleFontSize: '1.4rem',
+          circleSize: '3.75rem',
+          circleFontSize: '1.5rem',
           circleLeft: '0.5rem',
-          lineLeft: '2.125rem',
+          lineLeft: '2.375rem',
           lineWidth: '2px',
-          blockPadding: '0 2rem 0 4.5rem',
-          cardMargin: '1.25rem'
+          blockPadding: '0 2rem 0 5.25rem',
+          cardMargin: '0.625rem',
+          marginTop: '-8vh'
         };
       } else {
         return {
-          circleSize: '3.5rem',
-          circleFontSize: '1.5rem',
+          circleSize: '4rem',
+          circleFontSize: '1.75rem',
           circleLeft: '0',
           lineLeft: '2rem',
           lineWidth: '2px',
           blockPadding: '0 3rem 0 3rem',
-          cardMargin: '1.5rem'
+          cardMargin: '1.25rem',
+          marginTop: '6rem'
         };
       }
     };
@@ -796,7 +799,7 @@ document.addEventListener('DOMContentLoaded', function() {
             top: 0,
             bottom: 0,
             width: sizes.lineWidth,
-            background: 'linear-gradient(to bottom, transparent 0%, #b8b9bacc 35%, #b8b9bacc 65%, transparent 100%)',
+            background: 'linear-gradient(to bottom, transparent 0%, #c5c6c7 35%, #c5c6c7 65%, transparent 100%)',
             zIndex: 1
           }
         }),
@@ -810,7 +813,7 @@ document.addEventListener('DOMContentLoaded', function() {
             top: 0,
             width: sizes.lineWidth,
             height: `${((activeStep + 1) / steps.length) * 100}%`,
-            background: 'linear-gradient(to bottom, transparent 0%, #4379ba 25%, #63b1f1 75%, transparent 100%)',
+            background: 'linear-gradient(to bottom, transparent 0%, #5a92d4 25%, #7caee6 75%, transparent 100%)',
             zIndex: 2,
             transition: 'all 1s ease-out'
           }
@@ -828,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function() {
               alignItems: 'center',
               minHeight: '60vh',
               padding: sizes.blockPadding,
-              marginTop: index === 0 ? 0 : '-8vh',
+              marginTop: index === 0 ? 0 : sizes.marginTop,
               opacity: visibleSteps.has(index) ? 1 : 0,
               transform: visibleSteps.has(index) ? 'translateY(-10px)' : 'translateY(40px)',
               transition: 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
