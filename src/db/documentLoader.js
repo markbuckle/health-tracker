@@ -1,14 +1,49 @@
-// src/db/documentLoader.js
+// src/db/documentLoader.js - WITH CHUNKING
 const fs = require("fs");
 const path = require("path");
 const { addDocument } = require("./medicalKnowledgeService");
 
 /**
+ * Chunk a large document by ## headers
+ */
+function chunkDocumentByHeaders(content, baseTitle, sourceFile) {
+  const chunks = [];
+  
+  // Split by ## headers (main sections)
+  const sections = content.split(/(?=^## )/gm);
+  
+  console.log(`  Found ${sections.length} sections to process`);
+  
+  sections.forEach((section, index) => {
+    const trimmed = section.trim();
+    if (!trimmed || trimmed.length < 100) return; // Skip tiny sections
+    
+    // Extract the section header
+    const headerMatch = trimmed.match(/^##\s+(.+?)$/m);
+    const sectionHeader = headerMatch ? headerMatch[1].trim() : 'Introduction';
+    
+    // Create chunk
+    chunks.push({
+      title: `${baseTitle} - ${sectionHeader}`,
+      content: trimmed,
+      source: "Peter Attia MD",
+      categories: ["health", "preventative"],
+      sectionHeader: sectionHeader,
+      chunkIndex: index,
+      parentDocument: baseTitle,
+      contentLength: trimmed.length,
+      originalPath: sourceFile
+    });
+  });
+  
+  return chunks;
+}
+
+/**
  * Load markdown files from a directory and add to the database
- * @param {string} directory - Path to directory containing markdown files
  */
 async function loadDocumentsFromDirectory(directory) {
-  console.log(`Loading documents from ${directory}...`);
+  console.log(`\n📂 Loading documents from ${directory}...`);
 
   try {
     const files = fs.readdirSync(directory);
@@ -24,44 +59,66 @@ async function loadDocumentsFromDirectory(directory) {
         const content = fs.readFileSync(filePath, "utf8");
         const fileName = path.basename(file, ".md");
 
-        // Process metadata from the content
+        // Process metadata
         const metadata = extractMetadata(content, fileName);
         const processedContent = processContent(content);
 
+        console.log(`\n📄 Processing: ${metadata.title}`);
+        console.log(`   Size: ${processedContent.length} chars`);
+
         try {
-          await addDocument({
-            title: metadata.title,
-            content: processedContent,
-            source: metadata.source || "Peter Attia MD",
-            categories: metadata.categories || ["cardiovascular"],
-            originalPath: filePath,
-          });
-          console.log(`Added document: ${metadata.title}`);
+          // Check if document is large (> 15KB)
+          if (processedContent.length > 15000) {
+            console.log(`   ⚠️  Large document detected - chunking into sections...`);
+            
+            const chunks = chunkDocumentByHeaders(
+              processedContent,
+              metadata.title,
+              filePath
+            );
+            
+            console.log(`   ✂️  Split into ${chunks.length} chunks`);
+            
+            for (const chunk of chunks) {
+              await addDocument(chunk);
+              console.log(`      ✅ Added: "${chunk.sectionHeader}" (${chunk.contentLength} chars)`);
+            }
+            
+            console.log(`   ✅ Completed chunking for ${metadata.title}`);
+          } else {
+            // Small document - add as single piece
+            await addDocument({
+              title: metadata.title,
+              content: processedContent,
+              source: metadata.source || "Peter Attia MD",
+              categories: metadata.categories || ["cardiovascular"],
+              originalPath: filePath,
+              chunkIndex: 0,
+              parentDocument: metadata.title,
+              contentLength: processedContent.length
+            });
+            console.log(`   ✅ Added as single document`);
+          }
         } catch (error) {
-          console.error(`Error adding document ${file}:`, error);
+          console.error(`   ❌ Error adding document ${file}:`, error.message);
         }
       }
     }
   } catch (error) {
-    console.error(`Error reading directory ${directory}:`, error);
+    console.error(`❌ Error reading directory ${directory}:`, error);
   }
 }
 
 /**
  * Extract metadata from content
- * @param {string} content - File content
- * @param {string} fileName - Name of the file (without extension)
- * @returns {Object} - Metadata object
  */
 function extractMetadata(content, fileName) {
-  // Default metadata
   const metadata = {
     title: fileName.replace(/-/g, " "),
     source: "Peter Attia MD",
     categories: [],
   };
 
-  // Try to extract title from the first line (if it starts with # or has a dash)
   const lines = content.split("\n");
   if (lines.length > 0) {
     const firstLine = lines[0].trim();
@@ -70,70 +127,39 @@ function extractMetadata(content, fileName) {
     } else if (firstLine.includes("‒") || firstLine.includes("-")) {
       const parts = firstLine.split(/‒|-/);
       if (parts.length >= 2) {
-        // If format is like "#229 ‒ Understanding cardiovascular disease"
-        metadata.title = parts.slice(1).join("-").trim();
-        metadata.episodeNumber = parts[0].trim().replace(/^#/, "");
+        metadata.title = parts[0].trim();
       }
     }
   }
 
-  // Extract categories based on content keywords
-  if (
-    content.toLowerCase().includes("cardiovascular") ||
-    content.toLowerCase().includes("heart") ||
-    content.toLowerCase().includes("ascvd")
-  ) {
+  // Detect categories from content
+  const contentLower = content.toLowerCase();
+  if (contentLower.includes("cholesterol") || contentLower.includes("cardiovascular")) {
     metadata.categories.push("cardiovascular");
   }
-
-  if (
-    content.toLowerCase().includes("cholesterol") ||
-    content.toLowerCase().includes("lipid") ||
-    content.toLowerCase().includes("apob")
-  ) {
-    metadata.categories.push("cholesterol");
+  if (contentLower.includes("exercise") || contentLower.includes("vo2")) {
+    metadata.categories.push("exercise");
   }
-
-  if (
-    content.toLowerCase().includes("diabetes") ||
-    content.toLowerCase().includes("insulin")
-  ) {
-    metadata.categories.push("diabetes");
+  if (contentLower.includes("cancer")) {
+    metadata.categories.push("oncology");
   }
 
   return metadata;
 }
 
 /**
- * Process content to make it more suitable for RAG
- * @param {string} content - Raw file content
- * @returns {string} - Processed content
+ * Process content - clean up formatting
  */
 function processContent(content) {
-  // Remove markdown formatting that's not helpful for the RAG system
-  let processed = content;
-
-  // Remove image references
-  processed = processed.replace(/!\[.*?\]\(.*?\)/g, "");
-
-  // Convert headers to plain text with emphasis
-  processed = processed.replace(/#{1,6}\s+(.*?)$/gm, "$1:");
-
-  // Handle bullet points
-  processed = processed.replace(/^\s*[-*+]\s+/gm, "• ");
-
-  // Handle numbered lists
-  processed = processed.replace(/^\s*\d+\.\s+/gm, "• ");
-
-  // Remove URLs but keep text
-  processed = processed.replace(/\[(.*?)\]\(.*?\)/g, "$1");
-
-  // Remove extra whitespace
-  processed = processed.replace(/\n{3,}/g, "\n\n");
-
-  return processed.trim();
+  return content
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 module.exports = {
   loadDocumentsFromDirectory,
+  chunkDocumentByHeaders,
+  extractMetadata,
+  processContent
 };

@@ -1,9 +1,8 @@
-// src/db/chatService.js - COMPLETE FIXED VERSION
+// src/db/chatService.js - COMPLETE FINAL VERSION
 const { OpenAI } = require("openai");
 const fetch = require("node-fetch");
 require("dotenv").config();
 
-// Initialize the OpenAI client for embeddings
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -11,62 +10,61 @@ const openai = new OpenAI({
 console.log("OPENAI_API_KEY present:", !!process.env.OPENAI_API_KEY);
 console.log("TOGETHER_API_KEY present:", !!process.env.TOGETHER_API_KEY);
 
-// Simple post-processing function that removes known hallucinations
+// ============================================
+// RESPONSE CLEANING
+// ============================================
+
 function cleanResponse(response) {
   return (
-    response
+     response
+      // Remove common LLM prefixes
       .replace(
-        /^(Axir|According to the provided documents,|Based on the context,|In the provided documents,|The documents state that|As mentioned in the documents,|As mentioned in the documents,|IntroductionIn the provided documents,|Original---------------inois a medical professional and according to the documents provided by Peter Attia MD,)\s*/i,
+        /^(Axir|According to the provided documents,|Based on the context,|In the provided documents,|The documents state that|As mentioned in the documents,|The context shows that|IntroductionIn the provided documents,)\s*/i,
         ""
       )
-      // Remove document references
+      // Remove document reference markers
       .replace(/Document \d+[:\-]\s*/gi, "")
       .replace(/\(Episode \d+[^)]*\)/gi, "")
       .replace(/Source:\s*[^,\n]*(,|\n|$)/gi, "")
       .replace(/Episode \d+[^:]*:\s*/gi, "")
-      // Remove section headers like "I. Introduction", "II. Definition", etc.
+      // Remove auto-generated section markers
       .replace(/^[IVX]+\.\s*[A-Za-z]+\s*\n?/gm, "")
-      // Remove unnecessary line breaks at the beginning
-      .replace(/^\n+/, "")
-      // Remove any markdown-style headers
-      .replace(/^#+\s+.+$/gm, "")
-      // Clean up any "Introduction:" or similar prefixes
+      // Clean up intro phrases
       .replace(/^(Introduction:|Overview:|Summary:|Background:)\s*/i, "")
+      // **NEW: Remove markdown headers (## Header becomes just Header)**
+      .replace(/^#{1,6}\s+(.+)$/gm, '$1')
+      // Clean up excess whitespace
+      .replace(/^\n+/, "")
+      .replace(/\n{3,}/g, "\n\n")
       .trim()
   );
 }
 
-// Function to format context in a more structured way
 function formatContext(context) {
-  // Split the context into individual documents
+  if (!context) return "";
   const documents = context.split("\n\n").filter((doc) => doc.trim());
-
-  // Format each document with clear separators and titles
   return documents
-    .map((doc, index) => {
-      // Format the content
-      const content = doc.replace(/Title:\s*.*?\s*\n/, "").trim();
-      return content;
-    })
+    .map((doc) => doc.replace(/Title:\s*.*?\s*\n/, "").trim())
     .join("\n\n");
 }
 
-// Function to generate embeddings for a text (OpenAI)
+// ============================================
+// EMBEDDINGS
+// ============================================
+
 async function generateEmbedding(text) {
   try {
-    console.log('🔍 Generating embedding for text length:', text.length);
+    console.log('Generating embedding for text length:', text.length);
     
     const response = await openai.embeddings.create({
       model: "text-embedding-ada-002",
       input: text,
     });
 
-    console.log('✅ Embedding generated successfully, dimensions:', response.data[0].embedding.length);
+    console.log('Embedding generated successfully');
     return response.data[0].embedding;
   } catch (error) {
-    console.error("❌ Error generating embedding:", error.message);
-    
-    // More specific error handling
+    console.error("Error generating embedding:", error.message);
     if (error.code === 'invalid_api_key') {
       throw new Error('Invalid OpenAI API key. Please check your OPENAI_API_KEY in .env file.');
     } else if (error.code === 'quota_exceeded') {
@@ -77,7 +75,35 @@ async function generateEmbedding(text) {
   }
 }
 
-// Function to check if Together AI is working
+// ============================================
+// PERSONAL QUESTION DETECTION - STRICT
+// ============================================
+
+function isPersonalHealthQuestion(query) {
+  // Only match questions that explicitly ask about "MY" health data
+  const patterns = [
+    /\bmy blood type\b/i,
+    /\bwhat is my\b/i,
+    /\bhow old am i\b/i,
+    /\bmy age\b/i,
+    /\bmy sex\b/i,
+    /\bmy gender\b/i,
+    /\bmy medications?\b/i,
+    /\bmy meds\b/i,
+    /\bmy lifestyle\b/i,
+    /\bmy lab (values?|results?)\b/i,
+    /\bmy (cholesterol|ldl|hdl|triglycerides)\b/i,
+    /\bmy blood pressure\b/i,
+    /\bmy weight\b/i
+  ];
+  
+  return patterns.some(pattern => pattern.test(query));
+}
+
+// ============================================
+// TOGETHER AI STATUS CHECK
+// ============================================
+
 async function checkTogetherAIStatus() {
   try {
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
@@ -106,82 +132,42 @@ async function checkTogetherAIStatus() {
       return { working: false, error: `HTTP ${response.status}: ${error}` };
     }
   } catch (error) {
-    return { 
-      working: false, 
-      error: error.message 
-    };
+    return { working: false, error: error.message };
   }
 }
 
-// Function to generate a response using Together AI (with user context support)
+// ============================================
+// MAIN RESPONSE GENERATION
+// ============================================
+
 async function generateBasicResponse(query, context, userContext = null) {
   try {
-    console.log("🚨 UPDATED generateBasicResponse called with query:", query);
-    console.log("🚨 UserContext provided:", !!userContext);
-    console.log("🚨 Context length:", context.length);
+    console.log("\nGenerateBasicResponse called");
+    console.log("Query:", query);
+    console.log("Context length:", context?.length || 0);
+    console.log("UserContext provided:", !!userContext);
     
-    // Check if this is a direct question about user's personal information
-    // ONLY if userContext is provided AND the query is actually about personal info
-    const personalQuestionPatterns = [
-      'my blood type', 'what is my', 'what is the user', 'blood type',
-      'how old am i', 'my age', 'what age am i', 'how old is the user',
-      'my sex', 'my gender', 'what sex am i', 'what gender am i',
-      'my medications', 'what medications', 'my meds', 'what meds',
-      'my family history', 'family history', 'my lifestyle', 'my health history',
-      'my lab values', 'my lab results', 'my recent labs', 'my test results'
-    ];
-    
-    const queryLower = query.toLowerCase();
-    const isPersonalQuestion = personalQuestionPatterns.some(pattern => 
-      queryLower.includes(pattern)
-    );
+    // Check if personal question
+    const isPersonal = isPersonalHealthQuestion(query);
+    console.log("Is personal question:", isPersonal);
 
-    console.log("🔍 Is personal question:", isPersonalQuestion);
-    console.log("🔍 Has user context:", !!userContext);
-
-    // ONLY handle as personal question if BOTH conditions are true:
-    // 1. It matches personal question patterns
-    // 2. We have userContext to work with
-    if (userContext && isPersonalQuestion) {
-      console.log("🎯 Handling personal question with direct user data");
+    // ==========================================
+    // HANDLE PERSONAL QUESTIONS
+    // ==========================================
+    if (userContext && isPersonal) {
+      console.log("Handling personal question");
       
-      // Format family history details
       let familyHistoryText = 'No family history recorded';
-      if (userContext.profile?.familyHistoryDetails && userContext.profile.familyHistoryDetails.length > 0) {
+      if (userContext.profile?.familyHistoryDetails?.length > 0) {
         familyHistoryText = userContext.profile.familyHistoryDetails
-          .map(item => `${item.condition} (affects: ${item.relatives}, notes: ${item.notes})`)
+          .map(item => `${item.condition} (affects: ${item.relatives})`)
           .join('; ');
       }
       
-      // Format lifestyle details
-      let lifestyleText = 'No lifestyle information recorded';
-      if (userContext.profile?.lifestyleDetails && userContext.profile.lifestyleDetails.length > 0) {
-        lifestyleText = userContext.profile.lifestyleDetails
-          .map(item => `${item.habitType} (status: ${item.status}, notes: ${item.notes})`)
-          .join('; ');
-      }
-      
-      // Format medication details
-      let medicationsText = 'No medications or supplements recorded';
-      if (userContext.profile?.medicationDetails && userContext.profile.medicationDetails.length > 0) {
-        medicationsText = userContext.profile.medicationDetails
-          .map(item => `${item.name} (${item.type}, ${item.dosage}, ${item.frequency})`)
-          .join('; ');
-      }
-      
-      // Format monitoring details
-      let monitoringText = 'No monitoring data recorded';
-      if (userContext.profile?.monitoringDetails && userContext.profile.monitoringDetails.length > 0) {
-        monitoringText = userContext.profile.monitoringDetails
-          .map(item => `Weight: ${item.weight}, BP: ${item.bloodPressure}, HR: ${item.restingHeartRate}`)
-          .join('; ');
-      }
-      
-      // Format recent lab values
       let labValuesText = 'No recent lab values recorded';
       if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
         labValuesText = Object.entries(userContext.recentLabValues)
-          .map(([test, data]) => `${test}: ${data.value} ${data.unit} (ref: ${data.referenceRange})`)
+          .map(([test, data]) => `${test}: ${data.value} ${data.unit}`)
           .join('; ');
       }
 
@@ -196,38 +182,23 @@ async function generateBasicResponse(query, context, userContext = null) {
           messages: [
             {
               role: 'system',
-              content: 'You are a medical assistant. Answer questions directly and clearly based on the patient information provided. If the patient has specific health information, state it clearly. Be specific and helpful.'
+              content: 'You are Reed, a health assistant. Answer questions directly using the patient information provided.'
             },
             {
               role: 'user', 
-              content: `PATIENT HEALTH INFORMATION:
-
-BASIC INFO:
-- Age: ${userContext.profile?.age || 'Not specified'} years old
+              content: `PATIENT INFO:
+- Age: ${userContext.profile?.age || 'Not specified'}
 - Sex: ${userContext.profile?.sex || 'Not specified'}  
 - Blood Type: ${userContext.profile?.bloodType || 'Not specified'}
-
-FAMILY HISTORY:
-${familyHistoryText}
-
-LIFESTYLE:
-${lifestyleText}
-
-MEDICATIONS & SUPPLEMENTS:
-${medicationsText}
-
-CURRENT MONITORING DATA:
-${monitoringText}
-
-RECENT LAB VALUES:
-${labValuesText}
+- Family History: ${familyHistoryText}
+- Lab Values: ${labValuesText}
 
 Question: ${query}
 
-Answer this question directly using the patient information above. Be specific and comprehensive.`
+Answer directly using the information above.`
             }
           ],
-          max_tokens: 150,
+          max_tokens: 200,
           temperature: 0.1,
           top_p: 0.9
         })
@@ -235,57 +206,31 @@ Answer this question directly using the patient information above. Be specific a
 
       if (response.ok) {
         const result = await response.json();
-        const answer = result.choices[0].message.content;
-        console.log("✅ Direct personal response:", answer);
-        return cleanResponse(answer);
+        return cleanResponse(result.choices[0].message.content);
       } else {
-        console.error("❌ Together AI API error for personal question:", response.status);
-        return "I'm sorry, I couldn't process your personal information request at this time.";
+        console.error("API error:", response.status);
+        return "I'm sorry, I couldn't process your personal information request.";
       }
     }
 
-    // For ALL non-personal questions OR when no userContext is provided
-    // Use the medical knowledge context to answer
-    console.log("📚 Handling general medical question with context");
+    // ==========================================
+    // HANDLE GENERAL MEDICAL QUESTIONS
+    // ==========================================
+    console.log("Handling general medical question");
     
     if (!context || context.length === 0) {
-      return "I don't have enough information in my medical knowledge database to answer that question.";
+      return "I don't have information about that topic in my medical knowledge database.";
     }
     
-    // Format the context
     const formattedContext = formatContext(context);
     
-    let userPrompt = `Medical Knowledge Context:
-${formattedContext}
-
-Question: ${query}`;
-
-    // Add patient context if available (for enhanced answers)
-    if (userContext) {
-      userPrompt += `
-
-Patient Context (use if relevant):
-- Age: ${userContext.profile?.age || 'Not specified'}
-- Sex: ${userContext.profile?.sex || 'Not specified'}
-- Blood Type: ${userContext.profile?.bloodType || 'Not specified'}`;
-
-      if (userContext.recentLabValues && Object.keys(userContext.recentLabValues).length > 0) {
-        const labSummary = Object.entries(userContext.recentLabValues)
-          .slice(0, 3)
-          .map(([test, data]) => `${test}: ${data.value} ${data.unit}`)
-          .join(', ');
-        userPrompt += `
-- Recent Lab Values: ${labSummary}`;
-      }
-    }
-
-    userPrompt += `
-
-Instructions:
-- Use the medical knowledge context to answer the question
-- If patient context is provided, personalize your answer when relevant
-- Be specific, accurate, and helpful
-- Keep response concise but comprehensive (max 100 words)`;
+    // Limit context size to prevent overwhelming the LLM
+    const maxContextLength = 8000;
+    const truncatedContext = formattedContext.length > maxContextLength
+      ? formattedContext.substring(0, maxContextLength) + "\n\n[Content truncated for brevity]"
+      : formattedContext;
+    
+    console.log("Context length after formatting:", truncatedContext.length);
 
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
       method: 'POST',
@@ -296,19 +241,51 @@ Instructions:
       body: JSON.stringify({
         model: 'mistralai/Mistral-7B-Instruct-v0.1',
         messages: [
-          {
-            role: 'system',
-            content: 'You are a medical research assistant. Provide information based on the medical knowledge context provided. Be accurate, helpful, and concise.'
-          },
+{
+  role: 'system',
+  content: `You are Reed, a health assistant with access to medical documents from Peter Attia MD.
+
+CRITICAL RULES:
+1. Answer questions using ONLY the Medical Knowledge Context provided
+2. PRESERVE THE EXACT FORMATTING from the context - this is critical:
+   - If the context has "## Header", include "## Header"
+   - If the context has "### Subheader", include "### Subheader"
+   - If the context has "1. **Item** - Description", use that exact format
+   - If the context has bullet points, use bullet points
+   - Copy the structure exactly as shown
+3. Include ALL items from lists - don't summarize or shorten
+4. Include specific numbers and statistics exactly as written (e.g., "19 million deaths annually")
+5. If context has qualifiers (age ranges, conditions), include them
+6. Only say "I don't have information" if the context is completely unrelated
+7. DO NOT paraphrase or rewrite - preserve the original wording and structure
+
+Example:
+Context:
+"## Leading Causes
+1. **Heart Disease** - 19 million deaths
+2. **Cancer** - 12 million deaths"
+
+Your response should be:
+"## Leading Causes
+1. **Heart Disease** - 19 million deaths
+2. **Cancer** - 12 million deaths"
+
+NOT: "The main causes are heart disease and cancer"`
+},
           {
             role: 'user', 
-            content: userPrompt
+            content: `Medical Knowledge Context:
+${truncatedContext}
+
+Question: ${query}
+
+Instructions: Answer using ONLY the context above. Preserve the exact structure and formatting (numbered lists, statistics, headers). If the context contains the answer with qualifiers, provide that information.`
           }
         ],
-        max_tokens: 150,
-        temperature: 0.3,
-        top_p: 0.9,
-        repetition_penalty: 1.1
+        max_tokens: 400,
+        temperature: 0.1,
+        top_p: 0.7,
+        repetition_penalty: 1.2
       })
     });
 
@@ -316,40 +293,42 @@ Instructions:
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Together AI API error: ${response.status} ${response.statusText}`);
-      console.error("Error details:", errorText);
-      return `Error: Unable to process your question at this time. (${response.status})`;
+      console.error(`API error: ${response.status}`, errorText);
+      return `Error: Unable to process your question. (${response.status})`;
     }
 
     const result = await response.json();
     
-    if (!result.choices || !result.choices[0] || !result.choices[0].message) {
-      console.error("Invalid response structure from Together AI:", result);
+    if (!result.choices?.[0]?.message?.content) {
+      console.error("Invalid response structure");
       return "Error: Received invalid response from AI service.";
     }
     
-    const answer = result.choices[0].message.content;
+    const answer = result.choices[0].message.content.trim();
 
-    if (!answer || answer.trim().length === 0) {
-      console.error("Empty response from Together AI");
-      return "Error: No response could be generated. Please try again.";
+    if (!answer) {
+      console.error("Empty response");
+      return "Error: No response generated. Please try again.";
     }
 
-    console.log("✅ Generated response:", answer.substring(0, 100) + "...");
+    console.log("Generated response successfully");
     return cleanResponse(answer);
 
   } catch (error) {
-    console.error("❌ Error generating response with Together AI:", error);
+    console.error("Error:", error);
     return "Error processing your request: " + error.message;
   }
 }
 
-// Simple test function
+// ============================================
+// TEST FUNCTION
+// ============================================
+
 async function testModel() {
   try {
     const response = await generateBasicResponse(
       "What is a healthy cholesterol level?",
-      "LDL cholesterol levels below 100 mg/dL are considered optimal. Levels between 100-129 mg/dL are considered near optimal. Total cholesterol levels below 200 mg/dL are considered desirable."
+      "LDL cholesterol levels below 100 mg/dL are considered optimal. Levels between 100-129 mg/dL are considered near optimal."
     );
 
     return {
@@ -358,26 +337,21 @@ async function testModel() {
     };
   } catch (error) {
     console.error("Test failed:", error);
-    return {
-      error: error.message,
-    };
+    return { error: error.message };
   }
 }
 
-// CRITICAL: Make sure all functions are exported
+// ============================================
+// EXPORTS
+// ============================================
+
 module.exports = {
   cleanResponse,
-  generateEmbedding,        // ✅ OpenAI embeddings
-  generateBasicResponse,    // ✅ Together AI responses
+  generateEmbedding,
+  generateBasicResponse,
   testModel,
-  checkTogetherAIStatus
+  checkTogetherAIStatus,
+  isPersonalHealthQuestion
 };
 
-// Debug: Log what we're exporting on module load
-console.log('🔍 chatService.js exports:', {
-  cleanResponse: typeof cleanResponse,
-  generateEmbedding: typeof generateEmbedding,
-  generateBasicResponse: typeof generateBasicResponse,
-  testModel: typeof testModel,
-  checkTogetherAIStatus: typeof checkTogetherAIStatus
-});
+console.log('chatService.js loaded');

@@ -1,0 +1,45 @@
+/* ===================================
+   CHAT MESSAGE MARKDOWN FORMATTING
+   =================================== */
+
+.message-content strong {
+  font-weight: 700;
+  color: inherit;
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3 {
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+.message-content h2 {
+  font-size: 1.2em;
+}
+
+.message-content h3 {
+  font-size: 1.1em;
+}
+
+.message-content ol,
+.message-content ul {
+  margin-left: 1.5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.message-content li {
+  margin-bottom: 0.25em;
+  line-height: 1.5;
+}
+
+.message-content p {
+  margin-bottom: 0.75em;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}

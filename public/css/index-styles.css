@@ -149,13 +149,16 @@
   align-items: center;
   margin: 3rem 0 1rem 0;
   padding: 0 0.25rem;
+  font-family: "Poppins-Regular", sans-serif;
   font-size: clamp(26px, 5vw, 30px);
+  font-weight: 575;
   line-height: 1.8;
   letter-spacing: -0.01em;
   text-align: center;
   color: #333;
-  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+  /* text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8); */
 }
+
 .quote-2 {
   display: flex;
   justify-content: center;
@@ -388,8 +391,9 @@
   z-index: 3;
 }
 .section-title {
+  font-family: "Poppins-Regular", sans-serif;
   font-size: clamp(1rem, 5vw, 2rem);
-  font-weight: 700;
+  font-weight: 575;
   color: #333;
   margin-bottom: 1rem;
   position: relative;
@@ -398,6 +402,7 @@
   transform: translateY(80px);
   transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+
 /* When visible class is added, slide up animation */
 .section-title.title-visible {
   opacity: 1;
