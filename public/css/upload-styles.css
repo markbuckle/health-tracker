@@ -1720,14 +1720,16 @@
     display: none;
   }
   .upload-section-container {
+    display: flex;
     flex-direction: column;
-    gap: 0; /* Slightly reduced gap */
-    align-items: stretch; /* Full width on mobile */
+    gap: 0;
+    align-items: stretch;
   }
   
   .sample-pdf-section {
     flex: none;
     width: 100%;
+    order: 1;
   }
   
   .sample-pdf-preview {
@@ -1777,46 +1779,43 @@
     right: -11px;
     width: 16px;
     height: 16px;
-}
-.upload-reports-modal {
-        position: fixed;
-        top: 70%;
-        left: 50%;
-        right: auto;
-        transform: translate(-50%, -50%) scale(0.95);
-        max-width: 320px;
-        width: calc(100vw - 3rem);
-        padding: 1.5rem;
-        max-height: 80vh;
-    }
-    
-    .upload-reports-modal.show {
-        transform: translate(-50%, -50%) scale(1);
-    }
-    
-    .upload-reports-modal .modal-arrow {
-        display: none;
-    }
-    
-    .upload-reports-modal .modal-title {
-        font-size: 1.1rem;
-        margin-bottom: 0.75rem;
-    }
-    
-    .upload-reports-modal .modal-message {
-        font-size: 0.9rem;
-        line-height: 1.4;
-        margin-bottom: 1.25rem;
-    }
-    
-    .upload-reports-modal .modal-buttons {
-        gap: 0.85rem;
-    }
-    
-    .upload-reports-modal .modal-button {
-        padding: 0.85rem 1.25rem;
-        font-size: 0.95rem;
-    }
+  }
+  .file-upload-container {
+    order: 2;
+  }
+  .upload-reports-modal {
+    position: fixed;
+    top: 70%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%) scale(0.95);
+    max-width: 320px;
+    width: calc(100vw - 3rem);
+    padding: 1.5rem;
+    max-height: 80vh;
+  }
+  .upload-reports-modal.show {
+      transform: translate(-50%, -50%) scale(1);
+  }
+  .upload-reports-modal .modal-arrow {
+      display: none;
+  }
+  .upload-reports-modal .modal-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+  }
+  .upload-reports-modal .modal-message {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 1.25rem;
+  }
+  .upload-reports-modal .modal-buttons {
+      gap: 0.85rem;
+  }
+  .upload-reports-modal .modal-button {
+      padding: 0.85rem 1.25rem;
+      font-size: 0.95rem;
+  }
 }
 
 /* Very small screens */
