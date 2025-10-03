@@ -64,93 +64,13 @@
     </div>
 
     <div class="use-cases-section">
-      <div class="slider-content-container">
-          <div class="section-header">
-              <h2 class="section-title">Perfect for you if you are</h2>
-          </div>
-          
-          <!-- Replace slider-container with scroll-container -->
-          <div class="scroll-container">
-              <!-- Card 1 -->
-              <div class="use-case-block">
-                  <div class="use-case-card">
-                      <div class="card-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-                          </svg>
-                      </div>
-                      <div class="card-title">Trying to be proactive</div>
-                      <div class="card-description">Our insights allow you to be proactive rather than reactive</div>
-                      <div class="card-illustration">
-                        <img src="/images/proactive.svg" alt="Illustration">
-                      </div>
-                  </div>
-              </div>
 
-              <!-- Card 2 -->
-              <div class="use-case-block">
-                  <div class="use-case-card">
-                      <div class="card-icon">
-                          <svg viewBox="0 0 24 24">
-                              <path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z" />
-                          </svg>
-                      </div>
-                      <div class="card-title">Managing conditions</div>
-                      <div class="card-description">Track symptoms, correlations, and progress over time</div>
-                      <div class="card-illustration">
-                        <img src="/images/manageconditions.svg" alt="Illustration">
-                      </div>
-                  </div>
-              </div>
-
-              <!-- Card 3 -->
-              <div class="use-case-block">
-                  <div class="use-case-card">
-                      <div class="card-icon">
-                          <svg viewBox="0 0 24 24">
-                              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                          </svg>
-                      </div>
-                      <div class="card-title">Caring for loved ones</div>
-                      <div class="card-description">Helps reduce the burden of stressful researching</div>
-                      <div class="card-illustration">
-                        <img src="/images/lovedones.svg" alt="Illustration">
-                      </div>
-                  </div>
-              </div>
-
-              <!-- Card 4 -->
-              <div class="use-case-block">
-                  <div class="use-case-card">
-                      <div class="card-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                              <path d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5q0-2.725 1.888-4.612T9.5 3q2.725 0 4.612 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5q0-1.875-1.312-3.188T9.5 5Q7.625 5 6.312 6.312T5 9.5q0 1.875 1.312 3.188T9.5 14"/>
-                          </svg>
-                      </div>
-                      <div class="card-title">Searching for a diagnosis</div>
-                      <div class="card-description">Document symptoms and track patterns to make healthcare visits more effective</div>
-                      <div class="card-illustration">
-                        <img src="/images/searching.svg" alt="Illustration">
-                      </div>
-                  </div>
-              </div>
-
-              <!-- Card 5 -->
-              <div class="use-case-block">
-                  <div class="use-case-card">
-                      <div class="card-icon">
-                          <svg viewBox="0 0 24 24">
-                              <path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z" />
-                          </svg>
-                      </div>
-                      <div class="card-title">Boosting overall health</div>
-                      <div class="card-description">Monitor wellness metrics and lifestyle factors</div>
-                      <div class="card-illustration">
-                        <img src="/images/boostmetrics.svg" alt="Illustration">
-                      </div>
-                  </div>
-              </div>
-          </div>
+      <!-- React will mount here -->
+      <div id="use-cases-react-container">
+        <div style="padding: 2rem; text-align: center; color: #4379ba;">
+          <h2>Loading Use Cases...</h2>
+          <p>If you see this message, React hasn't loaded yet.</p>
+        </div>
       </div>
     </div>
 
@@ -613,8 +533,7 @@
     <!-- Load React from CDN that's allowed by CSP -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-    <!-- Plain JavaScript version without Babel -->
-    <script>
+    <script> // Hero section React script
 
 console.log('Index React script starting...');
 console.log('React available:', typeof React !== 'undefined');
@@ -990,6 +909,308 @@ document.addEventListener('DOMContentLoaded', function() {
           });
         }
       }
+    </script>
+    <script>
+    console.log('Use Cases React script starting...');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, initializing Use Cases component...');
+      
+      const { useState, useEffect, useRef, createElement: h } = React;
+
+      function UseCasesSection() {
+        const [visibleCards, setVisibleCards] = useState(new Set());
+        const [titleVisible, setTitleVisible] = useState(false);
+        const cardsRef = useRef([]);
+        const titleRef = useRef(null);
+
+        const useCases = [
+          {
+            id: 1,
+            icon: 'shield',
+            title: "Trying to be proactive",
+            description: "Our insights allow you to be proactive rather than reactive",
+            image: "/images/proactive.svg"
+          },
+          {
+            id: 2,
+            icon: 'clock',
+            title: "Managing conditions",
+            description: "Track symptoms, correlations, and progress over time",
+            image: "/images/manageconditions.svg"
+          },
+          {
+            id: 3,
+            icon: 'heart',
+            title: "Caring for loved ones",
+            description: "Helps reduce the burden of stressful researching",
+            image: "/images/lovedones.svg"
+          },
+          {
+            id: 4,
+            icon: 'search',
+            title: "Searching for a diagnosis",
+            description: "Document symptoms and track patterns to make healthcare visits more effective",
+            image: "/images/searching.svg"
+          },
+          {
+            id: 5,
+            icon: 'microscope',
+            title: "Boosting overall health",
+            description: "Monitor wellness metrics and lifestyle factors",
+            image: "/images/boostmetrics.svg"
+          }
+        ];
+
+        // Icon SVG paths
+        const iconPaths = {
+          shield: "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z",
+          clock: "M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z",
+          heart: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+          search: "m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5q0-2.725 1.888-4.612T9.5 3q2.725 0 4.612 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5q0-1.875-1.312-3.188T9.5 5Q7.625 5 6.312 6.312T5 9.5q0 1.875 1.312 3.188T9.5 14",
+          microscope: "M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 7h-2v-1c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v1H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z"
+        };
+
+        useEffect(() => {
+          const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+          };
+
+          const titleObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                setTitleVisible(true);
+              }
+            });
+          }, observerOptions);
+
+          const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const index = parseInt(entry.target.dataset.index);
+                setVisibleCards(prev => new Set([...prev, index]));
+              }
+            });
+          }, observerOptions);
+
+          if (titleRef.current) {
+            titleObserver.observe(titleRef.current);
+          }
+
+          cardsRef.current.forEach((card) => {
+            if (card) cardObserver.observe(card);
+          });
+
+          return () => {
+            if (titleRef.current) {
+              titleObserver.unobserve(titleRef.current);
+            }
+            cardsRef.current.forEach((card) => {
+              if (card) cardObserver.unobserve(card);
+            });
+          };
+        }, []);
+
+        return h('div', {
+          style: {
+            position: 'relative',
+            padding: '3rem 0',
+            overflow: 'hidden'
+          }
+        }, [
+          // Decorative background
+          h('div', {
+            key: 'bg-pattern',
+            style: {
+              position: 'absolute',
+              inset: '0',
+              opacity: '0.03',
+              pointerEvents: 'none',
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundRepeat: 'repeat'
+            }
+          }),
+          
+          // Main content
+          h('div', {
+            key: 'content',
+            style: {
+              position: 'relative',
+              maxWidth: '1600px',
+              margin: '0 auto',
+              padding: '0 1rem'
+            }
+          }, [
+            // Header
+            h('div', {
+              key: 'header',
+              ref: titleRef,
+              style: {
+                textAlign: 'center',
+                marginBottom: '3rem',
+                opacity: titleVisible ? '1' : '0',
+                transform: titleVisible ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'all 1s ease-out'
+              }
+            }, [
+              h('h2', {
+                key: 'title',
+                style: {
+                  fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+                  fontWeight: '600',
+                  color: '#333',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Poppins-SemiBold, sans-serif'
+                }
+              }, 'Perfect for you if you are')
+            ]),
+            
+            // Cards Grid
+            h('div', {
+              key: 'grid',
+              style: {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: window.innerWidth < 768 ? '4rem' : window.innerWidth < 1024 ? '2rem' : '1.5rem',
+                maxWidth: '100%'
+              }
+            }, useCases.map((useCase, index) => {
+              const isVisible = visibleCards.has(index);
+              
+              return h('div', {
+                key: useCase.id,
+                ref: (el) => cardsRef.current[index] = el,
+                'data-index': index,
+                style: {
+                  opacity: isVisible ? '1' : '0',
+                  transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(8rem) scale(0.95)',
+                  transition: `all 1s ease-out ${index * 150}ms`
+                }
+              }, [
+                h('div', {
+                  key: 'card',
+                  className: 'use-case-card-react',
+                  style: {
+                    background: 'white',
+                    borderRadius: '1rem',
+                    padding: '1.25rem 1rem',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                    transition: 'all 0.4s ease',
+                    cursor: 'default',
+                    position: 'relative'
+                  },
+                  onMouseOver: function() {
+                    this.style.transform = 'translateY(-8px) scale(1.03)';
+                    this.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
+                  },
+                  onMouseOut: function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                  }
+                }, [
+                  // Gradient overlay on hover
+                  h('div', {
+                    key: 'overlay',
+                    style: {
+                      position: 'absolute',
+                      inset: '0',
+                      borderRadius: '1rem',
+                      background: 'linear-gradient(135deg, rgba(92, 177, 93, 0.03) 0%, rgba(67, 121, 186, 0.03) 100%)',
+                      opacity: '0',
+                      transition: 'opacity 0.4s ease',
+                      pointerEvents: 'none'
+                    }
+                  }),
+                  
+                  // Illustration (moved to top)
+                  h('div', {
+                    key: 'illustration',
+                    style: {
+                      width: window.innerWidth >= 1024 ? '9rem' : '8rem',
+                      height: window.innerWidth >= 1024 ? '9rem' : '8rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      zIndex: '1',
+                      marginBottom: '1.5rem',
+                      marginTop: '0.5rem'
+                    }
+                  }, [
+                    h('img', {
+                      key: 'img',
+                      src: useCase.image,
+                      alt: useCase.title,
+                      style: {
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        transition: 'transform 0.4s ease'
+                      },
+                      onError: function() {
+                        console.error('Failed to load image:', useCase.image);
+                      }
+                    })
+                  ]),
+                  
+                  // Title
+                  h('h3', {
+                    key: 'title',
+                    style: {
+                      fontSize: window.innerWidth >= 1024 ? '1.125rem' : '1rem',
+                      fontWeight: '600',
+                      color: '#2d4a3e',
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Poppins-SemiBold, sans-serif',
+                      lineHeight: '1.3',
+                      padding: '0 0.25rem',
+                      position: 'relative',
+                      zIndex: '1'
+                    }
+                  }, useCase.title),
+                  
+                  // Description
+                  h('p', {
+                    key: 'description',
+                    style: {
+                      fontSize: window.innerWidth >= 1024 ? '0.875rem' : '0.75rem',
+                      color: '#5a6b61',
+                      lineHeight: '1.6',
+                      fontFamily: 'Poppins-Regular, sans-serif',
+                      maxWidth: '95%',
+                      position: 'relative',
+                      zIndex: '1'
+                    }
+                  }, useCase.description)
+                ])
+              ]);
+            }))
+          ])
+        ]);
+      }
+
+      // Mount the component
+      try {
+        const container = document.getElementById('use-cases-react-container');
+        if (container) {
+          console.log('Use Cases container found, creating root...');
+          const root = ReactDOM.createRoot(container);
+          console.log('Root created, rendering component...');
+          root.render(React.createElement(UseCasesSection));
+          console.log('Use Cases component rendered successfully!');
+        } else {
+          console.error('Use Cases container not found!');
+        }
+      } catch (error) {
+        console.error('Error mounting Use Cases component:', error);
+      }
+    });
     </script>
   </body>
 </html>
