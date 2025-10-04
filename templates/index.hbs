@@ -1039,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function() {
               position: 'relative',
               maxWidth: '1600px',
               margin: '0 auto',
-              padding: '0 1rem'
+              padding: '0 4rem'
             }
           }, [
             // Header
@@ -1048,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', function() {
               ref: titleRef,
               style: {
                 textAlign: 'center',
-                marginBottom: '3rem',
+                marginBottom: '2rem',
                 opacity: titleVisible ? '1' : '0',
                 transform: titleVisible ? 'translateY(0)' : 'translateY(20px)',
                 transition: 'all 1s ease-out'
@@ -1057,11 +1057,11 @@ document.addEventListener('DOMContentLoaded', function() {
               h('h2', {
                 key: 'title',
                 style: {
-                  fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
-                  fontWeight: '600',
+                  fontSize: 'clamp(1.2rem, 4vw, 2.2rem)',
+                  fontWeight: '500',
                   color: '#333',
                   marginBottom: '0.5rem',
-                  fontFamily: 'Poppins-SemiBold, sans-serif'
+                  fontFamily: 'Poppins-Regular, sans-serif'
                 }
               }, 'Perfect for you if you are')
             ]),
