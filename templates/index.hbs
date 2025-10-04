@@ -146,6 +146,18 @@
       </div>
     </div>
 
+    <div style="background-color: #e0ecee; text-align: center; margin-top: 0; padding: 3rem 1rem;">
+      <h3 style="font-size: clamp(20px, 4vw, 26px); font-weight: 600; margin-bottom: 1.5rem; color: #333; font-family: Poppins-SemiBold, sans-serif; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);">
+        Ready to transform your health journey?
+      </h3>
+      <a href="/register" 
+        style="display: inline-block; background-color: #4379ba; color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-family: Poppins-SemiBold, sans-serif; font-size: clamp(14px, 2.5vw, 16px); font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(67, 121, 186, 0.3);"
+        onmouseover="this.style.backgroundColor='#63b1f1'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(67, 121, 186, 0.4)';"
+        onmouseout="this.style.backgroundColor='#4379ba'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(67, 121, 186, 0.3)';">
+        Get Started Today
+      </a>
+    </div>
+
     <div class="wave-light-bg-5">
         <div class="wave-pattern">
           {{> svg/wavePattern5}}
@@ -315,589 +327,325 @@
             });
         });
     </script>
-    {{!-- <script>  // Debug panel for scroll animation (keep commented until needed)
-      (function() {
-        console.log("Creating scroll animation debug panel");
-        
-        document.addEventListener('DOMContentLoaded', function() {
-          // Wait for the main scroll animation to initialize
-          setTimeout(function() {
-            // Create debug panel
-            const debugPanel = document.createElement('div');
-            debugPanel.style.cssText = `
-              position: fixed;
-              bottom: 10px;
-              right: 10px;
-              width: 300px;
-              padding: 12px;
-              background-color: rgba(0, 0, 0, 0.8);
-              color: white;
-              font-family: monospace;
-              font-size: 12px;
-              border-radius: 5px;
-              z-index: 10000;
-              pointer-events: none;
-              opacity: 0.9;
-            `;
-            
-            document.body.appendChild(debugPanel);
-            
-            // Add control buttons
-            const controlPanel = document.createElement('div');
-            controlPanel.style.cssText = `
-              position: fixed;
-              bottom: 10px;
-              left: 10px;
-              display: flex;
-              gap: 10px;
-              z-index: 10000;
-            `;
-            
-            const toggleButton = document.createElement('button');
-            toggleButton.textContent = 'Toggle Debug';
-            toggleButton.style.cssText = `
-              padding: 5px 10px;
-              background-color: #4CAF50;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              font-family: Arial, sans-serif;
-              font-size: 12px;
-            `;
-            
-            const resetButton = document.createElement('button');
-            resetButton.textContent = 'Reset Cards';
-            resetButton.style.cssText = `
-              padding: 5px 10px;
-              background-color: #2196F3;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              font-family: Arial, sans-serif;
-              font-size: 12px;
-            `;
-            
-            controlPanel.appendChild(toggleButton);
-            controlPanel.appendChild(resetButton);
-            document.body.appendChild(controlPanel);
-            
-            // Button functionality
-            toggleButton.addEventListener('click', function(e) {
-              e.stopPropagation();
-              debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
-            });
-            
-            resetButton.addEventListener('click', function(e) {
-              e.stopPropagation();
-              
-              // Reset cards to initial state
-              const cards = document.querySelectorAll('.use-case-card');
-              const navDots = document.querySelectorAll('.nav-dot');
-              
-              cards.forEach((card, i) => {
-                if (i === 0) {
-                  card.classList.add('active');
-                  card.style.opacity = '1';
-                  card.style.visibility = 'visible';
-                } else {
-                  card.classList.remove('active');
-                  card.style.opacity = '0';
-                  card.style.visibility = 'hidden';
-                }
-              });
-              
-              navDots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === 0);
-              });
-              
-              console.log("Cards reset to initial state");
-              
-              // Scroll back to top of hero section
-              const heroSection = document.getElementById('scrollHero');
-              if (heroSection) {
-                window.scrollTo({
-                  top: heroSection.offsetTop,
-                  behavior: 'smooth'
-                });
-              }
-            });
-            
-            // Get elements needed for debugging
-            const heroSection = document.getElementById('scrollHero');
-            const scrollSpacer = heroSection?.querySelector('.scroll-spacer');
-            const cards = heroSection?.querySelectorAll('.use-case-card');
-            const navDots = heroSection?.querySelectorAll('.nav-dot');
-            
-            // Determine trigger points (same calculation as main script)
-            const triggerPoints = [];
-            if (cards && heroSection) {
-              const cardCount = cards.length;
-              const viewportHeight = window.innerHeight;
-              const heroTop = heroSection.offsetTop;
-              
-              for (let i = 0; i < cardCount; i++) {
-                triggerPoints.push(heroTop + (i * viewportHeight * 0.6));
-              }
-            }
-            
-            // Helper function to get active card index
-            function getActiveCardIndex() {
-              let activeIndex = -1;
-              cards?.forEach((card, index) => {
-                if (card.classList.contains('active')) {
-                  activeIndex = index;
-                }
-              });
-              return activeIndex;
-            }
-            
-            // Update debug info on scroll
-            window.addEventListener('scroll', function() {
-              if (!heroSection) {
-                debugPanel.innerHTML = "ERROR: Hero section not found!";
-                return;
-              }
-              
-              const scrollTop = window.scrollY;
-              const heroTop = heroSection.offsetTop;
-              const heroHeight = heroSection.offsetHeight;
-              const spacerHeight = scrollSpacer ? scrollSpacer.offsetHeight : 0;
-              const heroPosition = window.getComputedStyle(heroSection).position;
-              const heroZIndex = window.getComputedStyle(heroSection).zIndex;
-              
-              // Find current zone based on scroll position
-              let currentZone = -1;
-              for (let i = triggerPoints.length - 1; i >= 0; i--) {
-                if (scrollTop >= triggerPoints[i]) {
-                  currentZone = i;
-                  break;
-                }
-              }
-              
-              // Generate debug output
-              debugPanel.innerHTML = `
-                <div style="margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #555; padding-bottom: 6px;">Scroll Animation Debug</div>
-                
-                <div style="margin-bottom: 12px;">
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>Scroll position:</span>
-                    <span>${scrollTop.toFixed(0)}px</span>
-                  </div>
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>Hero top:</span>
-                    <span>${heroTop}px</span>
-                  </div>
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>Spacer height:</span>
-                    <span>${spacerHeight}px</span>
-                  </div>
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>Current zone:</span>
-                    <span style="color: ${currentZone >= 0 ? '#4CAF50' : '#FF5252'}">${currentZone}</span>
-                  </div>
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>Active card:</span>
-                    <span style="color: ${getActiveCardIndex() >= 0 ? '#4CAF50' : '#FF5252'}">${getActiveCardIndex()}</span>
-                  </div>
-                </div>
-                
-                <div style="margin-bottom: 12px; border-bottom: 1px solid #555; padding-bottom: 6px;">
-                  <div style="margin-bottom: 6px; font-weight: bold;">Trigger Points:</div>
-                  ${triggerPoints.map((point, i) => `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                      <span>Card ${i}:</span>
-                      <span style="color: ${scrollTop >= point ? '#4CAF50' : '#FF5252'}">${point.toFixed(0)}px</span>
-                    </div>
-                  `).join('')}
-                </div>
-                
-                <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid #555; padding-bottom: 6px;">Element Status:</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                  <span>Position:</span>
-                  <span style="color: ${heroPosition === 'sticky' ? '#4CAF50' : '#FF5252'}">${heroPosition}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                  <span>Z-Index:</span>
-                  <span>${heroZIndex}</span>
-                </div>
-              `;
-            }, { passive: true });
-            
-            console.log("Scroll animation debug panel initialized");
-          }, 800); // Wait for main animation script to initialize
-        });
-      })();
-    </script> --}}
     <!-- Load React from CDN that's allowed by CSP -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
     <script> // Hero section React script
+      console.log('Index React script starting...');
+      console.log('React available:', typeof React !== 'undefined');
+      console.log('ReactDOM available:', typeof ReactDOM !== 'undefined');
 
-console.log('Index React script starting...');
-console.log('React available:', typeof React !== 'undefined');
-console.log('ReactDOM available:', typeof ReactDOM !== 'undefined');
-
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing index React component...');
-  
-  const { useState, useEffect, useRef, createElement: h } = React;
-
-  function IndexHowItWorksComponent() {
-    const [activeStep, setActiveStep] = useState(0);
-    const [visibleSteps, setVisibleSteps] = useState(new Set([0]));
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const containerRef = useRef(null);
-    const stepRefs = useRef([]);
-
-    const steps = [
-      {
-        number: "01",
-        title: "Set up an account for free",
-        description: "Hit the 'Sign Up' button to get started."
-      },
-      {
-        number: "02",
-        title: "Import your health data",
-        description: "Upload your health information from labs and/or document scans."
-      },
-      {
-        number: "03",
-        title: "Use our dashboards and reports",
-        description: "Our reports make complex health information easy to understand. We set it up so that it provides feedback and actionable insights that is unique to you."
-      },
-      {
-        number: "04",
-        title: "Use our share feature (Optional)",
-        description: "Share your profile or specific results with your doctor to discuss issues and put together an action plan."
-      }
-    ];
-
-    // Responsive sizing based on window width
-    const getResponsiveSizes = () => {
-      if (windowWidth <= 480) {
-        return {
-          circleSize: '3.5rem',
-          circleFontSize: '1.4rem',
-          circleLeft: '0.5rem',
-          lineLeft: '2.25rem',
-          lineWidth: '2px',
-          blockPadding: '0 1rem 0 4rem',
-          cardMargin: '0.5rem',
-          marginTop: '-8vh'
-        };
-      } else if (windowWidth <= 767) {
-        return {
-          circleSize: '3.75rem',
-          circleFontSize: '1.5rem',
-          circleLeft: '0.5rem',
-          lineLeft: '2.375rem',
-          lineWidth: '2px',
-          blockPadding: '0 2rem 0 5.25rem',
-          cardMargin: '0.625rem',
-          marginTop: '-8vh'
-        };
-      } else {
-        return {
-          circleSize: '4rem',
-          circleFontSize: '1.75rem',
-          circleLeft: '0',
-          lineLeft: '2rem',
-          lineWidth: '2px',
-          blockPadding: '0 3rem 0 3rem',
-          cardMargin: '1.25rem',
-          marginTop: '6rem'
-        };
-      }
-    };
-
-    const sizes = getResponsiveSizes();
-
-    useEffect(() => {
-      const handleResize = () => {
-        setWindowWidth(window.innerWidth);
-      };
-
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    useEffect(() => {
-      console.log('Setting up intersection observer...');
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const stepIndex = parseInt(entry.target.dataset.stepIndex);
-            
-            if (entry.isIntersecting) {
-              setVisibleSteps(prev => new Set([...prev, stepIndex]));
-              setActiveStep(stepIndex);
-            }
-          });
-        },
-        {
-          threshold: 0.6,
-          rootMargin: '-20% 0px -20% 0px'
-        }
-      );
-
-      stepRefs.current.forEach((ref) => {
-        if (ref) observer.observe(ref);
-      });
-
-      return () => observer.disconnect();
-    }, []);
-
-    const scrollToStep = (index) => {
-      stepRefs.current[index]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    };
-
-    // Create the component using your index page styling
-    return h('div', {
-      style: { 
-        width: '100%',
-        paddingTop: '2rem',
-        paddingBottom: '2rem'
-      }
-    }, [
-      // Header section similar to your quote style
-      h('div', {
-        key: 'header',
-        style: {
-          textAlign: 'center',
-          marginBottom: '3rem'
-        }
-      }, [
-        h('h2', {
-          key: 'title',
-          style: { 
-            fontSize: 'clamp(26px, 5vw, 36px)',
-            fontWeight: 'bold',
-            marginBottom: '1.5rem',
-            color: '#333',
-            fontFamily: 'Poppins-Bold, sans-serif',
-            textShadow: '2px 2px 4px rgba(255, 255, 255, 0.8)',
-            lineHeight: '1.4'
-          }
-        }, ''),
-        h('p', {
-          key: 'subtitle',
-          style: { 
-            fontSize: 'clamp(1.6rem, 3vw, 2rem)',
-            color: '#333',
-            fontFamily: 'Poppins-Regular, sans-serif',
-            maxWidth: '600px',
-            margin: '0 auto',
-            lineHeight: '1.6',
-            textShadow: '1px 1px 2px rgba(255, 255, 255, 0.5)'
-          }
-        }, 'How it works')
-      ]),
-      
-      // Steps Container - more compact for index page
-      h('div', {
-        key: 'steps-container',
-        ref: containerRef,
-        style: {
-          position: 'relative',
-          maxWidth: '900px',
-          margin: '0 auto'
-        }
-      }, [
-        // Progress Line
-        h('div', {
-          key: 'progress-line',
-          style: {
-            position: 'absolute',
-            left: sizes.lineLeft,
-            top: 0,
-            bottom: 0,
-            width: sizes.lineWidth,
-            background: 'linear-gradient(to bottom, transparent 0%, #c5c6c7 35%, #c5c6c7 65%, transparent 100%)',
-            zIndex: 1
-          }
-        }),
+      // Wait for DOM to be ready
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing index React component...');
         
-        // Active Progress Line
-        h('div', {
-          key: 'active-progress-line',
-          style: {
-            position: 'absolute',
-            left: sizes.lineLeft,
-            top: 0,
-            width: sizes.lineWidth,
-            height: `${((activeStep + 1) / steps.length) * 100}%`,
-            background: 'linear-gradient(to bottom, transparent 0%, #5a92d4 25%, #7caee6 75%, transparent 100%)',
-            zIndex: 2,
-            transition: 'all 1s ease-out'
-          }
-        }),
+        const { useState, useEffect, useRef, createElement: h } = React;
 
-        // Steps - more compact spacing for index page
-        ...steps.map((step, index) => 
-          h('div', {
-            key: `step-${index}`,
-            ref: (el) => stepRefs.current[index] = el,
-            'data-step-index': index,
-            style: {
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              minHeight: '60vh',
-              padding: sizes.blockPadding,
-              marginTop: index === 0 ? 0 : sizes.marginTop,
-              opacity: visibleSteps.has(index) ? 1 : 0,
-              transform: visibleSteps.has(index) ? 'translateY(-10px)' : 'translateY(40px)',
-              transition: 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              zIndex: 2,
-              cursor: 'pointer'
+        function IndexHowItWorksComponent() {
+          const [activeStep, setActiveStep] = useState(0);
+          const [visibleSteps, setVisibleSteps] = useState(new Set([0]));
+          const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+          const containerRef = useRef(null);
+          const stepRefs = useRef([]);
+
+          const steps = [
+            {
+              number: "01",
+              title: "Set up an account for free",
+              description: "Hit the 'Sign Up' button to get started."
             },
-            onClick: () => scrollToStep(index)
-          }, [
-            // Step Number
-            h('div', {
-              key: 'step-number',
-              style: {
-                position: 'absolute',
-                left: sizes.circleLeft,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: sizes.circleSize,
-                height: sizes.circleSize,
-                borderRadius: '50%',
-                color: 'white',
-                letterSpacing: '1px',
-                fontSize: sizes.circleFontSize,
-                fontWeight: 700,
-                fontFamily: 'Poppins-Bold, sans-serif',
-                background: visibleSteps.has(index) 
-                  ? 'linear-gradient(135deg, #4379ba, #63b1f1)'
-                  : '#b8b9bacc',
-                boxShadow: visibleSteps.has(index) 
-                  ? '0 4px 10px rgba(67, 121, 186, 0.3)'
-                  : '0 2px 5px rgba(184, 185, 186, 0.3)',
-                zIndex: 10,
-                transition: 'all 0.5s ease'
-              }
-            }, step.number),
+            {
+              number: "02",
+              title: "Import your health data",
+              description: "Upload your health information from labs and/or document scans."
+            },
+            {
+              number: "03",
+              title: "Use our dashboards and reports",
+              description: "Our reports make complex health information easy to understand. We set it up so that it provides feedback and actionable insights that is unique to you."
+            },
+            {
+              number: "04",
+              title: "Use our share feature (Optional)",
+              description: "Share your profile or specific results with your doctor to discuss issues and put together an action plan."
+            }
+          ];
 
-            // Step Content Card
+          // Responsive sizing based on window width
+          const getResponsiveSizes = () => {
+            if (windowWidth <= 480) {
+              return {
+                circleSize: '3.5rem',
+                circleFontSize: '1.4rem',
+                circleLeft: '0.5rem',
+                lineLeft: '2.25rem',
+                lineWidth: '2px',
+                blockPadding: '0 1rem 0 4rem',
+                cardMargin: '0.5rem',
+                marginTop: '-8vh'
+              };
+            } else if (windowWidth <= 767) {
+              return {
+                circleSize: '3.75rem',
+                circleFontSize: '1.5rem',
+                circleLeft: '0.5rem',
+                lineLeft: '2.375rem',
+                lineWidth: '2px',
+                blockPadding: '0 2rem 0 5.25rem',
+                cardMargin: '0.625rem',
+                marginTop: '-8vh'
+              };
+            } else {
+              return {
+                circleSize: '4rem',
+                circleFontSize: '1.75rem',
+                circleLeft: '0',
+                lineLeft: '2rem',
+                lineWidth: '2px',
+                blockPadding: '0 3rem 0 3rem',
+                cardMargin: '1.25rem',
+                marginTop: '6rem'
+              };
+            }
+          };
+
+          const sizes = getResponsiveSizes();
+
+          useEffect(() => {
+            const handleResize = () => {
+              setWindowWidth(window.innerWidth);
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+          }, []);
+
+          useEffect(() => {
+            console.log('Setting up intersection observer...');
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  const stepIndex = parseInt(entry.target.dataset.stepIndex);
+                  
+                  if (entry.isIntersecting) {
+                    setVisibleSteps(prev => new Set([...prev, stepIndex]));
+                    setActiveStep(stepIndex);
+                  }
+                });
+              },
+              {
+                threshold: 0.6,
+                rootMargin: '-20% 0px -20% 0px'
+              }
+            );
+
+            stepRefs.current.forEach((ref) => {
+              if (ref) observer.observe(ref);
+            });
+
+            return () => observer.disconnect();
+          }, []);
+
+          const scrollToStep = (index) => {
+            stepRefs.current[index]?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          };
+
+          // Create the component using your index page styling
+          return h('div', {
+            style: { 
+              width: '100%',
+              paddingTop: '2rem',
+              paddingBottom: '2rem'
+            }
+          }, [
+            // Header section similar to your quote style
             h('div', {
-              key: 'step-card',
+              key: 'header',
               style: {
-                flex: 1,
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                marginLeft: sizes.cardMargin,
-                border: '0.5px solid #e5e7eb',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                transition: 'all 0.6s ease',
-                transform: visibleSteps.has(index) ? 'translateX(0)' : 'translateX(15px)'
+                textAlign: 'center',
+                marginBottom: '3rem'
               }
             }, [
-              h('h3', {
-                key: 'step-title',
+              h('h2', {
+                key: 'title',
                 style: { 
-                  fontSize: 'clamp(18px, 2.5vw, 22px)',
-                  fontWeight: 600,
-                  marginBottom: '0.75rem',
-                  color: '#4379ba',
-                  fontFamily: 'Poppins-SemiBold, sans-serif'
+                  fontSize: 'clamp(26px, 5vw, 36px)',
+                  fontWeight: 'bold',
+                  marginBottom: '1.5rem',
+                  color: '#333',
+                  fontFamily: 'Poppins-Bold, sans-serif',
+                  textShadow: '2px 2px 4px rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.4'
                 }
-              }, step.title),
+              }, ''),
               h('p', {
-                key: 'step-description',
+                key: 'subtitle',
                 style: { 
-                  fontSize: 'clamp(14px, 2vw, 16px)',
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  color: '#666',
-                  fontFamily: 'Poppins-Regular, sans-serif'
+                  fontSize: 'clamp(1.6rem, 3vw, 2rem)',
+                  color: '#333',
+                  fontFamily: 'Poppins-Regular, sans-serif',
+                  maxWidth: '600px',
+                  margin: '0 auto',
+                  lineHeight: '1.6',
+                  textShadow: '1px 1px 2px rgba(255, 255, 255, 0.5)'
                 }
-              }, step.description)
+              }, 'How it works')
+            ]),
+            
+            // Steps Container - more compact for index page
+            h('div', {
+              key: 'steps-container',
+              ref: containerRef,
+              style: {
+                position: 'relative',
+                maxWidth: '900px',
+                margin: '0 auto'
+              }
+            }, [
+              // Progress Line
+              h('div', {
+                key: 'progress-line',
+                style: {
+                  position: 'absolute',
+                  left: sizes.lineLeft,
+                  top: 0,
+                  bottom: 0,
+                  width: sizes.lineWidth,
+                  background: 'linear-gradient(to bottom, transparent 0%, #c5c6c7 35%, #c5c6c7 65%, transparent 100%)',
+                  zIndex: 1
+                }
+              }),
+              
+              // Active Progress Line
+              h('div', {
+                key: 'active-progress-line',
+                style: {
+                  position: 'absolute',
+                  left: sizes.lineLeft,
+                  top: 0,
+                  width: sizes.lineWidth,
+                  height: `${((activeStep + 1) / steps.length) * 100}%`,
+                  background: 'linear-gradient(to bottom, transparent 0%, #5a92d4 25%, #7caee6 75%, transparent 100%)',
+                  zIndex: 2,
+                  transition: 'all 1s ease-out'
+                }
+              }),
+
+              // Steps - more compact spacing for index page
+              ...steps.map((step, index) => 
+                h('div', {
+                  key: `step-${index}`,
+                  ref: (el) => stepRefs.current[index] = el,
+                  'data-step-index': index,
+                  style: {
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: '60vh',
+                    padding: sizes.blockPadding,
+                    marginTop: index === 0 ? 0 : sizes.marginTop,
+                    opacity: visibleSteps.has(index) ? 1 : 0,
+                    transform: visibleSteps.has(index) ? 'translateY(-10px)' : 'translateY(40px)',
+                    transition: 'all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    zIndex: 2,
+                    cursor: 'pointer'
+                  },
+                  onClick: () => scrollToStep(index)
+                }, [
+                  // Step Number
+                  h('div', {
+                    key: 'step-number',
+                    style: {
+                      position: 'absolute',
+                      left: sizes.circleLeft,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: sizes.circleSize,
+                      height: sizes.circleSize,
+                      borderRadius: '50%',
+                      color: 'white',
+                      letterSpacing: '1px',
+                      fontSize: sizes.circleFontSize,
+                      fontWeight: 700,
+                      fontFamily: 'Poppins-Bold, sans-serif',
+                      background: visibleSteps.has(index) 
+                        ? 'linear-gradient(135deg, #4379ba, #63b1f1)'
+                        : '#b8b9bacc',
+                      boxShadow: visibleSteps.has(index) 
+                        ? '0 4px 10px rgba(67, 121, 186, 0.3)'
+                        : '0 2px 5px rgba(184, 185, 186, 0.3)',
+                      zIndex: 10,
+                      transition: 'all 0.5s ease'
+                    }
+                  }, step.number),
+
+                  // Step Content Card
+                  h('div', {
+                    key: 'step-card',
+                    style: {
+                      flex: 1,
+                      backgroundColor: 'white',
+                      borderRadius: '12px',
+                      padding: '1.5rem',
+                      marginLeft: sizes.cardMargin,
+                      border: '0.5px solid #e5e7eb',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                      transition: 'all 0.6s ease',
+                      transform: visibleSteps.has(index) ? 'translateX(0)' : 'translateX(15px)'
+                    }
+                  }, [
+                    h('h3', {
+                      key: 'step-title',
+                      style: { 
+                        fontSize: 'clamp(18px, 2.5vw, 22px)',
+                        fontWeight: 600,
+                        marginBottom: '0.75rem',
+                        color: '#4379ba',
+                        fontFamily: 'Poppins-SemiBold, sans-serif'
+                      }
+                    }, step.title),
+                    h('p', {
+                      key: 'step-description',
+                      style: { 
+                        fontSize: 'clamp(14px, 2vw, 16px)',
+                        fontWeight: 400,
+                        lineHeight: 1.6,
+                        color: '#666',
+                        fontFamily: 'Poppins-Regular, sans-serif'
+                      }
+                    }, step.description)
+                  ])
+                ])
+              )
             ])
-          ])
-        )
-      ]),
-
-      // CTA section at the bottom (like your original quote section)
-      h('div', {
-        key: 'cta-section',
-        style: {
-          textAlign: 'center',
-          marginTop: '3rem',
-          paddingTop: '2rem'
+          ]);
         }
-      }, [
-        h('h3', {
-          key: 'cta-title',
-          style: {
-            fontSize: 'clamp(20px, 4vw, 26px)',
-            fontWeight: 600,
-            marginBottom: '1.5rem',
-            color: '#333',
-            fontFamily: 'Poppins-SemiBold, sans-serif',
-            textShadow: '1px 1px 2px rgba(255, 255, 255, 0.5)'
-          }
-        }, 'Ready to transform your health journey?'),
-        h('a', {
-          key: 'cta-button',
-          href: '/register',
-          style: {
-            display: 'inline-block',
-            backgroundColor: '#4379ba',
-            color: 'white',
-            padding: '0.75rem 2rem',
-            borderRadius: '8px',
-            textDecoration: 'none',
-            fontFamily: 'Poppins-SemiBold, sans-serif',
-            fontSize: 'clamp(14px, 2.5vw, 16px)',
-            fontWeight: 600,
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(67, 121, 186, 0.3)'
-          },
-          onMouseOver: function() {
-            this.style.backgroundColor = '#63b1f1';
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 6px 20px rgba(67, 121, 186, 0.4)';
-          },
-          onMouseOut: function() {
-            this.style.backgroundColor = '#4379ba';
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 4px 12px rgba(67, 121, 186, 0.3)';
-          }
-        }, 'Get Started Today')
-      ])
-    ]);
-  }
 
-  // Mount the component - FIXED: Use correct container ID
-  try {
-    const container = document.getElementById('index-react-steps-container');
-    if (container) {
-      console.log('Container found, creating root...');
-      const root = ReactDOM.createRoot(container);
-      console.log('Root created, rendering component...');
-      root.render(React.createElement(IndexHowItWorksComponent));
-      console.log('Index component rendered successfully!');
-    } else {
-      console.error('Index container element not found! Looking for: index-react-steps-container');
-    }
-  } catch (error) {
-    console.error('Error mounting React component:', error);
-  }
-});
+        // Mount the component
+        try {
+          const container = document.getElementById('index-react-steps-container');
+          if (container) {
+            console.log('Container found, creating root...');
+            const root = ReactDOM.createRoot(container);
+            console.log('Root created, rendering component...');
+            root.render(React.createElement(IndexHowItWorksComponent));
+            console.log('Index component rendered successfully!');
+          } else {
+            console.error('Index container element not found! Looking for: index-react-steps-container');
+          }
+        } catch (error) {
+          console.error('Error mounting React component:', error);
+        }
+      });
     </script>
     <script> // How it works scroll function
+      
       function scrollToHowItWorks(event) {
         event.preventDefault(); // Prevent default anchor behavior
         
@@ -910,311 +658,311 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     </script>
-<script>
-console.log('Use Cases React script starting...');
+    <script>
+        console.log('Use Cases React script starting...');
 
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing Use Cases component...');
-  
-  const { useState, useEffect, useRef, createElement: h } = React;
-
-  function UseCasesSection() {
-    const [visibleCards, setVisibleCards] = useState(new Set());
-    const [titleVisible, setTitleVisible] = useState(false);
-    const cardsRef = useRef([]);
-    const titleRef = useRef(null);
-
-    const useCases = [
-      {
-        id: 1,
-        icon: 'shield',
-        title: "Trying to be proactive",
-        description: "Our insights allow you to be proactive rather than reactive",
-        image: "/images/proactive.svg"
-      },
-      {
-        id: 2,
-        icon: 'clock',
-        title: "Managing conditions",
-        description: "Track symptoms, correlations, and progress over time",
-        image: "/images/manageconditions.svg"
-      },
-      {
-        id: 3,
-        icon: 'heart',
-        title: "Caring for loved ones",
-        description: "Helps reduce the burden of stressful researching",
-        image: "/images/lovedones.svg"
-      },
-      {
-        id: 4,
-        icon: 'search',
-        title: "Searching for a diagnosis",
-        description: "Document symptoms and track patterns to make healthcare visits more effective",
-        image: "/images/searching.svg"
-      },
-      {
-        id: 5,
-        icon: 'microscope',
-        title: "Boosting overall health",
-        description: "Monitor wellness metrics and lifestyle factors",
-        image: "/images/boostmetrics.svg"
-      }
-    ];
-
-    // Icon SVG paths
-    const iconPaths = {
-      shield: "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z",
-      clock: "M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z",
-      heart: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
-      search: "m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5q0-2.725 1.888-4.612T9.5 3q2.725 0 4.612 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5q0-1.875-1.312-3.188T9.5 5Q7.625 5 6.312 6.312T5 9.5q0 1.875 1.312 3.188T9.5 14",
-      microscope: "M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 7h-2v-1c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v1H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z"
-    };
-
-    useEffect(() => {
-      const observerOptions = {
-        threshold: 0.2,
-        rootMargin: '0px 0px -100px 0px'
-      };
-
-      const titleObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setTitleVisible(true);
-          }
-        });
-      }, observerOptions);
-
-      const cardObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const index = parseInt(entry.target.dataset.index);
-            setVisibleCards(prev => new Set([...prev, index]));
-          }
-        });
-      }, observerOptions);
-
-      if (titleRef.current) {
-        titleObserver.observe(titleRef.current);
-      }
-
-      cardsRef.current.forEach((card) => {
-        if (card) cardObserver.observe(card);
-      });
-
-      return () => {
-        if (titleRef.current) {
-          titleObserver.unobserve(titleRef.current);
-        }
-        cardsRef.current.forEach((card) => {
-          if (card) cardObserver.unobserve(card);
-        });
-      };
-    }, []);
-
-    return h('div', {
-      style: {
-        position: 'relative',
-        padding: '3rem 0',
-        overflow: 'hidden'
-      }
-    }, [
-      // Decorative background
-      h('div', {
-        key: 'bg-pattern',
-        style: {
-          position: 'absolute',
-          inset: '0',
-          opacity: '0.03',
-          pointerEvents: 'none',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat'
-        }
-      }),
-      
-      // Main content
-      h('div', {
-        key: 'content',
-        style: {
-          position: 'relative',
-          maxWidth: '1600px',
-          margin: '0 auto',
-          padding: '0'
-        }
-      }, [
-        // Header
-        h('div', {
-          key: 'header',
-          ref: titleRef,
-          style: {
-            textAlign: 'center',
-            marginBottom: '2rem',
-            padding: window.innerWidth < 768 ? '0 2rem' : '0 4rem',
-            opacity: titleVisible ? '1' : '0',
-            transform: titleVisible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 1s ease-out'
-          }
-        }, [
-          h('h2', {
-            key: 'title',
-            style: {
-              fontSize: 'clamp(1.5rem, 4vw, 2.2rem)',
-              fontWeight: '500',
-              color: '#333',
-              marginBottom: '0.5rem',
-              fontFamily: 'Poppins-Regular, sans-serif'
-            }
-          }, 'Perfect for you if you are')
-        ]),
-        
-        // Cards Grid
-        h('div', {
-          key: 'grid',
-          style: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: window.innerWidth < 768 ? '4rem' : window.innerWidth < 1024 ? '2rem' : '1.5rem',
-            maxWidth: '100%',
-            padding: window.innerWidth < 768 ? '0 4rem' : '0 4rem'
-          }
-        }, useCases.map((useCase, index) => {
-          const isVisible = visibleCards.has(index);
+        document.addEventListener('DOMContentLoaded', function() {
+          console.log('DOM loaded, initializing Use Cases component...');
           
-          return h('div', {
-            key: useCase.id,
-            ref: (el) => cardsRef.current[index] = el,
-            'data-index': index,
-            style: {
-              opacity: isVisible ? '1' : '0',
-              transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(8rem) scale(0.95)',
-              transition: `all 1s ease-out ${index * 150}ms`
-            }
-          }, [
-            h('div', {
-              key: 'card',
-              className: 'use-case-card-react',
+          const { useState, useEffect, useRef, createElement: h } = React;
+
+          function UseCasesSection() {
+            const [visibleCards, setVisibleCards] = useState(new Set());
+            const [titleVisible, setTitleVisible] = useState(false);
+            const cardsRef = useRef([]);
+            const titleRef = useRef(null);
+
+            const useCases = [
+              {
+                id: 1,
+                icon: 'shield',
+                title: "Trying to be proactive",
+                description: "Our insights allow you to be proactive rather than reactive",
+                image: "/images/proactive.svg"
+              },
+              {
+                id: 2,
+                icon: 'clock',
+                title: "Managing conditions",
+                description: "Track symptoms, correlations, and progress over time",
+                image: "/images/manageconditions.svg"
+              },
+              {
+                id: 3,
+                icon: 'heart',
+                title: "Caring for loved ones",
+                description: "Helps reduce the burden of stressful researching",
+                image: "/images/lovedones.svg"
+              },
+              {
+                id: 4,
+                icon: 'search',
+                title: "Searching for a diagnosis",
+                description: "Document symptoms and track patterns to make healthcare visits more effective",
+                image: "/images/searching.svg"
+              },
+              {
+                id: 5,
+                icon: 'microscope',
+                title: "Boosting overall health",
+                description: "Monitor wellness metrics and lifestyle factors",
+                image: "/images/boostmetrics.svg"
+              }
+            ];
+
+            // Icon SVG paths
+            const iconPaths = {
+              shield: "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z",
+              clock: "M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm1-8h3v2h-5V7h2v4z",
+              heart: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+              search: "m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5q0-2.725 1.888-4.612T9.5 3q2.725 0 4.612 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5q0-1.875-1.312-3.188T9.5 5Q7.625 5 6.312 6.312T5 9.5q0 1.875 1.312 3.188T9.5 14",
+              microscope: "M9 13c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm6 7h-2v-1c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v1H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z"
+            };
+
+            useEffect(() => {
+              const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -100px 0px'
+              };
+
+              const titleObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                    setTitleVisible(true);
+                  }
+                });
+              }, observerOptions);
+
+              const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                    const index = parseInt(entry.target.dataset.index);
+                    setVisibleCards(prev => new Set([...prev, index]));
+                  }
+                });
+              }, observerOptions);
+
+              if (titleRef.current) {
+                titleObserver.observe(titleRef.current);
+              }
+
+              cardsRef.current.forEach((card) => {
+                if (card) cardObserver.observe(card);
+              });
+
+              return () => {
+                if (titleRef.current) {
+                  titleObserver.unobserve(titleRef.current);
+                }
+                cardsRef.current.forEach((card) => {
+                  if (card) cardObserver.unobserve(card);
+                });
+              };
+            }, []);
+
+            return h('div', {
               style: {
-                background: 'white',
-                borderRadius: '1rem',
-                padding: window.innerWidth >= 1024 ? '1.25rem 0.75rem 1rem' : '1.25rem 1rem',
-                height: '85%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                transition: 'all 0.4s ease',
-                cursor: 'default',
-                position: 'relative'
-              },
-              onMouseOver: function() {
-                this.style.transform = 'translateY(-8px) scale(1.03)';
-                this.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
-              },
-              onMouseOut: function() {
-                this.style.transform = 'translateY(0) scale(1)';
-                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                position: 'relative',
+                padding: '3rem 0',
+                overflow: 'hidden'
               }
             }, [
-              // Gradient overlay on hover
+              // Decorative background
               h('div', {
-                key: 'overlay',
+                key: 'bg-pattern',
                 style: {
                   position: 'absolute',
                   inset: '0',
-                  borderRadius: '1rem',
-                  background: 'linear-gradient(135deg, rgba(92, 177, 93, 0.03) 0%, rgba(67, 121, 186, 0.03) 100%)',
-                  opacity: '0',
-                  transition: 'opacity 0.4s ease',
-                  pointerEvents: 'none'
+                  opacity: '0.03',
+                  pointerEvents: 'none',
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'repeat'
                 }
               }),
               
-              // Illustration
+              // Main content
               h('div', {
-                key: 'illustration',
+                key: 'content',
                 style: {
-                  width: window.innerWidth >= 1024 ? '9rem' : '8rem',
-                  height: window.innerWidth >= 1024 ? '9rem' : '8rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                   position: 'relative',
-                  zIndex: '1',
-                  marginBottom: window.innerWidth >= 1024 ? '0.75rem' : '0',
-                  marginTop: '0'
+                  maxWidth: '1600px',
+                  margin: '0 auto',
+                  padding: '0'
                 }
               }, [
-                h('img', {
-                  key: 'img',
-                  src: useCase.image,
-                  alt: useCase.title,
+                // Header
+                h('div', {
+                  key: 'header',
+                  ref: titleRef,
                   style: {
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    transition: 'transform 0.4s ease'
-                  },
-                  onError: function() {
-                    console.error('Failed to load image:', useCase.image);
+                    textAlign: 'center',
+                    marginBottom: '2rem',
+                    padding: window.innerWidth < 768 ? '0 2rem' : '0 4rem',
+                    opacity: titleVisible ? '1' : '0',
+                    transform: titleVisible ? 'translateY(0)' : 'translateY(20px)',
+                    transition: 'all 1s ease-out'
                   }
-                })
-              ]),
-              
-              // Title
-              h('h3', {
-                key: 'title',
-                style: {
-                  fontSize: window.innerWidth >= 1024 ? '0.9rem' : '1rem',
-                  fontWeight: '600',
-                  color: '#2d4a3e',
-                  marginBottom: window.innerWidth >= 1024 ? '0.375rem' : '0.5rem',
-                  fontFamily: 'Poppins-SemiBold, sans-serif',
-                  lineHeight: '1.3',
-                  padding: '0 0.25rem',
-                  position: 'relative',
-                  zIndex: '1',
-                  whiteSpace: window.innerWidth >= 1024 ? 'nowrap' : 'normal'
-                }
-              }, useCase.title),
-              
-              // Description
-              h('p', {
-                key: 'description',
-                style: {
-                  fontSize: window.innerWidth >= 1024 ? '0.8rem' : '0.75rem',
-                  color: '#5a6b61',
-                  lineHeight: '1.6',
-                  fontFamily: 'Poppins-Regular, sans-serif',
-                  maxWidth: '95%',
-                  position: 'relative',
-                  zIndex: '1',
-                  marginBottom: '0'
-                }
-              }, useCase.description)
-            ])
-          ]);
-        }))
-      ])
-    ]);
-  }
+                }, [
+                  h('h2', {
+                    key: 'title',
+                    style: {
+                      fontSize: 'clamp(1.5rem, 4vw, 2.2rem)',
+                      fontWeight: '500',
+                      color: '#333',
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Poppins-Regular, sans-serif'
+                    }
+                  }, 'Perfect for you if you are')
+                ]),
+                
+                // Cards Grid
+                h('div', {
+                  key: 'grid',
+                  style: {
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: window.innerWidth < 768 ? '4rem' : window.innerWidth < 1024 ? '2rem' : '1.5rem',
+                    maxWidth: '100%',
+                    padding: window.innerWidth < 768 ? '0 4rem' : '0 4rem'
+                  }
+                }, useCases.map((useCase, index) => {
+                  const isVisible = visibleCards.has(index);
+                  
+                  return h('div', {
+                    key: useCase.id,
+                    ref: (el) => cardsRef.current[index] = el,
+                    'data-index': index,
+                    style: {
+                      opacity: isVisible ? '1' : '0',
+                      transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(8rem) scale(0.95)',
+                      transition: `all 1s ease-out ${index * 150}ms`
+                    }
+                  }, [
+                    h('div', {
+                      key: 'card',
+                      className: 'use-case-card-react',
+                      style: {
+                        background: 'white',
+                        borderRadius: '1rem',
+                        padding: window.innerWidth >= 1024 ? '1.25rem 0.75rem 1rem' : '1.25rem 1rem',
+                        height: '85%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        transition: 'all 0.4s ease',
+                        cursor: 'default',
+                        position: 'relative'
+                      },
+                      onMouseOver: function() {
+                        this.style.transform = 'translateY(-8px) scale(1.03)';
+                        this.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
+                      },
+                      onMouseOut: function() {
+                        this.style.transform = 'translateY(0) scale(1)';
+                        this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                      }
+                    }, [
+                      // Gradient overlay on hover
+                      h('div', {
+                        key: 'overlay',
+                        style: {
+                          position: 'absolute',
+                          inset: '0',
+                          borderRadius: '1rem',
+                          background: 'linear-gradient(135deg, rgba(92, 177, 93, 0.03) 0%, rgba(67, 121, 186, 0.03) 100%)',
+                          opacity: '0',
+                          transition: 'opacity 0.4s ease',
+                          pointerEvents: 'none'
+                        }
+                      }),
+                      
+                      // Illustration
+                      h('div', {
+                        key: 'illustration',
+                        style: {
+                          width: window.innerWidth >= 1024 ? '9rem' : '8rem',
+                          height: window.innerWidth >= 1024 ? '9rem' : '8rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          position: 'relative',
+                          zIndex: '1',
+                          marginBottom: window.innerWidth >= 1024 ? '0.75rem' : '0',
+                          marginTop: '0'
+                        }
+                      }, [
+                        h('img', {
+                          key: 'img',
+                          src: useCase.image,
+                          alt: useCase.title,
+                          style: {
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            transition: 'transform 0.4s ease'
+                          },
+                          onError: function() {
+                            console.error('Failed to load image:', useCase.image);
+                          }
+                        })
+                      ]),
+                      
+                      // Title
+                      h('h3', {
+                        key: 'title',
+                        style: {
+                          fontSize: window.innerWidth >= 1024 ? '0.9rem' : '1rem',
+                          fontWeight: '600',
+                          color: '#2d4a3e',
+                          marginBottom: window.innerWidth >= 1024 ? '0.375rem' : '0.5rem',
+                          fontFamily: 'Poppins-SemiBold, sans-serif',
+                          lineHeight: '1.3',
+                          padding: '0 0.25rem',
+                          position: 'relative',
+                          zIndex: '1',
+                          whiteSpace: window.innerWidth >= 1024 ? 'nowrap' : 'normal'
+                        }
+                      }, useCase.title),
+                      
+                      // Description
+                      h('p', {
+                        key: 'description',
+                        style: {
+                          fontSize: window.innerWidth >= 1024 ? '0.8rem' : '0.75rem',
+                          color: '#5a6b61',
+                          lineHeight: '1.6',
+                          fontFamily: 'Poppins-Regular, sans-serif',
+                          maxWidth: '95%',
+                          position: 'relative',
+                          zIndex: '1',
+                          marginBottom: '0'
+                        }
+                      }, useCase.description)
+                    ])
+                  ]);
+                }))
+              ])
+            ]);
+          }
 
-  // Mount the component
-  try {
-    const container = document.getElementById('use-cases-react-container');
-    if (container) {
-      console.log('Use Cases container found, creating root...');
-      const root = ReactDOM.createRoot(container);
-      console.log('Root created, rendering component...');
-      root.render(React.createElement(UseCasesSection));
-      console.log('Use Cases component rendered successfully!');
-    } else {
-      console.error('Use Cases container not found!');
-    }
-  } catch (error) {
-    console.error('Error mounting Use Cases component:', error);
-  }
-});
-</script>
+          // Mount the component
+          try {
+            const container = document.getElementById('use-cases-react-container');
+            if (container) {
+              console.log('Use Cases container found, creating root...');
+              const root = ReactDOM.createRoot(container);
+              console.log('Root created, rendering component...');
+              root.render(React.createElement(UseCasesSection));
+              console.log('Use Cases component rendered successfully!');
+            } else {
+              console.error('Use Cases container not found!');
+            }
+          } catch (error) {
+            console.error('Error mounting Use Cases component:', error);
+          }
+        });
+    </script>
   </body>
-</html>
+</html> 
