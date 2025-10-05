@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === "development") {
     res.setHeader(
       "Content-Security-Policy",
       "default-src 'self'; " +
-        "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'unsafe-hashes' cdnjs.cloudflare.com d3e54v103j8qbb.cloudfront.net cdn.jsdelivr.net cdn.plot.ly www.gstatic.com apis.google.com; " +
+        "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'unsafe-hashes' cdnjs.cloudflare.com d3e54v103j8qbb.cloudfront.net cdn.jsdelivr.net cdn.plot.ly www.gstatic.com apis.google.com unpkg.com; " +
         "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdn.plot.ly; " +
         "img-src 'self' data: blob: *; " +
         "font-src 'self' data: fonts.gstatic.com; " +
