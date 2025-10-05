@@ -8,6 +8,8 @@
     <link href="css/user-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/user-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/welcome-styles.css" rel="stylesheet" type="text/css" />
+    {{!-- <script src="https://unpkg.com/lucide@latest"></script> --}}
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   </head>
 
   <body class="user-body">
@@ -118,42 +120,47 @@
           <p class="welcome-subtitle">
             Click below for a quick tutorial
           </p>
-          <button class="get-started-btn" id="getStartedBtn">
-            Get Started
-          </button>
+          <div class="welcome-buttons">
+            <button class="get-started-btn" id="getStartedBtn">
+              Get Started
+            </button>
+            <button class="skip-tutorial-btn" id="skipTutorialBtn">
+              Skip Tutorial
+            </button>
+          </div>
         </div>
 
         <div class="feature-overview">
           <div class="feature-item" data-target="Profile">
-            <div class="feature-icon">📋</div>
+            <div class="feature-icon"><i data-lucide="user-circle" style="width: 48px; height: 48px; stroke-width: 1.5;"></i></div>
             <div class="feature-title">Profile</div>
             <div class="feature-description">
               Add your personal health details and medical history
             </div>
           </div>
           <div class="feature-item" data-target="Upload">
-            <div class="feature-icon">📄</div>
+            <div class="feature-icon"> <i data-lucide="file-up" style="width: 48px; height: 48px; stroke-width: 1.5;"></i></div>
             <div class="feature-title">Upload</div>
             <div class="feature-description">
               Upload your medical records and lab results
             </div>
           </div>
           <div class="feature-item" data-target="Reports">
-            <div class="feature-icon">📊</div>
+            <div class="feature-icon"><i data-lucide="bar-chart-3" style="width: 48px; height: 48px; stroke-width: 1.5;"></i></div>
             <div class="feature-title">Reports</div>
             <div class="feature-description">
               View detailed reports based on your health data
             </div>
           </div>
           <div class="feature-item" data-target="Insights">
-            <div class="feature-icon">💡</div>
+            <div class="feature-icon"><i data-lucide="lightbulb" style="width: 48px; height: 48px; stroke-width: 1.5;"></i></div>
             <div class="feature-title">Insights</div>
             <div class="feature-description">
               Get personalized insights and recommendations
             </div>
           </div>
           <div class="feature-item" data-target="Chatbot">
-            <div class="feature-icon">💬</div>
+            <div class="feature-icon"><i data-lucide="message-circle" style="width: 48px; height: 48px; stroke-width: 1.5;"></i></div>
             <div class="feature-title">Chatbot</div>
             <div class="feature-description">
               Ask questions to our AI Chatbot Reed
@@ -809,6 +816,11 @@
           getStartedBtn.addEventListener("click", startTutorial);
         }
 
+        const skipTutorialBtn = document.getElementById("skipTutorialBtn");
+        if (skipTutorialBtn) {
+          skipTutorialBtn.addEventListener("click", completeTutorial);
+        }
+
         // NEW: Event listeners for new overview steps
         if (stepInputOverviewNext) {
           stepInputOverviewNext.addEventListener("click", () => showStep(2));
@@ -909,6 +921,18 @@
         console.log('Welcome page script initialized');
       });
     </script>
-
+    <script> // lucide icons
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, attempting to initialize Lucide...');
+        console.log('Lucide object:', typeof lucide);
+        
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+          console.log('Lucide icons initialized successfully');
+        } else {
+          console.error('Lucide library not loaded!');
+        }
+      });
+    </script>
   </body>
 </html>

@@ -228,6 +228,15 @@ body.tutorial-active .highlight-nav {
   height: 4px;
   overflow: hidden;
 }
+/* .welcome-card .progress-container {
+  display: none !important;
+} */
+ .steps-container2 .progress-container {
+  display: none;
+}
+body.tutorial-active .steps-container2 .progress-container {
+  display: block;
+}
 .progress-bar {
   height: 4px;
   background-color: #5cb15d;
@@ -263,7 +272,7 @@ body.tutorial-active .highlight-nav {
   border-radius: 30px;
   border: 0.25px solid #000;
   text-decoration: none;
-  margin: 1rem;
+  margin: 1rem 0.5rem;
   box-shadow: 0 4px 10px rgba(92, 177, 93, 0.3);
   transition: all 0.3s ease;
 }
@@ -272,7 +281,6 @@ body.tutorial-active .highlight-nav {
   box-shadow: 0 6px 15px rgba(92, 177, 93, 0.4);
   cursor: pointer;
   color: #fff;
-  font-size: 1rem;
 }
 
 /* Feature overview */
@@ -297,9 +305,21 @@ body.tutorial-active .highlight-nav {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 .feature-icon {
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5cb15d;
+  transition: all 0.3s ease;
+}
+/* .feature-icon {
   font-size: 1.8rem;
   margin-bottom: 0.8rem;
   display: block;
+} */
+.feature-item:hover .feature-icon {
+  color: #46953f;
+  transform: scale(1.1);
 }
 .feature-title {
   font-family: "Poppins-SemiBold", sans-serif;
@@ -362,6 +382,32 @@ body[data-output-group-hover="true"] #Chatbot {
   position: relative !important;
   border-radius: 10px;
 }
+.welcome-buttons {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+/* Skip Tutorial button - matches Get Started but lighter */
+.skip-tutorial-btn {
+  display: inline-block;
+  background-color: #e5e7eb;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: 0.25px solid #3a3a3a;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.skip-tutorial-btn:hover {
+  background-color: #d1d5db;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  color: #333;
+}
 
 @media screen and (max-width: 1200px) {
   .feature-overview {
@@ -421,7 +467,11 @@ body[data-output-group-hover="true"] #Chatbot {
     margin: 1rem;
     border-radius: 12px;
   }
+  .welcome-header {
+    margin-bottom: 0;
+  }
   .feature-overview {
+    display: none;
     grid-template-columns: 1fr;
   }
   .actions {
@@ -519,6 +569,20 @@ body[data-output-group-hover="true"] #Chatbot {
   }
   .feature-icon {
     margin-bottom: 1rem;
+  }
+  .welcome-buttons {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .skip-tutorial-btn {
+    margin: 0.75rem 0;
+    padding: 0.5rem 0.35rem;
+    width: 8rem;
+  }
+  .get-started-btn,
+  .skip-tutorial-btn {
+    width: 100%;
+    max-width: 200px;
   }
 }
 
