@@ -365,7 +365,7 @@ html, body {
 
 .page-link:hover {
   background-color: #cdcdcd;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .page-link:active {
@@ -374,7 +374,7 @@ html, body {
 
 .page-link.w--current {
   background-color: #cdcdcd;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .nav-icon {

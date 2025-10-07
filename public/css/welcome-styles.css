@@ -293,13 +293,13 @@ body.tutorial-active .steps-container2 .progress-container {
 .feature-item {
   text-align: center;
   padding: 1.25rem;
-  border-radius: 12px;
+  border-radius: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   border: 1px solid transparent;
 }
 .feature-item:hover {
-  background-color: rgba(92, 177, 93, 0.02);
+  background-color: rgba(184, 184, 184, 0.128);
   border-color: rgba(92, 177, 93, 0.1);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
