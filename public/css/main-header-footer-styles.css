@@ -87,8 +87,8 @@
   align-items: center;
   padding-left: 0;
   font-family: "Poppins-Regular", sans-serif;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 550;
   line-height: 20px;
   text-decoration: none;
   transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
