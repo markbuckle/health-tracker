@@ -45,7 +45,7 @@ function detectQueryCategories(query) {
     oncology: ['cancer', 'tumor', 'oncology', 'malignancy', 'chemotherapy'],
     nutrition: ['diet', 'food', 'nutrition', 'eating', 'meal', 'calorie', 'macronutrient'],
     metabolic: ['diabetes', 'insulin', 'glucose', 'metabolic', 'blood sugar', 'a1c'],
-    longevity: ['longevity', 'aging', 'lifespan', 'mortality', 'centenarian']
+    longevity: ['longevity', 'aging', 'lifespan', 'mortality', 'centenarian', 'death', 'causes of death']
   };
   
   const detected = [];
@@ -255,7 +255,7 @@ async function searchDocuments(query, options = {}) {
 // PRIORITY 2: IMPROVED RAG WITH RE-RANKING
 // ============================================
 
-async function performRag(query, options = {}) {
+async function performRag(query, options = {}, userContext = null) {
   try {
     console.log('🔍 ===== PERFORMING ENHANCED RAG =====');
     console.log('🔍 Query:', query);
@@ -300,7 +300,7 @@ async function performRag(query, options = {}) {
     const context = reranked.map((doc) => doc.content).join("\n\n");
 
     console.log('🔍 Generating response with context length:', context.length);
-    const responseText = await llmService.generateBasicResponse(query, context);
+    const responseText = await llmService.generateBasicResponse(query, context, userContext);
 
     const result = {
       response: responseText,
@@ -375,7 +375,7 @@ async function performRagWithContext(query, userContext, options = {}) {
     // ==========================================
     console.log('📚 General medical question - using enhanced RAG');
     
-    const ragResult = await performRag(query, options);
+    const ragResult = await performRag(query, options, userContext);
     
     // If user context exists, optionally personalize the response
     if (userContext && ragResult.response) {

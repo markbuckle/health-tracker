@@ -1790,7 +1790,7 @@
   .inner-content-container {
     flex-direction: column;
     align-items: center;
-    gap: 25px;
+    gap: 10px;
     width: 95%;
   }
   .laptop-image-container {
@@ -2103,7 +2103,7 @@
     padding: 0;
   }
   .inner-content-container {
-    width: 95%;
+    width: 100%;
     margin-top: 2rem;
     margin-bottom: 0 !important;
   }

@@ -1,4 +1,4 @@
-// src/db/chatService.js - MERGED VERSION WITH PERSONAL DATA SUPPORT
+// src/db/chatService.js - FIXED: Separate Personal vs General Questions
 const { OpenAI } = require("openai");
 const fetch = require("node-fetch");
 require("dotenv").config();
@@ -306,6 +306,8 @@ Instructions: Answer using ONLY the patient information above. Be specific with 
     // ==========================================
     // HANDLE GENERAL MEDICAL QUESTIONS (with document context)
     // ==========================================
+    console.log("📚 Handling general medical question");
+    
     if (!context || context.length === 0) {
       return "I don't have information about that topic in my medical knowledge database.";
     }
@@ -320,35 +322,7 @@ Instructions: Answer using ONLY the patient information above. Be specific with 
     
     console.log("📊 Context length after formatting:", truncatedContext.length);
 
-    // Build user prompt with optional patient context
-    let userPrompt = `Medical Knowledge Context:
-${truncatedContext}
-
-Question: ${query}`;
-
-    // Add patient context if available (for enhanced answers)
-    if (parsedUserContext) {
-      userPrompt += `
-
-Patient Context (use if relevant):
-- Age: ${parsedUserContext.profile?.age || 'Not specified'}
-- Sex: ${parsedUserContext.profile?.sex || 'Not specified'}
-- Blood Type: ${parsedUserContext.profile?.bloodType || 'Not specified'}`;
-
-      if (parsedUserContext.recentLabValues && Object.keys(parsedUserContext.recentLabValues).length > 0) {
-        const labSummary = Object.entries(parsedUserContext.recentLabValues)
-          .slice(0, 3)
-          .map(([test, data]) => `${test}: ${data.value} ${data.unit}`)
-          .join(', ');
-        userPrompt += `
-- Recent Lab Values: ${labSummary}`;
-      }
-    }
-
-    userPrompt += `
-
-Instructions: Answer using ONLY the context above. Preserve the exact structure and formatting (numbered lists, statistics, headers). If the context contains the answer with qualifiers, provide that information.`;
-
+    // For general questions, DON'T include patient info - just answer from medical knowledge
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -364,21 +338,26 @@ Instructions: Answer using ONLY the context above. Preserve the exact structure 
 
 CRITICAL RULES:
 1. Answer questions using ONLY the Medical Knowledge Context provided
-2. PRESERVE THE EXACT FORMATTING from the context - this is critical:
+2. PRESERVE THE EXACT FORMATTING from the context:
    - If the context has "## Header", include "## Header"
-   - If the context has "### Subheader", include "### Subheader"
-   - If the context has "1. **Item** - Description", use that exact format
-   - If the context has bullet points, use bullet points
+   - If the context has numbered lists, preserve them exactly
+   - If the context has bullet points, preserve them
    - Copy the structure exactly as shown
 3. Include ALL items from lists - don't summarize or shorten
-4. Include specific numbers and statistics exactly as written (e.g., "19 million deaths annually")
+4. Include specific numbers and statistics exactly as written
 5. If context has qualifiers (age ranges, conditions), include them
 6. Only say "I don't have information" if the context is completely unrelated
-7. DO NOT paraphrase or rewrite - preserve the original wording and structure`
+7. DO NOT paraphrase or rewrite - preserve the original wording and structure
+8. Answer directly without preambles like "According to the context" or "The documents state"`
           },
           {
             role: 'user', 
-            content: userPrompt
+            content: `Medical Knowledge Context:
+${truncatedContext}
+
+Question: ${query}
+
+Instructions: Answer using ONLY the context above. Preserve exact formatting, lists, and structure. Answer directly.`
           }
         ],
         max_tokens: 500,

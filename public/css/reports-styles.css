@@ -360,7 +360,7 @@
     display: none;
   }
   .biomarker-container {
-    margin-bottom: 1rem; /* Add space between biomarker entries */
+    margin-bottom: 0; /* Add space between biomarker entries */
   }
   .biomarker-table-top._3-columns {
     display: grid;
