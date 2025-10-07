@@ -1129,6 +1129,10 @@
   animation-delay: 0.8s;
   border-left-color: #9C27B0;
 }
+.hover-title:nth-child(5) {
+  animation-delay: 0.8s;
+  border-left-color: #f2f53b;
+}
 .hover-title:hover {
   transform: translateX(-5px) scale(1.05);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
@@ -1793,18 +1797,18 @@
     max-width: 100%; /* Much bigger laptop on mobile */
   }
   .hover-titles {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
-    max-width: 280px; /* Limit width so buttons don't get too wide */
+    /* max-width: 280px; Limit width so buttons don't get too wide */
   }
   .hover-title {
     padding: 10px 16px;
     font-size: 14px;
     text-align: center;
     width: 100%;
-    max-width: 7rem; /* Smaller buttons on mobile */
+    max-width: 3.3rem; /* Smaller buttons on mobile */
     white-space: nowrap;
   }
   .hero-title .hero-text.mobile-hide {
@@ -1985,7 +1989,6 @@
     font-size: 1.5rem;
     margin: 2.5rem 0 0.5rem;
     max-width: 98%;
-    line-height: 1.4;
   }
   .quote-2 {
     font-size: 1.4rem;

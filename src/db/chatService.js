@@ -1,4 +1,4 @@
-// src/db/chatService.js - ENHANCED VERSION
+// src/db/chatService.js - MERGED VERSION WITH PERSONAL DATA SUPPORT
 const { OpenAI } = require("openai");
 const fetch = require("node-fetch");
 require("dotenv").config();
@@ -79,11 +79,10 @@ async function generateEmbedding(text) {
 }
 
 // ============================================
-// PERSONAL QUESTION DETECTION - STRICT
+// PERSONAL QUESTION DETECTION
 // ============================================
 
 function isPersonalHealthQuestion(query) {
-  // Only match questions that explicitly ask about "MY" health data
   const patterns = [
     /\bmy blood type\b/i,
     /\bwhat is my\b/i,
@@ -99,7 +98,10 @@ function isPersonalHealthQuestion(query) {
     /\bmy blood pressure\b/i,
     /\bmy weight\b/i,
     /\bwhat are my\b/i,
-    /\bshow me my\b/i
+    /\bshow me my\b/i,
+    /\bmy family history\b/i,
+    /\bmy health history\b/i,
+    /\bmy test results\b/i
   ];
   
   return patterns.some(pattern => pattern.test(query));
@@ -152,12 +154,78 @@ async function generateBasicResponse(query, context, userContext = null) {
     console.log("📄 Context length:", context?.length || 0);
     console.log("👤 UserContext provided:", !!userContext);
 
+    // Parse userContext if it's a string
+    let parsedUserContext = userContext;
+    if (typeof userContext === 'string') {
+      try {
+        parsedUserContext = JSON.parse(userContext);
+        console.log("✅ Parsed userContext from string");
+      } catch (e) {
+        console.error("❌ Failed to parse userContext:", e);
+        parsedUserContext = null;
+      }
+    }
+
+    // Check if this is a personal question
+    const queryLower = query.toLowerCase();
+    const isPersonalQuestion = isPersonalHealthQuestion(query);
+
+    console.log("🔍 Is personal question:", isPersonalQuestion);
+    console.log("🔍 Has parsed user context:", !!parsedUserContext);
+
     // ==========================================
     // HANDLE PERSONAL QUESTIONS (with user context)
     // ==========================================
-    if (userContext) {
-      console.log("👤 Using user context for personalized response");
+    if (parsedUserContext && isPersonalQuestion) {
+      console.log("🎯 Handling personal question with direct user data");
       
+      // Format family history details
+      let familyHistoryText = 'No family history recorded';
+      if (parsedUserContext.profile?.familyHistoryDetails && parsedUserContext.profile.familyHistoryDetails.length > 0) {
+        familyHistoryText = parsedUserContext.profile.familyHistoryDetails
+          .map(item => `${item.condition} (affects: ${item.relatives?.join(', ')}, notes: ${item.notes})`)
+          .join('; ');
+      }
+      
+      // Format personal history details
+      let personalHistoryText = 'No personal medical history recorded';
+      if (parsedUserContext.profile?.personalHistoryDetails && parsedUserContext.profile.personalHistoryDetails.length > 0) {
+        personalHistoryText = parsedUserContext.profile.personalHistoryDetails
+          .map(item => `${item.condition} (notes: ${item.notes})`)
+          .join('; ');
+      }
+      
+      // Format lifestyle details
+      let lifestyleText = 'No lifestyle information recorded';
+      if (parsedUserContext.profile?.lifestyleDetails && parsedUserContext.profile.lifestyleDetails.length > 0) {
+        lifestyleText = parsedUserContext.profile.lifestyleDetails
+          .map(item => `${item.habitType} (status: ${item.status?.join(', ')}, notes: ${item.notes})`)
+          .join('; ');
+      }
+      
+      // Format medication details
+      let medicationsText = 'No medications or supplements recorded';
+      if (parsedUserContext.profile?.medicationDetails && parsedUserContext.profile.medicationDetails.length > 0) {
+        medicationsText = parsedUserContext.profile.medicationDetails
+          .map(item => `${item.name} (${item.type}, ${item.dosage}, ${item.frequency})`)
+          .join('; ');
+      }
+      
+      // Format monitoring details
+      let monitoringText = 'No monitoring data recorded';
+      if (parsedUserContext.profile?.monitoringDetails && parsedUserContext.profile.monitoringDetails.length > 0) {
+        const latest = parsedUserContext.profile.monitoringDetails[0];
+        monitoringText = `Weight: ${latest.weight}, Blood Pressure: ${latest.bloodPressure}, Resting Heart Rate: ${latest.restingHeartRate}, Sleep: ${latest.sleep}`;
+      }
+      
+      // Format recent lab values
+      let labValuesText = 'No recent lab values recorded';
+      if (parsedUserContext.recentLabValues && Object.keys(parsedUserContext.recentLabValues).length > 0) {
+        labValuesText = Object.entries(parsedUserContext.recentLabValues)
+          .map(([test, data]) => `${test}: ${data.value} ${data.unit} (reference: ${data.referenceRange})`)
+          .join('; ');
+      }
+
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -176,17 +244,39 @@ CRITICAL RULES:
 2. Be specific with numbers and values from their data
 3. Keep responses concise and actionable
 4. If asked about specific values, provide them clearly
-5. If data is missing, say "I don't have that information in your profile"
+5. If data is missing or says "Not specified", say "I don't have that information in your profile"
 6. Do not make up information not in the user data`
             },
             {
               role: 'user',
-              content: `User's Personal Data:
-${userContext}
+              content: `PATIENT HEALTH INFORMATION:
+
+BASIC INFO:
+- Age: ${parsedUserContext.profile?.age || 'Not specified'} years old
+- Sex: ${parsedUserContext.profile?.sex || 'Not specified'}  
+- Blood Type: ${parsedUserContext.profile?.bloodType || 'Not specified'}
+
+FAMILY HISTORY:
+${familyHistoryText}
+
+PERSONAL MEDICAL HISTORY:
+${personalHistoryText}
+
+LIFESTYLE:
+${lifestyleText}
+
+MEDICATIONS & SUPPLEMENTS:
+${medicationsText}
+
+CURRENT MONITORING DATA:
+${monitoringText}
+
+RECENT LAB VALUES:
+${labValuesText}
 
 Question: ${query}
 
-Instructions: Answer using ONLY the user's data above. Be specific with values.`
+Instructions: Answer using ONLY the patient information above. Be specific with values.`
             }
           ],
           max_tokens: 300,
@@ -230,6 +320,35 @@ Instructions: Answer using ONLY the user's data above. Be specific with values.`
     
     console.log("📊 Context length after formatting:", truncatedContext.length);
 
+    // Build user prompt with optional patient context
+    let userPrompt = `Medical Knowledge Context:
+${truncatedContext}
+
+Question: ${query}`;
+
+    // Add patient context if available (for enhanced answers)
+    if (parsedUserContext) {
+      userPrompt += `
+
+Patient Context (use if relevant):
+- Age: ${parsedUserContext.profile?.age || 'Not specified'}
+- Sex: ${parsedUserContext.profile?.sex || 'Not specified'}
+- Blood Type: ${parsedUserContext.profile?.bloodType || 'Not specified'}`;
+
+      if (parsedUserContext.recentLabValues && Object.keys(parsedUserContext.recentLabValues).length > 0) {
+        const labSummary = Object.entries(parsedUserContext.recentLabValues)
+          .slice(0, 3)
+          .map(([test, data]) => `${test}: ${data.value} ${data.unit}`)
+          .join(', ');
+        userPrompt += `
+- Recent Lab Values: ${labSummary}`;
+      }
+    }
+
+    userPrompt += `
+
+Instructions: Answer using ONLY the context above. Preserve the exact structure and formatting (numbered lists, statistics, headers). If the context contains the answer with qualifiers, provide that information.`;
+
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -255,29 +374,11 @@ CRITICAL RULES:
 4. Include specific numbers and statistics exactly as written (e.g., "19 million deaths annually")
 5. If context has qualifiers (age ranges, conditions), include them
 6. Only say "I don't have information" if the context is completely unrelated
-7. DO NOT paraphrase or rewrite - preserve the original wording and structure
-
-Example:
-Context:
-"## Leading Causes
-1. **Heart Disease** - 19 million deaths
-2. **Cancer** - 12 million deaths"
-
-Your response should be:
-"## Leading Causes
-1. **Heart Disease** - 19 million deaths
-2. **Cancer** - 12 million deaths"
-
-NOT: "The main causes are heart disease and cancer"`
+7. DO NOT paraphrase or rewrite - preserve the original wording and structure`
           },
           {
             role: 'user', 
-            content: `Medical Knowledge Context:
-${truncatedContext}
-
-Question: ${query}
-
-Instructions: Answer using ONLY the context above. Preserve the exact structure and formatting (numbered lists, statistics, headers). If the context contains the answer with qualifiers, provide that information.`
+            content: userPrompt
           }
         ],
         max_tokens: 500,

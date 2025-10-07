@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === "development") {
         "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdn.plot.ly; " +
         "img-src 'self' data: blob: *; " +
         "font-src 'self' data: fonts.gstatic.com; " +
-        "connect-src 'self' ws: wss: localhost:* cdn.jsdelivr.net cdn.plot.ly huggingface.co api-inference.huggingface.co; " +
+        "connect-src 'self' ws: wss: localhost:* cdn.jsdelivr.net cdn.plot.ly huggingface.co api-inference.huggingface.co unpkg.com; " +
         "child-src 'self' blob:; " +
         "worker-src 'self' blob:; " +
         "object-src 'none'; " +

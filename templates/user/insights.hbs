@@ -8,6 +8,7 @@
     <link href="css/user-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/user-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/insights-styles.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   </head>
 
   <body class="user-body">
@@ -290,113 +291,9 @@
                     </div>
                   </div>
 
-                  <div class="lab-summary-container">
-                    {{#if biomarkerSummary}}
-                    <div class="lab-status-card">
-                      {{!-- <h3 class="lab-status-title">Labs Summary</h3> --}}
-                      
-                      <!-- Stats Container -->
-                      <div class="labs-stats-container">
-                        <!-- In Range -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number in-range" id="inRangeCount">
-                            <span class="count-number">{{biomarkerSummary.inRange}}</span>
-                          </div>
-                          <div class="lab-stat-label">In Range</div>
-                        </div>
+                  <!-- React component will render here -->
+                  <div id="labs-summary-recharts-root"></div>
 
-                        <!-- Improving -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number improving" id="improvingCount">
-                            <span class="count-number">{{biomarkerSummary.improving}}</span>
-                          </div>
-                          <div class="lab-stat-label">Improving</div>
-                        </div>
-
-                         <!-- Out of Range -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number out-of-range" id="outOfRangeCount">
-                            <span class="count-number">{{biomarkerSummary.outOfRange}}</span>
-                          </div>
-                          <div class="lab-stat-label">Out of Range</div>
-                        </div>
-
-                         <!-- Declining -->
-                        <div class="lab-stat-box">
-                          <div class="lab-stat-number declining" id="decliningCount">
-                            <span class="count-number">{{biomarkerSummary.declining}}</span>
-                          </div>
-                          <div class="lab-stat-label">Declining</div>
-                        </div>
-                      </div>
-
-                      <!-- Stats Chart -->
-                     <div class="lab-stats-chart {{#if (allZero biomarkerSummary)}}empty-state{{/if}}">
-                        <div class="chart-container">
-                          <!-- In Range Bar -->
-                          <div class="chart-bar in-range" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}180px{{/if}}; width: 22%;">
-                          </div>
-                          <!-- Improving Bar -->
-                          <div class="chart-bar improving" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.improving biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
-                          </div>
-                          <!-- Out of Range Bar -->
-                          <div class="chart-bar out-of-range" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.outOfRange biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
-                          </div>
-                          <!-- Declining Bar -->
-                          <div class="chart-bar declining" style="height: {{#if (allZero biomarkerSummary)}}10px{{else}}{{calculateBarHeight biomarkerSummary.declining biomarkerSummary.inRange}}px{{/if}}; width: 22%;">
-                          </div>
-                        </div>
-                        <div class="chart-labels">
-                          <div class="chart-label">In Range</div>
-                          <div class="chart-label">Improving</div>
-                          <div class="chart-label">Out of Range</div>
-                          <div class="chart-label">Declining</div>
-                        </div>
-                        
-                        {{#if (allZero biomarkerSummary)}}
-                        <div class="empty-state-text">Upload lab results to see your biomarker data</div>
-                        {{/if}}
-                      </div>
-
-                      <!-- Action button -->
-                      <a href="/reports?tab=all&filter=all" class="lab-summary-action-btn">
-                        View all <span class="arrow-icon">→</span>
-                      </a>
-                    </div>
-                    {{else}}
-                    <div class="no-data-message">
-                      <p>No lab data available yet. Upload lab results to see your health metrics.</p>
-                      <a href="/upload" class="lab-summary-action-btn">Upload Labs</a>
-                    </div>
-                    {{/if}}
-                    <!-- Recent Labs Section -->
-                    <div class="recent-labs-section">
-                      <h3 class="recent-labs-title">Recent Lab Results</h3>
-                      
-                      {{#if recentFiles}}
-                        <div class="recent-labs-list">
-                          {{#each recentFiles}}
-                            <div class="recent-lab-item">
-                              <div class="lab-file-name">{{this.originalName}}</div>
-                              <div class="lab-align">
-                                <div class="lab-date">{{formatDate this.testDate}}</div>
-                                <div class="lab-stats">
-                                  <span class="lab-stat in-range">{{countInRange this.labValues}} in range</span>
-                                  <span class="lab-stat out-of-range">{{countOutOfRange this.labValues}} out of range</span>
-                                </div>
-                                <a href="/upload?tab=Output" class="view-lab-link">View</a>
-                              </div>
-                            </div>
-                          {{/each}}
-                        </div>
-                      {{else}}
-                        <div class="no-recent-labs">
-                          <p>No lab results uploaded yet.</p>
-                          <a href="/upload" class="upload-labs-btn">Upload Labs</a>
-                        </div>
-                      {{/if}}
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -989,7 +886,7 @@
         initializeChatbotCardResize();
       });
     </script>
-    <script> // Labs Summary JavaScript
+    {{!-- <script> // Labs Summary JavaScript
       document.addEventListener('DOMContentLoaded', function() {
         // Check if we're on the insights page with the Labs Summary tab
         const labSummaryTab = document.querySelector('[data-w-tab="LabsSummary"]');
@@ -1135,8 +1032,8 @@
           setTimeout(animateLabStats, 300);
         }
       });
-    </script>
-    <script> // empty state bar charts
+    </script> --}}
+    {{!-- <script> // empty state bar charts
       document.addEventListener('DOMContentLoaded', function() {
         // Check for empty state (all values are zero)
         function checkForEmptyState() {
@@ -1211,7 +1108,7 @@
           });
         });
       });
-    </script>
+    </script> --}}
     <script> // chat-messages size adjuster
       function initializeChatbotCardResize() {
         const chatbotCard = document.querySelector('.chatbot-card');
@@ -1485,7 +1382,7 @@
       // Run the debug
       debugAuth();
     </script>
-    <script> // make the stat boxes clickable
+    {{!-- <script> // make the stat boxes clickable
     document.addEventListener('DOMContentLoaded', function() {
         // Make in-range stat box clickable
         const inRangeStatBox = document.querySelector('#inRangeCount').closest('.lab-stat-box');
@@ -1505,6 +1402,217 @@
             });
         }
     });
+    </script> --}}
+    <script> // 
+        document.addEventListener('DOMContentLoaded', function() {
+          console.log('🎨 Initializing Chart.js Labs Summary...');
+          
+          // Get data from hidden element (DYNAMIC - reads from your backend)
+          const dataElement = document.getElementById('labSummaryData');
+          if (!dataElement) {
+            console.error('❌ labSummaryData element not found');
+            return;
+          }
+
+          let labData;
+          try {
+            labData = JSON.parse(dataElement.getAttribute('data-labs'));
+            console.log('✅ Loaded lab data:', labData);
+          } catch (e) {
+            console.error('❌ Error parsing lab data:', e);
+            labData = { inRange: 0, improving: 0, outOfRange: 0, declining: 0 };
+          }
+
+          // Create canvas for chart
+          const root = document.getElementById('labs-summary-recharts-root');
+          if (!root) {
+            console.error('❌ Root element not found');
+            return;
+          }
+
+          // Check if all values are zero
+          const isEmpty = labData.inRange === 0 && labData.improving === 0 && 
+                          labData.outOfRange === 0 && labData.declining === 0;
+
+          // Build the UI dynamically
+          root.innerHTML = `
+            <div style="width: 100%; padding: 0;">
+              <!-- Stats Container -->
+              <div style="display: flex; align-items: flex-end; justify-content: space-around; gap: 2rem; margin-bottom: 2rem;">
+                <div class="stat-box" data-category="inRange" id="inRangeStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.inRange === 0 ? '#d76f6f' : '#7db17f'};">
+                    ${labData.inRange || 0}
+                  </div>
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                    In Range
+                  </div>
+                </div>
+                <div class="stat-box" data-category="improving" id="improvingStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.improving === 0 ? '#d76f6f' : '#9ed3a0'};">
+                    ${labData.improving || 0}
+                  </div>
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                    Improving
+                  </div>
+                </div>
+                <div class="stat-box" data-category="outOfRange" id="outOfRangeStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.outOfRange === 0 ? '#d76f6f' : '#d76f6f'};">
+                    ${labData.outOfRange || 0}
+                  </div>
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                    Out of Range
+                  </div>
+                </div>
+                <div class="stat-box" data-category="declining" id="decliningStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.declining === 0 ? '#d76f6f' : '#e98b8b'};">
+                    ${labData.declining || 0}
+                  </div>
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                    Declining
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chart -->
+              <div style="margin-top: 1.5rem; margin-bottom: 1rem; position: relative; height: 220px;">
+                <canvas id="labsChart"></canvas>
+              </div>
+
+              ${isEmpty ? '<div style="text-align: center; padding: 1rem; color: #999; font-size: 0.9rem; font-style: italic;">Upload lab results to see your biomarker data</div>' : ''}
+
+              <!-- Action Button (Centered) -->
+              <div style="text-align: center;">
+                <a href="/reports?tab=all&filter=all" 
+                  style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background-color: #f5f5f5; color: #666; text-decoration: none; border-radius: 8px; font-family: 'Poppins-Medium', sans-serif; font-size: 0.9rem; transition: all 0.3s ease; margin-top: 1rem;"
+                  onmouseenter="this.style.backgroundColor='#e0e0e0'; this.style.transform='translateX(4px)';"
+                  onmouseleave="this.style.backgroundColor='#f5f5f5'; this.style.transform='translateX(0)';">
+                  View all <span style="font-size: 1.1rem;">→</span>
+                </a>
+              </div>
+            </div>
+          `;
+
+          // Add hover effects to stat boxes
+          document.querySelectorAll('.stat-box').forEach(box => {
+            box.addEventListener('mouseenter', function() {
+              this.style.backgroundColor = 'rgba(0, 0, 0, 0.04)';
+              this.style.transform = 'translateY(-2px)';
+              this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+            });
+            box.addEventListener('mouseleave', function() {
+              this.style.backgroundColor = 'transparent';
+              this.style.transform = 'translateY(0)';
+              this.style.boxShadow = 'none';
+            });
+          });
+
+          // Make stat boxes clickable - navigate to filtered reports
+          document.getElementById('inRangeStatBox')?.addEventListener('click', function() {
+            window.location.href = '/reports?filter=in-range';
+          });
+          
+          document.getElementById('outOfRangeStatBox')?.addEventListener('click', function() {
+            window.location.href = '/reports?filter=out-of-range';
+          });
+
+          // Create Chart.js chart
+          const ctx = document.getElementById('labsChart');
+          if (!ctx || typeof Chart === 'undefined') {
+            console.error('❌ Chart.js not loaded or canvas not found');
+            return;
+          }
+
+          // Dynamic Y-axis scaling (same as original version)
+          const maxValue = Math.max(labData.inRange, labData.improving, labData.outOfRange, labData.declining);
+          const yAxisMax = maxValue === 0 ? 10 : Math.ceil(maxValue * 1.2);
+
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['In Range', 'Improving', 'Out of Range', 'Declining'],
+              datasets: [{
+                label: 'Biomarkers',
+                data: [labData.inRange, labData.improving, labData.outOfRange, labData.declining],
+                backgroundColor: [
+                  labData.inRange === 0 ? '#dbdbdb' : '#7db17f',
+                  labData.improving === 0 ? '#dbdbdb' : '#9ed3a0',
+                  labData.outOfRange === 0 ? '#dbdbdb' : '#d76f6f',
+                  labData.declining === 0 ? '#dbdbdb' : '#e98b8b'
+                ],
+                borderRadius: {
+                  topLeft: 5,
+                  topRight: 5,
+                  bottomLeft: 0,
+                  bottomRight: 0
+                },
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: 'white',
+                  titleColor: '#333',
+                  bodyColor: '#666',
+                  borderColor: '#e2e8f0',
+                  borderWidth: 1,
+                  padding: 12,
+                  displayColors: false,
+                  titleFont: {
+                    size: 14,
+                    weight: '600'
+                  },
+                  bodyFont: {
+                    size: 13,
+                    weight: '700'
+                  },
+                  callbacks: {
+                    label: function(context) {
+                      return context.parsed.y + ' biomarkers';
+                    }
+                  }
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: yAxisMax,
+                  ticks: { 
+                    color: '#666', 
+                    font: { size: 12 }
+                  },
+                  grid: { 
+                    color: '#f0f0f0', 
+                    drawBorder: false 
+                  },
+                  title: {
+                    display: true,
+                    text: 'Biomarkers',
+                    color: '#666',
+                    font: { size: 12 }
+                  }
+                },
+                x: {
+                  ticks: { 
+                    color: '#666', 
+                    font: { size: 12 }
+                  },
+                  grid: { display: false },
+                  border: { color: '#e0e0e0' }
+                }
+              },
+              animation: {
+                duration: 800,
+                easing: 'easeOutQuart'
+              }
+            }
+          });
+
+          console.log('✅ Chart.js Labs Summary initialized successfully!');
+        });
     </script>
   </body>
 </html>

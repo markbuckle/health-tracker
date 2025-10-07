@@ -1814,6 +1814,28 @@
     max-width: 280px;
     justify-content: center;
   }
+ #labs-summary-recharts-root > div > div:first-child {
+    gap: 0.5rem !important;
+    padding: 0 0.5rem;
+  }
+  
+  .stat-box {
+    padding: 0.5rem 0.25rem !important;
+    min-width: 0; /* Allow boxes to shrink */
+  }
+  
+  .stat-box > div:first-child {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .stat-box > div:last-child {
+    font-size: 0.7rem !important;
+  }
+  
+  #labs-summary-recharts-root canvas {
+    max-height: 180px !important;
+  }
 }
 
 @media screen and (max-width: 480px) {  
@@ -1844,6 +1866,21 @@
     align-self: flex-end;
     font-size: 0.75rem;
   }
+    #labs-summary-recharts-root > div > div:first-child {
+    gap: 0.25rem !important;
+  }
+  
+  .stat-box {
+    padding: 0.5rem 0.15rem !important;
+  }
+  
+  .stat-box > div:first-child {
+    font-size: 1.25rem !important;
+  }
+  
+  .stat-box > div:last-child {
+    font-size: 0.65rem !important;
+  }
 }
 /* Dark mode support (if you plan to add it later) */
 @media (prefers-color-scheme: dark) {
@@ -1861,5 +1898,11 @@
   }
   .no-recommendations p {
     color: #cbd5e0;
+  }
+    .stat-box > div:first-child {
+    font-size: 1.75rem !important;
+  }
+  #labs-summary-recharts-root canvas {
+    max-height: 160px !important;
   }
 }
