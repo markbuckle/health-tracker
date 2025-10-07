@@ -77,7 +77,7 @@ const biomarkerData = {
     recommendation: {
       priority: 'high',
       category: 'Cardiovascular Risk',
-      explanation: 'ApoB provides a more accurate assessment of cardiovascular risk than standard cholesterol panels. It counts the actual number of atherogenic particles that can penetrate artery walls, making it especially important for people with diabetes, metabolic syndrome, or family history of heart disease.',
+      explanation: 'provides a more accurate assessment of cardiovascular risk than standard cholesterol panels. It counts the actual number of atherogenic particles that can penetrate artery walls, making it especially important for people with diabetes, metabolic syndrome, or family history of heart disease.',
       aliases: ['apob', 'apolipoprotein b', 'apo b', 'apolipoprotein b-100', 'apolipoprotein-b']
     }
   },
@@ -99,7 +99,7 @@ const biomarkerData = {
     recommendation: {
       priority: 'high',
       category: 'Cardiovascular Risk',
-      explanation: 'Lp(a) is a genetically determined risk factor for cardiovascular disease that affects about 20% of the population. Unlike other cholesterol markers, Lp(a) levels are largely inherited and remain stable throughout life. High levels significantly increase heart attack and stroke risk.',
+      explanation: 'a genetically determined risk factor for cardiovascular disease that affects about 20% of the population. Unlike other cholesterol markers, Lp(a) levels are largely inherited and remain stable throughout life. High levels significantly increase heart attack and stroke risk.',
       aliases: ['lp(a)', 'lipoprotein(a)', 'lipoprotein a', 'lp a', 'lpa', 'lp-a']
     }
   },
@@ -211,7 +211,7 @@ const biomarkerData = {
     recommendation: {
       priority: 'high',
       category: 'Metabolic Health',
-      explanation: 'HbA1c reflects your average blood sugar levels over the past 2-3 months. It\'s crucial for detecting prediabetes and monitoring diabetes risk, even before fasting glucose becomes abnormal. Elevated levels increase cardiovascular disease risk.',
+      explanation: 'reflects your average blood sugar levels over the past 2-3 months. It\'s crucial for detecting prediabetes and monitoring diabetes risk, even before fasting glucose becomes abnormal. Elevated levels increase cardiovascular disease risk.',
       aliases: ['hba1c', 'hemoglobin a1c', 'glycated hemoglobin', 'a1c', 'hgba1c']
     }
   },

@@ -366,9 +366,9 @@
                             <div class="recommendation-item {{#if recommendation.priority}}{{recommendation.priority}}-priority{{/if}}">
                               <div class="recommendation-text">
                                 {{#if recommendation.text}}
-                                  {{recommendation.text}}
+                                  {{formatBiomarkerText recommendation.text}}
                                 {{else}}
-                                  {{recommendation}}
+                                  {{formatBiomarkerText recommendation}}
                                 {{/if}}
                               </div>
                               {{#if recommendation.type}}

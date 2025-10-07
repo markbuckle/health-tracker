@@ -1625,6 +1625,27 @@ function getRecentFiles(files, limit = 5) {
     }));
 }
 
+hbs.registerHelper('formatBiomarkerText', function(text) {
+  if (!text) return '';
+  
+  // Match "Consider testing [biomarker name] - " where biomarker ends at " - "
+  const pattern = /(Consider testing\s+)([\w\(\)-]+)(\s+-\s+)/i;
+  const match = text.match(pattern);
+  
+  if (match) {
+    const prefix = match[1]; // "Consider testing "
+    const biomarkerName = match[2]; // e.g., "Apo-B", "Lp(a)", "HbAIC"
+    const separator = match[3]; // " - "
+    const rest = text.substring(match[0].length); // Everything after the dash
+    
+    return new hbs.SafeString(
+      `<strong>${prefix}${biomarkerName}</strong>${separator}${rest}`
+    );
+  }
+  
+  return text;
+});
+
 // Updated generateBiomarkerRecommendations function using your biomarkerData
 function generateBiomarkerRecommendations(userFiles) {
   const recommendations = [];

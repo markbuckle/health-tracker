@@ -1115,23 +1115,28 @@
 }
 .hover-title:nth-child(1) {
   animation-delay: 0.2s;
-  border-left-color: #4CAF50;
+  border-left-color: #3e3e3e;
+  /* border-left-color: #4CAF50; */
 }
 .hover-title:nth-child(2) {
   animation-delay: 0.4s;
-  border-left-color: #2196F3;
+  border-left-color: #3e3e3e;
+  /* border-left-color: #2196F3; */
 }
 .hover-title:nth-child(3) {
   animation-delay: 0.6s;
-  border-left-color: #FF9800;
+  border-left-color: #3e3e3e;
+  /* border-left-color: #FF9800; */
 }
 .hover-title:nth-child(4) {
   animation-delay: 0.8s;
-  border-left-color: #9C27B0;
+  border-left-color: #3e3e3e;
+  /* border-left-color: #9C27B0; */
 }
 .hover-title:nth-child(5) {
   animation-delay: 0.8s;
-  border-left-color: #f2f53b;
+  border-left-color: #3e3e3e;
+  /* border-left-color: #f2f53b; */
 }
 .hover-title:hover {
   transform: translateX(-5px) scale(1.05);
@@ -1808,7 +1813,7 @@
     font-size: 14px;
     text-align: center;
     width: 100%;
-    max-width: 3.3rem; /* Smaller buttons on mobile */
+    max-width: 4.5rem; /* Smaller buttons on mobile */
     white-space: nowrap;
   }
   .hero-title .hero-text.mobile-hide {
