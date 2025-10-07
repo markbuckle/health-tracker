@@ -604,7 +604,6 @@ document.addEventListener('DOMContentLoaded', function () {
       let totalDocuments = files.size;
       let estimatedProgress = 0;
       let progressInterval;
-      let processingCompleted = false;
       let extractionCompleted = false;
 
       const statusDiv = document.getElementById('processingStatus');
@@ -614,13 +613,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
       ws.onopen = () => {
         console.log('WebSocket connected for local processing');
+        // Start with initial progress
+        updateProgress(5, 'Connected', 'Preparing to process files...');
       };
 
       ws.onmessage = function (event) {
         const message = event.data;
         console.log('WebSocket message:', message);
 
-        // ENHANCED: Try to parse JSON messages from Google Vision first
+        // Try to parse JSON messages first (for Google Vision)
         try {
           const progressData = JSON.parse(message);
           if (progressData.type === 'progress') {
@@ -630,21 +631,20 @@ document.addEventListener('DOMContentLoaded', function () {
               documentDiv.textContent = `Processing document ${progressData.fileIndex} of ${progressData.totalFiles}`;
             }
             if (statusDiv) {
-              statusDiv.textContent = progressData.status;
+              statusDiv.textContent = progressData.status || 'Processing...';
             }
             if (progressFill && progressText) {
               const progress = Math.min(progressData.progress, 99);
               progressFill.style.width = progress + '%';
               progressText.textContent = progress + '%';
-              console.log('📊 Progress bar updated to:', progress + '%');
             }
-            return; // Exit early for JSON messages
+            return;
           }
         } catch (e) {
-          // Not JSON, continue with existing text message handling below
+          // Not JSON, handle as text message
         }
 
-        // Existing PaddleOCR message handling (unchanged)
+        // Handle text messages (for PaddleOCR)
         if (message.includes('Processing file')) {
           const match = message.match(/Processing file (\d+) of (\d+)/);
           if (match && documentDiv) {
@@ -658,98 +658,54 @@ document.addEventListener('DOMContentLoaded', function () {
             
             clearInterval(progressInterval);
             estimatedProgress = 0;
-            processingCompleted = false;
             extractionCompleted = false;
-            if (progressFill) {
-              progressFill.style.width = '0%';
-              progressText.textContent = '0%';
-            }
-          }
-        }
-        else if (message.includes('Running command:')) {
-          if (statusDiv) {
-            statusDiv.textContent = 'Initializing OCR engine...';
-          }
-          
-          estimatedProgress = 1;
-          if (progressFill) {
-            progressFill.style.width = '1%';
-            progressText.textContent = '1%';
-          }
-          
-          clearInterval(progressInterval);
-          progressInterval = setInterval(() => {
-            if (!processingCompleted && estimatedProgress < 99) {
-              estimatedProgress += 1;
-              if (progressFill) {
-                progressFill.style.width = estimatedProgress + '%';
-                progressText.textContent = Math.round(estimatedProgress) + '%';
-              }
-            }
-          }, 500);
-        }
-        else if (message.includes('Processing page')) {
-          const match = message.match(/Processing page (\d+) of (\d+)/);
-          if (match && statusDiv) {
-            const currentPage = parseInt(match[1]);
-            const totalPagesFromMessage = parseInt(match[2]);
-            const isEstimated = message.includes('(estimated)');
             
-            statusDiv.textContent = `Processing page ${currentPage} of ${totalPagesFromMessage}${isEstimated ? ' (estimated)' : ''}`;
-            
-            if (!isEstimated && estimatedProgress < 75) {
-              clearInterval(progressInterval);
-              progressInterval = setInterval(() => {
-                if (!processingCompleted && estimatedProgress < 90) {
-                  estimatedProgress += 2;
-                  if (progressFill) {
-                    progressFill.style.width = estimatedProgress + '%';
-                    progressText.textContent = Math.round(estimatedProgress) + '%';
-                  }
+            // Start smooth progress animation
+            progressInterval = setInterval(() => {
+              if (estimatedProgress < 95 && !extractionCompleted) {
+                estimatedProgress += 0.5;
+                if (progressFill && progressText) {
+                  progressFill.style.width = estimatedProgress + '%';
+                  progressText.textContent = Math.round(estimatedProgress) + '%';
                 }
-              }, 400);
-            }
-          }
-        }
-        else if (message.includes('Completed processing')) {
-          processingCompleted = true;
-          clearInterval(progressInterval);
-          if (statusDiv) {
-            statusDiv.textContent = 'Extracting data and finalizing...';
-          }
-          
-          const finalizeInterval = setInterval(() => {
-            if (estimatedProgress < 95) {
-              estimatedProgress = Math.min(estimatedProgress + 3, 95);
-              if (progressFill) {
-                progressFill.style.width = estimatedProgress + '%';
-                progressText.textContent = Math.round(estimatedProgress) + '%';
               }
-            } else {
-              clearInterval(finalizeInterval);
+            }, 100);
+          }
+        } else if (message.includes('Running OCR on page')) {
+          if (statusDiv) {
+            const pageMatch = message.match(/page (\d+)/);
+            if (pageMatch) {
+              statusDiv.textContent = `Extracting text from page ${pageMatch[1]}...`;
             }
-          }, 333);
-        }
-        else if (message.includes('Found lab values:')) {
+          }
+        } else if (message.includes('Completed OCR for page') || message.includes('Processing complete')) {
           extractionCompleted = true;
+          clearInterval(progressInterval);
+          
           if (statusDiv) {
-            statusDiv.textContent = 'Finalizing...';
+            statusDiv.textContent = 'OCR extraction complete!';
           }
           
-          const completeInterval = setInterval(() => {
-            if (estimatedProgress < 99) {
-              estimatedProgress = Math.min(estimatedProgress + 5, 99);
-              if (progressFill) {
-                progressFill.style.width = estimatedProgress + '%';
-                progressText.textContent = Math.round(estimatedProgress) + '%';
-              }
-            } else {
-              clearInterval(completeInterval);
+          // Smoothly transition to high percentage
+          const targetProgress = ((currentDocument / totalDocuments) * 100) - 1;
+          const currentProgress = estimatedProgress;
+          let step = 0;
+          const steps = 10;
+          const increment = (targetProgress - currentProgress) / steps;
+          
+          const finishInterval = setInterval(() => {
+            step++;
+            estimatedProgress += increment;
+            if (progressFill && progressText) {
+              progressFill.style.width = estimatedProgress + '%';
+              progressText.textContent = Math.round(estimatedProgress) + '%';
             }
-          }, 200);
-        }
-        // ENHANCED: Handle Google Vision specific messages
-        else if (message.includes('Files saved successfully')) {
+            if (step >= steps) {
+              clearInterval(finishInterval);
+            }
+          }, 50);
+        } else if (message.includes('Files saved successfully')) {
+          clearInterval(progressInterval);
           if (statusDiv) {
             statusDiv.textContent = 'All files processed successfully!';
           }
@@ -765,6 +721,11 @@ document.addEventListener('DOMContentLoaded', function () {
         clearInterval(progressInterval);
       };
 
+      ws.onclose = () => {
+        console.log('WebSocket closed');
+        clearInterval(progressInterval);
+      };
+
       return ws;
     } catch (error) {
       console.error('Failed to setup WebSocket:', error);
@@ -774,38 +735,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Production environment progress simulation
   function simulateProductionProgress(totalFiles, currentFileIndex, callback) {
-    let progress = 0;
-    const startProgress = (currentFileIndex / totalFiles) * 100;
-    const endProgress = ((currentFileIndex + 1) / totalFiles) * 100;
-    
-    const cappedEndProgress = currentFileIndex === totalFiles - 1 ? 
-      Math.min(endProgress, 99) : endProgress;
-    
-    const progressRange = cappedEndProgress - startProgress;
+  let progress = 0;
+  const startProgress = (currentFileIndex / totalFiles) * 100;
+  const endProgress = ((currentFileIndex + 1) / totalFiles) * 100;
+  
+  // Cap the last file at 99% to reserve 100% for final completion
+  const cappedEndProgress = currentFileIndex === totalFiles - 1 ? 
+    Math.min(endProgress, 99) : endProgress;
+  
+  const progressRange = cappedEndProgress - startProgress;
 
-    const interval = setInterval(() => {
-      progress += 1;
-      const currentProgress = startProgress + (progress / 100) * progressRange;
-      
-      if (progress < 95) {
-        updateProgress(
-          currentProgress,
-          `Processing file ${currentFileIndex + 1} of ${totalFiles}...`,
-          `Extracting data using external OCR service...`
-        );
-      } else {
-        clearInterval(interval);
-        updateProgress(
-          cappedEndProgress,
-          `File ${currentFileIndex + 1} processing complete`,
-          `OCR extraction finished`
-        );
-        if (callback) callback();
+  const interval = setInterval(() => {
+    progress += 1;
+    const currentProgress = startProgress + (progress / 100) * progressRange;
+    
+    if (progress < 95) {
+      updateProgress(
+        currentProgress,
+        `Processing file ${currentFileIndex + 1} of ${totalFiles}...`,
+        `Extracting data using external OCR service...`
+      );
+    } else if (progress < 100) {
+      updateProgress(
+        currentProgress,
+        `File ${currentFileIndex + 1} almost complete...`,
+        `Finalizing OCR extraction...`
+      );
+    } else {
+      clearInterval(interval);
+      updateProgress(
+        cappedEndProgress,
+        `File ${currentFileIndex + 1} processing complete`,
+        `OCR extraction finished`
+      );
+      if (callback) {
+        // Small delay before starting next file
+        setTimeout(callback, 200);
       }
-    }, 500);
+    }
+  }, 300); // Faster updates for smoother progress (300ms instead of 500ms)
 
-    return interval;
-  }
+  return interval;
+}
 
   // Event listeners
   document.querySelector('.browse-button').addEventListener('click', (e) => {
@@ -989,128 +960,133 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Local environment processing
-  async function processFilesLocal() {
-    const formData = new FormData();
-    files.forEach(file => {
-      formData.append('files', file);
+async function processFilesLocal() {
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('files', file);
+  });
+
+  try {
+    showLoading();
+    updateProgress(0, 'Starting upload...', 'Initializing...');
+
+    // Set up WebSocket for real-time progress
+    const ws = setupLocalProgressTracking();
+    
+    // Start the upload
+    const response = await fetch('/upload-files', {
+      method: 'POST',
+      body: formData
     });
 
-    try {
-      showLoading();
-
-      const ws = setupLocalProgressTracking();
-      let progressInterval;
-
-      const response = await fetch('/upload-files', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (progressInterval) {
-        clearInterval(progressInterval);
+    if (response.ok) {
+      const result = await response.json();
+      
+      // Close WebSocket
+      if (ws) {
+        ws.close();
       }
-
-      if (response.ok) {
-        const result = await response.json();
-        if (ws) {
-          ws.close();
-        }
+      
+      // Ensure we reach 100%
+      updateProgress(100, 'Complete!', 'Processing finished');
+      
+      // Show success overlay after a brief delay
+      setTimeout(() => {
+        showSuccessOverlay('Success!', 'Files processed successfully using local OCR!');
+      }, 500);
         
-        setTimeout(() => {
+    } else {
+      throw new Error('Upload failed');
+    }
+  } catch (error) {
+    console.error('Local upload error:', error);
+    alert('Error processing files: ' + error.message);
+  }
+  // Don't call hideLoading() here - let success overlay handle it
+}
+
+  // Production environment processing
+async function processFilesProduction() {
+  const formData = new FormData();
+  const filesArray = Array.from(files);
+  
+  filesArray.forEach(file => {
+    formData.append('files', file);
+  });
+
+  try {
+    showLoading();
+    
+    // Initialize progress
+    updateProgress(0, 'Starting upload...', `Preparing ${filesArray.length} file(s) for external OCR processing`);
+
+    // Create progress simulation that runs sequentially
+    let currentFileIndex = 0;
+    let activeIntervals = [];
+    
+    // Function to start progress for next file
+    const startNextFileProgress = () => {
+      if (currentFileIndex < filesArray.length) {
+        const index = currentFileIndex;
+        currentFileIndex++;
+        
+        const interval = simulateProductionProgress(
+          filesArray.length, 
+          index, 
+          () => {
+            // When this file completes, start the next one
+            startNextFileProgress();
+          }
+        );
+        
+        activeIntervals.push(interval);
+      }
+    };
+    
+    // Start the first file's progress immediately
+    startNextFileProgress();
+
+    // Perform the actual upload
+    const response = await fetch('/upload-files', {
+      method: 'POST',
+      body: formData
+    });
+
+    // Clear any remaining intervals
+    activeIntervals.forEach(interval => clearInterval(interval));
+
+    if (response.ok) {
+      const result = await response.json();
+      
+      // Ensure we show completion
+      updateProgress(99, 'Almost done - finalizing...', 'All files processed using external OCR service');
+      
+      setTimeout(() => {
         updateProgress(100, 'Complete!', 'Processing finished');
         
         setTimeout(() => {
-          showSuccessOverlay('Success!', 'Files processed successfully using local OCR!');
+          const details = result.processedCount !== undefined ? 
+            `Processed: ${result.processedCount} files\nFailed: ${result.failedCount} files` : '';
+          showSuccessOverlay('Success!', 'Files processed successfully using external OCR service!', details);
         }, 300);
-      }, 1500);
+      }, 500);
         
-      } else {
-        throw new Error('Upload failed');
-      }
-    } catch (error) {
-      console.error('Local upload error:', error);
-      alert('Error processing files: ' + error.message);
-    } finally {
-      hideLoading();
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Upload failed');
     }
-  }
-
-  // Production environment processing
-  async function processFilesProduction() {
-    const formData = new FormData();
-    const filesArray = Array.from(files);
+  } catch (error) {
+    console.error('Production upload error:', error);
     
-    filesArray.forEach(file => {
-      formData.append('files', file);
-    });
-
-    try {
-      showLoading();
-      
-      updateProgress(0, 'Starting upload...', `Preparing ${filesArray.length} file(s) for external OCR processing`);
-
-      let completedFiles = 0;
-      const progressPromises = [];
-
-      const uploadPromise = fetch('/upload-files', {
-        method: 'POST',
-        body: formData
-      });
-
-      filesArray.forEach((file, index) => {
-        const progressPromise = new Promise((resolve) => {
-          setTimeout(() => {
-            const interval = simulateProductionProgress(filesArray.length, index, () => {
-              completedFiles++;
-              resolve();
-            });
-          }, index * 1000);
-        });
-        progressPromises.push(progressPromise);
-      });
-
-      const response = await Promise.race([
-        uploadPromise,
-        Promise.all(progressPromises).then(() => uploadPromise)
-      ]);
-
-      updateProgress(99, 'Almost done - finalizing...', 'All files processed using external OCR service');
-
-      if (response.ok) {
-        const result = await response.json();
-        
-        let successMessage = 'Files processed successfully using external OCR service!';
-        if (result.processedCount !== undefined && result.failedCount !== undefined) {
-          successMessage += `\n\nProcessed: ${result.processedCount} files\nFailed: ${result.failedCount} files`;
-        }
-        
-        setTimeout(() => {
-          updateProgress(100, 'Complete!', 'Processing finished');
-          
-          setTimeout(() => {
-            const details = result.processedCount !== undefined ? 
-              `Processed: ${result.processedCount} files\nFailed: ${result.failedCount} files` : '';
-            showSuccessOverlay('Success!', 'Files processed successfully using external OCR service!', details);
-          }, 300);
-        }, 500);
-        
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Upload failed');
-      }
-    } catch (error) {
-      console.error('Production upload error:', error);
-      
-      let errorMessage = 'Error processing files: ' + error.message;
-      if (error.message.includes('OCR service')) {
-        errorMessage += '\n\nThe external OCR service may be temporarily unavailable. Please try again in a few minutes.';
-      }
-      
-      alert(errorMessage);
-    } finally {
-      hideLoading();
+    let errorMessage = 'Error processing files: ' + error.message;
+    if (error.message.includes('OCR service')) {
+      errorMessage += '\n\nThe external OCR service may be temporarily unavailable. Please try again in a few minutes.';
     }
+    
+    alert(errorMessage);
+    hideLoading();
   }
+}
 
   // Handle file deletions
   document.querySelectorAll('.delete-file-btn').forEach(button => {
