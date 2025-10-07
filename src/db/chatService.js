@@ -321,6 +321,12 @@ Instructions: Answer using ONLY the patient information above. Be specific with 
       : formattedContext;
     
     console.log("📊 Context length after formatting:", truncatedContext.length);
+    
+    // DEBUG: Log what's being sent to the AI
+    console.log("\n🔍 DEBUG - First 1000 chars of context:");
+    console.log(truncatedContext.substring(0, 1000));
+    console.log("\n🔍 DEBUG - Last 500 chars of context:");
+    console.log(truncatedContext.substring(truncatedContext.length - 500));
 
     // For general questions, DON'T include patient info - just answer from medical knowledge
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
@@ -334,30 +340,25 @@ Instructions: Answer using ONLY the patient information above. Be specific with 
         messages: [
           {
             role: 'system',
-            content: `You are Reed, a health assistant with access to medical documents from Peter Attia MD.
+            content: `You are Reed, a health assistant. Answer questions clearly and directly using the medical information provided.
 
-CRITICAL RULES:
-1. Answer questions using ONLY the Medical Knowledge Context provided
-2. PRESERVE THE EXACT FORMATTING from the context:
-   - If the context has "## Header", include "## Header"
-   - If the context has numbered lists, preserve them exactly
-   - If the context has bullet points, preserve them
-   - Copy the structure exactly as shown
-3. Include ALL items from lists - don't summarize or shorten
-4. Include specific numbers and statistics exactly as written
-5. If context has qualifiers (age ranges, conditions), include them
-6. Only say "I don't have information" if the context is completely unrelated
-7. DO NOT paraphrase or rewrite - preserve the original wording and structure
-8. Answer directly without preambles like "According to the context" or "The documents state"`
+When the context contains the answer:
+- Provide the information directly and completely
+- Preserve formatting like numbered lists, bullet points, and headers
+- Include all items from lists
+- Include specific numbers and statistics
+- Answer naturally without phrases like "According to the context"
+
+If the context doesn't contain relevant information, say so briefly.`
           },
           {
             role: 'user', 
-            content: `Medical Knowledge Context:
+            content: `Medical Knowledge:
 ${truncatedContext}
 
 Question: ${query}
 
-Instructions: Answer using ONLY the context above. Preserve exact formatting, lists, and structure. Answer directly.`
+Answer the question using the medical knowledge above. If the information is there, provide it clearly and completely.`
           }
         ],
         max_tokens: 500,
