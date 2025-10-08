@@ -744,12 +744,12 @@ body.menu-open .hero-title {
   }
   .header-scrolled .mobile-nav-links-horizontal .mobile-nav-link,
   .header-scrolled .mobile-nav-links-horizontal .auth-button {
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 6px 4px !important;
   }
   .header-scrolled .mobile-nav-links-horizontal .auth-button {
     padding: 6px 4px !important;
-    min-width: 45px !important;
+    /* min-width: 45px !important; */
   }
   .mobile-nav-link.pressed {
     color: #5cb15d !important;
@@ -967,7 +967,7 @@ body.menu-open .hero-title {
     padding: 2px 0 !important;
   }
   .header-scrolled .mobile-nav-links-horizontal .mobile-nav-link {
-    font-size: 10px !important;
+    font-size: 12px !important;
     padding: 2px 0 !important;
   }
   .header-scrolled .mobile-nav-buttons .auth-button {
@@ -992,7 +992,7 @@ body.menu-open .hero-title {
   }
   .mobile-nav-links-horizontal .mobile-nav-link,
   .mobile-nav-links-horizontal .auth-button {
-    font-size: 12px !important; /* Even smaller on very small screens */
+    font-size: 14px !important; /* Even smaller on very small screens */
   }
 }
 
