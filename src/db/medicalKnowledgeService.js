@@ -255,10 +255,11 @@ async function searchDocuments(query, options = {}) {
 // PRIORITY 2: IMPROVED RAG WITH RE-RANKING
 // ============================================
 
-async function performRag(query, conversationHistory = [], options = {}, userContext = null) {
+async function performRag(query, options = {}, userContext = null, conversationHistory = []) {
   try {
     console.log('🔍 ===== PERFORMING ENHANCED RAG =====');
     console.log('🔍 Query:', query);
+    console.log('🔍 performRag received conversationHistory:', conversationHistory?.length || 'undefined');
     
     // Detect categories from query
     const detectedCategories = detectQueryCategories(query);
