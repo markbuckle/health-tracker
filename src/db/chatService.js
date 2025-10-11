@@ -147,12 +147,13 @@ async function checkTogetherAIStatus() {
 // MAIN RESPONSE GENERATION
 // ============================================
 
-async function generateBasicResponse(query, context, userContext = null) {
+async function generateBasicResponse(query, context, userContext = null, conversationHistory = []) {
   try {
     console.log("\n🤖 GenerateBasicResponse called");
     console.log("📝 Query:", query);
     console.log("📄 Context length:", context?.length || 0);
     console.log("👤 UserContext provided:", !!userContext);
+    console.log("💬 Conversation history length:", conversationHistory.length);
 
     // Parse userContext if it's a string
     let parsedUserContext = userContext;
@@ -226,18 +227,11 @@ async function generateBasicResponse(query, context, userContext = null) {
           .join('; ');
       }
 
-      const response = await fetch('https://api.together.xyz/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'mistralai/Mistral-7B-Instruct-v0.1',
-          messages: [
-            {
-              role: 'system',
-              content: `You are Reed, a personal health assistant. Answer questions using the user's personal health data provided.
+      // Build messages array with conversation history
+      const messages = [
+        {
+          role: 'system',
+          content: `You are Reed, a personal health assistant. Answer questions using the user's personal health data provided.
 
 CRITICAL RULES:
 1. Answer directly using the User's Personal Data
@@ -245,11 +239,10 @@ CRITICAL RULES:
 3. Keep responses concise and actionable
 4. If asked about specific values, provide them clearly
 5. If data is missing or says "Not specified", say "I don't have that information in your profile"
-6. Do not make up information not in the user data`
-            },
-            {
-              role: 'user',
-              content: `PATIENT HEALTH INFORMATION:
+6. Do not make up information not in the user data
+7. Use conversation history to understand context (e.g., "reduce this" refers to previous topic)
+
+PATIENT HEALTH INFORMATION:
 
 BASIC INFO:
 - Age: ${parsedUserContext.profile?.age || 'Not specified'} years old
@@ -272,13 +265,31 @@ CURRENT MONITORING DATA:
 ${monitoringText}
 
 RECENT LAB VALUES:
-${labValuesText}
+${labValuesText}`
+        }
+      ];
 
-Question: ${query}
+      // Add conversation history (last 8 messages to avoid token limits)
+      if (conversationHistory && conversationHistory.length > 0) {
+        const recentHistory = conversationHistory.slice(-8);
+        messages.push(...recentHistory);
+      }
 
-Instructions: Answer using ONLY the patient information above. Be specific with values.`
-            }
-          ],
+      // Add current question
+      messages.push({
+        role: 'user',
+        content: query
+      });
+
+      const response = await fetch('https://api.together.xyz/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'mistralai/Mistral-7B-Instruct-v0.1',
+          messages: messages,
           max_tokens: 300,
           temperature: 0.1,
           top_p: 0.7
@@ -328,7 +339,39 @@ Instructions: Answer using ONLY the patient information above. Be specific with 
     console.log("\n🔍 DEBUG - Last 500 chars of context:");
     console.log(truncatedContext.substring(truncatedContext.length - 500));
 
-    // For general questions, DON'T include patient info - just answer from medical knowledge
+    // Build messages array with conversation history
+    const messages = [
+      {
+        role: 'system',
+        content: `You are Reed, a health assistant. Answer questions clearly and directly using the medical information provided.
+
+When the context contains the answer:
+- Provide the information directly and completely
+- Preserve formatting like numbered lists, bullet points, and headers
+- Include all items from lists
+- Include specific numbers and statistics
+- Answer naturally without phrases like "According to the context"
+- Use conversation history to understand context (e.g., "what about that" refers to previous topic)
+
+If the context doesn't contain relevant information, say so briefly.
+
+Medical Knowledge:
+${truncatedContext}`
+      }
+    ];
+
+    // Add conversation history (last 8 messages to avoid token limits)
+    if (conversationHistory && conversationHistory.length > 0) {
+      const recentHistory = conversationHistory.slice(-8);
+      messages.push(...recentHistory);
+    }
+
+    // Add current question
+    messages.push({
+      role: 'user',
+      content: query
+    });
+
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -337,30 +380,7 @@ Instructions: Answer using ONLY the patient information above. Be specific with 
       },
       body: JSON.stringify({
         model: 'mistralai/Mistral-7B-Instruct-v0.1',
-        messages: [
-          {
-            role: 'system',
-            content: `You are Reed, a health assistant. Answer questions clearly and directly using the medical information provided.
-
-When the context contains the answer:
-- Provide the information directly and completely
-- Preserve formatting like numbered lists, bullet points, and headers
-- Include all items from lists
-- Include specific numbers and statistics
-- Answer naturally without phrases like "According to the context"
-
-If the context doesn't contain relevant information, say so briefly.`
-          },
-          {
-            role: 'user', 
-            content: `Medical Knowledge:
-${truncatedContext}
-
-Question: ${query}
-
-Answer the question using the medical knowledge above. If the information is there, provide it clearly and completely.`
-          }
-        ],
+        messages: messages,
         max_tokens: 500,
         temperature: 0.1,
         top_p: 0.7,

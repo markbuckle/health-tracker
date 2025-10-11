@@ -255,7 +255,7 @@ async function searchDocuments(query, options = {}) {
 // PRIORITY 2: IMPROVED RAG WITH RE-RANKING
 // ============================================
 
-async function performRag(query, options = {}, userContext = null) {
+async function performRag(query, options = {}, userContext = null, conversationHistory = []) {
   try {
     console.log('🔍 ===== PERFORMING ENHANCED RAG =====');
     console.log('🔍 Query:', query);
@@ -300,7 +300,7 @@ async function performRag(query, options = {}, userContext = null) {
     const context = reranked.map((doc) => doc.content).join("\n\n");
 
     console.log('🔍 Generating response with context length:', context.length);
-    const responseText = await llmService.generateBasicResponse(query, context, userContext);
+    const responseText = await llmService.generateBasicResponse(query, context, userContext, conversationHistory);
 
     const result = {
       response: responseText,
@@ -330,7 +330,7 @@ async function performRag(query, options = {}, userContext = null) {
 // RAG WITH USER CONTEXT (for personal questions)
 // ============================================
 
-async function performRagWithContext(query, userContext, options = {}) {
+async function performRagWithContext(query, userContext, options = {}, conversationHistory = []) {
   try {
     console.log('\n🔍 ===== PERFORMING RAG WITH USER CONTEXT =====');
     console.log('🔍 Query:', query);
@@ -353,7 +353,8 @@ async function performRagWithContext(query, userContext, options = {}) {
         const directResponse = await llmService.generateBasicResponse(
           query, 
           "", // Empty context - no medical documents needed
-          userContext
+          userContext,
+          conversationHistory
         );
         
         return {
@@ -375,7 +376,7 @@ async function performRagWithContext(query, userContext, options = {}) {
     // ==========================================
     console.log('📚 General medical question - using enhanced RAG');
     
-    const ragResult = await performRag(query, options, userContext);
+    const ragResult = await performRag(query, options, userContext, conversationHistory);
     
     // If user context exists, optionally personalize the response
     if (userContext && ragResult.response) {

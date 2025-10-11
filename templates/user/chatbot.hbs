@@ -165,12 +165,25 @@
                   <div class="ask-wrapper">
                     <div class="ask-header">
                       <h2 class="ask-title">Ask Reed</h2>
-                      <button
-                        class="info-button"
-                        aria-label="Show RAG information"
-                      >
-                        {{> svg/info}}
-                      </button>
+                      <div class="header-buttons">
+                        <button
+                          id="clear-conversation-btn"
+                          class="clear-conversation-button"
+                          aria-label="Clear conversation"
+                          title="Start new conversation"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                          </svg>
+                        </button>
+                        <button
+                          class="info-button"
+                          aria-label="Show RAG information"
+                        >
+                          {{> svg/info}}
+                        </button>
+                      </div>
                     </div>
 
                     <!-- Chat interface container -->
@@ -377,6 +390,9 @@
         const chatInput = document.getElementById("chat-input");
         const chatSubmit = document.getElementById("chat-submit");
 
+        // ← NEW: Store conversation history for context
+        let conversationHistory = [];
+
         // Auto-resize textarea
         chatInput.addEventListener("input", function () {
           this.style.height = "auto";
@@ -486,6 +502,17 @@
 
         async function sendToRAG(query) {
           try {
+            // ← NEW: Add user message to conversation history
+            conversationHistory.push({
+              role: "user",
+              content: query
+            });
+            
+            // ← NEW: Keep only last 10 messages to avoid token limits
+            if (conversationHistory.length > 10) {
+              conversationHistory = conversationHistory.slice(-10);
+            }
+
             // STEP 1: Try to get current user ID
             console.log('Getting current user ID...');
             let userId = null;
@@ -532,11 +559,18 @@
               },
               body: JSON.stringify({ 
                 query,
-                userContext: userContext
+                userContext: userContext,
+                conversationHistory: conversationHistory  // ← NEW: Include conversation history
               }),
             });
 
             const data = await response.json();
+            
+            // ← NEW: Add assistant response to conversation history
+            conversationHistory.push({
+              role: "assistant",
+              content: data.response
+            });
             
             // Remove typing indicator
             removeTypingIndicator();
@@ -1117,6 +1151,32 @@
 
         // Run the debug
         debugAuth();
+    </script>
+    <script> // Clear RAG chat
+      // Add this function with your other functions
+      function clearConversation() {
+        conversationHistory = [];
+        chatMessages.innerHTML = '';
+        
+        // Re-add the welcome message
+        const welcomeDiv = document.createElement("div");
+        welcomeDiv.className = "chat-message system-message";
+        welcomeDiv.innerHTML = `
+          <div class="message-content">
+            <p>Hi there! I'm Reed, your health assistant. I can answer questions about cardiovascular health, cholesterol, exercise, and other health topics. How can I help you today?</p>
+          </div>
+        `;
+        chatMessages.appendChild(welcomeDiv);
+        
+        console.log('Conversation cleared');
+      }
+
+      // Add this event listener in your DOMContentLoaded section
+      document.getElementById('clear-conversation-btn').addEventListener('click', function() {
+        if (confirm('Clear conversation history? This cannot be undone.')) {
+          clearConversation();
+        }
+      });
     </script>
   </body>
 </html>
