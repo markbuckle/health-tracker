@@ -255,7 +255,7 @@ async function searchDocuments(query, options = {}) {
 // PRIORITY 2: IMPROVED RAG WITH RE-RANKING
 // ============================================
 
-async function performRag(query, options = {}, userContext = null, conversationHistory = []) {
+async function performRag(query, conversationHistory = [], options = {}, userContext = null) {
   try {
     console.log('🔍 ===== PERFORMING ENHANCED RAG =====');
     console.log('🔍 Query:', query);
@@ -330,7 +330,7 @@ async function performRag(query, options = {}, userContext = null, conversationH
 // RAG WITH USER CONTEXT (for personal questions)
 // ============================================
 
-async function performRagWithContext(query, userContext, options = {}, conversationHistory = []) {
+async function performRagWithContext(query, userContext, conversationHistory = [], options = {}) {
   try {
     console.log('\n🔍 ===== PERFORMING RAG WITH USER CONTEXT =====');
     console.log('🔍 Query:', query);
