@@ -260,7 +260,9 @@ async function performRag(query, options = {}, userContext = null, conversationH
     console.log('🔍 ===== PERFORMING ENHANCED RAG =====');
     console.log('🔍 Query:', query);
     console.log('🔍 performRag received conversationHistory:', conversationHistory?.length || 'undefined');
-    
+    console.log('💬 DEBUG performRag received conversationHistory length:', conversationHistory?.length);  // ← ADD THIS
+    console.log('💬 DEBUG conversationHistory value:', conversationHistory);  // ← ADD THIS TOO
+
     // Detect categories from query
     const detectedCategories = detectQueryCategories(query);
     
@@ -301,6 +303,8 @@ async function performRag(query, options = {}, userContext = null, conversationH
     const context = reranked.map((doc) => doc.content).join("\n\n");
 
     console.log('🔍 Generating response with context length:', context.length);
+    console.log('💬 DEBUG before calling generateBasicResponse, conversationHistory length:', conversationHistory?.length);  // ← ADD THIS
+
     const responseText = await llmService.generateBasicResponse(query, context, userContext, conversationHistory);
 
     const result = {
@@ -336,6 +340,7 @@ async function performRagWithContext(query, userContext, conversationHistory = [
     console.log('\n🔍 ===== PERFORMING RAG WITH USER CONTEXT =====');
     console.log('🔍 Query:', query);
     console.log('🔍 User context provided:', !!userContext);
+     console.log('💬 DEBUG performRagWithContext received conversationHistory length:', conversationHistory?.length);
     
     // Check if this is a personal question
     const isPersonalQuestion = llmService.isPersonalHealthQuestion 
@@ -376,6 +381,7 @@ async function performRagWithContext(query, userContext, conversationHistory = [
     // GENERAL QUESTIONS: Use enhanced RAG with user context
     // ==========================================
     console.log('📚 General medical question - using enhanced RAG');
+    console.log('💬 DEBUG before calling performRag, conversationHistory length:', conversationHistory?.length);  // ← ADD THIS
     
     const ragResult = await performRag(query, options, userContext, conversationHistory);
     

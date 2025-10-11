@@ -351,7 +351,7 @@ When the context contains the answer:
 - Include all items from lists
 - Include specific numbers and statistics
 - Answer naturally without phrases like "According to the context"
-- Use conversation history to understand context (e.g., "what about that" refers to previous topic)
+- Use conversation history to understand context (e.g., "what about that" or "this" refers to previous topic)
 
 If the context doesn't contain relevant information, say so briefly.
 
