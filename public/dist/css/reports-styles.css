@@ -1,0 +1,482 @@
+/* ----  Search bar ----- */
+
+.search-wrapper {
+    margin-left: auto;
+  }
+  
+  .search-container {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 40px;
+    width: 35px;
+    height: 35px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .search-container.expanded {
+    width: 230px;
+  }
+  
+  .search-icon,
+  .clear-icon {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+  }
+  
+  .search-icon:hover,
+  .clear-icon:hover {
+    color: #333;
+  }
+  
+  .search-input {
+    width: 0;
+    padding: 8px 0;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-family: "Poppins-Regular", sans-serif;
+    transition: all 0.3s ease;
+  }
+  
+  .search-container.expanded .search-input {
+    width: 100%;
+  }
+  
+  .clear-icon {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .clear-icon.visible {
+    opacity: 1;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .in-page-container {
+    display: flex;
+  }
+  .biomarker-table-top {
+    grid-template-rows: auto;
+    grid-template-columns: 0.4fr 0.4fr 0.4fr 1fr;
+    align-items: center;
+    padding: 0 1rem;
+    font-size: 14px;
+    gap: 0;
+  }
+  .biomarker-table-top._3-columns {
+    grid-template-rows: 1fr;
+    grid-template-columns: 0.4fr 0.4fr 0.4fr 1fr;
+    width: auto;
+    margin: 0 auto;
+  }
+  .table-headers._3-columns,
+  .biomarker-table-top._3-columns {
+    width: auto;
+  }
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: 1rem;
+  padding: 0.5rem 0;
+}
+.range-filter-select {
+  appearance: none;
+  background-color: #f8fafc;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 40px 10px 16px;
+  font-size: 14px;
+  font-family: "Poppins-Regular", sans-serif;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+.range-filter-select:hover {
+  background-color: #f1f5f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+.range-filter-select:focus {
+  outline: none;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+.range-filter-select:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  overflow: visible;
+}
+
+.filter-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 13px;
+  color: #64748b;
+  font-family: "Poppins-Regular", sans-serif;
+  padding: 6px 12px;
+  border-radius: 6px;
+  /* border: 1px solid #e2e8f0; */
+}
+.filter-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.in-range {
+  background-color: #85bb83; /* Green to match your bar charts */
+  box-shadow: 0 0 0 2px rgba(133, 187, 131, 0.2);
+}
+
+.status-dot.out-of-range {
+  background-color: #f0a7a7; /* Red/pink to match your bar charts */
+  box-shadow: 0 0 0 2px rgba(240, 167, 167, 0.2);
+}
+
+/* Count numbers */
+.filter-stats span {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Enhanced layout for in-page-container */
+.in-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem 0 0 0;
+}
+
+/* Keep existing search wrapper styles but improve alignment */
+.search-wrapper {
+  margin: 0;
+}
+
+.biomarker-container.filtered-out {
+  display: none !important;
+}
+
+.dropdown-content-top.filtered-out {
+  display: none !important;
+}
+
+/* Optional: Add a subtle animation when filters are applied */
+.biomarker-container {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.biomarker-container.filtered-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Improve the dropdown arrow styling */
+.range-filter-select::-ms-expand {
+  display: none; /* Hide default IE dropdown arrow */
+}
+
+
+@media (max-width: 1200px) {
+  .filter-container {
+    gap: 1rem;
+  }
+  
+  .filter-stats {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  
+  .range-filter-select {
+    min-width: 120px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .dashboard-content {
+    margin-right: 1rem;
+  }
+  .subheading-2 {
+    font-size: 15px;
+    margin-right: 0.5rem;
+  }
+  .biomarker-table-top._3-columns {
+    height: 4rem;
+  }
+  .biomarker-textbox-container {
+    padding: 1rem 1rem 1.5rem;
+  }
+  .biomarker-bottom .columns {
+    flex-direction: row !important;
+    align-items: flex-start;
+  }
+  .html-embed.chart {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+  .w-col-6:has(.html-embed.chart) {
+    width: 70% !important;
+    flex: 0 0 70% !important;
+    max-width: 70% !important;
+  }
+  .w-col-6:has(.biomarker-textbox-container) {
+    width: 30% !important;
+    flex: 0 0 30% !important;
+    max-width: 30% !important;
+  }
+  .columns.w-row { 
+    flex-wrap: nowrap;
+  }
+  .in-page-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .filter-container {
+    justify-content: center;
+    margin-left: 0;
+    gap: 0.75rem;
+  }
+  .filter-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .filter-stats::before {
+    display: none;
+  }
+}
+
+
+  /* Responsive adjustments */
+@media screen and (max-width: 767px) {
+  .dashboard-content {
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+    padding: 0px 0.5rem 1rem 0.5rem !important; /* Add top padding for fixed header */
+    transition: padding-top 0.3s ease-in-out;
+  }
+   /* Adjust for mobile menu when open */
+  body.menu-open .demo-header {
+    padding-top: calc(10px + var(--mobile-menu-height, 0px)) !important;
+    transition: padding-top 0.3s ease-in-out;
+  }
+  .header-container-2 {
+    margin-left: 0 !important;
+    padding: 0.7rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  .biomarker-table-top {
+    padding-left: 0.75rem;
+    padding-right: 0;
+    font-size: 10px;
+  }
+  .html-embed {
+    padding: 0 0.25rem;
+  }
+  .biomarker {
+    text-align: left;
+    align-items: start;
+    justify-content: left;
+  }
+  .biomarker-result {
+    font-size: 8px;
+  }
+  .caption-large {
+    font-size: 10px;
+    line-height: 16px;
+  }
+  .columns {
+    flex-flow: column;
+  }
+  .columns.w-row { 
+    flex-wrap: wrap;
+  }
+  .w-col-6  {
+    width: 100%;
+  }
+  .biomarker-textbox-container {
+    padding: 5px 10px 15px;
+  }
+  .biomarker-textbox {
+    font-size: 11px;
+    text-align: justify;
+    padding: 0.25rem;
+  }
+  .gtitle {
+    font-size: 14px !important;
+  }
+  .in-page-menu {
+    gap: 0.2rem;
+  }
+  .w-col-6:has(.html-embed.chart) {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  .table-headers._3-columns {
+    grid-template-columns: 1fr 0.3fr 1fr; /* Spread out evenly across 3 columns */
+    padding: 0.25rem 1rem;
+    gap: 1rem; /* Add more spacing between headers */
+  }
+  .table-headers-all {
+    grid-template-columns: 1fr 0.3fr 1fr; /* Match the 3-column layout */
+    padding: 0.25rem 1rem;
+    gap: 1rem;
+  }
+  .table-headers._3-columns .caption-large:nth-child(4),
+  .table-headers-all .caption-large:nth-child(4) {
+    display: none;
+  }
+  .biomarker-container {
+    margin-bottom: 0; /* Add space between biomarker entries */
+  }
+  .biomarker-table-top._3-columns {
+    display: grid;
+    grid-template-columns: 1fr 0.3fr 1fr; /* 3 columns to match headers */
+    grid-template-rows: auto auto; /* 2 rows - first for data, second for chart */
+    gap: 1rem 1rem; /* Vertical and horizontal gaps */
+    padding: 0.75rem 1rem;
+    height: auto; /* Remove fixed height */
+    align-items: center;
+  }
+  biomarker-table-top._3-columns .biomarker {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: left;
+    justify-content: flex-start;
+    padding-left: 0;
+    font-size: 12px;
+  }
+  .biomarker-table-top._3-columns .biomarker-dropdown {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+  }
+  .biomarker-table-top._3-columns .biomarker-result {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+    justify-content: flex-end;
+    font-size: 12px;
+    align-self: center; /* Center vertically in grid cell */
+    padding-right: 2.5rem; /* Add slight right padding for better spacing */
+  }
+  /* Position the bar chart in the second row, spanning all columns */
+  .biomarker-table-top._3-columns .html-embed.w-embed {
+    grid-column: 1 / -1; /* Span all columns */
+    grid-row: 2;
+    width: 100%;
+    padding: 0.5rem 0 0 0; /* Add top padding for separation */
+    margin-top: 0.5rem;
+  }
+  /* Ensure the SVG chart takes full width */
+  .biomarker-table-top._3-columns .html-embed.w-embed .svgBoxContainer {
+    width: 100%;
+  }
+  .biomarker-table-top._3-columns .html-embed.w-embed .svgBoxContent {
+    width: 100%;
+    max-width: 100%;
+  }
+  /* Adjust the biomarker dropdown stripes for better mobile display */
+  .biomarker-dropdown {
+    width: auto;
+    min-width: 1.5em;
+  }
+  /* Additional spacing adjustments */
+  .dropdown-content-bottom {
+    padding: 0.5rem;
+  }
+  /* Ensure consistent spacing in the category dropdowns */
+  .category-dropdown-list {
+    padding: 0.25rem;
+  }
+  /* Optional: Add a subtle border to separate the data row from chart row */
+  .biomarker-table-top._3-columns .html-embed.w-embed {
+    border-top: 1px solid #e5e5e5;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .biomarker-table-top._3-columns .biomarker {
+    align-self: center; /* Center vertically in grid cell */
+    padding-left: 1rem; /* Add slight left padding for better spacing */
+    min-height: 2.5rem;
+    padding-top: 1rem;
+  }
+  .filter-container {
+    flex-direction: column-reverse;
+    gap: 0.25rem;
+    max-width: 65%;
+    align-self: center;
+    padding: 0;
+  }
+  .range-filter-select {
+    width: 100%;
+    min-width: auto;
+  }
+  .filter-stats {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .biomarker-table-top._3-columns {
+    padding: 0.5rem;
+    gap: 0rem 0.5rem;
+  }
+  .biomarker-table-top._3-columns .biomarker {
+    font-size: 11px;
+  }
+  .biomarker-table-top._3-columns .biomarker-result {
+    font-size: 11px;
+  }
+  .table-headers._3-columns,
+  .table-headers-all {
+    padding: 0.25rem 0.5rem;
+    gap: 0.5rem;
+  }
+  .caption-large {
+    font-size: 9px;
+  }
+  .filter-stats {
+    flex-direction: row;
+    gap: 0.25rem;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+  }
+}

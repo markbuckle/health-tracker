@@ -1,4 +1,4 @@
-// src/db/chatService.js - FIXED: Separate Personal vs General Questions
+// src/db/chatService.js - UPDATED with stricter prompts
 const { OpenAI } = require("openai");
 const fetch = require("node-fetch");
 require("dotenv").config();
@@ -227,24 +227,8 @@ async function generateBasicResponse(query, context, userContext = null, convers
           .join('; ');
       }
 
-      // Build messages array with conversation history
-      const messages = [
-        {
-          role: 'system',
-          content: `You are Reed, a personal health assistant. Answer questions using the user's personal health data provided.
-
-CRITICAL RULES:
-1. Answer directly using the User's Personal Data
-2. Be specific with numbers and values from their data
-3. Keep responses concise and actionable
-4. If asked about specific values, provide them clearly
-5. If data is missing or says "Not specified", say "I don't have that information in your profile"
-6. Do not make up information not in the user data
-7. Use conversation history to understand context (e.g., "reduce this" refers to previous topic)
-
-PATIENT HEALTH INFORMATION:
-
-BASIC INFO:
+      // Build user data string
+      const userData = `BASIC INFO:
 - Age: ${parsedUserContext.profile?.age || 'Not specified'} years old
 - Sex: ${parsedUserContext.profile?.sex || 'Not specified'}  
 - Blood Type: ${parsedUserContext.profile?.bloodType || 'Not specified'}
@@ -265,7 +249,22 @@ CURRENT MONITORING DATA:
 ${monitoringText}
 
 RECENT LAB VALUES:
-${labValuesText}`
+${labValuesText}`;
+
+      // Build messages array with conversation history
+      const messages = [
+        {
+          role: 'system',
+          content: `You are Reed, a personal health assistant. Answer questions using the user's personal health data provided.
+
+CRITICAL RULES:
+1. Answer directly using the User's Personal Data
+2. Be specific with numbers and values from their data
+3. Keep responses concise and actionable
+4. If asked about specific values, provide them clearly
+5. If data is missing, say "I don't have that information in your profile"
+6. Do not make up information not in the user data
+7. Use conversation history to understand context (e.g., "reduce this" refers to previous topic)`
         }
       ];
 
@@ -275,10 +274,15 @@ ${labValuesText}`
         messages.push(...recentHistory);
       }
 
-      // Add current question
+      // Add current question with user data
       messages.push({
         role: 'user',
-        content: query
+        content: `User's Personal Data:
+${userData}
+
+Question: ${query}
+
+Instructions: Answer using ONLY the user's data above. Be specific with values.`
       });
 
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
@@ -343,20 +347,35 @@ ${labValuesText}`
     const messages = [
       {
         role: 'system',
-        content: `You are Reed, a health assistant. Answer questions clearly and directly using the medical information provided.
+        content: `You are Reed, a health assistant with access to medical documents from Peter Attia MD.
 
-When the context contains the answer:
-- Provide the information directly and completely
-- Preserve formatting like numbered lists, bullet points, and headers
-- Include all items from lists
-- Include specific numbers and statistics
-- Answer naturally without phrases like "According to the context"
-- Use conversation history to understand context (e.g., "what about that" or "this" refers to previous topic)
+CRITICAL RULES:
+1. Answer questions using ONLY the Medical Knowledge Context provided
+2. PRESERVE THE EXACT FORMATTING from the context - this is critical:
+   - If the context has "## Header", include "## Header"
+   - If the context has "### Subheader", include "### Subheader"
+   - If the context has "1. **Item** - Description", use that exact format
+   - If the context has bullet points, use bullet points
+   - Copy the structure exactly as shown
+3. Include ALL items from lists - don't summarize or shorten
+4. Include specific numbers and statistics exactly as written (e.g., "19 million deaths annually")
+5. If context has qualifiers (age ranges, conditions), include them
+6. Only say "I don't have information" if the context is completely unrelated
+7. DO NOT paraphrase or rewrite - preserve the original wording and structure
+8. Use conversation history to understand context (e.g., "this" refers to previous topic)
 
-If the context doesn't contain relevant information, say so briefly.
+Example:
+Context:
+"## Leading Causes
+1. **Heart Disease** - 19 million deaths
+2. **Cancer** - 12 million deaths"
 
-Medical Knowledge:
-${truncatedContext}`
+Your response should be:
+"## Leading Causes
+1. **Heart Disease** - 19 million deaths
+2. **Cancer** - 12 million deaths"
+
+NOT: "The main causes are heart disease and cancer"`
       }
     ];
 
@@ -369,7 +388,12 @@ ${truncatedContext}`
     // Add current question
     messages.push({
       role: 'user',
-      content: query
+      content: `Medical Knowledge Context:
+${truncatedContext}
+
+Question: ${query}
+
+Instructions: Answer using ONLY the context above. Preserve the exact structure and formatting (numbered lists, statistics, headers). If the context contains the answer with qualifiers, provide that information.`
     });
 
     const response = await fetch('https://api.together.xyz/v1/chat/completions', {

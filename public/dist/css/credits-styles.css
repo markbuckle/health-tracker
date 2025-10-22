@@ -1,0 +1,348 @@
+/* ------ credits page ------- */
+:root {
+  --card-radius: 14px;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --primary-color: #4a90e2;
+}
+.credits-body {
+  background-color: #ffffff;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.content-section {
+  background-color: #d7d7d7d7;
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: block; /* Reset to block for desktop */
+}
+.credits-title {
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: clamp(30px, 5vw, 42px);
+  /* color: #454545; */
+  color: var(--green-primary);
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+  /* background-image: linear-gradient(
+    90deg,
+    #454545 0%,
+    #454545 100%
+  ); */
+  background-image: linear-gradient(
+    90deg,
+    #3b782fcc 0%,
+    #3b782fcc 100%
+  );
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.credits-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    #707070 0%,
+    #36642db1 45%,
+    #ffffff 50%,
+    #36642db1 55%,
+    #707070 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shine-text-once 3s forwards;
+  animation-delay: 0s;
+}
+@keyframes shine-text-once {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+/* For users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .credits-title::before {
+    animation: none;
+  }
+}
+.credits-subtitle {
+  text-align: center;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: clamp(16px, 2vw, 18px);
+  margin-bottom: 3rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+.steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+    margin-top: 2rem;
+    position: relative;
+    max-width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+.step-block {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.step-number {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  color: white;
+  letter-spacing: 1px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: "Poppins-Bold", sans-serif;
+  background: linear-gradient(135deg, #4379ba, #63b1f1);
+  box-shadow: 0 4px 10px rgba(67, 121, 186, 0.3);
+  z-index: 2;
+}
+.step-card {
+  flex: 1;
+  background-color: #8d8d8d;
+  border-radius: var(--card-radius);
+  padding: 1px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 750px;
+}
+.step-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.step-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.5s ease;
+  text-align: left;
+}
+.step-title {
+  color: #4379ba;
+  font-size: clamp(20px, 3vw, 24px);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-family: "Poppins-SemiBold", sans-serif;
+}
+.step-description {
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 400;
+  line-height: 1.6;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
+}
+.highlight {
+    background-color: rgba(224, 224, 224, 0.176);
+    border: 1px solid #797979;
+    padding: 0.5rem 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+}
+.last-updated {
+  text-align: center; 
+  margin: 1rem 0;
+  font-size: 0.9rem; 
+  color: #8f8f8f;
+  font-family: "Poppins-Regular", sans-serif;
+}
+.wave-pattern {
+  margin-top: -1px;
+}
+@media screen and (max-width: 1024px) {
+  .credits-subtitle {
+    max-width: 43%; /* Increased from 43% */
+    margin: 0 auto; /* Center with margin instead of justify-self */
+    text-align: center;
+  }
+}
+/* Mobile Styles */
+@media screen and (max-width: 767px) {
+  .credits-title::before {
+    animation-duration: 3.5s; /* Slightly slower on mobile */
+  }
+  .content-section {
+    width: 100% !important;
+    margin: 1rem auto !important;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem; /* Add some padding */
+  }
+  body.menu-open .content-section {
+    transition: margin-top 0.3s ease !important;
+    margin-top: var(--mobile-menu-height, 200px) !important;
+  }
+  .step-block {
+    padding: 1rem 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step-number {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    position: relative; /* Changed from absolute for better mobile flow */
+    margin-bottom: 1rem;
+  }
+  .step-card {
+    padding: 0.35rem;
+    width: 100%;
+    margin: 0 auto; /* Center the card */
+  }
+  .step-content {
+    width: 100%;
+  }
+  .steps-container {
+    margin: 1rem auto; /* Center with margin instead of justify-self */
+    gap: 1rem;
+    max-width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step-title {
+    font-size: 17px;
+    text-align: center; /* Center titles on mobile */
+  }
+  .step-description {
+    font-size: 12px;
+  }
+  .tech-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important; /* Single column on mobile */
+    gap: 1rem !important;
+    margin-top: 1rem !important;
+  }
+  .credits-subtitle {
+    margin: 0 auto 0.25rem auto; /* Center with margin */
+    width: 90%; /* Increased for better mobile fit */
+    text-align: center;
+  }
+  .highlight {
+    font-size: 15px !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+    text-align: left;
+  }
+  .highlight p {
+    font-size: 12px !important;
+  }
+  .last-updated {
+    margin: 1rem auto 0 auto !important;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* Small Mobile Styles */
+@media screen and (max-width: 480px) {
+  .content-section {
+    width: 100% !important;
+    padding: 1rem 0;
+    margin: 0 auto !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .credits-title {
+    font-size: 25px;
+  }
+  .credits-subtitle {
+    font-size: 13px;
+    max-width: 90%; /* Increased from 73% */
+    margin: 0 auto;
+    text-align: center;
+  }
+  .content-section {
+    margin-bottom: 0 !important;
+  }
+  .steps-container {
+    max-width: 90%; /* Increased from 90% */
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step-content {
+    padding: 1rem 0.5rem;
+    width: 95%;
+  }
+  .step-number {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+  .step-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  .step-card {
+    width: 97%;
+    margin: 0 auto;
+  }
+  .tech-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    margin-top: 1rem !important;
+  }
+  .highlight {
+    padding: 0.75rem !important;
+    margin: 0 !important;
+  }
+  .highlight strong {
+    font-size: 14px;
+  }
+  .highlight p {
+    font-size: 11px !important;
+    margin: 0.25rem 0;
+  }
+  .last-updated {
+    margin: 0 auto 0 auto !important;
+    font-size: 12px;
+    text-align: center;
+    width: 100%;
+  }
+}

@@ -1,0 +1,595 @@
+/* ------------- Welcome Page styles --------------- */
+.step-container {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+.welcome-step-number {
+  background-color: var(--grey-primary);
+  color: white;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-right: 1rem;
+}
+.step-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.5s ease;
+}
+.step-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+.step-description {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 1rem;
+  color: #4a4a4a;
+  line-height: 1.6;
+}
+.highlight {
+  background-color: rgba(92, 177, 93, 0.1);
+  border-left: 3px solid #5cb15d;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0 8px 8px 0;
+}
+.actions {
+  display: flex;
+  margin-top: 1.5rem;
+  gap: 12px;
+}
+.button-next {
+  background-color: #5cb15d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Poppins-Regular", sans-serif;
+  transition: all 0.3s ease;
+}
+.button-next:hover {
+  background-color: #46953f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.button-skip {
+  background-color: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Poppins-Regular", sans-serif;
+  transition: all 0.3s ease;
+}
+.button-skip:hover {
+  background-color: #f5f5f5;
+}
+
+/* Updated highlight navigation styles with support for blue highlights */
+.highlight-nav {
+  position: absolute;
+  background-color: rgba(92, 177, 93, 0.2);
+  border: 2px solid #5cb15d;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 90;
+  display: none !important;
+  visibility: hidden !important;
+  animation: pulse-green 2s infinite;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Blue highlight styles for input group AND individual input pages */
+#highlightInputGroup,
+#highlightProfile,
+#highlightUpload {
+  background-color: rgba(63, 177, 241, 0.2) !important;
+  border-color: #3fb1f1 !important;
+  animation: pulse-blue 2s infinite !important;
+}
+
+/* Green highlight styles for output group (explicit) */
+#highlightOutputGroup {
+  background-color: rgba(92, 177, 93, 0.2) !important;
+  border-color: #5cb15d !important;
+  animation: pulse-green 2s infinite !important;
+}
+
+body.tutorial-active .highlight-nav.show {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1;
+}
+body.tutorial-active .highlight-nav:not(.show) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0;
+}
+
+/* Green pulse animation (renamed from original pulse) */
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(92, 177, 93, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0);
+  }
+}
+
+/* Blue pulse animation (new) */
+@keyframes pulse-blue {
+  0% {
+    box-shadow: 0 0 0 0 rgba(63, 177, 241, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(63, 177, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(63, 177, 241, 0);
+  }
+}
+
+/* Keep original pulse for backward compatibility */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(92, 177, 93, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(92, 177, 93, 0);
+  }
+}
+
+/* Arrow styles */
+.arrow {
+  position: absolute;
+  width: 100px;
+  height: 50px;
+  display: none !important;
+  z-index: 89;
+  visibility: hidden !important;
+}
+.arrow svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(92, 177, 93, 0.3));
+}
+
+/* General tutorial highlighting and arrows on all screen sizes */
+body {
+  position: relative;
+  min-height: 100vh;
+}
+body.tutorial-active .arrow {
+  display: block !important;
+  visibility: visible !important;
+  animation: arrowFloat 2s ease-in-out infinite;
+}
+body.tutorial-active .highlight-nav {
+  display: block !important;
+  visibility: visible !important;
+}
+
+@keyframes arrowFloat {
+  0%, 100% { 
+    transform: translateY(0px);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in {
+  animation: fadeInUp 0.8s forwards;
+}
+.progress-container {
+  width: 100%;
+  background-color: #f1f1f1;
+  border: 0.25px solid #e0e0e0;
+  border-radius: 10px;
+  margin: 1.5rem 0;
+  height: 4px;
+  overflow: hidden;
+}
+/* .welcome-card .progress-container {
+  display: none !important;
+} */
+ .steps-container2 .progress-container {
+  display: none;
+}
+body.tutorial-active .steps-container2 .progress-container {
+  display: block;
+}
+.progress-bar {
+  height: 4px;
+  background-color: #5cb15d;
+  width: 0%;
+  transition: width 0.6s ease;
+}
+.welcome-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+.welcome-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.welcome-title {
+  font-size: 2rem;
+  color: #5cb15d;
+  margin-bottom: 0.5rem;
+}
+.welcome-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+}
+.get-started-btn {
+  display: inline-block;
+  background-color: #77c778;
+  color: #000;
+  font-family: "Poppins-SemiBold", sans-serif;
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: 0.25px solid #000;
+  text-decoration: none;
+  margin: 1rem 0.5rem;
+  box-shadow: 0 4px 10px rgba(92, 177, 93, 0.3);
+  transition: all 0.3s ease;
+}
+.get-started-btn:hover {
+  background-color: #46953f;
+  box-shadow: 0 6px 15px rgba(92, 177, 93, 0.4);
+  cursor: pointer;
+  color: #fff;
+}
+
+/* Feature overview */
+.feature-overview {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.feature-item {
+  text-align: center;
+  padding: 1.25rem;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.feature-item:hover {
+  background-color: rgba(184, 184, 184, 0.128);
+  border-color: rgba(92, 177, 93, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+.feature-icon {
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5cb15d;
+  transition: all 0.3s ease;
+}
+/* .feature-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  display: block;
+} */
+.feature-item:hover .feature-icon {
+  color: #46953f;
+  transform: scale(1.1);
+}
+.feature-title {
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  color: #333;
+}
+.feature-description {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* DESKTOP HOVER EFFECTS - These were missing! */
+/* Force override for sidebar links when hovering on features */
+body[data-profile-hover="true"] #Profile {
+  background-color: #a4d5ec92 !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+body[data-upload-hover="true"] #Upload {
+  background-color: #a4d5ec92 !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+body[data-reports-hover="true"] #Reports {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+body[data-insights-hover="true"] #Insights {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+body[data-chatbot-hover="true"] #Chatbot {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+/* NEW: Add hover effects for group highlights */
+body[data-input-group-hover="true"] #Profile,
+body[data-input-group-hover="true"] #Upload {
+  background-color: #a4d5ec92 !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+body[data-output-group-hover="true"] #Reports,
+body[data-output-group-hover="true"] #Insights,
+body[data-output-group-hover="true"] #Chatbot {
+  background-color: #bcdcbe !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  border-radius: 10px;
+}
+.welcome-buttons {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+/* Skip Tutorial button - matches Get Started but lighter */
+.skip-tutorial-btn {
+  display: inline-block;
+  background-color: #e5e7eb;
+  color: #666;
+  font-family: "Poppins-Regular", sans-serif;
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: 0.25px solid #3a3a3a;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.skip-tutorial-btn:hover {
+  background-color: #d1d5db;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  color: #333;
+}
+
+@media screen and (max-width: 1200px) {
+  .feature-overview {
+    gap: 0.8rem; /* Even smaller gap on smaller screens */
+  }
+  
+  .feature-item {
+    padding: 1rem;
+  }
+  
+  .feature-description {
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .steps-container2 {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .feature-overview {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    gap: 1.2rem;
+  }
+  
+  .feature-item {
+    padding: 1.5rem;
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .feature-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* Responsive layout adjustments */
+@media screen and (max-width: 767px) {
+  .get-started-btn {
+    margin: 0.75rem 0;
+    padding: 0.5rem 0.35rem;
+    width: 8rem;
+  }
+  .sidebar {
+    display: none !important;
+  }
+  .welcome-card {
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 12px;
+  }
+  .welcome-header {
+    margin-bottom: 0;
+  }
+  .feature-overview {
+    display: none;
+    grid-template-columns: 1fr;
+  }
+  .actions {
+    flex-direction: column;
+  }
+  .button-next, 
+  .button-skip {
+    max-width: none;
+    width: 100%;
+    text-align: center;
+  }
+  .dashboard-content {
+    margin-left: 0 !important;
+    padding-top: 5.5rem !important; /* Account for fixed mobile header */
+  }
+  body.menu-open .dashboard-content {
+    padding-top: calc(60px + var(--mobile-menu-height, 0px)) !important;
+    transition: padding-top 0.3s ease-in-out;
+  }
+  .steps-container2 {
+    padding: 0 0.5rem;
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+  }
+  .step-content {
+    padding: 1.25rem 1rem;
+  }
+  .sidebar {
+    display: none;
+  }
+  .highlight-nav {
+    z-index: 10; /* Below the fixed header but above content */
+  }
+  body.tutorial-active .highlight-nav {
+    border-width: 1px;
+  }
+  .welcome-title {
+    font-size: 22px;
+    margin-top: 0.5rem;
+  }
+  .welcome-subtitle {
+    font-size: 16px;
+    margin: 0.5rem 0;
+  }
+  .feature-item {
+    padding: 1rem;
+  }
+  .feature-icon {
+    margin-bottom: 0;
+  }
+  body.tutorial-active .mobile-menu.open {
+    position: absolute !important;
+    z-index: 1600 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    max-height: 140px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: grid !important;
+    /* Prevent menu from closing */
+    pointer-events: none;
+  }
+  body.tutorial-active .mobile-menu.open .step-container {
+    padding-top: 100px !important;
+  }
+  body.tutorial-active .steps-container2 {
+    padding-top: 0.5rem !important;
+    z-index: 1700;
+    position: relative;
+  }
+  body.tutorial-active .highlight-nav {
+    z-index: 1650 !important; /* Above mobile menu */
+  }
+  body.tutorial-active .mobile-menu .page-link {
+    position: relative;
+    z-index: 1610;
+  }
+  body.tutorial-active .step-container,
+  body.tutorial-active .button-next,
+  body.tutorial-active .button-skip {
+    pointer-events: auto;
+    z-index: 1700;
+    position: relative;
+  }
+  body.tutorial-active .highlight-nav.show {
+    z-index: 1650 !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+  .feature-overview {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1.5rem;
+  }
+  .feature-item {
+    padding: 1.5rem;
+  }
+  .feature-icon {
+    margin-bottom: 1rem;
+  }
+  .welcome-buttons {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .skip-tutorial-btn {
+    margin: 0.75rem 0;
+    padding: 0.5rem 0.35rem;
+    width: 8rem;
+  }
+  .get-started-btn,
+  .skip-tutorial-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+/* Small screen adjustments */
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 1.25rem;
+    margin: 0.75rem;
+  }
+}

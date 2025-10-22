@@ -1,0 +1,1370 @@
+/* ----- Base styles and CSS variables ----- */
+:root {
+  --font-primary: "Poppins", sans-serif;
+  --card-radius: 16px;
+
+  --black: #000;
+  --dark-green: #194b1e8e;
+  --dark-grey: #3b3b3bca;
+  --primary-color: #4379ba;
+  --bg-color: #cef3e2;
+  --white: #fff;
+  --green-primary: #5cb15d;
+  --green-secondary: #628d63ce;
+  --green-hover: #45a049;
+  --blue-primary: #63b1f1;
+  --blue-secondary: #7db7e7c0;
+  --blue-hover: #1e88e5;
+  --grey-primary: #b8b9bacc;
+  --btn-primary-bg: #7fd182;
+  --btn-primary-hover: #60ad64;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px;
+  --shadow-md: 0 4px 8px;
+  --shadow-lg: 0 4px 20px;
+  --shadow-color: rgba(18, 18, 18, 0.07);
+
+  --button-font-size: clamp(0.6rem, 2vw, 0.8rem);
+  --primary-font-size: clamp(1rem, 2.5vw, 20px);
+
+  --content-width: 100%;
+  --max-content-width: 1200px;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --font-size-base: 16px;
+
+  --header-height-default: 3.5rem;
+  --header-height-scrolled: 2rem;
+  --header-padding: 1rem;
+  --header-font-size: 16px;
+  --header-font-size-scrolled: 14px;
+
+   /* Mobile-specific variables */
+  --mobile-header-height-default: 3.5rem;
+  --mobile-header-height-scrolled: 2.8rem;
+
+   /* Mobile logo sizes */
+  --mobile-logo-height-default: 2.5rem;
+  --mobile-logo-height-scrolled: 1.6rem;
+
+  --footer-bg: #ffffff;
+  --footer-text: #4a5568;
+  --footer-heading: #2d3748;
+  --footer-link: #718096;
+  --footer-hover: #4379ba;
+  --footer-border: rgba(0, 0, 0, 0.08);
+  --footer-card-bg: #f7fafc;
+  --footer-max-width: 88%;
+  --footer-padding: 2rem 2rem 3rem;
+  --footer-shadow: 0 -4px 6px -1px rgba(255, 255, 255, 0.05);
+  --footer-accent: #4379ba;
+}
+
+/* ----- Fonts ----- */
+@font-face {
+  font-family: "Poppins-Bold";
+  src: url("../fonts/Poppins-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins-Regular";
+  src: url("../fonts/Poppins-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins-SemiBold";
+  src: url("../fonts/Poppins-SemiBold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ----- Common base styles ----- */
+body {
+  font-family: "Poppins-Regular", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+html {
+  overscroll-behavior: none;
+}
+html, body {
+  /* background-color: #ffffff; Set to white instead of blue */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+/* ----- Headings and subheadings ---- */
+
+/* ----- Backgrounds ----- */
+.home-body {
+  /* background-color: #b3d6ff; */
+  background-color: #ffffff;
+  margin: 0;
+}
+
+.login-register-body {
+  background-color: #7ebcf347;
+  /* background-color: #ffffff; */
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-body {
+  background-color: #ebf8ff;
+}
+
+/* ----- Buttons ----- */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  padding: clamp(0.5rem, 2vw, 1rem);
+}
+
+.register-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.25rem, 2vw, 0.4rem);
+  padding: clamp(0.5rem, 2vw, 0.5rem);
+}
+
+.button-basics {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.5rem 0;
+  width: auto;
+  min-width: 4.5rem;
+  max-width: 6rem;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: var(--button-font-size);
+  font-weight: 500;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  color: white;
+  user-select: none;
+  cursor: pointer;
+}
+
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  padding: 0.4rem 0.6rem;
+  text-decoration: none;
+  white-space: nowrap;
+  margin: 0.4rem 0.2rem;
+}
+
+.auth-buttons {
+  padding: 1rem;
+  margin: 0;
+}
+
+.button a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  height: auto;
+}
+
+.button-green {
+  background-color: var(--green-primary);
+  box-shadow: var(--shadow-sm) rgba(76, 175, 80, 0.2);
+}
+
+.button-green:hover {
+  background-color: var(--green-hover);
+  box-shadow: var(--shadow-md) rgba(76, 175, 80, 0.3);
+}
+
+.button-green:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm) rgba(76, 175, 80, 0.2);
+}
+
+.button-blue {
+  background-color: var(--blue-primary);
+  box-shadow: var(--shadow-sm) rgba(33, 150, 243, 0.2);
+}
+
+.button-blue:hover {
+  background-color: var(--blue-hover);
+  box-shadow: var(--shadow-md) rgba(33, 150, 243, 0.3);
+}
+
+.button-blue:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm) rgba(33, 150, 243, 0.3);
+}
+
+.btn-primary {
+  background-color: #4cc12fab;
+  color: #000;
+  border-radius: 76px;
+  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+  width: clamp(200px, 45%, 400px);
+  box-shadow: 0 1px 4px rgba(74, 58, 255, 0.26);
+  border: 1px solid var(--dark-green);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: var(--primary-font-size);
+  text-shadow: 0 1px 1px #0003;
+  max-width: clamp(15rem, 1vw, 20rem);
+  text-decoration: none;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  visibility: hidden;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: var(--btn-primary-hover);
+  transform: scale3d(1.02, 1.02, 1.01);
+  box-shadow: var(--shadow-lg) rgba(74, 58, 255, 0.3);
+}
+
+.flex-horizontal {
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 1rem);
+}
+
+.button-basics:disabled,
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.button-basics:focus,
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* Auth button styles */
+.auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+  white-space: nowrap;
+  will-change: transform, padding, font-size, border-radius;
+}
+
+.login-button {
+  background-color: var(--blue-primary);
+  box-shadow: var(--shadow-sm) rgba(33, 150, 243, 0.2);
+}
+
+.login-button:hover {
+  background-color: var(--blue-hover);
+  box-shadow: var(--shadow-sm) rgba(33, 150, 243, 0.3);
+  transform: translateY(0);
+}
+
+.signup-button {
+  background-color: var(--green-primary);
+  box-shadow: var(--shadow-sm) rgba(76, 175, 80, 0.2);
+}
+
+.signup-button:hover {
+  background-color: var(--green-hover);
+  box-shadow: var(--shadow-md) rgba(76, 175, 80, 0.3);
+}
+
+/* ----- Sidebar CSS ------ */
+.sidebar {
+  background-color: #fefefe;
+  border-right: 1px solid #e1e6f0;
+  width: 10rem;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-logo-wrapper {
+  padding: 1rem 1rem 0.25rem 1rem;
+  text-align: center;
+}
+
+.sidebar-logo-link {
+  color: #333333;
+  text-decoration: none;
+}
+
+.sidebar-logo {
+  width: 100%;
+  height: auto;
+  max-width: 9rem;
+}
+
+.nav-divider-basics {
+  background-color: #e1e6f0;
+  height: 1px;
+}
+
+.nav-divider-top {
+  margin-top: 0;
+  margin-bottom: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.nav-divider-bottom {
+  margin-top: auto;
+  margin-bottom: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.page-link {
+  width: auto;
+  height: auto;
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+}
+
+.page-link:hover {
+  background-color: #cdcdcd;
+  border-radius: 5px;
+}
+
+.page-link:active {
+  background-color: #ebf8ff;
+}
+
+.page-link.w--current {
+  background-color: #cdcdcd;
+  border-radius: 5px;
+}
+
+.nav-icon {
+  filter: grayscale(100%);
+  mix-blend-mode: normal;
+  max-width: 1rem;
+  margin: auto auto auto 10px;
+  text-decoration: none;
+  display: block;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.nav-icon:hover {
+  filter: grayscale(100%) brightness(3);
+}
+
+.page-link-text-block {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: clamp(12px, 4vw, 16px);
+  opacity: 1;
+  color: var(--dark-grey);
+  mix-blend-mode: normal;
+  background-color: transparent;
+}
+
+.page-link-text-block:hover {
+  filter: brightness(5);
+  font-weight: bolder;
+}
+
+.page-link-text-span {
+  margin: 0.45rem;
+}
+
+.page-link-text-span:hover {
+  mix-blend-mode: exclusion;
+}
+
+.sidebar-bottom-spacer {
+  height: 3%;
+}
+
+/* ----- Content container ----- */
+.content-container {
+  display: flex;
+  max-width: var(--content-width);
+  /* width: 60%; */
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+  justify-content: center;
+}
+.inner-content-container {
+  width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0; /* Consistent gap between laptop and titles */
+}
+
+.content-container-2 {
+  max-width: var(--content-width);
+  width: 70%;
+  margin: 0 auto;
+  /* padding: 0 var(--spacing-sm); */
+}
+
+/* ----- Wave elements ----- */
+.wave-light-bg {
+  /* background: #e0ecee; */
+  /* margin-top: -1px; Remove any top margin */
+  margin-top: -3px !important;
+  margin-bottom: -2px; /* Remove any top margin */
+  padding-top: 0; /* Remove any top padding */
+}
+
+.wave-pattern {
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  z-index: 2;
+  margin-top: -5px !important;
+  margin-bottom: -5px !important;
+  line-height: 0;
+}
+
+.wave-pattern svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  min-width: 1000px;
+  transform-origin: bottom;
+  vertical-align: top !important; /* Prevents baseline gaps */
+  line-height: 0;
+}
+
+/* ----- Dashboard / User Page Layout ----- */
+.demo-header {
+  background-color: transparent;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header-container-2 {
+  margin: auto;
+  margin-left: 10rem;
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.heading {
+  color: #535151;
+  font-family: "Poppins-Bold", sans-serif;
+  font-weight: 700;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 auto 0 0;
+}
+
+.heading2 {
+  color: rgba(2, 2, 2, 0.76);
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: clamp(22px, 5vw, 30px);
+  font-weight: 700;
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 auto 0 0;
+}
+
+.spacer-block {
+  flex: 1;
+}
+
+.dashboard-content {
+  margin-left: 10rem;
+  margin-top: 1.5rem;
+  padding: 0 2rem 2rem 1.5rem;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* ----- Modal Styles ----- */
+.modal-wrapper,
+.modal-wrapper-1,
+.modal-wrapper-2,
+.modal-wrapper-3 {
+  z-index: 999;
+  display: none;
+  position: fixed;
+  inset: 0%;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modal-wrapper-1.active,
+.modal-wrapper-2.active,
+.modal-wrapper-3.active,
+.modal-wrapper-6.active {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+}
+
+.modal-background {
+  z-index: 1000;
+  position: fixed;
+  inset: 0%;
+  background-color: rgba(0, 0, 0, 0.33);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background-color: white;
+  width: 90%;
+  max-width: 30rem;
+  margin: 20px;
+  height: auto;
+  transform: scale(0.9);
+  transition: all 0.3s ease-in-out;
+  z-index: 1000;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+}
+
+.modal-wrapper-1.active .modal-card,
+.modal-wrapper-2.active .modal-card,
+.modal-wrapper-3.active .modal-card {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 1002;
+}
+
+.modal-header {
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+}
+
+.modal-footer {
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+  max-width: auto;
+  margin-left: 0;
+  margin-right: 0;
+  display: flex;
+}
+
+.modal-return-button {
+  z-index: 1002;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.modal-return-button.w--current {
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 10px 5px;
+  display: flex;
+}
+
+.modal-content,
+.modal-form,
+.modal-header,
+.modal-footer {
+  z-index: 1002;
+  pointer-events: auto;
+}
+.modal-wrapper-1 {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.modal-wrapper-1.active {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+}
+
+.modal-card {
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.modal-card p {
+  margin-bottom: 1rem;
+  color: #4b5563;
+  font-family: "Poppins-Regular", sans-serif;
+}
+
+.header-container-3-spacing {
+  display: flex;
+}
+.modal-form-title {
+  margin: 1rem;
+  font-size: large;
+  font-weight: bold;
+}
+.modal-description {
+  margin: 1rem;
+  text-align: justify;
+}
+.info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 65%;
+  border: none;
+  background-color: #33885182;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 20px;
+  margin: 1rem 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  vertical-align: middle;
+}
+.info-button:hover {
+  background-color: #22583582;
+  transform: scale(1.05);
+}
+
+/* ----- Utility Classes ----- */
+.w-inline-block {
+  max-width: 100%;
+}
+
+.text-block {
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 10px;
+  text-align: center;
+}
+
+img,
+.nav-icon {
+  height: auto;
+  max-width: 100%;
+}
+
+/* ----- DASHBOARD STYLES ------  */
+.demo-header {
+  background-color: transparent;
+  margin-left: auto;
+  margin-right: auto;
+}
+.header-container-2 {
+  margin: auto; /* Centers the container */
+  margin-left: 10rem;
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.heading {
+  color: #535151;
+  font-family: "Poppins-Bold", sans-serif;
+  font-weight: 700;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 auto 0 0;
+}
+.heading2 {
+  color: rgba(2, 2, 2, 0.76);
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: clamp(22px, 5vw, 30px);
+  font-weight: 700;
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 auto 0 0;
+}
+
+.spacer-block {
+  flex: 1;
+}
+.dashboard-img {
+  background-color: #b3d6ff;
+  position: relative !important;
+  z-index: 1 !important; /* Lower than hero-wrapper */
+  margin-top: -2px !important;
+  margin-bottom: -2px !important;
+  padding: 40px 0 !important;
+  padding-top: 0 !important;
+  overflow: hidden !important;
+}
+.dashboard-img .content-container {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  justify-content: center !important;
+}
+.hero, .dashboard-img {
+  margin-bottom: -1px !important;
+}
+.dashboard-img .inner-content-container {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.dashboard-img .demo-page-img {
+  margin-bottom: 0 !important;
+}
+.cms-notice {
+  padding-bottom: 20px;
+  font-family: "Poppin-Regular", sans-serif;
+}
+.dashboard-container {
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+.w-layout-grid {
+  display: grid;
+  grid-gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-rows: auto;
+}
+.w-layout-grid-all {
+  display: grid;
+  grid-gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-rows: auto;
+  background-color: white;
+  border-radius: 5px;
+}
+.main-grid {
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
+}
+
+/* ----- modal styles ------ */
+
+.modal-form {
+  width: auto;
+  height: auto;
+  margin: 0 1rem;
+}
+.modal-wrapper,
+.modal-wrapper-1,
+.modal-wrapper-2,
+.modal-wrapper-3 {
+  z-index: 999;
+  display: none;
+  position: fixed;
+  inset: 0%;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+  opacity: 0;
+  visibility: hidden;
+}
+.modal-wrapper-1.active,
+.modal-wrapper-2.active,
+.modal-wrapper-3.active {
+  display: flex;
+}
+.modal-wrapper-6.active {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+}
+
+.modal-wrapper-6 {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+.modal-background {
+  z-index: 1000;
+  position: fixed; /* Changed from absolute to fixed */
+  inset: 0%;
+  background-color: rgba(0, 0, 0, 0.33);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.modal-card {
+  background-color: white;
+  width: 90%; /* More responsive width */
+  max-width: 30rem; /* Slightly wider max-width */
+  margin: 20px; /* Add margin for smaller screens */
+  height: auto; /* Prevent overflow on small screens */
+  transform: scale(0.9); /* Subtle entrance animation */
+  transition: all 0.3s ease-in-out;
+  z-index: 1000;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+  /* overflow-y: auto; /* Allow scrolling if content is long */
+  /* opacity: 0; */
+}
+.modal-wrapper-1.active .modal-card,
+.modal-wrapper-2.active .modal-card,
+.modal-wrapper-3.active .modal-card {
+  transform: scale(1);
+  opacity: 1;
+}
+/* Ensure modal content doesn't trigger background clicks */
+.modal-content {
+  position: relative;
+  z-index: 1002;
+}
+.modal-button {
+  width: auto;
+  font-family: Poppins, sans-serif;
+  font-size: 26px;
+  font-weight: 300;
+}
+.modal-close-button {
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 25px;
+  height: 25px;
+  display: flex;
+}
+.modal-header {
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+}
+.modal-footer {
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+  max-width: auto;
+  margin-left: 0;
+  margin-right: 0;
+  display: flex;
+}
+.modal-return-button {
+  z-index: 1002;
+  margin: 10px;
+  cursor: pointer;
+}
+.modal-return-button.w--current {
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 10px 5px;
+  display: flex;
+}
+/* Ensure modal content stays above background */
+.modal-content,
+.modal-form,
+.modal-header,
+.modal-footer {
+  /* position: relative; */
+  z-index: 1002;
+  pointer-events: auto;
+}
+/* #customBloodType,
+label[for="customBloodType"] {
+    display: none;
+} */
+
+/* Blood Type Info Button */
+.blood-type-info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background-color: #63b1f1;
+  color: white;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 14px;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  vertical-align: middle;
+}
+
+.blood-type-info-button:hover {
+  background-color: #1e88e5;
+  transform: scale(1.05);
+}
+
+/* Blood Type Modal Styles */
+.blood-type-modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 9999; /* Changed from 999 to 9999 */
+  position: fixed;
+  inset: 0%;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+  display: none;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.blood-type-modal.active {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+  z-index: 999;
+}
+.blood-type-modal .modal-card {
+  width: 95%;
+  max-width: 700px; /* Increased from 600px */
+  max-height: 95vh;/*Increased from 90vh to give more space */
+  min-height: 80vh; 
+  overflow-y: auto;
+  margin: auto; /* Ensure it's centered */
+}
+.blood-type-modal .modal-description {
+  font-size: 14px;
+  line-height: 1.6; /* Slightly increased line height */
+  padding-right: 5px;
+  padding-bottom: 10px; /* Add bottom padding */
+}
+.blood-type-table-container {
+  overflow-x: auto;
+  margin: 15px 0;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.blood-type-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+.blood-type-table th, .blood-type-table td {
+  padding: 8px 10px;
+  border: 1px solid #e1e6f0;
+  text-align: left;
+}
+
+.blood-type-table th {
+  background-color: #f8f9fb;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.blood-type-table tr:nth-child(even) {
+  background-color: #f8f9fb;
+}
+
+.blood-type-table tr:hover {
+  background-color: #e1e6f0;
+}
+
+.blood-type-facts {
+  background-color: #f8f9fb;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+.blood-type-facts h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.blood-type-facts ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.blood-type-facts li {
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.source-link {
+  font-size: 11px;
+  margin-top: 15px;
+  text-align: right;
+  font-style: italic;
+}
+
+.source-link a {
+  color: #4379ba;
+  text-decoration: none;
+}
+
+.source-link a:hover {
+  text-decoration: underline;
+}
+
+.simple-info-modal {
+  display: none; 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  background-color: rgba(0,0,0,0.5); 
+  z-index: 1000; 
+  padding-left: 160px;
+}
+.dashboard-img .content-container,
+.dashboard-img .inner-content-container {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ----- Button Touch Device Optimizations ----- */
+@media (hover: none) {
+  .button-basics:active,
+  .btn-primary:active {
+    opacity: 0.8;
+  }
+}
+
+/* ----- Button High Contrast Mode ----- */
+@media (prefers-contrast: high) {
+  .button-basics,
+  .btn-primary {
+    border: 2px solid #000;
+  }
+}
+
+/* ----- Button Reduced Motion ----- */
+@media (prefers-reduced-motion: reduce) {
+  .button-basics,
+  .btn-primary {
+    transition: none;
+  }
+}
+
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    animation-delay: 0.001ms !important;
+  }
+  
+  /* .feedback-widget,
+  .feedback-form-container,
+  .feedback-close,
+  .feedback-toggle {
+    transition: none !important;
+  } */
+  
+  .button-basics,
+  .btn-primary {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .button-basics,
+  .btn-primary {
+    border: 2px solid #000;
+  }
+}
+
+@media (hover: none) {
+  .button-basics:active,
+  .btn-primary:active {
+    opacity: 0.8;
+  }
+}
+
+/* ===== ENHANCED MEDIA QUERIES FOR MAIN-STYLES.CSS ===== */
+
+/* Large Desktop (1400px and above) */
+@media screen and (min-width: 1400px) {  
+  .header-links {
+    font-size: 14px;
+    gap: 2.5rem;
+  }
+  .auth-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+/* Standard Desktop (1200px - 1399px) */
+@media screen and (min-width: 1200px) and (max-width: 1399px) {
+  .quote-1 {
+    font-size: 2rem;
+  }
+  .quote-2 {
+    font-size: 1.4rem;
+    max-width: 80%;
+  }
+  .use-cases-container {
+    max-width: 900px;
+  }
+  .content-container {
+    /* width: 70%; */
+  }
+  .center-header {
+    gap: 2rem;
+  }
+  .header-links {
+    font-size: 13px;
+  }
+}
+
+/* Small Desktop / Large Laptop (992px - 1199px) */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+  .content-container {
+    /* width: 85%; */
+  }
+  .center-header {
+    gap: 1.5rem;
+  }
+  .header-links {
+    font-size: 12px;
+  }
+  .auth-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablet Landscape (768px - 991px) */
+@media screen and (max-width: 991px) {
+  .mobile-header {
+    display: none !important;
+  }
+  .sidebar {
+    width: 9rem;
+  }
+  .content-container {
+    /* width: 90%; */
+  }
+  .header-container {
+    padding: 0 1rem;
+  }
+  .header-container-2 {
+    padding-left: 0 !important;
+    margin-top: 1rem;
+  }
+  .center-header {
+    gap: 1rem;
+  }
+  .header-links {
+    font-size: 11px;
+    padding: 0.25rem 0.5rem;
+  }
+  .auth-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  .logo-block {
+    margin-right: 1rem;
+  }
+  /* .dashboard-container {
+    margin-left: 1rem;
+    margin-top: 1rem;
+  } */
+  .dashboard-container {
+    margin-left: 0;
+    margin-top: 0;
+  }
+  .modal-button {
+    font-size: 26px;
+    font-weight: 600;
+  }
+  .modal-description {
+    font-size: 18px;
+  }
+  .blood-type-modal {
+    margin-left: 6rem;
+  }
+}
+
+/* Large Mobile */
+@media screen and (max-width: 767px) {
+  .page-link {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .mobile-header {
+    display: block;
+  }
+  .content-container {
+    /* width: 95%; */
+    padding: 0 1rem;
+  }
+  .sidebar {
+    display: none;
+  }
+  .dashboard-content {
+    margin-left: 0;
+    padding: 0 1rem;
+  }
+  .dashboard-container {
+   margin: 0 !important; 
+  }
+  .header-container-2 {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  .content-container-2 {
+    width: 100% !important;
+  }
+  .btn-secondary {
+    visibility: visible;
+    width: 80%;
+    max-width: 300px;
+    padding: 0.8rem 1.5rem;
+    margin-top: 2rem;
+    background-color: var(--btn-primary-bg);
+    color: #000;
+    border-radius: 76px;
+    border: 1px solid var(--dark-green);
+    font-family: "Poppins-SemiBold", sans-serif;
+    font-size: 1rem;
+  }
+  .register-block {
+    margin-top: 0 !important;
+    margin-bottom: 2rem !important;
+  }
+  .button-basics {
+    font-size: 0.8rem;
+  }
+  /* Typography adjustments */
+  .heading {
+    font-size: 2rem;
+  }
+  .heading2 {
+    font-size: 1.75rem;
+    margin-top: 5.5rem;
+  }
+  .subheading {
+    font-size: 1.1rem;
+  }
+  .subheading-2 {
+    font-size: 0.9rem;
+  }
+  .footer-tagline {
+    font-size: 0.8rem;
+  }
+  .mobile-header-container {
+    /* padding: 0.75rem 1.5rem; */
+    height: 3.5rem;
+  }
+  .mobile-header-logo .header-logo {
+    height: 2rem;
+    max-width: 100px;
+  }
+  .mobile-menu-toggle {
+    font-size: 1.5rem;
+    padding: 0.4rem;
+  }
+  .header-logo {
+    max-height: 2rem;
+  }
+  .mobile-menu {
+    width: 300px;
+  }
+  .btn-secondary {
+    width: 85%;
+    max-width: 280px;
+  }
+  .modal-button {
+    font-size: 20px;
+  }
+  .modal-card {
+    margin-top: 7rem;
+  }
+  .modal-form {
+    margin: 0.25rem;
+  }
+  .blood-type-modal {
+    padding: 0;
+    margin-left: 0;
+  }
+  .blood-type-modal .modal-card {
+    max-width: none;
+  }
+}
+
+/* Standard mobile */
+@media screen and (max-width: 480px) {
+  .mobile-header-container {
+    /* padding: 0.2rem 1.2rem !important; */
+    height: 3.2rem;
+  }
+  .mobile-header-logo .header-logo {
+    margin-top: 0rem;
+    height: 1.8rem;
+    max-width: 150px;
+  }
+  .mobile-menu-toggle {
+    font-size: 1.4rem;
+    padding: 0.3rem;
+  }
+  .mobile-menu {
+    width: 280px;
+  }
+  .mobile-menu .page-link {
+    padding: 0.8rem 1.2rem;
+  }
+}

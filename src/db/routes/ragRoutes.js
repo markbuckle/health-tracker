@@ -16,7 +16,7 @@ router.get("/test", (req, res) => {
 // Ask endpoint
 router.post("/ask", async (req, res) => {
   try {
-    const { query, userContext } = req.body;
+    const { query, userContext, conversationHistory } = req.body;
 
     if (!query) {
       return res.status(400).json({ error: "Query is required" });
@@ -25,16 +25,15 @@ router.post("/ask", async (req, res) => {
     console.log('🔍 RAG request received');
     console.log('🔍 Query:', query);
     console.log('🔍 User context provided:', !!userContext);
-
-    // Add detailed logging before making the service call
+    console.log('💬 Conversation history length:', conversationHistory?.length || 0);  // ← ADD logging
     console.log('🔍 Performing RAG with context:', !!userContext);
 
     let result;
     try {
       // Use context-aware RAG if userContext is provided
       result = userContext 
-        ? await medicalKnowledgeService.performRagWithContext(query, userContext)
-        : await medicalKnowledgeService.performRag(query);
+        ? await medicalKnowledgeService.performRagWithContext(query, userContext, conversationHistory)
+        : await medicalKnowledgeService.performRag(query, conversationHistory);
       
       console.log('🔍 RAG service result:', result);
       console.log('🔍 Result type:', typeof result);

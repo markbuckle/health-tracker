@@ -728,6 +728,17 @@ hbs.registerPartials(partialsPath);
 // Add error handling for static files
 app.use(express.static(publicPath));
 
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
+
 // Session setup - MUST come before passport middleware
 if (!process.env.SESSION_SECRET) {
   console.error("SESSION_SECRET is not set in environment variables");
