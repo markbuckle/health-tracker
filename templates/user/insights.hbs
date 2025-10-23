@@ -9,6 +9,135 @@
     <link href="css/user-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/insights-styles.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      /* Dashboard grid layout */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        width: 100%;
+      }
+      
+      .dashboard-left-column,
+      .dashboard-right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      /* Add top padding to match Labs Summary */
+      .dashboard-right-column .insights-header {
+        padding-top: 1.5rem;
+      }
+
+      /* Add top padding to Labs Summary header too for consistency */
+      .dashboard-left-column .labs-summary-header {
+        padding-top: 1.5rem;
+      }
+
+      /* Center the wellness score horizontally */
+      .dashboard-right-column .wellness-summary-card:first-child .wellness-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Override wellness-content for dashboard */
+      .dashboard-wellness-content {
+        display: block !important;
+      }
+
+      .dashboard-wellness-content .wellness-chart-container {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .dashboard-wellness-content .wellness-categories {
+        max-width: 100%;
+      }
+
+      /* Info modal styling */
+      .info-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .info-modal .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .info-modal .modal-content h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-family: 'Poppins-SemiBold', sans-serif;
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      .info-modal .modal-content p {
+        margin-bottom: 1rem;
+        line-height: 1.6;
+        color: #4b5563;
+        font-family: 'Poppins-Regular', sans-serif;
+      }
+
+      .info-modal .modal-content ul {
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+      }
+
+      .info-modal .modal-content li {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+        color: #4b5563;
+        font-family: 'Poppins-Regular', sans-serif;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        line-height: 1;
+        color: #666;
+        cursor: pointer;
+        padding: 0;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+      }
+
+      .modal-close:hover {
+        color: #333;
+      }
+
+      @media (max-width: 991px) {
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
   </head>
 
   <body class="user-body">
@@ -119,16 +248,10 @@
             <!-- Tab Menu -->
             <div class="in-page-menu w-tab-menu">
               <a
-                data-w-tab="Scores"
+                data-w-tab="Dashboard"
                 class="in-page-link w-inline-block w-tab-link w--current"
               >
-                <div class="text-block">Scores</div>
-              </a>
-              <a
-                data-w-tab="LabsSummary"
-                class="in-page-link w-inline-block w-tab-link"
-              >
-                <div class="text-block">Labs</div>
+                <div class="text-block">Dashboard</div>
               </a>
               <a
                 data-w-tab="Actions"
@@ -140,18 +263,99 @@
 
             <!-- Tab Content -->
             <div class="w-tab-content">
-              <!-- Scores Tab -->
-              <div data-w-tab="Scores" class="w-tab-pane">
-                <div class="wellness-summary-card">
-                  <!-- Hidden data element -->
-                  <div
+              <!-- Dashboard Tab -->
+              <div data-w-tab="Dashboard" class="w-tab-pane">
+                <!-- Hidden data elements -->
+                <div
                     id="wellnessData"
                     data-scores="{{json scores}}"
                     data-recommendations="{{json recommendations}}"
                     style="display: none"
                   ></div>
+                <div 
+                    id="labSummaryData" 
+                    data-labs="{{json biomarkerSummary}}" 
+                    style="display: none">
+                  </div>
 
-                  <div class="insights-header">
+                <!-- Two Column Grid Layout -->
+                <div class="dashboard-grid">
+                  
+                  <!-- LEFT COLUMN: Labs Summary -->
+                  <div class="dashboard-left-column">
+                    <div class="wellness-summary-card">
+                      <div class="labs-summary-header">
+                        <div class="labs-title-wrapper">
+                          <h2 class="insights-title">Labs Summary</h2>
+                        </div>
+                      </div>
+
+                      <!-- React component will render here -->
+                      <div id="labs-summary-recharts-root"></div>
+                    </div>
+                  </div>
+
+                  <!-- RIGHT COLUMN: Wellness Scores -->
+                  <div class="dashboard-right-column">
+
+                    <!-- Overall Wellness Score -->
+                    <div class="wellness-summary-card">
+                      <div class="insights-header">
+                        <div class="insights-title-wrapper">
+                          <h2 class="insights-title">Overall Wellness Score</h2>
+                          <button class="info-button" aria-label="Show wellness information">
+                            {{> svg/info}}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="wellness-content dashboard-wellness-content">
+                        <div class="wellness-chart-container">
+                      <div class="chart-wrapper">
+                        <svg viewBox="0 0 100 100" class="circular-chart">
+                          <!-- Background circle -->
+                          <circle cx="50" cy="50" r="26" fill="white" />
+
+                          <!-- Score circle -->
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="26"
+                            fill="none"
+                            stroke="#eee"
+                            stroke-width="6"
+                            class="circle-bg"
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="26"
+                            fill="none"
+                            stroke-width="6"
+                            class="circle-progress"
+                            id="scoreCircle"
+                          />
+                        </svg>
+
+                        <!-- Tooltip -->
+                        <div class="chart-tooltip"></div>
+
+                        <!-- Score circle overlaid on chart -->
+                        <div class="score-circle">
+                          <span class="score-number"
+                            >{{calculateCompletionPercentage
+                            scores.inputs}}</span
+                          >
+                          <span class="score-max">/100</span>
+                        </div>
+                      </div>
+                    </div>
+                      </div>
+                    </div>
+
+                    <!-- Wellness Score Inputs -->
+                    <div class="wellness-summary-card">
+                      <div class="insights-header">
                     <div class="insights-title-wrapper">
                       <h2 class="insights-title">Wellness Score Inputs</h2>
                       <button
@@ -163,9 +367,9 @@
                     </div>
                   </div>
 
-                  <div class="wellness-content">
-                    <!-- Left side: Categories -->
-                    <div class="wellness-categories">
+                  <div class="wellness-content dashboard-wellness-content" style="display: block;">
+                    <!-- Categories -->
+                    <div class="wellness-categories" style="max-width: 100%; flex: none;">
                       <!-- Prevention Section -->
                       <div class="category-section">
                         <div class="category-header">
@@ -226,74 +430,44 @@
                     </div>
 
                     <!-- Right side: Chart -->
-                    <div class="wellness-chart-container">
-                      <h3 class="chart-title">Overall Wellness Score</h3>
-                      <!-- Update the SVG part -->
-                      <div class="chart-wrapper">
-                        <svg viewBox="0 0 100 100" class="circular-chart">
-                          <!-- Background circle -->
-                          <circle cx="50" cy="50" r="45" fill="white" />
-
-                          <!-- Score circle -->
-                          <circle
-                            cx="50"
-                            cy="50"
-                            r="26"
-                            fill="none"
-                            stroke="#eee"
-                            stroke-width="6"
-                            class="circle-bg"
-                          />
-                          <circle
-                            cx="50"
-                            cy="50"
-                            r="26"
-                            fill="none"
-                            stroke-width="6"
-                            class="circle-progress"
-                            id="scoreCircle"
-                          />
-                        </svg>
-
-                        <!-- Tooltip -->
-                        <div class="chart-tooltip"></div>
-
-                        <!-- Score circle overlaid on chart -->
-                        <div class="score-circle">
-                          <span class="score-number"
-                            >{{calculateCompletionPercentage
-                            scores.inputs}}</span
-                          >
-                          <span class="score-max">/100</span>
-                        </div>
+                    
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              <!-- Labs Summary Tab -->
-              <div data-w-tab="LabsSummary" class="w-tab-pane">
-                <div class="wellness-summary-card">
-                  <!-- Hidden data element to store lab values -->
-                  <div 
-                    id="labSummaryData" 
-                    data-labs="{{json biomarkerSummary}}" 
-                    style="display: none">
-                  </div>
-
-                  <div class="labs-summary-header">
-                    <div class="labs-title-wrapper">
-                      <h2 class="insights-title">Labs Summary</h2>
-                      {{!-- <button class="info-button" aria-label="Show labs information">
-                        {{> svg/info}}
-                      {{!-- </button> --}} 
+                  <!-- Info Modal for Wellness Score Inputs -->
+                  <div class="info-modal" style="display: none">
+                    <div class="modal-content">
+                      <button class="modal-close">&times;</button>
+                      <h3>About Wellness Score Inputs</h3>
+                      <p>
+                        Your wellness score is calculated based on the
+                        completion of health metrics across four categories:
+                      </p>
+                      <ul>
+                        <li>
+                          <strong>Inputs:</strong> Basic health data like
+                          age, height, weight, and BMI
+                        </li>
+                        <li>
+                          <strong>Prevention:</strong> Preventive health
+                          measures and screenings
+                        </li>
+                        <li>
+                          <strong>Optimization:</strong> Advanced health
+                          metrics for optimal wellness
+                        </li>
+                        <li>
+                          <strong>Longevity:</strong> Long-term health
+                          indicators
+                        </li>
+                      </ul>
+                      <p>
+                        Click on any metric to see recommendations for
+                        improvement.
+                      </p>
                     </div>
                   </div>
-
-                  <!-- React component will render here -->
-                  <div id="labs-summary-recharts-root"></div>
-
                 </div>
               </div>
 
@@ -1438,36 +1612,36 @@
           root.innerHTML = `
             <div style="width: 100%; padding: 0;">
               <!-- Stats Container -->
-              <div style="display: flex; align-items: flex-end; justify-content: space-around; gap: 2rem; margin-bottom: 2rem;">
-                <div class="stat-box" data-category="inRange" id="inRangeStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
-                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.inRange === 0 ? '#d76f6f' : '#7db17f'};">
+              <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 0.5rem; margin-bottom: 2rem; padding: 0 2.5rem;">
+                <div class="stat-box" data-category="inRange" id="inRangeStatBox" style="flex: 1; text-align: center; padding: 0.75rem 0.15rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; color: ${labData.inRange === 0 ? '#d76f6f' : '#7db17f'}; line-height: 1;">
                     ${labData.inRange || 0}
                   </div>
-                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.75rem; color: #666; white-space: nowrap;">
                     In Range
                   </div>
                 </div>
-                <div class="stat-box" data-category="improving" id="improvingStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
-                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.improving === 0 ? '#d76f6f' : '#9ed3a0'};">
+                <div class="stat-box" data-category="improving" id="improvingStatBox" style="flex: 1; text-align: center; padding: 0.75rem 0.15rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; color: ${labData.improving === 0 ? '#d76f6f' : '#9ed3a0'}; line-height: 1;">
                     ${labData.improving || 0}
                   </div>
-                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.75rem; color: #666; white-space: nowrap;">
                     Improving
                   </div>
                 </div>
-                <div class="stat-box" data-category="outOfRange" id="outOfRangeStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
-                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.outOfRange === 0 ? '#d76f6f' : '#d76f6f'};">
+                <div class="stat-box" data-category="outOfRange" id="outOfRangeStatBox" style="flex: 1; text-align: center; padding: 0.75rem 0.15rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; color: ${labData.outOfRange === 0 ? '#d76f6f' : '#d76f6f'}; line-height: 1;">
                     ${labData.outOfRange || 0}
                   </div>
-                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.75rem; color: #666; white-space: nowrap;">
                     Out of Range
                   </div>
                 </div>
-                <div class="stat-box" data-category="declining" id="decliningStatBox" style="flex: 1; text-align: center; padding: 1rem 0.5rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
-                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; color: ${labData.declining === 0 ? '#d76f6f' : '#e98b8b'};">
+                <div class="stat-box" data-category="declining" id="decliningStatBox" style="flex: 1; text-align: center; padding: 0.75rem 0.15rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                  <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; color: ${labData.declining === 0 ? '#d76f6f' : '#e98b8b'}; line-height: 1;">
                     ${labData.declining || 0}
                   </div>
-                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.9rem; color: #666;">
+                  <div style="font-family: 'Poppins-Regular', sans-serif; font-size: 0.75rem; color: #666; white-space: nowrap;">
                     Declining
                   </div>
                 </div>
