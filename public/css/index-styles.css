@@ -1719,12 +1719,14 @@
     margin-bottom: 0;
     padding-bottom: 0 !important;
   }
-  .quote-1 {
-    font-size: 1.4rem;
-    margin: 1.5rem 0 0.5rem;
-    max-width: 95%;
-    line-height: 1.5;
-  }
+.quote-1 {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 0.5rem 0;
+  max-width: 80%;
+  line-height: 1.5;
+  text-align: center; /* Change from justify to center */
+  text-wrap: balance; /* This balances the line lengths */
+}
   .quote-2 {
     font-size: 1.1rem;
     margin-top: 2.5rem;
@@ -1829,10 +1831,11 @@
     margin-bottom: 3.5rem;
   }
   .inner-content-container {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    width: 95%;
+    width: 100%;
   }
   .laptop-image-container {
     max-width: 100%; /* Much bigger laptop on mobile */
@@ -1898,6 +1901,8 @@
   .mobile-image-container {
     display: block;
     margin-bottom: 1rem !important;
+    position: relative;
+    z-index: 1;
   }
   .inner-content-container {
     flex-direction: column;
@@ -1905,16 +1910,30 @@
     gap: 20px;
   }
   .hover-titles {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
+    position: absolute;
+    right: 3%; /* Adjust this to control how far from the right edge */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    display: flex;
+    flex-direction: column; /* Stack vertically */
+    gap: 12px;
+    z-index: 2; /* Above the image */
+    width: auto;
   }
   .hover-title {
     padding: 10px 16px;
     font-size: 13px;
     white-space: nowrap;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .hover-title.active {
+    background: #5cb15d; /* Use your brand color */
+    color: white;
+    transform: scale(1.05);
   }
   .dashboard-img {
     overflow: visible !important;
