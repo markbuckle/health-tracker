@@ -1222,6 +1222,12 @@
   max-width: 300px;
   width: 100%;
   z-index: 2;
+  margin: 0 auto;
+}
+.mobile-image-container::before {
+  content: '';
+  display: block;
+  padding-top: 200%; /* Adjust this ratio based on your iPhone images (height/width * 100) */
 }
 
 .mobile-demo-img {
@@ -1234,6 +1240,7 @@
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
+  overflow: visible;
 }
 
 .mobile-demo-img.active {
@@ -1890,6 +1897,7 @@
   }
   .mobile-image-container {
     display: block;
+    margin-bottom: 1rem !important;
   }
   .inner-content-container {
     flex-direction: column;
@@ -1907,6 +1915,14 @@
     padding: 10px 16px;
     font-size: 13px;
     white-space: nowrap;
+  }
+  .dashboard-img {
+    overflow: visible !important;
+    padding-bottom: 20px !important;
+  }
+  .dashboard-img .content-container {
+    overflow: visible !important;
+    padding: 20px !important;
   }
 }
 
