@@ -1216,6 +1216,64 @@
   opacity: 0;
 }
 
+.mobile-image-container {
+  display: none; /* Hidden by default */
+  position: relative;
+  max-width: 300px;
+  width: 100%;
+  z-index: 2;
+  margin: 0 auto;
+}
+.mobile-image-container::before {
+  content: '';
+  display: block;
+  padding-top: 200%; /* Adjust this ratio based on your iPhone images (height/width * 100) */
+}
+
+/* .desktop-titles {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.desktop-titles .hover-title {
+  padding: 8px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+} */
+
+/* Mobile titles - vertical stack on right side */
+.mobile-titles {
+  display: none; /* Hidden by default */
+}
+
+
+.mobile-demo-img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.mobile-demo-img.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* Animation keyframes */
 @keyframes slideInRight {
   to {
@@ -1585,6 +1643,12 @@
     margin: 0;
     font-size: clamp(0.85rem, 1.8vw, 1.1rem);
   }
+  .laptop-image-container {
+    display: block;
+  }
+  .mobile-image-container {
+    display: none;
+  }
 }
 
 /* Large Mobile (767px) */
@@ -1622,7 +1686,6 @@
     padding-top: 120px; /* Account for mobile header */
     padding-bottom: 1.5rem;
   }
-  
   .hero-container {
     flex-direction: column;
     /* gap: 1.5rem; */
@@ -1651,7 +1714,6 @@
     padding-right: 0;
     line-height: 1.4;
   }
-  /* Align button container to match text width */
   .button-container-hero.mobile-only {
     width: 100%; /* Full width like the text */
     justify-content: flex-start; /* Left align instead of center */
@@ -1683,12 +1745,14 @@
     margin-bottom: 0;
     padding-bottom: 0 !important;
   }
-  .quote-1 {
-    font-size: 1.4rem;
-    margin: 1.5rem 0 0.5rem;
-    max-width: 95%;
-    line-height: 1.5;
-  }
+.quote-1 {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 0.5rem 0;
+  max-width: 80%;
+  line-height: 1.5;
+  text-align: center; /* Change from justify to center */
+  text-wrap: balance; /* This balances the line lengths */
+}
   .quote-2 {
     font-size: 1.1rem;
     margin-top: 2.5rem;
@@ -1793,10 +1857,11 @@
     margin-bottom: 3.5rem;
   }
   .inner-content-container {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    width: 95%;
+    width: 100%;
   }
   .laptop-image-container {
     max-width: 100%; /* Much bigger laptop on mobile */
@@ -1806,7 +1871,6 @@
     align-items: center;
     gap: 10px;
     width: 100%;
-    /* max-width: 280px; Limit width so buttons don't get too wide */
   }
   .hover-title {
     padding: 10px 16px;
@@ -1820,7 +1884,6 @@
     display: none !important;
     visibility: hidden !important;
   }
-  
   .hero-title .hero-text.mobile-show {
     display: block !important;
     visibility: visible !important;
@@ -1837,8 +1900,6 @@
   .button-container-hero .button-basics {
     width: calc(50% - 0.375rem);
     max-width: none;
-    /* width: 45%; Equal width, taking up most of container */
-    /* max-width: 140px; Prevent them from getting too wide */
     margin: 0;
     padding: 0.75rem 0.5rem !important;
     font-size: 0.85rem;
@@ -1859,6 +1920,54 @@
   }
   .mobile-only {
     display: flex !important;
+  }
+  .laptop-image-container {
+    display: none !important;
+  }
+  .mobile-image-container {
+    display: block;
+    margin-bottom: 1rem !important;
+    position: relative;
+    z-index: 1;
+  }
+  .inner-content-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .hover-titles {
+    position: absolute;
+    right: 3%; /* Adjust this to control how far from the right edge */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    display: flex;
+    flex-direction: column; /* Stack vertically */
+    gap: 12px;
+    z-index: 2; /* Above the image */
+    width: auto;
+  }
+  .hover-title {
+    padding: 10px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .hover-title.active {
+    background: #5cb15d; /* Use your brand color */
+    color: white;
+    transform: scale(1.05);
+  }
+  .dashboard-img {
+    overflow: visible !important;
+    padding-bottom: 20px !important;
+  }
+  .dashboard-img .content-container {
+    overflow: visible !important;
+    padding: 20px !important;
   }
 }
 
