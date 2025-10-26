@@ -1230,6 +1230,32 @@
   padding-top: 200%; /* Adjust this ratio based on your iPhone images (height/width * 100) */
 }
 
+/* .desktop-titles {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.desktop-titles .hover-title {
+  padding: 8px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+} */
+
+/* Mobile titles - vertical stack on right side */
+.mobile-titles {
+  display: none; /* Hidden by default */
+}
+
+
 .mobile-demo-img {
   width: 100%;
   height: auto;

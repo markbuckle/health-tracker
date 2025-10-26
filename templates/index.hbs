@@ -102,18 +102,27 @@
                 <img src="images/laptop4.png" alt="Chatbot dashboard" class="demo-page-img" data-target="chatbot">
             </div>
             
+            <!-- Desktop/iPad hover titles -->
+            <div class="hover-titles desktop-titles">
+              <div class="hover-title active" data-target="charts">Charts</div>
+              <div class="hover-title" data-target="labs">Summaries</div>
+              <div class="hover-title" data-target="recommendations">Actions</div>
+              <div class="hover-title" data-target="chatbot">AI Insights</div>
+            </div>
+            
             <!-- Mobile iPhone images container - Mobile only -->
             <div class="mobile-image-container">
                 <img src="images/iphone1.png" alt="Reports dashboard" class="mobile-demo-img active" data-target="charts">
                 <img src="images/iphone2.png" alt="Insights dashboard" class="mobile-demo-img" data-target="labs">
-                <img src="images/iphone1.png" alt="Chatbot dashboard" class="mobile-demo-img" data-target="recommendations">
-                <img src="images/iphone1.png" alt="Chatbot dashboard" class="mobile-demo-img" data-target="chatbot">
+                <img src="images/iphone3.png" alt="Chatbot dashboard" class="mobile-demo-img" data-target="recommendations">
+                <img src="images/iphone4.png" alt="Chatbot dashboard" class="mobile-demo-img" data-target="chatbot">
             </div>
             
-            <div class="hover-titles">
-              <div class="hover-title active" data-target="charts">Charts</div>
-              <div class="hover-title" data-target="labs">Summaries</div>
-              <div class="hover-title" data-target="recommendations">Actions</div>
+            <!-- Mobile hover titles -->
+            <div class="hover-titles mobile-titles">
+              <div class="hover-title active" data-target="charts">Categories</div>
+              <div class="hover-title" data-target="labs">Analytics</div>
+              <div class="hover-title" data-target="recommendations">Takeaways</div>
               <div class="hover-title" data-target="chatbot">AI Insights</div>
             </div>
         </div>
@@ -336,39 +345,41 @@
             });
         });
     </script> --}}
-    <script> // Image changer for both laptop and mobile
-        document.addEventListener('DOMContentLoaded', function() {
-            const titles = document.querySelectorAll('.hover-title');
-            const laptopImages = document.querySelectorAll('.demo-page-img');
-            const mobileImages = document.querySelectorAll('.mobile-demo-img');
-            
-            titles.forEach(title => {
-                title.addEventListener('mouseenter', function() {
-                    const target = this.dataset.target;
-                    
-                    // Remove active class from all titles and images
-                    titles.forEach(t => t.classList.remove('active'));
-                    laptopImages.forEach(img => img.classList.remove('active'));
-                    mobileImages.forEach(img => img.classList.remove('active'));
-                    
-                    // Add active class to current title
-                    this.classList.add('active');
-                    
-                    // Add active class to corresponding laptop image
-                    const targetLaptopImage = document.querySelector(`[data-target="${target}"].demo-page-img`);
-                    if (targetLaptopImage) {
-                        targetLaptopImage.classList.add('active');
-                    }
-                    
-                    // Add active class to corresponding mobile image
-                    const targetMobileImage = document.querySelector(`[data-target="${target}"].mobile-demo-img`);
-                    if (targetMobileImage) {
-                        targetMobileImage.classList.add('active');
-                    }
+<script> // Image changer for both laptop and mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const allTitles = document.querySelectorAll('.hover-title');
+        const laptopImages = document.querySelectorAll('.demo-page-img');
+        const mobileImages = document.querySelectorAll('.mobile-demo-img');
+        
+        allTitles.forEach(title => {
+            title.addEventListener('mouseenter', function() {
+                const target = this.dataset.target;
+                
+                // Remove active class from ALL titles (both desktop and mobile)
+                allTitles.forEach(t => t.classList.remove('active'));
+                laptopImages.forEach(img => img.classList.remove('active'));
+                mobileImages.forEach(img => img.classList.remove('active'));
+                
+                // Add active class to ALL titles with matching target
+                document.querySelectorAll(`[data-target="${target}"].hover-title`).forEach(t => {
+                    t.classList.add('active');
                 });
+                
+                // Add active class to corresponding laptop image
+                const targetLaptopImage = document.querySelector(`[data-target="${target}"].demo-page-img`);
+                if (targetLaptopImage) {
+                    targetLaptopImage.classList.add('active');
+                }
+                
+                // Add active class to corresponding mobile image
+                const targetMobileImage = document.querySelector(`[data-target="${target}"].mobile-demo-img`);
+                if (targetMobileImage) {
+                    targetMobileImage.classList.add('active');
+                }
             });
         });
-    </script>
+    });
+</script>
     <!-- Load React from CDN that's allowed by CSP -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
