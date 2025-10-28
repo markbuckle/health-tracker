@@ -13,8 +13,8 @@
       /* Dashboard grid layout */
       .dashboard-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
+        grid-template-columns: 0.5fr 0.5fr;
+        gap: 1rem;
         width: 100%;
       }
       
@@ -27,12 +27,14 @@
 
       /* Add top padding to match Labs Summary */
       .dashboard-right-column .insights-header {
-        padding-top: 1.5rem;
+        padding-top: 0;
+        margin-left: 0.5rem;
       }
 
       /* Add top padding to Labs Summary header too for consistency */
       .dashboard-left-column .labs-summary-header {
-        padding-top: 1.5rem;
+        padding-top: 0;
+        margin-left: 0.5rem;
       }
 
       /* Center the wellness score horizontally */
@@ -1612,7 +1614,7 @@
           root.innerHTML = `
             <div style="width: 100%; padding: 0;">
               <!-- Stats Container -->
-              <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 0.5rem; margin-bottom: 2rem; padding: 0 2.5rem;">
+              <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 0.5rem; margin-bottom: 0; padding: 0 2.5rem;">
                 <div class="stat-box" data-category="inRange" id="inRangeStatBox" style="flex: 1; text-align: center; padding: 0.75rem 0.15rem; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
                   <div style="font-family: 'Poppins-Bold', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; color: ${labData.inRange === 0 ? '#d76f6f' : '#7db17f'}; line-height: 1;">
                     ${labData.inRange || 0}
@@ -1648,7 +1650,7 @@
               </div>
 
               <!-- Chart -->
-              <div style="margin-top: 1.5rem; margin-bottom: 1rem; position: relative; height: 220px;">
+              <div style="margin-top: 0; margin-bottom: 0; position: relative; height: 180px;">
                 <canvas id="labsChart"></canvas>
               </div>
 

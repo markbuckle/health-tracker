@@ -741,6 +741,7 @@ body.menu-open .hero-title {
     text-align: center !important;
     white-space: nowrap !important; /* Prevent text wrapping */
     max-width: none !important; /* Remove width restrictions */
+    min-width: 4rem !important;
   }
   .header-scrolled .mobile-nav-links-horizontal .mobile-nav-link,
   .header-scrolled .mobile-nav-links-horizontal .auth-button {

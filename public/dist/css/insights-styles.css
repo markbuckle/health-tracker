@@ -303,7 +303,7 @@
   margin-top: 0.2rem;
 }
 .insights-title {
-  font-size: 24px;
+  font-size: 20px;
   font-family: "Poppins-SemiBold", sans-serif;
   color: #333;
   margin: 0;
@@ -1430,15 +1430,14 @@
 /* Dashboard layout styles */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-top: 1.5rem;
+  grid-template-columns: 0.5fr 0.5fr;
+  gap: 1rem;
 }
 
 .dashboard-column {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
       
 @media (max-width: 1024px) {
@@ -1505,6 +1504,10 @@
     padding: 0px 0.5rem 2rem 0.5rem !important; /* Add top padding for fixed header */
     transition: padding-top 0.3s ease-in-out;
     max-width: 100%;
+  }
+  .dashboard-grid {
+    margin-top: 0;
+    gap: 1rem !important;
   }
    /* Adjust for mobile menu when open */
   body.menu-open .demo-header {
