@@ -1430,7 +1430,7 @@
 /* Dashboard layout styles */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 0.5fr 0.5fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
 
@@ -1442,7 +1442,7 @@
 /* Dashboard grid layout */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 0.5fr 0.5fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
   width: 100%;
 }
@@ -1451,7 +1451,7 @@
 .dashboard-right-column {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0;
 }
 
 /* Add top padding to match Labs Summary */

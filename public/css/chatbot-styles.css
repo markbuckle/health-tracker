@@ -243,6 +243,11 @@
   background: #ebf8ff;
 }
 
+.dashboard-content {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 /* ===================================
    WELCOME STATE
    =================================== */
@@ -279,16 +284,16 @@
 .welcome-input-container {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto 2rem auto;
 }
 
 .welcome-input {
   width: 100%;
-  padding: 1rem 4rem 1rem 1.25rem;
+  padding: 1rem 4rem 3rem 1.25rem;
   border: 1.5px solid #e5e7eb;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1.5;
   color: #1f2937;
   background: white;
@@ -312,8 +317,8 @@
   right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 33px;
+  height: 33px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -600,8 +605,8 @@
 }
 
 .chat-submit-btn-modern {
-  width: 40px;
-  height: 40px;
+  width: 33px;
+  height: 33px;
   display: flex;
   align-items: center;
   justify-content: center;
