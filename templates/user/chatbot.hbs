@@ -9,11 +9,13 @@
     <link href="css/user-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/insights-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/chatbot-styles.css" rel="stylesheet" type="text/css" />
+    <link href="css/chatbot-modern.css" rel="stylesheet" type="text/css" />
   </head>
 
   <body class="user-body">
     {{> mobileUserHeader currentPage="chatbot"}}
 
+    <!-- Main Navigation Sidebar (Unchanged) -->
     <div class="sidebar">
       <div class="sidebar-logo-wrapper">
         <div class="sidebar-logo-link">
@@ -102,133 +104,195 @@
       <div class="sidebar-bottom-spacer"></div>
     </div>
 
-    <section class="demo-header">
-      <div class="header-container-2">
-        <div>
-          <h2 class="heading2">Chatbot</h2>
-          <h3 class="subheading"></h3>
-          <div class="spacer-block"></div>
+    <!-- Modern Chat Layout -->
+    <div class="modern-chat-layout">
+      <!-- Conversation History Sidebar -->
+      <div class="conversation-sidebar">
+        <div class="conversation-sidebar-header">
+          <h3 class="conversation-sidebar-title">Your chat history</h3>
+          <button 
+            id="new-conversation-btn" 
+            class="new-conversation-btn"
+            title="New conversation"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>New chat</span>
+          </button>
         </div>
-        <!-- Ask Tab Notification - Hidden by default -->
-        <div id="askTabNotification" class="ask-tab-notification" style="display: none;">
-          <div class="notification-container">
-            <div class="notification-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
+
+        <div class="conversation-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input 
+            type="text" 
+            id="conversation-search-input" 
+            placeholder="Search your chats..."
+            class="conversation-search-input"
+          />
+        </div>
+
+        <div class="conversation-list-container">
+          <div id="conversation-list" class="conversation-list">
+            <!-- Conversations will be loaded here -->
+            <div class="conversation-list-loading">
+              <div class="loading-spinner"></div>
+              <p>Loading conversations...</p>
             </div>
-            <div class="notification-content">
-              <div class="notification-title">Reed is a work in progress</div>
-              <div class="notification-message">
-                Our AI health assistant is currently being trained and our database is small. We plan to improve Reed's knowledge base soon!
-              </div>
-            </div>
-            {{!-- <div class="notification-content">
-              <div class="notification-title">Reed is Temporarily Unavailable</div>
-              <div class="notification-message">
-                Our AI health assistant is currently experiencing technical difficulties in the production environment. We're working to restore full functionality soon. Thank you for your patience!
-              </div>
-            </div> --}}
-            <button class="notification-close" aria-label="Close notification">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
           </div>
         </div>
       </div>
-    </section>
 
-    <div class="dashboard-content">
-      <div class="dashboard-container">
-        <div class="w-layout-grid main-grid">
-          <div class="tabs w-tabs">
-            <!-- Tab Menu -->
-            <div class="in-page-menu w-tab-menu">
-              <a
-                data-w-tab="Ask"
-                class="in-page-link w-inline-block w-tab-link"
-              >
-                <div class="text-block">Ask</div>
-              </a>
+      <!-- Main Chat Area -->
+      <div class="chat-main-area">
+        <section class="demo-header chat-header-modern">
+          <div class="header-container-2">
+            {{!-- <div class="header-title-group" style="display: none;">
+              <h2 class="heading2">Chatbot</h2>
+              <span id="current-conversation-title" class="conversation-subtitle"></span>
+            </div> --}}
+            
+            <!-- Ask Tab Notification - Hidden by default -->
+            <div id="askTabNotification" class="ask-tab-notification" style="display: none;">
+              <div class="notification-container">
+                <div class="notification-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </div>
+                <div class="notification-content">
+                  <div class="notification-title">Reed is a work in progress</div>
+                  <div class="notification-message">
+                    Our AI health assistant is currently being trained and our database is small. We plan to improve Reed's knowledge base soon!
+                  </div>
+                </div>
+                <button class="notification-close" aria-label="Close notification">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
             </div>
+          </div>
+        </section>
 
-            <!-- Tab Content -->
-            <div class="w-tab-content">
+        <div class="dashboard-content modern-dashboard">
+          <div class="dashboard-container">
+            <div class="modern-chat-container">
+              <!-- Welcome State (shown when no conversation is active) -->
+              <div id="welcome-state" class="welcome-state">
+                <div class="welcome-content">
+                  <h2 class="welcome-title">Hello, <span id="welcome-user-name">there</span></h2>
+                  <p class="welcome-subtitle">
+                    I can answer questions about cardiovascular health, cholesterol, exercise, and other health topics. How can I help you today?
+                  </p>
+                  
+                  <!-- Welcome Input Box -->
+                  <div class="welcome-input-container">
+                    <input 
+                      type="text" 
+                      id="welcome-input" 
+                      class="welcome-input" 
+                      placeholder="Ask me anything..."
+                    />
+                    <button id="welcome-submit" class="welcome-submit-btn">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                      </svg>
+                    </button>
+                  </div>
 
-              <!-- Ask Tab -->
-              <div data-w-tab="Ask" class="w-tab-pane">
-                <div class="chatbot-card">
-                  <div class="ask-wrapper">
-                    <div class="ask-header">
-                      <h2 class="ask-title">Ask Reed</h2>
-                      <div class="header-buttons">
-                        <button
-                          id="clear-conversation-btn"
-                          class="clear-conversation-button"
-                          aria-label="Clear conversation"
-                          title="Start new conversation"
+                  <div class="welcome-suggestions">
+                    <button class="suggestion-btn" data-query="What is my latest cholesterol level?">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                      </svg>
+                      What is my latest cholesterol level?
+                    </button>
+                    <button class="suggestion-btn" data-query="What are the leading causes of mortality?">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
+                      What are the leading causes of mortality?
+                    </button>
+                    <button class="suggestion-btn" data-query="How can I improve my cardiovascular health?">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                      </svg>
+                      How can I improve my cardiovascular health?
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Interface -->
+              <div id="chat-interface" class="chat-interface" style="display: none;">
+                <div class="chat-messages-wrapper">
+                  <div id="chat-messages" class="chat-messages-modern">
+                    <!-- Messages will appear here -->
+                  </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-wrapper">
+                  <div class="chat-input-container-modern">
+                    <textarea
+                      id="chat-input"
+                      class="chat-input-modern"
+                      placeholder="Ask me about health topics..."
+                      rows="1"
+                    ></textarea>
+                    <div class="chat-input-actions">
+                      <button 
+                        id="clear-conversation-btn" 
+                        class="chat-action-btn"
+                        title="Clear conversation"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="1 4 1 10 7 10"></polyline>
+                          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                      </button>
+                      <button 
+                        class="chat-action-btn info-button" 
+                        title="About Reed"
+                      >
+                        {{> svg/info}}
+                      </button>
+                      <button id="chat-submit" class="chat-submit-btn-modern">
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
                         >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="1 4 1 10 7 10"></polyline>
-                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                          </svg>
-                        </button>
-                        <button
-                          class="info-button"
-                          aria-label="Show RAG information"
-                        >
-                          {{> svg/info}}
-                        </button>
-                      </div>
-                    </div>
-
-                    <!-- Chat interface container -->
-                    <div class="chat-container">
-                      <!-- Messages will appear here -->
-                      <div id="chat-messages" class="chat-messages">
-                        <div class="chat-message system-message">
-                          <div class="message-content">
-                            <p>
-                              Hi there! I'm Reed, your health assistant. I can
-                              answer questions about cardiovascular health,
-                              cholesterol, exercise, and other health topics.
-                              How can I help you today?
-                            </p>
-                          </div>
-                        </div>
-                        <div class="chatbot-resize-handle"></div>
-                      </div>
-
-                      <!-- Input area -->
-                      <div class="chat-input-container">
-                        <textarea
-                          id="chat-input"
-                          class="chat-input"
-                          placeholder="Ask me about health topics..."
-                          rows="1"
-                        ></textarea>
-                        <button id="chat-submit" class="chat-submit-btn">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          >
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon
-                              points="22 2 15 22 11 13 2 9 22 2"
-                            ></polygon>
-                          </svg>
-                        </button>
-                      </div>
+                          <line x1="22" y1="2" x2="11" y2="13"></line>
+                          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -242,6 +306,8 @@
     <section class="background report-background">
       <div class="w-layout-blockcontainer container-4 w-container"></div>
     </section>
+
+    <!-- Scripts (Unchanged) -->
     <script
       src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6606de22e8c152e6b19be98a"
       type="text/javascript"
@@ -254,765 +320,22 @@
     <script src="js/mobile-logout.js"></script>
     <script src="js/sidebar-logout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script>// modals
 
-      // Info button modal
-      document.querySelector(".info-button").addEventListener("click", () => {
-        document.querySelector(".wellness-info").classList.add("active");
-      });
+    <!-- Main Chat Functionality Script -->
+    <script src="js/chatbot-modern.js"></script>
 
-      // Wellness metrics modal
-      document
-        .querySelector(".edit-button-modal")
-        .addEventListener("click", (e) => {
-          e.preventDefault();
-          document.querySelector(".modal-wrapper-6").classList.add("active");
-        });
-
-      // Close handlers
-      document
-        .querySelectorAll(".modal-background, .cancel-button")
-        .forEach((element) => {
-          element.addEventListener("click", () => {
-            document
-              .querySelectorAll(".wellness-info, .modal-wrapper-6")
-              .forEach((modal) => {
-                modal.classList.remove("active");
-              });
-          });
-        });
-
-      // Return button
-      document.querySelectorAll(".modal-return-button").forEach((button) => {
-        button.addEventListener("click", () => {
-          document
-            .querySelectorAll(".wellness-info, .modal-wrapper-6")
-            .forEach((modal) => {
-              modal.classList.remove("active");
-            });
-        });
-      });
-    </script>
-    <script> // wellness chart animations
-      function updateScoreCircle(score) {
-        const circle = document.getElementById("scoreCircle");
-        const scoreCircleElement = document.getElementById(".score-circle");
-
-        // Calculate circle properties
-        const radius = 26;
-        const circumference = 2 * Math.PI * radius;
-        // Calculate offset (reversed to fill clockwise from top)
-        const offset = ((100 - score) / 100) * circumference;
-
-        // Set circle properties
-        circle.style.strokeDasharray = `${circumference} ${circumference}`;
-        circle.style.strokeDashoffset = offset;
-
-        // Set color based on score
-        let color;
-        if (score >= 75) {
-          color = "#71b871"; // Green
-        } else if (score >= 50) {
-          color = "#ffd700"; // Yellow
-        } else {
-          color = "#ff6b6b"; // Red
-        }
-
-        circle.style.stroke = color;
-        scoreCircleElement.style.borderColor = color;
-      }
-
-      // Initialize when page loads
-      document.addEventListener("DOMContentLoaded", function () {
-        // Get the score from the totalScore element that was rendered from server
-        const score = parseInt(
-          document.getElementById("totalScore").textContent
-        );
-
-        // Update the circle display
-        document.querySelector(".score-number").textContent = score;
-        updateScoreCircle(score);
-      });
-    </script>
-    <script> // metric dropdown
-      document.addEventListener("DOMContentLoaded", function () {
-        // Get all metric items
-        const metricItems = document.querySelectorAll(".metric-item");
-
-        // Add click event listener to each metric item
-        metricItems.forEach((metricItem) => {
-          metricItem.addEventListener("click", function () {
-            // Toggle active class on the clicked metric item
-            this.classList.toggle("active");
-
-            // Get the metric dropdown element (it follows the metric item in DOM)
-            const metricDropdown = this.nextElementSibling;
-
-            // If dropdown doesn't exist, we don't need to do anything
-            if (
-              !metricDropdown ||
-              !metricDropdown.classList.contains("metric-dropdown")
-            ) {
-              return;
-            }
-
-            // Toggle the dropdown visibility
-            if (this.classList.contains("active")) {
-              metricDropdown.style.maxHeight =
-                metricDropdown.scrollHeight + "px";
-              metricDropdown.style.opacity = "1";
-            } else {
-              metricDropdown.style.maxHeight = "0";
-              metricDropdown.style.opacity = "0";
-            }
-
-            // Close other open dropdowns
-            metricItems.forEach((item) => {
-              if (item !== this && item.classList.contains("active")) {
-                item.classList.remove("active");
-                const dropdown = item.nextElementSibling;
-                if (
-                  dropdown &&
-                  dropdown.classList.contains("metric-dropdown")
-                ) {
-                  dropdown.style.maxHeight = "0";
-                  dropdown.style.opacity = "0";
-                }
-              }
-            });
-          });
-        });
-      });
-    </script>
-    <script> // RAG Chat functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        const chatMessages = document.getElementById("chat-messages");
-        const chatInput = document.getElementById("chat-input");
-        const chatSubmit = document.getElementById("chat-submit");
-
-        // ← NEW: Store conversation history for context
-        let conversationHistory = [];
-
-        // Auto-resize textarea
-        chatInput.addEventListener("input", function () {
-          this.style.height = "auto";
-          this.style.height = this.scrollHeight + "px";
-        });
-
-        // Submit on Enter (but allow Shift+Enter for new lines)
-        chatInput.addEventListener("keydown", function (e) {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            submitMessage();
-          }
-        });
-
-        // Submit button click
-        chatSubmit.addEventListener("click", submitMessage);
-
-        function submitMessage() {
-          const message = chatInput.value.trim();
-          if (!message) return;
-
-          // Add user message to chat
-          addMessage(message, "user");
-
-          // Clear input
-          chatInput.value = "";
-          chatInput.style.height = "auto";
-
-          // Show typing indicator
-          addTypingIndicator();
-
-          // Send to RAG API
-          sendToRAG(message);
-        }
-
-        function addMessage(message, sender) {
-          const messageDiv = document.createElement("div");
-          messageDiv.className = `chat-message ${sender}-message`;
-
-          const messageContent = document.createElement("div");
-          messageContent.className = "message-content";
-
-          // Parse markdown-like formatting for code blocks and links
-          const formattedText = formatMessage(message);
-          messageContent.innerHTML = `<p>${formattedText}</p>`;
-
-          messageDiv.appendChild(messageContent);
-          chatMessages.appendChild(messageDiv);
-
-          // Scroll to bottom
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function formatMessage(text) {
-          // Configure marked for simple rendering
-          if (typeof marked !== 'undefined') {
-            marked.setOptions({
-              breaks: true,  // Convert \n to <br>
-              gfm: true,     // GitHub Flavored Markdown
-              headerIds: false,
-              mangle: false
-            });
-            
-            // Use marked to parse the markdown
-            return marked.parse(text);
-          }
-          
-          // Fallback if marked isn't loaded
-          // Convert **bold** to <strong>
-          text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-          
-          // Handle code blocks
-          text = text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-          
-          // Handle inline code
-          text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-          
-          // Handle links
-          text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
-          
-          // Handle line breaks
-          text = text.replace(/\n/g, '<br>');
-          
-          return text;
-        }
-
-        function addTypingIndicator() {
-          const typingDiv = document.createElement("div");
-          typingDiv.className = "chat-message assistant-message typing";
-          typingDiv.innerHTML = `
-            <div class="typing-indicator">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          `;
-          chatMessages.appendChild(typingDiv);
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function removeTypingIndicator() {
-          const typingIndicator = document.querySelector(".typing");
-          if (typingIndicator) {
-            typingIndicator.remove();
-          }
-        }
-
-        async function sendToRAG(query) {
-          try {
-            // ← NEW: Add user message to conversation history
-            conversationHistory.push({
-              role: "user",
-              content: query
-            });
-            
-            // ← NEW: Keep only last 10 messages to avoid token limits
-            if (conversationHistory.length > 10) {
-              conversationHistory = conversationHistory.slice(-10);
-            }
-
-            // STEP 1: Try to get current user ID
-            console.log('Getting current user ID...');
-            let userId = null;
-            
-            try {
-              const userIdResponse = await fetch("/api/current-user");
-              if (userIdResponse.ok) {
-                const userData = await userIdResponse.json();
-                userId = userData.userId;
-                console.log('User ID retrieved:', userId);
-              } else {
-                console.log('User not authenticated, proceeding without context');
-              }
-            } catch (userError) {
-              console.log('Error getting user ID, proceeding without context:', userError);
-            }
-            
-            // STEP 2: Get user context only if we have a userId
-            let userContext = null;
-            
-            if (userId) {
-              try {
-                const contextResponse = await fetch("/api/rag/context", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ userId: userId })
-                });
-                
-                if (contextResponse.ok) {
-                  const contextData = await contextResponse.json();
-                  userContext = contextData.userContext;
-                  console.log('User context retrieved:', userContext);
-                }
-              } catch (contextError) {
-                console.error('Error getting user context:', contextError);
-              }
-            }
-            
-            // STEP 3: Send to RAG with context (if available)
-            const response = await fetch("/api/rag/ask", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ 
-                query,
-                userContext: userContext,
-                conversationHistory: conversationHistory  // ← NEW: Include conversation history
-              }),
-            });
-
-            const data = await response.json();
-            
-            // ← NEW: Add assistant response to conversation history
-            conversationHistory.push({
-              role: "assistant",
-              content: data.response
-            });
-            
-            // Remove typing indicator
-            removeTypingIndicator();
-
-            // Add response to chat
-            addMessage(data.response, "assistant");
-
-            // Store sources for info button
-            window.lastSources = data.sources;
-            
-          } catch (error) {
-            console.error("Error:", error);
-            removeTypingIndicator();
-            addMessage(
-              "Sorry, I couldn't process your request. Please try again.",
-              "assistant"
-            );
-          }
-        }
-
-        // Add info button functionality to show sources
-        document
-          .querySelector('[data-w-tab="Ask"] .info-button')
-          .addEventListener("click", function () {
-            showChatInfoModal();
-          });
-
-        function showChatInfoModal() {
-          // Create sources HTML if available
-          let sourcesHTML = "";
-          if (window.lastSources && window.lastSources.length > 0) {
-            sourcesHTML = "<h3>Last Query Sources:</h3>";
-            window.lastSources.forEach((source) => {
-              sourcesHTML += `
-          <div class="source-item">
-            <div class="source-title">${source.title}</div>
-            <div class="source-similarity">Relevance: ${Math.round(
-              source.similarity * 100
-            )}%</div>
-          </div>
-        `;
-            });
-          }
-
-          // Show modal with chat info and sources
-          const modal = document.createElement("div");
-          modal.id = "chatInfoModal";
-          modal.className = "modal-wrapper wellness-info active";
-          modal.innerHTML = `
-            <div class="modal-background"></div>
-            <div class="modal-card">
-              <div class="modal-header">
-                <a class="modal-return-button w-inline-block w--current" aria-current="page">
-                  {{> svg/backArrow}}
-                </a>
-                <h1 class="modal-button">About Reed</h1>
-              </div>
-              <div class="modal-description">
-                <p>Reed is your health knowledge assistant powered by retrieval-augmented generation (RAG). Reed only provides information based on trusted health resources in our database.</p>
-                <p>Unlike generic AI chatbots, Reed doesn't make things up - it will only answer with information it can find in reliable sources.</p>
-                <p>Note that Reed is currently in early development with a limited knowledge base. We're using free embeddings and a lightweight model, which can often leave a disappointing response quality. As we expand our database and upgrade to premium services, you can expect significantly improved accuracy and more comprehensive answers.</p>
-                ${sourcesHTML}
-              </div>
-              <div class="modal-footer">
-                <a href="#" aria-current="page" class="cancel-button cancel-space">Close</a>
-              </div>
-            </div>
-          `;
-
-          document.body.appendChild(modal);
-
-          // Add event listeners to close modal
-          modal
-            .querySelector(".modal-background")
-            .addEventListener("click", () => modal.remove());
-          modal
-            .querySelector(".cancel-button")
-            .addEventListener("click", () => modal.remove());
-          modal
-            .querySelector(".modal-return-button")
-            .addEventListener("click", () => modal.remove());
-        }
-        initializeChatbotCardResize();
-      });
-    </script>
-    <script> // Labs Summary JavaScript
-      document.addEventListener('DOMContentLoaded', function() {
-        // Check if we're on the insights page with the Labs Summary tab
-        const labSummaryTab = document.querySelector('[data-w-tab="LabsSummary"]');
-        if (!labSummaryTab) return;
-
-        // Add tab change listener to ensure stats update when tab is viewed
-        document.querySelectorAll('.in-page-link').forEach(tabLink => {
-          tabLink.addEventListener('click', function() {
-            if (this.getAttribute('data-w-tab') === 'LabsSummary') {
-              setTimeout(animateLabStats, 150);
-            }
-          });
-        });
-
-        // Get labs data from the hidden element
-        function getLabsData() {
-          const dataElement = document.getElementById('labSummaryData');
-          if (!dataElement) return { inRange: 0, outOfRange: 0, improving: 0 };
-          
-          try {
-            return JSON.parse(dataElement.getAttribute('data-labs'));
-          } catch (e) {
-            console.error('Error parsing labs data:', e);
-            return { inRange: 0, outOfRange: 0, improving: 0 };
-          }
-        }
-
-        // Animate stats with counting effect
-        function animateLabStats() {
-          const labsData = getLabsData();
-          
-          animateCounter('inRangeCount', labsData.inRange || 0);
-          animateCounter('outOfRangeCount', labsData.outOfRange || 0);
-          animateCounter('improvingCount', labsData.improving || 0);
-          
-          // Animate chart bars
-          animateChartBars(labsData);
-        }
-
-        // Counter animation function
-        function animateCounter(elementId, targetValue) {
-          const element = document.getElementById(elementId);
-          if (!element) return;
-          
-          const countDisplay = element.querySelector('.count-number');
-          if (!countDisplay) return;
-          
-          // Get current value
-          const startValue = parseInt(countDisplay.textContent) || 0;
-          const duration = 1000; // Animation duration in ms
-          const stepTime = 20; // ms per step
-          const steps = duration / stepTime;
-          const increment = (targetValue - startValue) / steps;
-          
-          let currentValue = startValue;
-          let currentStep = 0;
-          
-          const animation = setInterval(() => {
-            currentStep++;
-            currentValue += increment;
-            
-            if (currentStep >= steps) {
-              clearInterval(animation);
-              currentValue = targetValue;
-            }
-            
-            countDisplay.textContent = Math.round(currentValue);
-            
-            if (currentStep >= steps) {
-              // Add a slight bounce effect at the end
-              element.style.transform = 'scale(1.05)';
-              setTimeout(() => {
-                element.style.transform = 'scale(1)';
-              }, 100);
-            }
-          }, stepTime);
-        }
-
-        // Animate the chart bars
-        function animateChartBarsPercentage(labsData) {
-          const chartBars = document.querySelectorAll('.chart-bar');
-          if (chartBars.length < 4) return;
-          
-          // Get all values
-          const inRangeValue = labsData.inRange || 0;
-          const improvingValue = labsData.improving || 0;
-          const outOfRangeValue = labsData.outOfRange || 0;
-          const decliningValue = labsData.declining || 0;
-          
-          // Calculate total biomarkers
-          const totalBiomarkers = inRangeValue + improvingValue + outOfRangeValue + decliningValue;
-          
-          // Base height settings
-          const maxBarHeight = 180;
-          const minBarHeight = 8;
-          
-          // Apply heights with animation - using percentage of total
-          setTimeout(() => {
-            chartBars[0].style.height = `${calculatePercentageHeight(inRangeValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
-            chartBars[1].style.height = `${calculatePercentageHeight(improvingValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
-            chartBars[2].style.height = `${calculatePercentageHeight(outOfRangeValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
-            chartBars[3].style.height = `${calculatePercentageHeight(decliningValue, totalBiomarkers, maxBarHeight, minBarHeight)}px`;
-          }, 300);
-          
-          // Calculate height based on percentage of total biomarkers
-          function calculatePercentageHeight(value, total, maxHeight, minHeight) {
-            if (value === 0 || total === 0) return minHeight;
-            
-            // Calculate percentage of total
-            const percentage = value / total;
-            
-            // Scale from minHeight to maxHeight based on percentage
-            const scaledHeight = minHeight + (maxHeight - minHeight) * percentage;
-            
-            return Math.round(scaledHeight);
-          }
-        }
-
-        // Info button modal functionality
-        const labsInfoButton = labSummaryTab.querySelector('.info-button');
-        if (labsInfoButton) {
-          labsInfoButton.addEventListener('click', () => {
-            document.querySelector('.labs-info-modal').classList.add('active');
-          });
-        }
-
-        // Close modal handlers
-        document.querySelectorAll('.labs-info-modal .modal-background, .labs-info-modal .cancel-button, .labs-info-modal .modal-return-button').forEach(element => {
-          element.addEventListener('click', () => {
-            document.querySelector('.labs-info-modal').classList.remove('active');
-          });
-        });
-
-         // Close modal handlers
-        document.querySelectorAll('.wellness-info .modal-background, .wellness-info .cancel-button, .wellness-info .modal-return-button').forEach(element => {
-          element.addEventListener('click', () => {
-            document.querySelector('.wellness-info').classList.remove('active');
-          });
-        });
-
-        // Run animation on initial load if the Labs Summary tab is active
-        if (labSummaryTab.classList.contains('w--tab-active')) {
-          setTimeout(animateLabStats, 300);
-        }
-      });
-    </script>
-    <script> // empty state bar charts
-      document.addEventListener('DOMContentLoaded', function() {
-        // Check for empty state (all values are zero)
-        function checkForEmptyState() {
-          const biomarkerSummary = getBiomarkerSummary();
-          const isEmpty = biomarkerSummary.inRange === 0 && 
-                          biomarkerSummary.improving === 0 && 
-                          biomarkerSummary.outOfRange === 0 && 
-                          biomarkerSummary.declining === 0;
-          
-          // Apply or remove empty state class based on the check
-          const chartContainer = document.querySelector('.lab-stats-chart');
-          if (chartContainer) {
-            if (isEmpty) {
-              chartContainer.classList.add('empty-state');
-            } else {
-              chartContainer.classList.remove('empty-state');
-            }
-          }
-          
-          return isEmpty;
-        }
-        
-        // Get biomarker summary data from the hidden element
-        function getBiomarkerSummary() {
-          const dataElement = document.getElementById('labSummaryData');
-          if (!dataElement) {
-            return { inRange: 0, outOfRange: 0, improving: 0, declining: 0 };
-          }
-          
-          try {
-            return JSON.parse(dataElement.getAttribute('data-labs')) || 
-                  { inRange: 0, outOfRange: 0, improving: 0, declining: 0 };
-          } catch (e) {
-            console.error('Error parsing biomarker data:', e);
-            return { inRange: 0, outOfRange: 0, improving: 0, declining: 0 };
-          }
-        }
-        
-        // Update chart based on data
-        function updateChartDisplay() {
-          const isEmpty = checkForEmptyState();
-          const chartContainer = document.querySelector('.chart-container');
-          
-          if (!chartContainer) return;
-          
-          // If empty, make sure we have the empty state message
-          if (isEmpty && !document.querySelector('.empty-state-text')) {
-            const emptyText = document.createElement('div');
-            emptyText.className = 'empty-state-text';
-            emptyText.textContent = 'Upload lab results to see your biomarker data';
-            chartContainer.insertAdjacentElement('afterend', emptyText);
-          }
-          
-          // Set chart bar heights for empty state
-          if (isEmpty) {
-            const chartBars = document.querySelectorAll('.chart-bar');
-            chartBars.forEach(bar => {
-              bar.style.height = '10px';
-            });
-          }
-        }
-        
-        // Run the check when the page loads
-        updateChartDisplay();
-        
-        // You might want to run this again if the tab changes
-        document.querySelectorAll('.in-page-link').forEach(tab => {
-          tab.addEventListener('click', function() {
-            if (this.getAttribute('data-w-tab') === 'LabsSummary') {
-              setTimeout(updateChartDisplay, 100);
-            }
-          });
-        });
-      });
-    </script>
-    <script> // chat-messages size adjuster
-      function initializeChatbotCardResize() {
-        const chatbotCard = document.querySelector('.chatbot-card');
-        const chatMessages = document.getElementById('chat-messages');
-        const resizeHandle = document.querySelector('.chatbot-resize-handle');
-        
-        if (!chatbotCard || !chatMessages || !resizeHandle) return;
-        
-        let isResizing = false;
-        let startY = 0;
-        let startChatHeight = 0;
-        let startCardHeight = 0;
-        
-        // Mouse events for desktop
-        resizeHandle.addEventListener('mousedown', initResize);
-        document.addEventListener('mousemove', doResize);
-        document.addEventListener('mouseup', stopResize);
-        
-        // Touch events for mobile
-        resizeHandle.addEventListener('touchstart', initResizeTouch, { passive: false });
-        document.addEventListener('touchmove', doResizeTouch, { passive: false });
-        document.addEventListener('touchend', stopResize);
-        
-        function initResize(e) {
-          isResizing = true;
-          startY = e.clientY;
-          startChatHeight = parseInt(window.getComputedStyle(chatMessages).height, 10);
-          startCardHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
-          document.body.style.userSelect = 'none';
-          e.preventDefault();
-        }
-        
-        function initResizeTouch(e) {
-          isResizing = true;
-          startY = e.touches[0].clientY;
-          startChatHeight = parseInt(window.getComputedStyle(chatMessages).height, 10);
-          startCardHeight = parseInt(window.getComputedStyle(chatbotCard).height, 10);
-          document.body.style.userSelect = 'none';
-          e.preventDefault();
-        }
-        
-        function doResize(e) {
-          if (!isResizing) return;
-          
-          const currentY = e.clientY;
-          const diff = currentY - startY;
-          const newChatHeight = startChatHeight + diff;
-          const newCardHeight = startCardHeight + diff;
-          
-          // Set min and max heights with separate tablet handling
-          let minChatHeight, maxChatHeight;
-
-          if (window.innerWidth <= 767) {
-            // Mobile (≤767px)
-            minChatHeight = 120;
-            maxChatHeight = Math.min(window.innerHeight * 0.6, 600);
-          } else if (window.innerWidth <= 1024) {
-            // Tablet (768px-1024px)
-            minChatHeight = 170;
-            maxChatHeight = Math.min(window.innerHeight * 0.69, 775);
-          } else {
-            // Desktop (>1024px)
-            minChatHeight = 110;
-            maxChatHeight = Math.min(window.innerHeight * 0.8, 1000);
-          }
-          
-          if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
-            // Resize chat-messages directly
-            chatMessages.style.height = newChatHeight + 'px';
-            chatMessages.style.flex = 'none';
-            
-            // Resize chatbot-card indirectly
-            chatbotCard.style.height = newCardHeight + 'px';
-            chatbotCard.style.minHeight = 'auto';
-          }
-        }
-        
-        function doResizeTouch(e) {
-          if (!isResizing) return;
-          
-          const currentY = e.touches[0].clientY;
-          const diff = currentY - startY;
-          const newChatHeight = startChatHeight + diff;
-          const newCardHeight = startCardHeight + diff;
-          
-          // Set min and max heights with separate tablet handling (same as doResize)
-          let minChatHeight, maxChatHeight;
-
-          if (window.innerWidth <= 767) {
-            // Mobile (≤767px)
-            minChatHeight = 120;
-            maxChatHeight = Math.min(window.innerHeight * 0.6, 600);
-          } else if (window.innerWidth <= 1024) {
-            // Tablet (768px-1024px)
-            minChatHeight = 170;
-            maxChatHeight = Math.min(window.innerHeight * 0.69, 775); // Same as your doResize
-          } else {
-            // Desktop (>1024px)
-            minChatHeight = 300;
-            maxChatHeight = Math.min(window.innerHeight * 0.8, 1000);
-          }
-          
-          if (newChatHeight >= minChatHeight && newChatHeight <= maxChatHeight) {
-            chatMessages.style.height = newChatHeight + 'px';
-            chatMessages.style.flex = 'none';
-            
-            chatbotCard.style.height = newCardHeight + 'px';
-            chatbotCard.style.minHeight = 'auto';
-          }
-          
-          e.preventDefault();
-        }
-        
-        function stopResize() {
-          isResizing = false;
-          document.body.style.userSelect = '';
-        }
-      }
-    </script>
-    <script> // Notification
+    <!-- Notification Script -->
+    <script>
       (function() {
         'use strict';
         
         function initNotification() {
           try {
             const askTabNotification = document.getElementById('askTabNotification');
-            const tabLinks = document.querySelectorAll('.in-page-link');
             const closeButton = document.querySelector('.notification-close');
             
-            if (!askTabNotification || tabLinks.length === 0) {
-              return;
-            }
+            if (!askTabNotification) return;
             
-            // Check if notification was previously dismissed
             const notificationDismissed = localStorage.getItem('askTabNotificationDismissed');
             
             function showNotification() {
@@ -1043,140 +366,25 @@
               localStorage.setItem('askTabNotificationDismissed', 'true');
             }
             
-            function checkActiveTab() {
-              const activeTab = document.querySelector('.in-page-link.w--current');
-              
-              if (activeTab && activeTab.getAttribute('data-w-tab') === 'Ask') {
-                showNotification();
-              } else {
-                hideNotification();
-              }
-            }
-            
-            // IMPORTANT: Don't interfere with existing tab system
-            // Just listen for tab clicks, don't modify classes
-            tabLinks.forEach((link) => {
-              link.addEventListener('click', function() {
-                // Let the existing tab system handle the class changes
-                // Just check after a delay
-                setTimeout(checkActiveTab, 200);
-              });
-            });
-            
-            // Also observe for class changes made by existing tab system
-            const observer = new MutationObserver(function(mutations) {
-              mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && 
-                    mutation.attributeName === 'class' && 
-                    mutation.target.classList.contains('in-page-link')) {
-                  setTimeout(checkActiveTab, 50);
-                }
-              });
-            });
-            
-            // Observe all tab links for class changes
-            tabLinks.forEach(link => {
-              observer.observe(link, { attributes: true });
-            });
-            
-            // Close button functionality
             if (closeButton) {
               closeButton.addEventListener('click', dismissNotification);
             }
             
-            // Note: Auto-hide timer removed - notification only dismisses when user clicks X
-            
-            // Check initial state
-            setTimeout(checkActiveTab, 500); // Delay to let page fully load
-            
-            // Clear dismissed state for testing (remove this line in production)
-            localStorage.removeItem('askTabNotificationDismissed');
+            // Show notification on load
+            setTimeout(showNotification, 500);
             
           } catch (error) {
             console.error('Notification script error:', error);
           }
         }
         
-        // Multiple initialization points to ensure it runs
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', initNotification);
         } else {
           initNotification();
         }
         
-        // Backup initialization
-        setTimeout(initNotification, 1000);
-        
       })();
-    </script>
-    <script> // Check if we can see any session cookies
-        console.log('🔍 Checking session state...');
-        console.log('All cookies:', document.cookie);
-
-        // Check if session cookie exists
-        const hasSessionCookie = document.cookie.includes('connect.sid') || 
-                                document.cookie.includes('session');
-        console.log('Has session cookie:', hasSessionCookie);
-
-        // Try to get current user with more debugging
-        async function debugAuth() {
-        try {
-            console.log('🔍 Testing /api/current-user...');
-            const response = await fetch('/api/current-user', {
-            credentials: 'include',  // Important: include cookies
-            headers: {
-                'Content-Type': 'application/json'
-            }
-            });
-            
-            console.log('Response status:', response.status);
-            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-            
-            if (response.ok) {
-            const userData = await response.json();
-            console.log('✅ User authenticated:', userData);
-            } else if (response.status === 401) {
-            console.log('❌ User not authenticated (401)');
-            } else if (response.status === 302) {
-            console.log('❌ Redirected to login (302)');
-            } else {
-            console.log('❌ Unexpected status:', response.status);
-            const text = await response.text();
-            console.log('Response body:', text);
-            }
-        } catch (error) {
-            console.error('❌ Auth debug error:', error);
-        }
-        }
-
-        // Run the debug
-        debugAuth();
-    </script>
-    <script> // Clear RAG chat
-      // Add this function with your other functions
-      function clearConversation() {
-        conversationHistory = [];
-        chatMessages.innerHTML = '';
-        
-        // Re-add the welcome message
-        const welcomeDiv = document.createElement("div");
-        welcomeDiv.className = "chat-message system-message";
-        welcomeDiv.innerHTML = `
-          <div class="message-content">
-            <p>Hi there! I'm Reed, your health assistant. I can answer questions about cardiovascular health, cholesterol, exercise, and other health topics. How can I help you today?</p>
-          </div>
-        `;
-        chatMessages.appendChild(welcomeDiv);
-        
-        console.log('Conversation cleared');
-      }
-
-      // Add this event listener in your DOMContentLoaded section
-      document.getElementById('clear-conversation-btn').addEventListener('click', function() {
-        if (confirm('Clear conversation history? This cannot be undone.')) {
-          clearConversation();
-        }
-      });
     </script>
   </body>
 </html>

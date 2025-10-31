@@ -9,136 +9,6 @@
     <link href="css/user-header-footer-styles.css" rel="stylesheet" type="text/css" />
     <link href="css/insights-styles.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-      /* Dashboard grid layout */
-      .dashboard-grid {
-        display: grid;
-        grid-template-columns: 0.5fr 0.5fr;
-        gap: 1rem;
-        width: 100%;
-      }
-      
-      .dashboard-left-column,
-      .dashboard-right-column {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      /* Add top padding to match Labs Summary */
-      .dashboard-right-column .insights-header {
-        padding-top: 0;
-        margin-left: 0.5rem;
-      }
-
-      /* Add top padding to Labs Summary header too for consistency */
-      .dashboard-left-column .labs-summary-header {
-        padding-top: 0;
-        margin-left: 0.5rem;
-      }
-
-      /* Center the wellness score horizontally */
-      .dashboard-right-column .wellness-summary-card:first-child .wellness-content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* Override wellness-content for dashboard */
-      .dashboard-wellness-content {
-        display: block !important;
-      }
-
-      .dashboard-wellness-content .wellness-chart-container {
-        max-width: 100%;
-        width: 100%;
-      }
-
-      .dashboard-wellness-content .wellness-categories {
-        max-width: 100%;
-      }
-
-      /* Info modal styling */
-      .info-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-      }
-
-      .info-modal .modal-content {
-        background: white;
-        padding: 2rem;
-        border-radius: 12px;
-        max-width: 500px;
-        width: 90%;
-        max-height: 80vh;
-        overflow-y: auto;
-        position: relative;
-      }
-
-      .info-modal .modal-content h3 {
-        margin-top: 0;
-        margin-bottom: 1rem;
-        font-family: 'Poppins-SemiBold', sans-serif;
-        font-size: 1.5rem;
-        color: #333;
-      }
-
-      .info-modal .modal-content p {
-        margin-bottom: 1rem;
-        line-height: 1.6;
-        color: #4b5563;
-        font-family: 'Poppins-Regular', sans-serif;
-      }
-
-      .info-modal .modal-content ul {
-        margin: 1rem 0;
-        padding-left: 1.5rem;
-      }
-
-      .info-modal .modal-content li {
-        margin-bottom: 0.75rem;
-        line-height: 1.6;
-        color: #4b5563;
-        font-family: 'Poppins-Regular', sans-serif;
-      }
-
-      .modal-close {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: none;
-        border: none;
-        font-size: 2rem;
-        line-height: 1;
-        color: #666;
-        cursor: pointer;
-        padding: 0;
-        width: 2rem;
-        height: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: color 0.2s ease;
-      }
-
-      .modal-close:hover {
-        color: #333;
-      }
-
-      @media (max-width: 991px) {
-        .dashboard-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
 
   </head>
 
@@ -1650,7 +1520,7 @@
               </div>
 
               <!-- Chart -->
-              <div style="margin-top: 0; margin-bottom: 0; position: relative; height: 180px;">
+              <div class="labs-chart-wrapper">
                 <canvas id="labsChart"></canvas>
               </div>
 
