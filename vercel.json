@@ -45,6 +45,10 @@
         {
             "src": "/((?!api).*)",
             "dest": "/src/index.js"
+        },
+        {
+            "src": "/api/rag/conversations",
+            "dest": "/api/rag/conversations.js"
         }
     ]
 }

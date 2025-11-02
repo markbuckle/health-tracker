@@ -86,7 +86,11 @@
     elements.clearBtn.addEventListener('click', handleClearConversation);
     
     // New conversation
-    elements.newConversationBtn.addEventListener('click', handleNewConversation);
+    elements.newConversationBtn.addEventListener('click', function(e) {
+      console.log('🔵 New chat button clicked!');
+      e.preventDefault();
+      handleNewConversation();
+    });
     
     // Info button
     elements.infoButton.addEventListener('click', showInfoModal);
@@ -252,24 +256,46 @@
   // ===================================
 
   function handleNewConversation() {
-    // Clear current conversation
+    console.log('🆕 Starting new conversation...');
+    
+    // Clear state
     currentConversationId = null;
     conversationHistory = [];
-    elements.chatMessages.innerHTML = '';
     
-    // Show welcome state
-    showWelcomeState();
+    // Clear messages - DIRECT DOM query
+    const messagesEl = document.getElementById('chat-messages');
+    if (messagesEl) messagesEl.innerHTML = '';
     
-    // Clear active state from conversation list
+    // Clear inputs - DIRECT DOM queries
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) {
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+    }
+    
+    const welcomeInput = document.getElementById('welcome-input');
+    if (welcomeInput) welcomeInput.value = '';
+    
+    // Switch views - DIRECT DOM manipulation
+    const welcomeState = document.getElementById('welcome-state');
+    const chatInterface = document.getElementById('chat-interface');
+    
+    if (welcomeState) {
+      welcomeState.style.display = 'flex';
+      console.log('✅ Welcome shown');
+    }
+    
+    if (chatInterface) {
+      chatInterface.style.display = 'none';
+      console.log('✅ Chat hidden');
+    }
+    
+    // Clear active conversations
     document.querySelectorAll('.conversation-item').forEach(item => {
       item.classList.remove('active');
     });
     
-    // Clear input
-    elements.chatInput.value = '';
-    
-    // Update subtitle
-    document.getElementById('current-conversation-title').textContent = '';
+    console.log('✅ New conversation ready');
   }
 
   async function handleClearConversation() {
@@ -291,8 +317,7 @@
     }
   }
 
-  async function saveConversation(title, messages) {
-    // If no userId, can't save to database
+  async function saveConversation(title, messages, conversationId = null) {
     if (!userId) {
       console.log('No user ID, skipping conversation save');
       return;
@@ -300,7 +325,7 @@
     
     const conversation = {
       operation: 'save',
-      id: currentConversationId || null,
+      id: conversationId || currentConversationId || null,
       title: title || generateConversationTitle(messages),
       messages: messages,
       userId: userId
@@ -321,7 +346,7 @@
         
         console.log('✅ Conversation saved:', currentConversationId);
         
-        // Reload conversation list to show updated data
+        // Reload conversation list
         await loadConversations();
       } else {
         console.error('Failed to save conversation:', response.status);
@@ -407,19 +432,19 @@
   // MESSAGE HANDLING (Existing RAG Functionality)
   // ===================================
 
-  function submitWelcomeMessage() {
-    const message = elements.welcomeInput.value.trim();
-    if (!message) return;
+  // function submitWelcomeMessage() {
+  //   const message = elements.welcomeInput.value.trim();
+  //   if (!message) return;
     
-    // Transfer message to main chat input
-    elements.chatInput.value = message;
+  //   // Transfer message to main chat input
+  //   elements.chatInput.value = message;
     
-    // Clear welcome input
-    elements.welcomeInput.value = '';
+  //   // Clear welcome input
+  //   elements.welcomeInput.value = '';
     
-    // Submit the message (this will show chat interface and send to RAG)
-    submitMessage();
-  }
+  //   // Submit the message (this will show chat interface and send to RAG)
+  //   submitMessage();
+  // }
 
   function submitMessage() {
     const message = elements.chatInput.value.trim();
@@ -453,38 +478,6 @@
     addTypingIndicator();
     
     // Send to RAG API (existing functionality preserved)
-    sendToRAG(message);
-  }
-
-  function submitWelcomeMessage() {
-    const message = elements.welcomeInput.value.trim();
-    if (!message) return;
-    
-    // Clear welcome input
-    elements.welcomeInput.value = '';
-    
-    // Show chat interface
-    showChatInterface();
-    
-    // Add user message to UI
-    addMessageToUI(message, 'user');
-    
-    // Add to conversation history for RAG context
-    conversationHistory.push({
-      role: "user",
-      content: message,
-      timestamp: new Date().toISOString()
-    });
-    
-    // Keep only last 10 messages to avoid token limits
-    if (conversationHistory.length > 10) {
-      conversationHistory = conversationHistory.slice(-10);
-    }
-    
-    // Show typing indicator
-    addTypingIndicator();
-    
-    // Send to RAG API
     sendToRAG(message);
   }
 
@@ -669,7 +662,7 @@
   // CONVERSATION LIST RENDERING
   // ===================================
 
-  function renderConversationList(convos) {
+   function renderConversationList(convos) {
     if (!convos || convos.length === 0) {
       showEmptyConversationState();
       return;
@@ -683,6 +676,10 @@
       if (conversation.id === currentConversationId) {
         item.classList.add('active');
       }
+      
+      // Main conversation content (clickable)
+      const content = document.createElement('div');
+      content.className = 'conversation-item-content';
       
       const header = document.createElement('div');
       header.className = 'conversation-item-header';
@@ -698,22 +695,178 @@
       header.appendChild(title);
       header.appendChild(time);
       
-      const preview = document.createElement('div');
-      preview.className = 'conversation-item-preview';
-      preview.textContent = getConversationPreview(conversation);
+      // Menu button (three dots)
+      const menuBtn = document.createElement('button');
+      menuBtn.className = 'conversation-menu-btn';
+      menuBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="1"></circle>
+          <circle cx="12" cy="5" r="1"></circle>
+          <circle cx="12" cy="19" r="1"></circle>
+        </svg>
+      `;
+      menuBtn.title = "More options";
       
-      item.appendChild(header);
-      item.appendChild(preview);
+      // Stop propagation so clicking menu doesn't load conversation
+      menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleConversationMenu(conversation.id, menuBtn);
+      });
       
-      item.addEventListener('click', () => {
+      content.appendChild(header);
+      content.appendChild(menuBtn);
+      
+      // Click handler for loading conversation
+      content.addEventListener('click', () => {
         document.querySelectorAll('.conversation-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         loadConversation(conversation.id);
+        // Close any open menus
+        closeAllConversationMenus();
       });
       
+      item.appendChild(content);
       elements.conversationList.appendChild(item);
     });
   }
+
+  function closeAllConversationMenus() {
+    document.querySelectorAll('.conversation-menu').forEach(menu => menu.remove());
+  }
+
+  function toggleConversationMenu(conversationId, buttonElement) {
+  // Close any existing menus
+  const existingMenu = document.querySelector('.conversation-menu');
+  if (existingMenu) {
+    if (existingMenu.dataset.conversationId === conversationId) {
+      // Clicking same button - just close
+      existingMenu.remove();
+      return;
+    }
+    existingMenu.remove();
+  }
+  
+  // Create menu
+  const menu = document.createElement('div');
+  menu.className = 'conversation-menu';
+  menu.dataset.conversationId = conversationId;
+  
+  menu.innerHTML = `
+    <button class="conversation-menu-item" data-action="rename">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+      </svg>
+      Rename
+    </button>
+    <button class="conversation-menu-item delete" data-action="delete">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      Delete
+    </button>
+  `;
+  
+  // Position menu
+  const buttonRect = buttonElement.getBoundingClientRect();
+  const sidebar = document.querySelector('.conversation-sidebar');
+  const sidebarRect = sidebar.getBoundingClientRect();
+  
+  menu.style.position = 'absolute';
+  menu.style.top = `${buttonRect.bottom - sidebarRect.top + 5}px`;
+  menu.style.left = `${buttonRect.right - sidebarRect.left - 150}px`; // 150px is menu width
+  
+  // Add event listeners
+  menu.querySelector('[data-action="rename"]').addEventListener('click', () => {
+    handleRenameConversation(conversationId);
+    menu.remove();
+  });
+  
+  menu.querySelector('[data-action="delete"]').addEventListener('click', () => {
+    handleDeleteConversation(conversationId);
+    menu.remove();
+  });
+  
+  // Add to sidebar (not the item, so it can overflow)
+  const listContainer = document.querySelector('.conversation-list-container');
+  listContainer.style.position = 'relative';
+  listContainer.appendChild(menu);
+  
+  // Close menu when clicking outside
+  setTimeout(() => {
+    document.addEventListener('click', function closeMenu(e) {
+      if (!menu.contains(e.target) && e.target !== buttonElement) {
+        menu.remove();
+        document.removeEventListener('click', closeMenu);
+      }
+    });
+  }, 0);
+}
+
+function handleRenameConversation(conversationId) {
+  const conversation = conversations.find(c => c.id === conversationId);
+  if (!conversation) return;
+  
+  const newTitle = prompt('Rename conversation:', conversation.title);
+  if (!newTitle || newTitle === conversation.title) return;
+  
+  console.log('🔄 Renaming conversation:', conversationId);
+  
+  // Update locally
+  conversation.title = newTitle;
+  
+  // Update in database
+  saveConversation(newTitle, conversation.messages, conversationId);
+  
+  // Re-render list
+  renderConversationList(conversations);
+}
+
+async function handleDeleteConversation(conversationId) {
+  if (!confirm('Delete this conversation? This cannot be undone.')) {
+    return;
+  }
+  
+  console.log('🗑️ Deleting conversation:', conversationId);
+  
+  try {
+    const response = await fetch('/api/rag/conversations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        operation: 'delete',
+        conversationId,
+        userId
+      })
+    });
+    
+    if (response.ok) {
+      console.log('✅ Conversation deleted');
+      
+      // Remove from local array
+      conversations = conversations.filter(c => c.id !== conversationId);
+      
+      // If this was the active conversation, clear it
+      if (currentConversationId === conversationId) {
+        currentConversationId = null;
+        conversationHistory = [];
+        elements.chatMessages.innerHTML = '';
+        showWelcomeState();
+      }
+      
+      // Re-render list
+      renderConversationList(conversations);
+    } else {
+      console.error('❌ Failed to delete conversation');
+      alert('Failed to delete conversation. Please try again.');
+    }
+  } catch (error) {
+    console.error('❌ Error deleting conversation:', error);
+    alert('Error deleting conversation. Please try again.');
+  }
+}
+
 
   function showEmptyConversationState() {
     elements.conversationList.innerHTML = `
@@ -744,13 +897,31 @@
   // ===================================
 
   function showWelcomeState() {
-    elements.welcomeState.style.display = 'flex';
-    elements.chatInterface.style.display = 'none';
+    console.log('Showing welcome state');
+    
+    const welcomeState = document.getElementById('welcome-state');
+    const chatInterface = document.getElementById('chat-interface');
+    const newChatBtn = document.getElementById('new-conversation-btn');
+    
+    if (chatInterface) chatInterface.style.display = 'none';
+    if (welcomeState) welcomeState.style.display = 'flex';
+    
+    // ⭐ Hide "New Chat" button when on welcome state
+    if (newChatBtn) newChatBtn.style.display = 'none';
   }
 
   function showChatInterface() {
-    elements.welcomeState.style.display = 'none';
-    elements.chatInterface.style.display = 'flex';
+    console.log('Showing chat interface');
+    
+    const welcomeState = document.getElementById('welcome-state');
+    const chatInterface = document.getElementById('chat-interface');
+    const newChatBtn = document.getElementById('new-conversation-btn');
+    
+    if (chatInterface) chatInterface.style.display = 'flex';
+    if (welcomeState) welcomeState.style.display = 'none';
+    
+    // ⭐ Show "New Chat" button when in conversation
+    if (newChatBtn) newChatBtn.style.display = 'flex';
   }
 
   // ===================================
@@ -902,6 +1073,83 @@
     if (wrapper) {
       wrapper.scrollTop = wrapper.scrollHeight;
     }
+  }
+
+  function init() {
+    console.log('🚀 Initializing modern chatbot...');
+    
+    cacheElements();
+    setupEventListeners();
+    loadInitialData();
+    showWelcomeState();
+    
+    // ⭐ Add this:
+    initResizableSidebar();
+  }
+
+  // Add this function anywhere in your chatbot-modern.js:
+  function initResizableSidebar() {
+    const sidebar = document.querySelector('.conversation-sidebar');
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'sidebar-resize-handle';
+    
+    sidebar.appendChild(resizeHandle);
+    
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+    const defaultWidth = 300;
+    
+    // Load saved width
+    const savedWidth = localStorage.getItem('chatbot-sidebar-width');
+    if (savedWidth) {
+      sidebar.style.width = savedWidth + 'px';
+    }
+    
+    // Double-click to reset
+    resizeHandle.addEventListener('dblclick', () => {
+      sidebar.style.width = defaultWidth + 'px';
+      localStorage.setItem('chatbot-sidebar-width', defaultWidth);
+    });
+    
+    resizeHandle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      startX = e.clientX;
+      startWidth = sidebar.offsetWidth;
+      
+      sidebar.classList.add('resizing');
+      document.body.style.cursor = 'ew-resize';
+      document.body.style.userSelect = 'none';
+      
+      e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      
+      const delta = e.clientX - startX;
+      const newWidth = startWidth + delta;
+      
+      const minWidth = 200;
+      const maxWidth = 600;
+      
+      if (newWidth >= minWidth && newWidth <= maxWidth) {
+        sidebar.style.width = newWidth + 'px';
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (isResizing) {
+        isResizing = false;
+        sidebar.classList.remove('resizing');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        
+        localStorage.setItem('chatbot-sidebar-width', sidebar.offsetWidth);
+      }
+    });
+    
+    console.log('✅ Resizable sidebar initialized');
   }
 
   // ===================================
