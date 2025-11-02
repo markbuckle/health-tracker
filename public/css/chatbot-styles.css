@@ -1037,3 +1037,625 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
 .chat-messages-wrapper::-webkit-scrollbar-thumb:hover {
   background: #8cc9f0;
 }
+
+@media (max-width: 1024px) {
+  /* Adjust sidebar width for tablets */
+  .conversation-sidebar {
+    width: 260px !important;
+    min-width: 200px;
+  }
+  
+  /* Adjust chat content area */
+  .chat-messages-modern,
+  .chat-input-container-modern {
+    max-width: 700px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .welcome-content {
+    max-width: 600px;
+  }
+  
+  /* Slightly smaller fonts */
+  .conversation-item-title {
+    font-size: 0.8125rem;
+  }
+  
+  .conversation-sidebar-title {
+    font-size: 0.8125rem;
+  }
+}
+
+/* @media (max-width: 891px) {
+  .modern-chat-layout {
+      margin-left: 9rem;
+  }
+} */
+
+/* ===================================
+   MOBILE LANDSCAPE / SMALL TABLET (767px and below)
+   =================================== */
+@media (max-width: 767px) {
+  /* Sidebar becomes collapsible dropdown */
+  .conversation-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto;
+    max-height: none;
+    min-width: 100%;
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #b3e0ff;
+    overflow: visible;
+    position: relative;
+  }
+  
+  /* Hide resize handle on mobile */
+  .sidebar-resize-handle {
+    display: none;
+  }
+  
+  /* Header becomes clickable toggle */
+  .conversation-sidebar-header {
+    padding: 0.875rem 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: none;
+  }
+  
+  .conversation-sidebar-header:active {
+    background: rgba(59, 143, 196, 0.05);
+  }
+  
+  /* Title changes to "Chat History" */
+  .conversation-sidebar-title {
+    margin: 0;
+    font-size: 0.875rem;
+    text-transform: none;
+    letter-spacing: normal;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+  }
+  
+  /* Add dropdown arrow */
+  .conversation-sidebar-title::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #3b8fc4;
+    transition: transform 0.3s ease;
+  }
+  
+  /* Rotate arrow when expanded */
+  .conversation-sidebar.expanded .conversation-sidebar-title::after {
+    transform: rotate(180deg);
+  }
+  
+  /* Hide "New chat" button on mobile (or show as icon only) */
+  .new-conversation-btn {
+    display: none;
+  }
+  
+  /* Collapsible content (search + list) */
+  .conversation-sidebar-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .conversation-sidebar.expanded .conversation-sidebar-content {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  
+  /* Search bar inside collapsible */
+  .conversation-search {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #b3e0ff;
+  }
+  
+  .conversation-search-input {
+    font-size: 0.8125rem;
+  }
+  
+  /* Conversation list inside collapsible */
+  .conversation-list-container {
+    flex: none;
+    height: auto;
+    max-height: 40vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .conversation-list {
+    padding: 0.5rem;
+  }
+  
+  .conversation-item {
+    padding: 0.5rem 0.625rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .conversation-item-title {
+    font-size: 0.8125rem;
+    -webkit-line-clamp: 1;
+  }
+  
+  .conversation-item-time {
+    font-size: 0.6875rem;
+  }
+  
+  /* Chat main area takes remaining space */
+  .chat-main-area {
+    flex: 1;
+    min-height: 0;
+  }
+  
+  /* Rest of mobile styles... */
+  .welcome-state {
+    padding: 1.5rem 1rem;
+  }
+  
+  .welcome-title {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .welcome-input-container {
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  
+  .welcome-input {
+    font-size: 0.875rem;
+    padding: 0.875rem 3.5rem 0.875rem 1rem;
+  }
+  
+  .welcome-suggestions {
+    gap: 0.625rem;
+  }
+  
+  .suggestion-btn {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .chat-messages-modern,
+  .chat-input-container-modern {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .chat-message {
+    margin-bottom: 1.25rem;
+    gap: 0.625rem;
+  }
+  
+  .message-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8125rem;
+  }
+  
+  .message-content {
+    font-size: 0.875rem;
+  }
+  
+  .chat-input-wrapper {
+    padding: 1rem 0;
+  }
+  
+  .chat-input-modern {
+    font-size: 0.875rem;
+    padding: 0.75rem 7rem 0.75rem 1rem;
+  }
+  
+  .chat-action-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .chat-submit-btn-modern {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* ===================================
+   SMALL MOBILE (480px and below)
+   =================================== */
+@media (max-width: 480px) {
+  .conversation-sidebar-header {
+    padding: 0.75rem 0.875rem;
+  }
+  
+  .conversation-sidebar-title {
+    font-size: 0.8125rem;
+  }
+  
+  .conversation-sidebar-title::after {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #3b8fc4;
+  }
+  
+  .conversation-sidebar.expanded .conversation-sidebar-content {
+    max-height: 45vh;
+  }
+  
+  .conversation-search {
+    padding: 0.625rem 0.875rem;
+  }
+  
+  .conversation-list-container {
+    max-height: 35vh;
+  }
+  
+  .conversation-item {
+    padding: 0.5rem;
+  }
+  
+  .conversation-item-title {
+    font-size: 0.75rem;
+  }
+  
+  .welcome-state {
+    padding: 1rem 0.875rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.75rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 0.9375rem;
+  }
+  
+  .suggestion-btn {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+  
+  .chat-messages-modern {
+    padding: 0 0.875rem;
+  }
+  
+  .message-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .message-content {
+    font-size: 0.8125rem;
+  }
+  
+  .chat-input-modern {
+    font-size: 0.8125rem;
+    padding: 0.625rem 6.5rem 0.625rem 0.875rem;
+  }
+}
+
+/* ===================================
+   MOBILE PORTRAIT (480px and below)
+   =================================== */
+@media (max-width: 480px) {
+  /* Further compact the sidebar */
+  .conversation-sidebar {
+    max-height: 30vh;
+    margin-top: 6rem;
+  }
+
+  .chat-header-modern {
+    padding: 0;
+  }
+
+  .header-container-2 {
+    margin-top: 0;
+  }
+
+  .conversation-sidebar-header {
+    padding: 0.75rem 0.875rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .conversation-sidebar-title {
+    font-size: 0.8125rem;
+    flex: 1;
+  }
+  
+  .new-conversation-btn {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.75rem;
+    gap: 0.375rem;
+  }
+  
+  .new-conversation-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .new-conversation-btn span {
+    display: none; /* Hide "New chat" text on very small screens */
+  }
+  
+  /* Very compact search */
+  .conversation-search {
+    padding: 0.625rem 0.875rem;
+  }
+  
+  .conversation-search svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Smaller conversation items */
+  .conversation-list-container {
+    max-height: 22vh;
+  }
+  
+  .conversation-item {
+    padding: 0.5rem;
+  }
+  
+  .conversation-item-title {
+    font-size: 0.75rem;
+  }
+  
+  .conversation-item-time {
+    font-size: 0.625rem;
+  }
+  
+  .conversation-menu-btn {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .conversation-menu-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Very compact welcome state */
+  .welcome-state {
+    padding: 1rem 0.875rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.625rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 0.9375rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  
+  .welcome-input {
+    font-size: 0.875rem;
+    padding: 0.75rem 3rem 0.75rem 0.875rem;
+  }
+  
+  .welcome-submit-btn {
+    width: 30px;
+    height: 30px;
+    right: 0.375rem;
+  }
+  
+  .welcome-submit-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .welcome-suggestions {
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .suggestion-btn {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8125rem;
+    gap: 0.625rem;
+  }
+  
+  .suggestion-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Very compact chat interface */
+  .chat-messages-modern {
+    padding: 0 0.875rem;
+  }
+  
+  .chat-message {
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .message-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+  
+  .message-header {
+    margin-bottom: 0.25rem;
+  }
+  
+  .message-sender {
+    font-size: 0.75rem;
+  }
+  
+  .message-timestamp {
+    font-size: 0.6875rem;
+  }
+  
+  .message-content {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+  
+  .user-message .message-content,
+  .assistant-message .message-content {
+    padding: 0.75rem 0.875rem;
+  }
+  
+  /* Very compact input */
+  .chat-input-wrapper {
+    padding: 0.875rem 0;
+  }
+  
+  .chat-input-container-modern {
+    padding: 0 0.875rem;
+  }
+  
+  .chat-input-modern {
+    font-size: 0.8125rem;
+    padding: 0.625rem 6.5rem 0.625rem 0.875rem;
+    min-height: 44px;
+  }
+  
+  .chat-input-actions {
+    right: 1.25rem;
+    gap: 0.25rem;
+  }
+  
+  .chat-action-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .chat-action-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .chat-submit-btn-modern {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .chat-submit-btn-modern svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* Menu adjustments */
+  .conversation-menu {
+    min-width: 130px;
+    font-size: 0.8125rem;
+  }
+  
+  .conversation-menu-item {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+  
+  .conversation-menu-item svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ===================================
+   LANDSCAPE ORIENTATION ON MOBILE
+   =================================== */
+@media (max-width: 767px) and (orientation: landscape) {
+  /* Reduce sidebar height in landscape */
+  .conversation-sidebar {
+    max-height: 40vh;
+  }
+  
+  .conversation-list-container {
+    max-height: 30vh;
+  }
+  
+  /* Smaller welcome content in landscape */
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  
+  .welcome-suggestions {
+    margin-top: 1rem;
+  }
+}
+
+/* ===================================
+   UTILITY CLASSES FOR MOBILE
+   =================================== */
+
+/* Hide on mobile */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile */
+.show-mobile {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .show-mobile {
+    display: block !important;
+  }
+}
+
+/* ===================================
+   SCROLLBAR STYLING FOR MOBILE
+   =================================== */
+@media (max-width: 767px) {
+  .conversation-list-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .conversation-list-container::-webkit-scrollbar-thumb {
+    background: rgba(59, 143, 196, 0.3);
+    border-radius: 2px;
+  }
+  
+  .chat-messages-wrapper::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .chat-messages-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(113, 184, 113, 0.3);
+    border-radius: 2px;
+  }
+}
+
+/* ===================================
+   SAFE AREA INSETS FOR MOBILE DEVICES
+   =================================== */
+@media (max-width: 767px) {
+  .chat-input-wrapper {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+  
+  .conversation-sidebar {
+    padding-top: env(safe-area-inset-top);
+  }
+}

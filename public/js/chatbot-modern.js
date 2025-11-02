@@ -1075,17 +1075,25 @@ async function handleDeleteConversation(conversationId) {
     }
   }
 
-  function init() {
-    console.log('🚀 Initializing modern chatbot...');
-    
-    cacheElements();
-    setupEventListeners();
-    loadInitialData();
-    showWelcomeState();
-    
-    // ⭐ Add this:
-    initResizableSidebar();
-  }
+function init() {
+  console.log('🚀 Initializing modern chatbot...');
+  
+  cacheElements();
+  setupEventListeners();
+  loadInitialData();
+  showWelcomeState();
+  initResizableSidebar();
+  
+  // ⭐ Add this:
+  initMobileChatHistoryToggle();
+  
+  // Re-initialize on window resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth <= 767) {
+      initMobileChatHistoryToggle();
+    }
+  });
+}
 
   // Add this function anywhere in your chatbot-modern.js:
   function initResizableSidebar() {
@@ -1150,6 +1158,61 @@ async function handleDeleteConversation(conversationId) {
     });
     
     console.log('✅ Resizable sidebar initialized');
+  }
+
+  function initMobileChatHistoryToggle() {
+    // Only run on mobile
+    if (window.innerWidth > 767) return;
+    
+    const sidebar = document.querySelector('.conversation-sidebar');
+    const header = document.querySelector('.conversation-sidebar-header');
+    const searchContainer = document.querySelector('.conversation-search');
+    const listContainer = document.querySelector('.conversation-list-container');
+    
+    if (!sidebar || !header) return;
+    
+    // Create wrapper for collapsible content
+    let contentWrapper = sidebar.querySelector('.conversation-sidebar-content');
+    if (!contentWrapper) {
+      contentWrapper = document.createElement('div');
+      contentWrapper.className = 'conversation-sidebar-content';
+      
+      // Move search and list into wrapper
+      if (searchContainer) {
+        contentWrapper.appendChild(searchContainer);
+      }
+      if (listContainer) {
+        contentWrapper.appendChild(listContainer);
+      }
+      
+      sidebar.appendChild(contentWrapper);
+    }
+    
+    // Change title text on mobile
+    const titleElement = sidebar.querySelector('.conversation-sidebar-title');
+    if (titleElement) {
+      titleElement.textContent = 'Chat History';
+    }
+    
+    // Toggle function
+    function toggleChatHistory() {
+      sidebar.classList.toggle('expanded');
+      
+      // Save state
+      const isExpanded = sidebar.classList.contains('expanded');
+      localStorage.setItem('mobile-chat-history-expanded', isExpanded);
+    }
+    
+    // Add click handler
+    header.addEventListener('click', toggleChatHistory);
+    
+    // Restore saved state
+    const savedState = localStorage.getItem('mobile-chat-history-expanded');
+    if (savedState === 'true') {
+      sidebar.classList.add('expanded');
+    }
+    
+    console.log('✅ Mobile chat history toggle initialized');
   }
 
   // ===================================
