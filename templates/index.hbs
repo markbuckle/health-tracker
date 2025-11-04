@@ -709,7 +709,7 @@
         }
       }
     </script>
-    <script>
+    <script> // Perfect for you if you are
         console.log('Use Cases React script starting...');
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1014,6 +1014,44 @@
             console.error('Error mounting Use Cases component:', error);
           }
         });
+    </script>
+    <script> // Image changer animations
+
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        // Configuration for Intersection Observer
+        const observerOptions = {
+          root: null, // viewport
+          rootMargin: '0px 0px -100px 0px', // trigger 100px before element enters viewport
+          threshold: 0.1 // trigger when 10% of element is visible
+        };
+        
+        // Create the Intersection Observer
+        const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            // Check if element is intersecting (entering viewport)
+            if (entry.isIntersecting) {
+              // Add 'animate-in' class to trigger animation
+              entry.target.classList.add('animate-in');
+              
+              // Optional: Stop observing this element after animation
+              // Remove this line if you want animations to repeat every time element enters viewport
+              observer.unobserve(entry.target);
+            }
+          });
+        }, observerOptions);
+        
+        // Select all elements that should animate on scroll
+        const animatedElements = document.querySelectorAll('.quote-1, .laptop-image-container, .mobile-image-container, .hover-title');
+        
+        // Observe each element
+        animatedElements.forEach(element => {
+          // Remove initial animation classes to prevent auto-play on load
+          element.classList.add('await-animation');
+          observer.observe(element);
+        });
+        
+      });
     </script>
   </body>
 </html> 
