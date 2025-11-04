@@ -1357,7 +1357,7 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
   /* Further compact the sidebar */
   .conversation-sidebar {
     max-height: 30vh;
-    margin-top: 6rem;
+    margin-top: 2.8rem;
   }
 
   .chat-header-modern {

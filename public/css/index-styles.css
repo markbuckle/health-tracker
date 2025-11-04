@@ -138,6 +138,12 @@
   position: relative !important;
   z-index: 1 !important;
 }
+.quote-container-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 38%;
+}
 .quote-background-2 {
   background-color: #e0ecee;
   position: relative !important;
@@ -1085,6 +1091,17 @@
   z-index: 3;
   flex-shrink: 0; /* Prevent titles from shrinking */
 }
+.hover-titles.desktop-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: absolute;
+  right: calc(50% - 450px - 20px); /* Position relative to centered laptop */
+  /* This calculates: center of container (50%) - half laptop width (450px) + overlap (50px) */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3; /* Above laptop */
+}
 /* .hover-titles {
   position: absolute;
   right: 12%;
@@ -1364,6 +1381,9 @@
     margin-top: -10vh;
     padding: 0 1.5rem;
   }
+  .hover-titles.desktop-titles {
+    right: calc(50% - 450px - 10px); /* More overlap on larger screens */
+  }
 }
 
 /* Standard Desktop (1200px - 1399px) */
@@ -1572,6 +1592,10 @@
   .hover-title {
       padding: 10px 16px;
       font-size: 13px;
+  }
+  .hover-titles.desktop-titles {
+    right: calc(50% - 375px + 20px); /* Adjust for smaller laptop */
+    gap: 18px;
   }
 }
 
@@ -1865,6 +1889,9 @@
   }
   .laptop-image-container {
     max-width: 100%; /* Much bigger laptop on mobile */
+  }
+  .hover-titles.desktop-titles {
+    display: none;
   }
   .hover-titles {
     flex-direction: row;
@@ -2552,7 +2579,11 @@
     align-items: center;
     justify-content: center;
   }
-  
+  .hover-titles.desktop-titles {
+    right: calc(50% - 375px + 10px); /* Adjust for smaller laptop */
+    gap: 18px;
+    max-width: 6.5rem;
+  }
   .hover-title {
     padding: 12px 6px;
     animation: slideInUp 0.6s ease forwards;

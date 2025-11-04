@@ -1,0 +1,28 @@
+{{!-- templates/partials/mobileUserHeader.hbs --}}
+<footer id="mobile-header" class="mobile-footer">
+    <div class="mobile-footer-container">
+        <!-- Navigation - Always visible, with conditional w--current class -->
+        <nav class="mobile-nav">
+            <a id="Profile-mobile" href="/profile" class="page-link{{#if (eq currentPage 'profile')}} w--current{{/if}}">
+                <img loading="lazy" src="images/user.svg" alt="Profile Icon" class="nav-icon">
+                <span class="page-link-text-span">Profile</span>
+            </a>
+            <a id="Upload-mobile" href="/upload" class="page-link{{#if (eq currentPage 'upload')}} w--current{{/if}}">
+                <img src="images/file-text.svg" loading="lazy" alt="Upload Icon" class="nav-icon">
+                <span class="page-link-text-span">Upload</span>
+            </a>
+            <a id="Reports-mobile" href="/reports" class="page-link{{#if (eq currentPage 'reports')}} w--current{{/if}}">
+                <img src="images/clipboard.svg" loading="lazy" alt="Reports Icon" class="nav-icon">
+                <span class="page-link-text-span">Reports</span>
+            </a>
+            <a id="Insights-mobile" href="/insights" class="page-link{{#if (eq currentPage 'insights')}} w--current{{/if}}">
+                <img src="images/layout.svg" loading="lazy" alt="Insights Icon" class="nav-icon">
+                <span class="page-link-text-span">Insights</span>
+            </a>
+            <a id="Chatbot-mobile" href="/chatbot" class="page-link{{#if (eq currentPage 'chatbot')}} w--current{{/if}}">
+                <img src="images/chatbot.svg" loading="lazy" alt="Chatbot Icon" class="nav-icon">
+                <span class="page-link-text-span">Ask Reed</span>
+            </a>
+        </nav>
+    </div>
+</footer>

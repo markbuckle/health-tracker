@@ -1999,6 +1999,9 @@
     height: 200px;
     margin: 1rem 0;
   }
+  .dashboard-right-column {
+   gap: 1rem;
+  } 
 }
 
 @media screen and (max-width: 480px) {  

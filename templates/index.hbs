@@ -136,7 +136,7 @@
     </div>
 
     <div class="quote-background-2" id="how-it-works-section">
-      <div class="content-container quote-container-2">
+      <div class="content-container quote-container-3">
         <!-- React will mount here -->
         <div id="index-react-steps-container">
           <div style="padding: 2rem; text-align: center; color: #4379ba;">
@@ -345,41 +345,41 @@
             });
         });
     </script> --}}
-<script> // Image changer for both laptop and mobile
-    document.addEventListener('DOMContentLoaded', function() {
-        const allTitles = document.querySelectorAll('.hover-title');
-        const laptopImages = document.querySelectorAll('.demo-page-img');
-        const mobileImages = document.querySelectorAll('.mobile-demo-img');
-        
-        allTitles.forEach(title => {
-            title.addEventListener('mouseenter', function() {
-                const target = this.dataset.target;
-                
-                // Remove active class from ALL titles (both desktop and mobile)
-                allTitles.forEach(t => t.classList.remove('active'));
-                laptopImages.forEach(img => img.classList.remove('active'));
-                mobileImages.forEach(img => img.classList.remove('active'));
-                
-                // Add active class to ALL titles with matching target
-                document.querySelectorAll(`[data-target="${target}"].hover-title`).forEach(t => {
-                    t.classList.add('active');
+    <script> // Image changer for both laptop and mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const allTitles = document.querySelectorAll('.hover-title');
+            const laptopImages = document.querySelectorAll('.demo-page-img');
+            const mobileImages = document.querySelectorAll('.mobile-demo-img');
+            
+            allTitles.forEach(title => {
+                title.addEventListener('mouseenter', function() {
+                    const target = this.dataset.target;
+                    
+                    // Remove active class from ALL titles (both desktop and mobile)
+                    allTitles.forEach(t => t.classList.remove('active'));
+                    laptopImages.forEach(img => img.classList.remove('active'));
+                    mobileImages.forEach(img => img.classList.remove('active'));
+                    
+                    // Add active class to ALL titles with matching target
+                    document.querySelectorAll(`[data-target="${target}"].hover-title`).forEach(t => {
+                        t.classList.add('active');
+                    });
+                    
+                    // Add active class to corresponding laptop image
+                    const targetLaptopImage = document.querySelector(`[data-target="${target}"].demo-page-img`);
+                    if (targetLaptopImage) {
+                        targetLaptopImage.classList.add('active');
+                    }
+                    
+                    // Add active class to corresponding mobile image
+                    const targetMobileImage = document.querySelector(`[data-target="${target}"].mobile-demo-img`);
+                    if (targetMobileImage) {
+                        targetMobileImage.classList.add('active');
+                    }
                 });
-                
-                // Add active class to corresponding laptop image
-                const targetLaptopImage = document.querySelector(`[data-target="${target}"].demo-page-img`);
-                if (targetLaptopImage) {
-                    targetLaptopImage.classList.add('active');
-                }
-                
-                // Add active class to corresponding mobile image
-                const targetMobileImage = document.querySelector(`[data-target="${target}"].mobile-demo-img`);
-                if (targetMobileImage) {
-                    targetMobileImage.classList.add('active');
-                }
             });
         });
-    });
-</script>
+    </script>
     <!-- Load React from CDN that's allowed by CSP -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -643,12 +643,10 @@
                     key: 'step-card',
                     style: {
                       flex: 1,
-                      backgroundColor: 'white',
                       borderRadius: '12px',
                       padding: '1.5rem',
                       marginLeft: sizes.cardMargin,
                       border: '0.5px solid #e5e7eb',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
                       transition: 'all 0.6s ease',
                       transform: visibleSteps.has(index) ? 'translateX(0)' : 'translateX(15px)'
                     }
