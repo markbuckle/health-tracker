@@ -1784,6 +1784,9 @@
     padding: 0 0.75rem;
     line-height: 1.5;
   }
+  .quote-container-3 {
+    width: 100%;
+  }
   .quote-2-by {
     font-size: 1rem;
     margin-top: 2rem;
