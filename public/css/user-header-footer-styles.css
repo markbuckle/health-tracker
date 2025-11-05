@@ -221,6 +221,9 @@
 .mobile-header {
   display: none;
 }
+.mobile-footer {
+  display: none;
+}
 body.menu-open .dashboard-content {
   padding-top: 0;
 }
@@ -284,6 +287,9 @@ body.menu-open .dashboard-content {
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     min-height: 2.5rem; /* Reduced from 115px */
+  }
+  .mobile-footer {
+    display: block !important;
   }
   .hamburger-line {
     height: 1.5px;
