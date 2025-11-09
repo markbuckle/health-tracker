@@ -164,16 +164,11 @@
       </div>
     </div>
 
-    <div style="background-color: #e0ecee; text-align: center; margin-top: 0; padding: 3rem 1rem 8rem 1rem;">
-      <h3 style="font-size: clamp(20px, 4vw, 26px); font-weight: 600; margin-bottom: 1.5rem; color: #333; font-family: Poppins-SemiBold, sans-serif; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);">
-        Ready to transform your health journey?
-      </h3>
-      <a href="/register"
-        style="display: inline-block; background-color: #acdaffd4; color: rgb(52, 52, 52); padding: 0.75rem 2rem; border: 0.25px solid rgba(161, 161, 161, 0.801); border-radius: 8px; text-decoration: none; font-family: Poppins-Regular, sans-serif; font-size: clamp(14px, 2.5vw, 16px); font-weight: 590; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(67, 121, 186, 0.3);"
-        onmouseover="this.style.backgroundColor='#4379ba'; this.style.color='#fff'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(67, 121, 186, 0.4)';"
-        onmouseout="this.style.backgroundColor='#acdaffd4'; this.style.color='#6b6b6b'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(67, 121, 186, 0.3)';">
-        Get Started Today
-      </a>
+    <div class="cta-section">
+      <div class="cta-section-animated">
+        <h3 class="cta-title-animated">Ready to transform your health journey?</h3>
+        <a href="/register" class="cta-button-animated">Get Started Today</a>
+      </div>
     </div>
 
     <div class="wave-light-bg-5">
@@ -1051,6 +1046,88 @@
           observer.observe(element);
         });
         
+      });
+    </script>
+    <script> // Quote scroll animation
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('Quote animation initialized');
+        
+        // Get the quote elements
+        const quote = document.querySelector('.quote-2');
+        const quoteBy = document.querySelector('.quote-2-by');
+        
+        if (!quote) {
+          console.log('Quote element not found');
+          return;
+        }
+        
+        // Create an Intersection Observer to detect when quote comes into view
+        const observerOptions = {
+          root: null, // Use viewport as root
+          rootMargin: '0px',
+          threshold: 0.3 // Trigger when 30% of the element is visible
+        };
+        
+        const observerCallback = (entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              // Add the 'visible' class to trigger the animation
+              entry.target.classList.add('visible');
+              
+              // Also animate the author attribution
+              if (quoteBy) {
+                quoteBy.classList.add('visible');
+              }
+              
+              // Stop observing after animation is triggered
+              observer.unobserve(entry.target);
+            }
+          });
+        };
+        
+        // Create and start the observer
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        observer.observe(quote);
+      });
+    </script>
+    <script> // Quote and CTA Animation Script
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('Animation script loaded');
+        
+        // Get all elements
+        const quote = document.querySelector('.quote-2');
+        const quoteBy = document.querySelector('.quote-2-by');
+        const ctaSection = document.querySelector('.cta-section-animated');
+        
+        if (!quote && !ctaSection) {
+          console.log('No animated elements found');
+          return;
+        }
+        
+        // Setup intersection observer
+        const observerOptions = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.3
+        };
+        
+        const observerCallback = (entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        };
+        
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        
+        // Observe all elements
+        if (quote) observer.observe(quote);
+        if (quoteBy) observer.observe(quoteBy);
+        if (ctaSection) observer.observe(ctaSection);
+        
+        console.log('Animation observers initialized');
       });
     </script>
   </body>
