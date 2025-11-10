@@ -30,7 +30,7 @@
   display: flex; /* Add this line */
   align-items: center;
   justify-content: space-between;
-  padding: 10px 15px;
+  padding: 8px 5px;
   position: relative;
 }
 .mobile-header-logo {
@@ -665,11 +665,9 @@ body.menu-open .dashboard-content {
     margin: -16px 0 24px 0; /* More space below connector */
   }
   .mobile-nav {
-    padding: 0 2px;
+    padding: 0;
   }
-  .page-link {
-    padding: 3px 1px !important; /* Reduced from 4px */
-  }
+
   .nav-icon {
     width: 16px; /* Reduced from 18px */
     height: 16px;
