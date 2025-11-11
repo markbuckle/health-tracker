@@ -1038,7 +1038,7 @@
 .highlight-add-button::before {
     content: "Start Here";
     position: absolute;
-    top: -2rem;
+    top: -2.2rem;
     left: 50%;
     transform: translateX(-50%);
     background-color: #73bb66dc;

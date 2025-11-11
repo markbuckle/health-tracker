@@ -322,13 +322,13 @@ body.menu-open .dashboard-content {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 4px 0 4px 0;
+    padding: 0;
     position: relative;
   }
 
   .mobile-header-logo {
     flex-shrink: 0;
-    margin-bottom: 4px;
+    margin-bottom: 0;
   }
 
   .mobile-header-logo-link {
@@ -596,7 +596,7 @@ body.menu-open .dashboard-content {
 /* Small screens (320px - 480px) */
 @media screen and (max-width: 480px) {
   .mobile-header {
-    height: 2.7rem; /* Reduced from 105px */
+    height: 3rem; /* Reduced from 105px */
   }
   .dashboard-content {
     padding-top: 95px !important;
