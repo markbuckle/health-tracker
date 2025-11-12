@@ -108,44 +108,55 @@
     <!-- Modern Chat Layout -->
     <div class="modern-chat-layout">
       <!-- Conversation History Sidebar -->
-      <div class="conversation-sidebar">
-        <div class="conversation-sidebar-header">
-          <h3 class="conversation-sidebar-title">Your chat history</h3>
-          <button 
-            id="new-conversation-btn" 
-            class="new-conversation-btn"
-            title="New conversation"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
+      <div class="conversation-sidebar chat-history-sidebar open">
+        <div class="chat-history-content">
+          <div class="conversation-sidebar-header">
+            <h3 class="conversation-sidebar-title">Your chat history</h3>
+            <button
+              id="new-conversation-btn"
+              class="new-conversation-btn"
+              title="New conversation"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>New chat</span>
+            </button>
+          </div>
+          <div class="conversation-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
             </svg>
-            <span>New chat</span>
-          </button>
-        </div>
-
-        <div class="conversation-search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input 
-            type="text" 
-            id="conversation-search-input" 
-            placeholder="Search your chats..."
-            class="conversation-search-input"
-          />
-        </div>
-
-        <div class="conversation-list-container">
-          <div id="conversation-list" class="conversation-list">
-            <!-- Conversations will be loaded here -->
-            <div class="conversation-list-loading">
-              <div class="loading-spinner"></div>
-              <p>Loading conversations...</p>
+            <input
+              type="text"
+              id="conversation-search-input"
+              placeholder="Search your chats..."
+              class="conversation-search-input"
+            />
+          </div>
+          <div class="conversation-list-container">
+            <div id="conversation-list" class="conversation-list">
+              <!-- Conversations will be loaded here -->
+              <div class="conversation-list-loading">
+                <div class="loading-spinner"></div>
+                <p>Loading conversations...</p>
+              </div>
             </div>
           </div>
         </div>
+        
+        {{!-- Sidebar toggle button --}}
+        <button class="toggle-button">
+          <span class="arrow">‹</span>
+          <span class="chat-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </span>
+          <span class="tooltip">Chat History</span>
+        </button>
       </div>
 
       <!-- Main Chat Area -->
@@ -386,6 +397,39 @@
         }
         
       })();
+    </script>
+    <script> // Chatbot conversation arrow toggle
+      document.addEventListener('DOMContentLoaded', function() { 
+        const toggleButton = document.querySelector('.toggle-button');
+        const sidebar = document.querySelector('.chat-history-sidebar');
+        const tooltip = document.querySelector('.tooltip');
+        
+        // Toggle sidebar
+        toggleButton.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            sidebar.classList.toggle('closed');
+            
+            if (sidebar.classList.contains('closed')) {
+                sidebar.style.width = '3rem';
+                sidebar.style.minWidth = '3rem';
+                sidebar.style.maxWidth = '3rem';
+            } else {
+                const previousWidth = sidebar.dataset.previousWidth || '350px';
+                sidebar.style.width = previousWidth;
+                sidebar.style.minWidth = '100px';
+                sidebar.style.maxWidth = '600px';
+            }
+        });
+        
+        // Position tooltip dynamically when hovering
+        toggleButton.addEventListener('mouseenter', function() {
+            if (sidebar.classList.contains('closed')) {
+                const rect = toggleButton.getBoundingClientRect();
+                tooltip.style.top = rect.top + (rect.height / 2) + 'px';
+                tooltip.style.left = (rect.right + 10) + 'px';
+            }
+        });
+    });
     </script>
   </body>
 </html>
