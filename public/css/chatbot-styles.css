@@ -1100,34 +1100,30 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
 
 /* Tooltip */
 .tooltip {
-    position: fixed; /* Changed from absolute to fixed */
+    position: fixed;
+    left: 40px;
     background: #2b9c54;
     color: white;
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 13px;
     white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    display: none;
+    z-index: 10000000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .chat-history-sidebar.open .tooltip {
     display: none !important;
-}
-
-/* Hide tooltip completely when sidebar is open */
-.chat-history-sidebar.open .toggle-button:hover .tooltip {
-    opacity: 0;
-    display: none;
+    opacity: 0 !important;
 }
 
 /* Show tooltip on right side when sidebar is closed */
 .chat-history-sidebar.closed .tooltip {
     display: block;
+    visibility: visible;
 }
 
 .chat-history-sidebar.closed .toggle-button:hover .tooltip {
@@ -1176,11 +1172,6 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
 .chat-history-sidebar.closed .arrow {
     display: none;
 }
-
-/* Remove the ::before pseudo-element for closed sidebar hover */
-/* .chat-history-sidebar.closed::before {
-    display: none;
-} */
 
 @media (max-width: 1024px) {
   /* Adjust sidebar width for tablets */

@@ -420,15 +420,6 @@
                 sidebar.style.maxWidth = '600px';
             }
         });
-        
-        // Position tooltip dynamically when hovering
-        toggleButton.addEventListener('mouseenter', function() {
-            if (sidebar.classList.contains('closed')) {
-                const rect = toggleButton.getBoundingClientRect();
-                tooltip.style.top = rect.top + (rect.height / 2) + 'px';
-                tooltip.style.left = (rect.right + 10) + 'px';
-            }
-        });
     });
     </script>
   </body>
