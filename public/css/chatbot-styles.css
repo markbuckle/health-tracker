@@ -1409,6 +1409,10 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
     width: 36px;
     height: 36px;
   }
+
+  .toggle-button {
+    visibility: hidden;
+  }
 }
 
 /* ===================================
