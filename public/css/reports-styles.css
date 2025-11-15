@@ -338,7 +338,7 @@
     font-size: 14px !important;
   }
   .in-page-menu {
-    gap: 0.2rem;
+    gap: 0rem;
   }
   .w-col-6:has(.html-embed.chart) {
     width: 100% !important;

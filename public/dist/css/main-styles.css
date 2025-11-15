@@ -510,16 +510,6 @@ html, body {
   margin: 0 auto 0 0;
 }
 
-/* .heading3 {
-  color: rgba(81, 81, 81, 0.76);
-  font-family: "Poppins-Bold", sans-serif;
-  font-size: clamp(26px, 5vw, 30px);
-  font-weight: 700;
-  display: flex;
-  justify-content: flex-start;
-  margin: 0 auto 0 0;
-} */
-
 .spacer-block {
   flex: 1;
 }
@@ -1305,13 +1295,14 @@ label[for="customBloodType"] {
   }
   .heading2 {
     font-size: 1.75rem;
-    margin-top: 5.5rem;
+    margin-top: 2.5rem;
+    font-weight: 500;
   }
   .subheading {
     font-size: 1.1rem;
   }
   .subheading-2 {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
   }
   .footer-tagline {
     font-size: 0.8rem;
@@ -1321,7 +1312,7 @@ label[for="customBloodType"] {
     height: 3.5rem;
   }
   .mobile-header-logo .header-logo {
-    height: 2rem;
+    height: 3rem;
     max-width: 100px;
   }
   .mobile-menu-toggle {
@@ -1339,10 +1330,10 @@ label[for="customBloodType"] {
     max-width: 280px;
   }
   .modal-button {
-    font-size: 20px;
+    font-size: 24px;
   }
   .modal-card {
-    margin-top: 7rem;
+    margin-top: 1rem;
   }
   .modal-form {
     margin: 0.25rem;
@@ -1364,8 +1355,8 @@ label[for="customBloodType"] {
   }
   .mobile-header-logo .header-logo {
     margin-top: 0rem;
-    height: 1.8rem;
-    max-width: 150px;
+    /* height: 1.8rem; */
+    max-width: 225px;
   }
   .mobile-menu-toggle {
     font-size: 1.4rem;

@@ -81,7 +81,7 @@
 .header-links {
   color: #627183;
   letter-spacing: 0.5px;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1156,7 +1156,7 @@
 
 .ocr-training-note p {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #64748b;
   line-height: 1.4;
 }
@@ -1557,7 +1557,7 @@
   }
   .upload-page-text-1,
   .upload-page-text-2 {
-    font-size: 14px !important;
+    font-size: 15px !important;
     margin: 0.5rem 0 !important;
     line-height: 1.4;
   }
@@ -1745,13 +1745,13 @@
   
   .use-sample-btn {
     flex: 1;
-    max-width: none;
+    max-width: 60%;
     padding: 0.55rem 1rem; /* Smaller mobile button */
     font-size: 0.8rem;
   }
   
   .sample-pdf-section h4 {
-    font-size: 0.9rem; /* Smaller mobile heading */
+    font-size: 1.1rem; /* Smaller mobile heading */
     margin-bottom: 0.5rem;
   }
   .in-page-menu {

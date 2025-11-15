@@ -1296,12 +1296,13 @@ label[for="customBloodType"] {
   .heading2 {
     font-size: 1.75rem;
     margin-top: 2.5rem;
+    font-weight: 500;
   }
   .subheading {
     font-size: 1.1rem;
   }
   .subheading-2 {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
   }
   .footer-tagline {
     font-size: 0.8rem;
@@ -1329,10 +1330,10 @@ label[for="customBloodType"] {
     max-width: 280px;
   }
   .modal-button {
-    font-size: 20px;
+    font-size: 24px;
   }
   .modal-card {
-    margin-top: 7rem;
+    margin-top: 1rem;
   }
   .modal-form {
     margin: 0.25rem;

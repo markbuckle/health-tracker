@@ -216,9 +216,9 @@
   }
   .category-subtitle {
     margin: auto 0 auto auto;
-    font-family: "Poppins-SemiBold", sans-serif;
+    font-family: "Poppins-Regular", sans-serif;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
   }
   .dropdown-container {
     display: flex;

@@ -1,4 +1,17 @@
 /* ---- profile page ---- */
+
+.heading3 {
+  color: rgba(81, 81, 81, 0.76);
+  font-size: clamp(24px, 5vw, 30px);
+  font-weight: 600;
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 auto 0 0;
+  margin-top: 0.5rem;
+  line-height: 1.3;
+  letter-spacing: 1px;
+}
+
 .basic-info-div {
   background-color: #fff;
   border-radius: 15px;
@@ -177,7 +190,7 @@
   display: block;
   color: #534a4a;
   background-color: #d7effc;
-  border: 3px dashed #65b5e0;
+  border: 1px solid #65b5e0;
   border-radius: 20px;
   padding: 6px 12px;
   margin-top: 1rem;
@@ -379,9 +392,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.6rem;
-  margin-bottom: 0.6rem;
-  font-size: clamp(11px, 4vw, 13px);
+  margin-top: 0.4rem;
+  margin-bottom: 0rem;
+  font-size: clamp(14px, 4vw, 16px);
   font-family: "Poppins-Regular", sans-serif;
   color: rgba(0, 0, 0, 0.847);
 }
@@ -709,8 +722,8 @@
 }
 .tutorial-button-container {
   position: absolute;
-  top: 1.2rem;
-  left: 28rem;
+  top: 5.5rem;
+  left: 87%;
   z-index: 10;
 }
 .tutorial-button {
@@ -1210,6 +1223,11 @@
         box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.1);
     }
 }
+@media screen and (max-width: 1100px) {
+  .tutorial-button-container {
+      left: 85%;
+    }
+  }
 
 @media screen and (max-width: 991px) {
   .header-container-3 {
@@ -1272,7 +1290,7 @@
   }
   .monitoring-info {
     gap: 0.1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     padding: 0;
   }
   .monitoring-entry.entry-card {
@@ -1282,7 +1300,7 @@
   }
   .lifestyle-info {
     gap: 0.1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     padding: 0;
   }
   .lifestyle-entry.entry-card {
@@ -1292,7 +1310,7 @@
   }
   .meds-info {
     gap: 0.1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     padding: 0;
   }
   .medsandsups-entry.entry-card {
@@ -1300,12 +1318,15 @@
     min-width: 400px; /* Minimum width before wrapping */
     max-width: 700px; /* Maximum width to prevent cards from getting too wide */
   }
+  .tutorial-button-container {
+    left: 84%;
+  }
   }
 /* Responsive adjustments */
 @media screen and (max-width: 767px) {
   .dashboard-content {
     margin-left: 0 !important;
-    margin-top: 1rem !important;
+    margin-top: 1.5rem !important;
     padding: 0px 0.5rem 1rem 0.5rem !important; /* Add top padding for fixed header */
     transition: padding-top 0.3s ease-in-out;
   }
@@ -1334,7 +1355,15 @@
     display: block;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 10px;
+    border-radius: 5px;
+    text-align: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    box-sizing: border-box;
   }
   .text-block {
     font-size: 15px;
@@ -1356,7 +1385,10 @@
   }
   .profile-intro-container {
     display: block;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+  }
+  .profile-button {
+    border-radius: 15px;
   }
   .profile-info-button {
     margin: 0.1em;
@@ -1519,13 +1551,13 @@
     min-width: 300px;
   }
   .tutorial-button-container {
-    top: 3.2rem;
-    left: 59%;
+    top: 5.4rem;
+    left: 68%;
     z-index: 10;
   }
   .tutorial-button {
-    padding: 1.1rem 1.8rem;
-    font-size: 1.2rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 1rem;
   }
   /* .tutorial-text {
     display: none; /* Hide text on mobile, show only icon
@@ -1589,8 +1621,17 @@
         padding: 0.2rem 0.4rem;
     }
     .tab-status {
+      /* display: none; */
       align-self: center;
-      align-self: stretch;
+      margin: 0 auto;
+      /* align-self: stretch; */
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      -webkit-text-size-adjust: 100%;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
     .profile-completion-modal {
         position: fixed;
@@ -1631,6 +1672,13 @@
     .profile-completion-modal .modal-button {
         padding: 0.85rem 1.25rem;
         font-size: 0.95rem;
+    }
+    .heading3 {
+      margin-top: 2.2rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: 0;
     }
     
 }

@@ -1038,6 +1038,141 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
   background: #8cc9f0;
 }
 
+/* Chat History Sidebar Collapsible */
+.chat-history-sidebar {
+    position: relative;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+.chat-history-sidebar.open {
+    /* min-width: 350px !important; */
+    max-width: 500px !important;
+    /* width: 350px !important; */
+}
+
+.chat-history-sidebar.closed {
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+    width: 3rem !important;
+}
+
+/* Toggle Button */
+.toggle-button {
+    position: absolute;
+    top: 4.5%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-button:hover {
+    background: #43ad6a; /* Green color */
+    border-color: #43ad6a;
+    box-shadow: 0 2px 8px rgba(74, 222, 128, 0.3);
+}
+
+.toggle-button:hover .arrow {
+    color: white;
+}
+
+.arrow {
+    font-size: 14px;
+    color: #666;
+    transition: all 0.2s ease;
+    font-weight: bold;
+}
+
+.chat-history-sidebar.closed .arrow {
+    transform: rotate(180deg);
+}
+
+/* Tooltip */
+.tooltip {
+    position: fixed;
+    left: 40px;
+    background: #2b9c54;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10000000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.chat-history-sidebar.open .tooltip {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* Show tooltip on right side when sidebar is closed */
+.chat-history-sidebar.closed .tooltip {
+    display: block;
+    visibility: visible;
+}
+
+.chat-history-sidebar.closed .toggle-button:hover .tooltip {
+    opacity: 1;
+}
+
+/* Hide content when closed */
+.chat-history-sidebar.closed .chat-history-content {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.chat-history-content {
+    transition: opacity 0.2s ease;
+}
+
+/* Chat icon sizing */
+.toggle-button .chat-icon {
+    display: none;
+    width: 11px;
+    height: 11px;
+}
+
+.toggle-button .chat-icon svg {
+    width: 11px;
+    height: 11px;
+    display: block;
+}
+
+.chat-history-sidebar.closed .chat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-history-sidebar.closed .chat-icon svg {
+    stroke: #666;
+}
+
+.chat-history-sidebar.closed .toggle-button:hover .chat-icon svg {
+    stroke: white;
+}
+
+/* Hide arrow in closed state */
+.chat-history-sidebar.closed .arrow {
+    display: none;
+}
+
 @media (max-width: 1024px) {
   /* Adjust sidebar width for tablets */
   .conversation-sidebar {
@@ -1274,6 +1409,10 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
     width: 36px;
     height: 36px;
   }
+
+  .toggle-button {
+    visibility: hidden;
+  }
 }
 
 /* ===================================
@@ -1357,7 +1496,7 @@ body:has(#welcome-state:not([style*="display: none"])) .new-conversation-btn {
   /* Further compact the sidebar */
   .conversation-sidebar {
     max-height: 30vh;
-    margin-top: 6rem;
+    margin-top: 2.8rem;
   }
 
   .chat-header-modern {

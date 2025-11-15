@@ -1539,7 +1539,7 @@
   }
   .in-page-menu {
     flex-wrap: wrap;
-    gap: 0.25rem;
+    gap: 0rem;
     margin: 0.5rem 0;
   }
   .in-page-link {
@@ -1557,7 +1557,7 @@
   }
   .upload-page-text-1,
   .upload-page-text-2 {
-    font-size: 14px !important;
+    font-size: 15px !important;
     margin: 0.5rem 0 !important;
     line-height: 1.4;
   }
@@ -1745,7 +1745,7 @@
   
   .use-sample-btn {
     flex: 1;
-    max-width: none;
+    max-width: 15%;
     padding: 0.55rem 1rem; /* Smaller mobile button */
     font-size: 0.8rem;
   }
