@@ -171,6 +171,7 @@
                 {{!-- Upload container --}}
                 <div class="upload-section-container">
                   <div class="file-upload-container">
+                    <div class="or-text">OR</div>
                     <div class="file-upload-area" id="dropZone">
                       <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input" />
                       <div class="upload-content">
@@ -192,7 +193,7 @@
                     <div class="sample-pdf-preview">
                       <img src="/images/sample-report-preview.png" alt="Sample medical report preview">
                       <button class="use-sample-btn" data-sample-file="/samples/jane-smith-lab-report.pdf">
-                        Use Sample Reports (2 files)
+                        Use Sample Reports<br>(2 files)
                       </button>
                     </div>
                     <p style="font-size: 0.8rem; color: #64748b; text-align: center; margin-top: 0.5rem; margin-bottom: 0;">
@@ -214,7 +215,7 @@
                 <div class="upload-page-text-2">Uploaded documents:</div>
                 <div class="file-list-header">
                   <div class="file-list-title">Name</div>
-                  <div class="file-list-title">Test/Collection Date</div>
+                  <div class="file-list-title tc-date">Test/Collection Date</div>
                   <div class="file-list-title">Uploaded</div>
                   <div class="file-list-title checkbox-header">
                     <input type="checkbox" id="selectAllFiles" class="select-all-checkbox" aria-label="Select all files">
