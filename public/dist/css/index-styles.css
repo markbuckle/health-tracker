@@ -1290,8 +1290,9 @@
 .hover-title.active {
   background: #f0f8ff;
   border-left-width: 6px;
-  transform: translateX(-8px) scale(1.02);
+  transform: translateX(0px) scale(1.02);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  background: #e3e3e3;
 }
 @keyframes slideInFromRight {
   from {

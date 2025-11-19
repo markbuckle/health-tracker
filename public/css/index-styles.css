@@ -1290,8 +1290,9 @@
 .hover-title.active {
   background: #f0f8ff;
   border-left-width: 6px;
-  transform: translateX(-8px) scale(1.02);
+  transform: translateX(0px) scale(1.02);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  background: #e3e3e3;
 }
 @keyframes slideInFromRight {
   from {
@@ -1836,6 +1837,7 @@
   }
   .cta-button-animated {
     padding: 0.9rem 2rem;
+    letter-spacing: 0.1;
   }
 }
 
@@ -2214,6 +2216,16 @@
       opacity: 1;
       transform: translateX(0);
     }
+  }
+
+  .cta-button-animated {
+    padding: 0.9rem 2rem;
+    letter-spacing: 0.3px;
+  }
+  .cta-title-animated {
+    text-align: center;
+    justify-self: center;
+    max-width: 70%;
   }
 }
 
