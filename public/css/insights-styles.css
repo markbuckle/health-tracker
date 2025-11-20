@@ -1684,6 +1684,7 @@
   .wellness-summary-card {
     padding: 0.5rem 0.5rem 1rem 0.5rem !important;
     margin: 0;
+    margin-bottom: 2rem;
     min-height: auto !important;
   }
   .labs-summary-header {
