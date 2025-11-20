@@ -450,6 +450,9 @@
     justify-content: center;
     gap: 1rem;
   }
+  .dropdown-wrapper {
+    margin-bottom: 4rem !important;
+  }
 }
 
 @media screen and (max-width: 480px) {
