@@ -2225,6 +2225,7 @@
   .cta-title-animated {
     text-align: center;
     justify-self: center;
+    -webkit-box-align: center;
     max-width: 70%;
   }
 }
