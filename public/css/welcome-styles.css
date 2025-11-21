@@ -393,7 +393,8 @@ body[data-output-group-hover="true"] #Chatbot {
 .skip-tutorial-btn {
   display: inline-block;
   background-color: #e5e7eb;
-  color: #666;
+  color: #0baa28;
+  font-weight: 600;
   font-family: "Poppins-Regular", sans-serif;
   padding: 12px 28px;
   border-radius: 30px;
@@ -406,7 +407,7 @@ body[data-output-group-hover="true"] #Chatbot {
 .skip-tutorial-btn:hover {
   background-color: #d1d5db;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-  color: #333;
+  color: #1a6f0f;
 }
 
 @media screen and (max-width: 1200px) {
