@@ -25,6 +25,12 @@
           <p class="hero-subtitle">
             Get personalized reports, AI-powered insights, and recommendations to help you live a longer and healthier life - all in one secure platform
           </p>
+          <div class="hero-subtitle2">
+            <div class="subtitle-line" data-line="1">Detailed reports,</div>
+            <div class="subtitle-line" data-line="2">AI powered insights,</div>
+            <div class="subtitle-line" data-line="3">and actionable recommendations</div>
+            <div class="subtitle-line" data-line="4">- all in one secure platform</div>
+          </div>
           <!-- Desktop button - hidden on mobile -->
           <div class="button-container-hero desktop-only">
             <a href="#how-it-works-section" class="button-basics btn-secondary-outline" onclick="scrollToHowItWorks(event)">
@@ -193,21 +199,25 @@
                 // First time seeing the hero - play animations
                 const title = document.querySelector('.hero-title');
                 const subtitle = document.querySelector('.hero-subtitle');
+                const subtitleLines = document.querySelectorAll('.subtitle-line');
                 const mobileImage = document.querySelector('.mobile');
                 const button = document.querySelector('.desktop-only');
 
                 if (title) title.style.visibility = "visible";
                 if (subtitle) subtitle.style.visibility = "visible";
+                subtitleLines.forEach(line => {
+                  if (line) line.style.visibility = "visible";
+                });
                 if (mobileImage) mobileImage.style.visibility = "visible";
                 const buttons = document.querySelectorAll('.btn-primary, .btn-secondary-outline');
                 buttons.forEach(button => {
                   if (button) button.style.visibility = "visible";
                 });
-                
+
                 animationsHavePlayed = true;
               } else if (entry.isIntersecting && animationsHavePlayed) {
                 // Already seen the hero - show without animations
-                document.querySelectorAll('.hero-title, .hero-subtitle, .mobile, .desktop-only').forEach((el) => {
+                document.querySelectorAll('.hero-title, .hero-subtitle, .subtitle-line, .mobile, .desktop-only').forEach((el) => {
                   el.style.animation = "none";
                   el.style.opacity = "1";
                   el.style.transform = "none";
@@ -228,7 +238,7 @@
 
         // Handle reduced motion preference
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          document.querySelectorAll('.hero-title, .hero-subtitle, .mobile, .desktop-only').forEach((el) => {
+          document.querySelectorAll('.hero-title, .hero-subtitle, .subtitle-line, .mobile, .desktop-only').forEach((el) => {
             el.style.animation = "none";
             el.style.opacity = "1";
             el.style.transform = "none";
