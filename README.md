@@ -7,7 +7,7 @@ A comprehensive health tracking application that enables users to make sense of 
 - **Landing Page** - Modern, responsive landing page with interactive elements
 - **How It Works** - Step-by-step guide with React-powered scroll navigation
 - **User Authentication** - Secure authentication with Passport.js
-- **Document Upload & OCR** - Advanced OCR processing with PaddleOCR and DocTR
+- **Document Upload & OCR** - Advanced OCR processing with Google's free OCR API
 - **Interactive Dashboards** - Visual health data representation with Plotly.js
 - **RAG Chatbot** - AI-powered medical information retrieval using vector search
 - **Multi-Database Integration** - MongoDB for user data, PostgreSQL with pgvector for medical knowledge
