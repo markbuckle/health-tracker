@@ -118,5 +118,5 @@ The application includes curated medical information from:
 
 ### Database Design
 
-**MongoDB**: User data, sessions, uploaded documents, lab results
-**PostgreSQL**: Medical knowledge base, vector embeddings, semantic search
+- **MongoDB**: User data, sessions, uploaded documents, lab results
+- **PostgreSQL**: Medical knowledge base, vector embeddings, semantic search
