@@ -15,6 +15,7 @@ notes.md
 .vercel
 .vscode
 railway-rag-api/archive/
+paddleocr-processor/archive/
 config/
 *.json
 .VSCodeCounter/

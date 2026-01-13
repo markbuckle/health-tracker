@@ -40,7 +40,7 @@ let poolConfig;
 
 if (isLocal) {
   // Local development configuration - keep your existing localhost setup
-  const localConnectionString = "postgresql://postgres:BroBeans_2317@localhost:5432/postgres";
+  const localConnectionString = process.env.POSTGRES_URI;
   
   poolConfig = {
     connectionString: localConnectionString,

@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 
 // Local database connection
 const localPool = new Pool({
-  connectionString: "postgresql://postgres:BroBeans_2317@localhost:5432/postgres",
+  connectionString: process.env.POSTGRES_URI,
   ssl: false
 });
 

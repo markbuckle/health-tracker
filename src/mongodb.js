@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const isVercel = process.env.VERCEL || process.env.VERCEL_ENV;
 const isProduction = process.env.NODE_ENV === "production";
 
-const mongoURI = process.env.DB_STRING || "mongodb://localhost:27017/HealthLyncDatabase";
+const mongoURI = process.env.DB_STRING;
 
 console.log(`🌍 Environment: ${isVercel ? 'Vercel' : 'Local'} | Production: ${isProduction}`);
 
