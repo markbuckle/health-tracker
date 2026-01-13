@@ -1,5 +1,6 @@
 node_modules/
 .env
+.venv/
 dotenv
 .DS_Store
 webflow-export/
@@ -16,3 +17,7 @@ notes.md
 railway-rag-api/archive/
 config/
 *.json
+.VSCodeCounter/
+*-credentials.json
+google-credentials.json
+service-account-key.json
