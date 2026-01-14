@@ -22,3 +22,13 @@ config/
 *-credentials.json
 google-credentials.json
 service-account-key.json
+
+# test files
+test-prod-db.js
+test-google-vision.js
+test-free-document-ai.js
+regenerateSupabaseEmbeddings.js
+debug-google-vision.js
+checkLocalDatabase.js
+
+supabase/archive/
