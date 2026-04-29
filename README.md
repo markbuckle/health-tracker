@@ -73,7 +73,6 @@ A comprehensive health tracking application that enables users to make sense of 
 ### Production Infrastructure
 - **Vercel** - Frontend and API hosting
 - **Digital Ocean** - Database hosting
-- **Railway** - Additional backend services
 - **Docker** - Containerization for OCR services
 
 ## Key Features Explained
