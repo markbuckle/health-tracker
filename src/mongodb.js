@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const isVercel = process.env.VERCEL || process.env.VERCEL_ENV;
 const isProduction = process.env.NODE_ENV === "production";
 
-const mongoURI = process.env.DB_STRING;
+// const mongoURI = process.env.DB_STRING;
 
 console.log(`🌍 Environment: ${isVercel ? 'Vercel' : 'Local'} | Production: ${isProduction}`);
 
@@ -30,6 +30,8 @@ let isConnected = false;
 let connectionPromise = null;
 
 async function connectToMongoDB() {
+  const mongoURI = process.env.DB_STRING;
+
   if (isConnected && mongoose.connection.readyState === 1) {
     console.log('✅ Using existing MongoDB connection');
     return mongoose.connection;
@@ -86,15 +88,15 @@ async function connectToMongoDB() {
 }
 
 // Initialize connection (but don't await it at module level)
-if (!isVercel) {
+// if (!isVercel) {
   // Only auto-connect in local development
-  connectToMongoDB().catch(err => {
-    console.error('Initial MongoDB connection failed:', err.message);
-    if (!isVercel) {
-      process.exit(1);
-    }
-  });
-}
+//   connectToMongoDB().catch(err => {
+//     console.error('Initial MongoDB connection failed:', err.message);
+//     if (!isVercel) {
+//       process.exit(1);
+//     }
+//   });
+// }
 
 const personalHistorySchema = new mongoose.Schema(
   {

@@ -120,7 +120,7 @@ async function checkTogetherAIStatus() {
         'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'mistralai/Mistral-7B-Instruct-v0.1',
+        model: 'meta-llama/Meta-Llama-3-8B-Instruct-Lite',
         messages: [{ role: 'user', content: 'Hello' }],
         max_tokens: 10,
         temperature: 0.1
@@ -131,7 +131,7 @@ async function checkTogetherAIStatus() {
       const result = await response.json();
       return {
         working: true,
-        model: 'mistralai/Mistral-7B-Instruct-v0.1',
+        model: 'meta-llama/Meta-Llama-3-8B-Instruct-Lite',
         response: result.choices[0].message.content
       };
     } else {
@@ -292,7 +292,7 @@ Instructions: Answer using ONLY the user's data above. Be specific with values.`
           'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
         },
         body: JSON.stringify({
-          model: 'mistralai/Mistral-7B-Instruct-v0.1',
+          model: 'meta-llama/Meta-Llama-3-8B-Instruct-Lite',
           messages: messages,
           max_tokens: 300,
           temperature: 0.1,
@@ -403,7 +403,7 @@ Instructions: Answer using ONLY the context above. Preserve the exact structure 
         'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'mistralai/Mistral-7B-Instruct-v0.1',
+        model: 'meta-llama/Meta-Llama-3-8B-Instruct-Lite',
         messages: messages,
         max_tokens: 500,
         temperature: 0.1,
@@ -455,7 +455,7 @@ async function testModel() {
     );
 
     return {
-      model: "mistralai/Mistral-7B-Instruct-v0.1 (Together AI)",
+      model: "meta-llama/Meta-Llama-3-8B-Instruct-Lite (Together AI)",
       response: response,
     };
   } catch (error) {
