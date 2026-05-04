@@ -17,9 +17,6 @@ const fs = require("fs");
 require("dotenv").config();
 require('dotenv').config();
 
-// DEBUG: Check if DB_STRING is loaded
-console.log('🔍 DEBUG - DB_STRING:', process.env.DB_STRING);
-console.log('🔍 DEBUG - All env vars:', Object.keys(process.env).filter(k => k.includes('DB')));
 // const EventEmitter = require('events'); // for the processing files modal
 // const processEmitter = new EventEmitter(); // for the processing files modal
 const WebSocket = require("ws");
@@ -73,7 +70,6 @@ connectToMongoDB()
   .then(() => console.log('✅ MongoDB ready'))
   .catch(err => {
     console.error('❌ MongoDB connection failed:', err);
-    process.exit(1);
   });
 
 
@@ -81,7 +77,6 @@ connectToMongoDB()
 app.use(async (req, res, next) => {
   try {
     if (!isConnected()) {
-      console.log('🔄 Establishing MongoDB connection...');
       await connectToMongoDB();
     }
     next();

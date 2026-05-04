@@ -18,19 +18,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('🔍 USER CONTEXT ENDPOINT CALLED (Production)');
-    
     // Extract userId from request body
     const { userId } = req.body;
-    
+
     if (!userId) {
-      console.log('❌ No userId provided in request');
-      return res.status(400).json({ 
-        error: 'Missing userId', 
+      return res.status(400).json({
+        error: 'Missing userId',
         message: 'userId is required in request body'
       });
     }
-    
+
     // Import and connect to MongoDB with proper error handling
     let connectToMongoDB, registerCollection, isConnected, mongoose;
     try {
@@ -39,11 +36,10 @@ export default async function handler(req, res) {
       registerCollection = mongoModule.registerCollection;
       isConnected = mongoModule.isConnected;
       mongoose = mongoModule.default || mongoModule.mongoose;
-      console.log('📊 MongoDB module imported successfully');
     } catch (importError) {
-      console.error('❌ MongoDB import failed:', importError);
-      return res.status(500).json({ 
-        error: 'Database connection failed', 
+      console.error('MongoDB import failed:', importError);
+      return res.status(500).json({
+        error: 'Database connection failed',
         details: 'Import error',
         message: 'Unable to load database module'
       });
@@ -52,19 +48,17 @@ export default async function handler(req, res) {
     // Ensure MongoDB connection
     try {
       if (!isConnected()) {
-        console.log('🔄 Establishing MongoDB connection...');
         await Promise.race([
           connectToMongoDB(),
-          new Promise((_, reject) => 
+          new Promise((_, reject) =>
             setTimeout(() => reject(new Error('Connection timeout')), 8000)
           )
         ]);
       }
-      console.log('✅ MongoDB connection verified');
     } catch (connectionError) {
-      console.error('❌ MongoDB connection failed:', connectionError.message);
-      return res.status(503).json({ 
-        error: 'Database connection failed', 
+      console.error('MongoDB connection failed:', connectionError.message);
+      return res.status(503).json({
+        error: 'Database connection failed',
         details: connectionError.message,
         message: 'Unable to connect to database. Please try again.'
       });
@@ -73,29 +67,22 @@ export default async function handler(req, res) {
     // Query user with timeout and proper error handling
     let user;
     try {
-      console.log(`🔍 Querying user: ${userId}`);
-      
       user = await Promise.race([
         registerCollection.findById(userId).lean(),
-        new Promise((_, reject) => 
+        new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Query timeout')), 5000)
         )
       ]);
-      
-      console.log('🔍 User query completed:', !!user);
     } catch (queryError) {
-      console.error('❌ User query failed:', queryError.message);
-      return res.status(500).json({ 
-        error: 'Database query failed', 
+      console.error('User query failed:', queryError.message);
+      return res.status(500).json({
+        error: 'Database query failed',
         details: queryError.message,
         message: 'Unable to retrieve user data'
       });
     }
-    
-    console.log('🔍 User found:', !!user);
-    
+
     if (!user) {
-      console.log('❌ User not found in database');
       return res.status(404).json({ error: 'User not found' });
     }
     
@@ -202,8 +189,6 @@ export default async function handler(req, res) {
       recentLabValues: extractRecentLabValues(user.files || []),
       healthConcerns: user.profile?.familyHistory?.length > 0 ? ['family_history_risk'] : []
     };
-    
-    console.log('✅ User context prepared successfully (Production)');
     
     res.status(200).json({ userContext });
 

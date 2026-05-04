@@ -18,18 +18,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('🔍 VERCEL RAG ENDPOINT CALLED');
-    console.log('🔧 Database Configuration Debug:');
-    console.log('- POSTGRES_URI exists:', !!process.env.POSTGRES_URI);
-    console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
-    console.log('- POSTGRES_URI host:', process.env.POSTGRES_URI ? new URL(process.env.POSTGRES_URI).hostname : 'none');
-    console.log('- DATABASE_URL host:', process.env.DATABASE_URL ? new URL(process.env.DATABASE_URL).hostname : 'none');
-    
     const { query, userContext, options } = req.body;
-    
-    console.log('Request details:');
-    console.log('- Query:', query);
-    console.log('- User context provided:', !!userContext);
     
     if (!query) {
       return res.status(400).json({
