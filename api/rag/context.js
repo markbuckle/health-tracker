@@ -75,11 +75,6 @@ export default async function handler(req, res) {
     try {
       console.log(`🔍 Querying user: ${userId}`);
       
-      if (mongoose && mongoose.connection && mongoose.connection.db) {
-        console.log('🔍 Available collections:', await mongoose.connection.db.listCollections().toArray());
-        console.log('🔍 User count in collection:', await registerCollection.countDocuments());
-      }
-      
       user = await Promise.race([
         registerCollection.findById(userId).lean(),
         new Promise((_, reject) => 
